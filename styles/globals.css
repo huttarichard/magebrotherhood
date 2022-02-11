@@ -1,16 +1,12 @@
-html,
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-family: 'Quintessential', cursive;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Aclonica', sans-serif;
 }
