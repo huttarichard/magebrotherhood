@@ -1,4 +1,4 @@
-export default function Logo({ color = "white", style = {}, ...props }) {
+export default function Logo({ color = "black", style = {}, ...props }) {
   return (
     <svg
       version="1.1"

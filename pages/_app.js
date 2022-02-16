@@ -2,6 +2,8 @@ import Head from "next/head";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { VechaiProvider } from "@vechaiui/react";
+import Script from "next/script";
+
 config.autoAddCss = false;
 
 import "../styles/globals.scss";
@@ -60,7 +62,9 @@ function MageBrotherHoodApp({ Component, pageProps }) {
         <title>Mage Brotherhood - Homepage</title>
       </Head>
       <VechaiProvider theme={theme} colorScheme="cool">
-        <Component {...pageProps} />;
+        <Component {...pageProps} />
+        <Script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" />
+        <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" />
       </VechaiProvider>
     </>
   );

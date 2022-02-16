@@ -19,17 +19,9 @@ export const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     <React.Fragment>
       <style jsx>{`
         .sidebar {
-          background: #0e0f0f;
-          color: white;
-          border-right: 1px solid #5c5c5c;
-        }
-
-        .sídebar * {
-          color: white;
-        }
-
-        .side-navigation-panel-select-option {
-          color: white;
+          background: white;
+          color: black;
+          border-right: 1px solid #d1d1d1;
         }
       `}</style>
 
@@ -53,7 +45,10 @@ export const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           />
           <h2 className="mx-2 text-2xl font-semibold">Mage Brotherhood</h2>
           <br />
+          <hr />
         </div>
+
+        <br />
 
         <Navigation
           activeItemId={"2"}

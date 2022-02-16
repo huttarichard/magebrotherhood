@@ -1,0 +1,14 @@
+<model-viewer bounds="tight" src="2.glb" ar ar-modes="webxr scene-viewer quick-look" camera-controls poster="poster.webp" shadow-intensity="1" animation-name="Armature.001|mixamo.com|Layer0" environment-image="pillars_1k.hdr" skybox-image="pillars_1k.hdr" autoplay>
+    <button class="Hotspot" slot="hotspot-1" data-position="-0.32750255835575026m 3.388571179507904m 0.4491652455122156m" data-normal="-0.2986048198879707m -0.4614395947503901m 0.8354092781004223m" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Sup nigga</div>
+    </button>
+    <div class="progress-bar hide" slot="progress-bar">
+        <div class="update-bar"></div>
+    </div>
+    <button slot="ar-button" id="ar-button">
+        View in your space
+    </button>
+    <div id="ar-prompt">
+        <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+    </div>
+</model-viewer>

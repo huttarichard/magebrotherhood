@@ -1,3 +1,15 @@
+## Tokenomics
+
+
+- Sold NFT generates Brotherhood Coin by staking
+- All Ether is delegated towards the pool
+- Sell taxes on selling the brotherhood coin
+- Longer one holds NFT more borthergood coun you get
+- ERC20 governanace
+
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

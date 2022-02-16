@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Script from "next/script";
 
 export function Polygon({ ...props }) {
   return (
@@ -31,13 +30,6 @@ export default function Slide1() {
     <>
       <style jsx>{`
         .section {
-          background: linear-gradient(
-            180deg,
-            rgba(14, 15, 15, 1) 81%,
-            rgb(223 62 255 / 36%) 85%,
-            rgb(113 0 136 / 46%) 92%,
-            rgb(49 1 58 / 77%) 99%
-          );
         }
       `}</style>
 
@@ -51,19 +43,21 @@ export default function Slide1() {
           </div>
         </div>
 
+        {/* src="https://cdn.glitch.com/36cb8393-65c6-408d-a538-055ada20431b/Astronaut.glb?1542147958948" */}
         <div className="h-[60%] justify-center content-center align-items-center">
           <model-viewer
             class="model h-full w-full"
-            src="https://cdn.glitch.com/36cb8393-65c6-408d-a538-055ada20431b/Astronaut.glb?1542147958948"
-            ios-src="/assets/model.usdz"
+            src="/assets/1.glb"
+            ios-src="/assets/1.usdz"
             poster="https://cdn.glitch.com/36cb8393-65c6-408d-a538-055ada20431b%2Fposter-astronaut.png?v=1599079951717"
             alt="A 3D model of an astronaut"
-            shadow-intensity="1"
             camera-controls
-            auto-rotate
+            autoplay
+            disable-zoom
+            camera-orbit="calc(-1.5rad + env(window-scroll-y) * 4rad) calc(0deg + env(window-scroll-y) * 180deg) calc(3m - env(window-scroll-y) * 1.5m)"
+            environment-image="neutral"
             ar
           />
-          <Script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" />
         </div>
       </div>
     </>

@@ -8,8 +8,12 @@ export default function Layout({ children }) {
   return (
     <>
       <style jsx>{`
-        .content {
-          background: rgb(14, 15, 15);
+        .navbar {
+          position: fixed;
+          height: 60px;
+          width: 100%;
+          background: white;
+          z-index: 99;
         }
       `}</style>
 
@@ -18,9 +22,9 @@ export default function Layout({ children }) {
 
         <div className="flex flex-col flex-1 overflow-hidden">
           <main className="content">
-            <button className="btn-menu" onClick={() => setIsSidebarOpen(true)} type="button">
+            <div className="navbar lg:hidden flex" onClick={() => setIsSidebarOpen(true)} type="button">
               <Icon name="burger" className="w-6 h-6" />
-            </button>
+            </div>
 
             <section className="sm:flex-row flex flex-col flex-1">
               <div className="content-box" style={{ flexGrow: 2, flexBasis: "0%" }}>
