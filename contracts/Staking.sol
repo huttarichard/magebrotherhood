@@ -10,10 +10,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-import "./extensions/IERC1155721Transferrable.sol";
-import "./extensions/ERC1155721SafeTransferFallback.sol";
+import "./extensions/IERC721Transferrable.sol";
+import "./extensions/ERC721SafeTransfer.sol";
 import "./extensions/ERC1155TokenReceiver.sol";
-import "./extensions/IERC1155721WithStakingSupport.sol";
+import "./extensions/IERC721StakingSupport.sol";
+
+
+interface ERC721S is IERC721Transferrable, IERC721StakingSupport {} 
 
 /**
  * @title NFT Staking
@@ -24,7 +27,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     using SafeCast for uint256;
     using SafeMath for uint256;
     using SignedSafeMath for int256;
-    using ERC1155721SafeTransferFallback for IERC1155721WithStakingSupport;
+    using ERC721SafeTransfer for ERC721S; 
 
     event Started();
     event Disabled();
@@ -81,7 +84,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
      * The ERC1155-compliant (optional ERC721-compliance) contract from which staking is accepted.
      */
     struct ContractStaking {
-      IERC1155721WithStakingSupport nft;
+      ERC721S nft;
       mapping(uint256 => TokenInfo) tokens;
       bool enabled;
     }

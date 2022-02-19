@@ -74,7 +74,7 @@ export default function ID() {
         {/* src="/data/2/2.glb" */}
         <model-viewer
           class="min-h-[100vh] w-full"
-          src="/assets/3_2.glb"
+          src="/assets/2.glb"
           ar
           ar-modes="webxr scene-viewer quick-look"
           camera-controls
