@@ -4,7 +4,6 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-import "./extensions/Presalable.sol";
 import "./ERC721B.sol";
 
 
@@ -94,6 +93,8 @@ abstract contract PlayableRights is ERC721B {
     /**
      * Public mint function mints token and return its URI.
      */
+
+    // todo implement amount
     function mint() external payable returns (string memory) {
         require(state.Sale == Sale.PublicSale, "mint disabled");
         require(block.timestamp >= state.timestamp, "mint disabled");
@@ -115,6 +116,8 @@ abstract contract PlayableRights is ERC721B {
      * Presale mint function mints token and return its URI. In order to mint
      * user needs to provide merkle proof.
      */
+
+     // todo implement amount
     function mint(bytes32[] memory proof) external payable returns (string memory) {
         require(state.Sale == Sale.Presale, "mint disabled");
         require(block.timestamp >= state.timestamp, "mint disabled");
