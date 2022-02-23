@@ -1,275 +1,375 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
+// import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 
 // todo improt uniswap here
 
+contract Coin is ERC20, ERC20Votes, Ownable {
+  using SafeMath for uint256;
 
+  event TokenPurchase(address indexed buyer, uint256 indexed ethSold, uint256 indexed tokensBought);
 
-// import "@openzeppelin/contracts/utils/Context.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
+  event EthPurchase(address indexed buyer, uint256 indexed tokensSold, uint256 indexed ethBought);
 
-// import "./IUniswapV2Factory.sol";
-// import "./ReentrancyGuard.sol";
-// import "./Staking.sol";
+  mapping(address => bool) private isExcludedFromFees;
 
-// contract TokenContract is ERC20, Ownable {
-//     using SafeMath for uint256;
+  string constant NAME = "Brotherhood Coin";
 
-//     IUniswapV2Router02 public uniswapV2Router;
-//     address public uniswapV2Pair;
+  string constant TICK = "BHC";
 
-//     uint256 public curBuyFeeStaking;
-//     uint256 public curBuyFeeMarketing;    
-//     uint256 public curSellFeeBuyback;
-//     uint256 public curSellFeeMarketing;
-//     uint256 public curSellFeeStaking;
+  constructor() ERC20(NAME, TICK) ERC20Permit(NAME) {
+    excludeFromFee(owner());
+    excludeFromFee(address(this));
 
-//     //Internal contract usage
-//     uint256 private accumulatingMarketing;
-//     uint256 private accumulatingBuyback;
+    _mint(address(this), 10**18);
+  }
 
-//     // exlcude from fees and max transaction amount
-//     mapping (address => bool) private _isExcludedFromFees;
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies exact input (msg.value).
+   * @dev User cannot specify minimum output or deadline.
+   */
+  function excludeFromFee(address account) public onlyOwner {
+    isExcludedFromFees[account] = true;
+  }
 
-//     uint256 private _totalSupply = 1000000000 * (10**18);
-//     uint256 public numTokensSellToAddToLiquidity = _totalSupply / 10000;
-//     bool public swapAndLiquifyEnabled = true;
-//     bool private inSwapAndLiquify;
-//     bool private swapping;
+  /**
+   * @notice Allow unlimited spend for account.
+   */
+  function allowSpend(address account) public onlyOwner {
+    _approve(address(this), account, type(uint256).max);
+  }
 
-//     address public marketingWallet;
-//     address public DEAD = 0x000000000000000000000000000000000000dEaD;
-//     address public ROUTER = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
-//     //address public ROUTER = 0xD99D1c33F9fC3444f8101754aBC46c52416550D1; // testnet
+  /**
+   * @notice Allow limited spend for account.
+   */
+  function allowSpendAmount(address account, uint256 amount) public onlyOwner {
+    _approve(address(this), account, amount);
+  }
 
-//     Staking public staking;
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies exact input (msg.value).
+   * @dev User cannot specify minimum output or deadline.
+   */
+  receive() external payable {
+    ethToTokenInput(msg.value, 1, block.timestamp, msg.sender, msg.sender);
+  }
 
-//     // Buyback
-//     uint256 public lastBuyBack;
-//     bool public buyBackEnabled = true;
+  /**
+   * @dev Snapshots the totalSupply after it has been increased.
+   */
+  function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
+    super._mint(to, amount);
+  }
 
-//     //  Launch
-//     uint256 public launchTime;
+  /**
+   * @dev Snapshots the totalSupply after it has been decreased.
+   */
+  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) {
+    super._burn(account, amount);
+  }
 
-//     event MinTokensBeforeSwapUpdated(uint256 minTokensBeforeSwap);
-//     event SwapAndLiquifyEnabledUpdated(bool enabled);
-//     event SwapAndLiquify(
-//         uint256 tokensSwapped,
-//         uint256 ethReceived,
-//         uint256 tokensIntoLiqudity
-//     );
+  /**
+   * @dev Move voting power when tokens are transferred.
+   *
+   * Emits a {DelegateVotesChanged} event.
+   */
+  function _afterTokenTransfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal override(ERC20Votes, ERC20) {
+    super._afterTokenTransfer(from, to, amount);
+  }
 
-//     modifier lockTheSwap {
-//         inSwapAndLiquify = true;
-//         _;
-//         inSwapAndLiquify = false;
-//     }
+  /**
+   * @dev Pricing function for converting between ETH && Tokens.
+   * @param inputAmount Amount of ETH or Tokens being sold.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens bought.
+   */
+  function getInputPrice(
+    uint256 inputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) public pure returns (uint256) {
+    require(inputReserve > 0 && outputReserve > 0, "INVALID_VALUE");
+    uint256 inputAmountWithFee = inputAmount.mul(997);
+    uint256 numerator = inputAmountWithFee.mul(outputReserve);
+    uint256 denominator = inputReserve.mul(1000).add(inputAmountWithFee);
+    return numerator / denominator;
+  }
 
-//     constructor () ERC20("Name", "Symbol") {
+  /**
+   * @dev Pricing function for converting between ETH && Tokens.
+   * @param outputAmount Amount of ETH or Tokens being bought.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens sold.
+   */
+  function getOutputPrice(
+    uint256 outputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) public pure returns (uint256) {
+    require(inputReserve > 0 && outputReserve > 0);
+    uint256 numerator = inputReserve.mul(outputAmount).mul(1000);
+    uint256 denominator = (outputReserve.sub(outputAmount)).mul(997);
+    return (numerator / denominator).add(1);
+  }
 
-//         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(ROUTER); //Pancake Mainnet
+  function ethToTokenInput(
+    uint256 ethSold,
+    uint256 minTokens,
+    uint256 deadline,
+    address buyer,
+    address recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && ethSold > 0 && minTokens > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
+    require(tokensBought >= minTokens);
+    require(transfer(recipient, tokensBought));
+    emit TokenPurchase(buyer, ethSold, tokensBought);
+    return tokensBought;
+  }
 
-//         // Create a uniswap pair for this new token
-//         address _uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
-//             .createPair(address(this), _uniswapV2Router.WETH());
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies exact input (msg.value) && minimum output.
+   * @param minTokens Minimum Tokens bought.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of Tokens bought.
+   */
+  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) public payable returns (uint256) {
+    return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, msg.sender);
+  }
 
-//         uniswapV2Router = _uniswapV2Router;
-//         uniswapV2Pair = _uniswapV2Pair;
+  /**
+   * @notice Convert ETH to Tokens && transfers Tokens to recipient.
+   * @dev User specifies exact input (msg.value) && minimum output
+   * @param minTokens Minimum Tokens bought.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @param recipient The address that receives output Tokens.
+   * @return  Amount of Tokens bought.
+   */
+  function ethToTokenTransferInput(
+    uint256 minTokens,
+    uint256 deadline,
+    address recipient
+  ) public payable returns (uint256) {
+    require(recipient != address(this) && recipient != address(0));
+    return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
+  }
 
-//         staking = new Staking();
-//         staking.notifySendRewardFromToken(_totalSupply.mul(15).div(100));
-//         staking.transferOwnership(owner());
+  function ethToTokenOutput(
+    uint256 tokensBought,
+    uint256 maxEth,
+    uint256 deadline,
+    address payable buyer,
+    address recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
+    // Throws if ethSold > maxEth
+    uint256 eth_refund = maxEth.sub(ethSold);
+    if (eth_refund > 0) {
+      buyer.transfer(eth_refund);
+    }
+    require(transfer(recipient, tokensBought));
+    emit TokenPurchase(buyer, ethSold, tokensBought);
+    return ethSold;
+  }
 
-//         _mint(owner(), _totalSupply.mul(85).div(100));
-//         _mint(address(staking), _totalSupply.mul(15).div(100));
-        
-//         // exclude from paying fees or having max transaction amount
-//         excludeFromFee(owner());
-//         excludeFromFee(address(this));
-//         excludeFromFee(address(staking));
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies maximum input (msg.value) && exact output.
+   * @param tokensBought Amount of tokens bought.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of ETH sold.
+   */
+  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline) public payable returns (uint256) {
+    return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
+  }
 
-//         curBuyFeeStaking = mcap20mBuyFeeStaking;
-//         curBuyFeeMarketing = mcap20mBuyFeeMarketing;    
-//         curSellFeeBuyback = mcap20mSellFeeBuyback;
-//         curSellFeeMarketing = mcap20mSellFeeMarketing;
-//         curSellFeeStaking = mcap20mSellFeeStaking;
+  /**
+   * @notice Convert ETH to Tokens && transfers Tokens to recipient.
+   * @dev User specifies maximum input (msg.value) && exact output.
+   * @param tokensBought Amount of tokens bought.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @param recipient The address that receives output Tokens.
+   * @return Amount of ETH sold.
+   */
+  function ethToTokenTransferOutput(
+    uint256 tokensBought,
+    uint256 deadline,
+    address recipient
+  ) public payable returns (uint256) {
+    require(recipient != address(this) && recipient != address(0));
+    return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), recipient);
+  }
 
-//         marketingWallet = owner();
-//     }
+  function tokenToEthInput(
+    uint256 tokensSold,
+    uint256 minEth,
+    uint256 deadline,
+    address buyer,
+    address payable recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
+    uint256 weiBought = ethBought;
+    require(weiBought >= minEth);
+    recipient.transfer(weiBought);
+    require(transferFrom(buyer, address(this), tokensSold));
+    emit EthPurchase(buyer, tokensSold, weiBought);
+    return weiBought;
+  }
 
-//     receive() external payable {}
+  /**
+   * @notice Convert Tokens to ETH.
+   * @dev User specifies exact input && minimum output.
+   * @param tokensSold Amount of Tokens sold.
+   * @param minEth Minimum ETH purchased.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of ETH bought.
+   */
+  function tokenToEthSwapInput(
+    uint256 tokensSold,
+    uint256 minEth,
+    uint256 deadline
+  ) public returns (uint256) {
+    return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, payable(msg.sender));
+  }
 
-//     function setMarketingWallet(address _marketingWallet) external onlyOwner() {
-//         require(_marketingWallet != address(0), "Development wallet can't be the zero address");
-//         marketingWallet = _marketingWallet;
-//     }
+  /**
+   * @notice Convert Tokens to ETH && transfers ETH to recipient.
+   * @dev User specifies exact input && minimum output.
+   * @param tokensSold Amount of Tokens sold.
+   * @param minEth Minimum ETH purchased.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @param recipient The address that receives output ETH.
+   * @return  Amount of ETH bought.
+   */
+  function tokenToEthTransferInput(
+    uint256 tokensSold,
+    uint256 minEth,
+    uint256 deadline,
+    address payable recipient
+  ) public returns (uint256) {
+    require(recipient != address(this) && recipient != address(0));
+    return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
+  }
 
-//     function isExcludedFromFee(address account) public view returns(bool) {
-//         return _isExcludedFromFees[account];
-//     }
-    
-//     function excludeFromFee(address account) public onlyOwner {
-//         _isExcludedFromFees[account] = true;
-//     }
-    
-//     function includeInFee(address account) public onlyOwner {
-//         _isExcludedFromFees[account] = false;
-//     }
+  function tokenToEthOutput(
+    uint256 ethBought,
+    uint256 maxTokens,
+    uint256 deadline,
+    address buyer,
+    address payable recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && ethBought > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 tokensSold = getOutputPrice(ethBought, tokenReserve, address(this).balance);
+    // tokens sold is always > 0
+    require(maxTokens >= tokensSold);
+    recipient.transfer(ethBought);
+    require(transferFrom(buyer, address(this), tokensSold));
+    emit EthPurchase(buyer, tokensSold, ethBought);
+    return tokensSold;
+  }
 
-//     function maker() public view override returns (address) {
-//        return address(MAKR);
-//     }
+  /**
+   * @notice Convert Tokens to ETH.
+   * @dev User specifies maximum input && exact output.
+   * @param ethBought Amount of ETH purchased.
+   * @param maxTokens Maximum Tokens sold.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of Tokens sold.
+   */
+  function tokenToEthSwapOutput(
+    uint256 ethBought,
+    uint256 maxTokens,
+    uint256 deadline
+  ) public returns (uint256) {
+    return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
+  }
 
-//     function setBuyBackEnabled(bool enabled) public onlyOwner {
-//        buyBackEnabled = enabled;
-//     }
+  /**
+   * @notice Convert Tokens to ETH && transfers ETH to recipient.
+   * @dev User specifies maximum input && exact output.
+   * @param ethBought Amount of ETH purchased.
+   * @param maxTokens Maximum Tokens sold.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @param recipient The address that receives output ETH.
+   * @return Amount of Tokens sold.
+   */
+  function tokenToEthTransferOutput(
+    uint256 ethBought,
+    uint256 maxTokens,
+    uint256 deadline,
+    address payable recipient
+  ) public returns (uint256) {
+    require(recipient != address(this) && recipient != address(0));
+    return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, recipient);
+  }
 
-//     function setCurrentMcap(uint256 _mcap) public onlyOwner {
-//         curMCap = _mcap;
-//         if(curMCap < 20000000){
-//             curBuyFeeStaking = mcap20mBuyFeeStaking;
-//             curBuyFeeMarketing = mcap20mBuyFeeMarketing;    
-//             curSellFeeBuyback = mcap20mSellFeeBuyback;
-//             curSellFeeMarketing = mcap20mSellFeeMarketing;
-//             curSellFeeStaking = mcap20mSellFeeStaking;
-//         }else if( curMCap < 50000000){
-//             curBuyFeeStaking = mcap50mBuyFeeStaking;
-//             curBuyFeeMarketing = mcap50mBuyFeeMarketing;    
-//             curSellFeeBuyback = mcap50mSellFeeBuyback;
-//             curSellFeeMarketing = mcap50mSellFeeMarketing;
-//             curSellFeeStaking = mcap50mSellFeeStaking;
-//         }else {
-//             curBuyFeeStaking = mcap100mBuyFeeStaking;
-//             curBuyFeeMarketing = mcap100mBuyFeeMarketing;    
-//             curSellFeeBuyback = mcap100mSellFeeBuyback;
-//             curSellFeeMarketing = mcap100mSellFeeMarketing;
-//             curSellFeeStaking = mcap100mSellFeeStaking;   
-//         }
-//     }
+  /**
+   * @notice Public price function for ETH to Token trades with an exact input.
+   * @param ethSold Amount of ETH sold.
+   * @return Amount of Tokens that can be bought with input ETH.
+   */
+  function getEthToTokenInputPrice(uint256 ethSold) public view returns (uint256) {
+    require(ethSold > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    return getInputPrice(ethSold, address(this).balance, tokenReserve);
+  }
 
-//     function setSwapAndLiquifyEnabled(bool _enabled) public onlyOwner {
-//         swapAndLiquifyEnabled = _enabled;
-//         emit SwapAndLiquifyEnabledUpdated(_enabled);
-//     }
+  /**
+   * @notice Public price function for ETH to Token trades with an exact output.
+   * @param tokensBought Amount of Tokens bought.
+   * @return Amount of ETH needed to buy output Tokens.
+   */
+  function getEthToTokenOutputPrice(uint256 tokensBought) public view returns (uint256) {
+    require(tokensBought > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance, tokenReserve);
+    return ethSold;
+  }
 
-//     function getPriceTokenPer1BNB() public view returns (uint256) {
-//         uint256 amountTokenInPool = balanceOf(address(uniswapV2Pair));
-//         address WBNB = uniswapV2Router.WETH();
-//         uint256 amountBNBInPool = IERC20(WBNB).balanceOf(address(uniswapV2Pair));
+  /**
+   * @notice Public price function for Token to ETH trades with an exact input.
+   * @param tokensSold Amount of Tokens sold.
+   * @return Amount of ETH that can be bought with input Tokens.
+   */
+  function getTokenToEthInputPrice(uint256 tokensSold) public view returns (uint256) {
+    require(tokensSold > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
+    return ethBought;
+  }
 
-//         if(amountBNBInPool > 0){
-//             uint256 tokenPerBNB = (amountTokenInPool.div(amountBNBInPool)).mul(10**18);
-//             return tokenPerBNB;
-//         }else 
-//             return 0;
-//     }
-
-//     function _transfer(
-//         address from,
-//         address to,
-//         uint256 amount
-//     ) internal override {
-
-//         require(from != address(0), "ERC20: transfer from the zero address");
-//         require(to != address(0), "ERC20: transfer to the zero address");
-//         require(amount > 0, "Transfer amount must be greater than zero");
-
-//         // Set launch time when Pinksale add liquidity
-//         if(launchTime == 0 && to == uniswapV2Pair){
-//             launchTime = block.timestamp;
-//         }
-
-//         bool overMinTokenBalance = balanceOf(address(this)) >= numTokensSellToAddToLiquidity;
-//         if (
-//             overMinTokenBalance &&
-//             !inSwapAndLiquify &&
-//             from != uniswapV2Pair &&
-//             swapAndLiquifyEnabled
-//         ) {
-//             //add liquidity
-//             swapAndSendFee();
-//         }else {
-//             if (buyBackEnabled && address(this).balance > 0.2 ether && block.timestamp.sub(lastBuyBack) > (5 minutes)) {
-//                 buyBackAndBurn(address(this).balance);
-//                 lastBuyBack = block.timestamp;    
-//             }
-//         }
-
-//         uint256 feeStaking = 0;
-//         uint256 feeMarketing = 0;
-//         uint256 feeBuyback = 0;
-//         if(to == uniswapV2Pair){ // Sell
-//             feeStaking = amount.mul(curSellFeeStaking).div(100);
-//             feeMarketing = amount.mul(curSellFeeMarketing).div(100);
-//             feeBuyback = amount.mul(curSellFeeBuyback).div(100);
-//         }else if (from == uniswapV2Pair){ // Buy
-//             feeStaking = amount.mul(curBuyFeeStaking).div(100);
-//             feeMarketing = amount.mul(curBuyFeeMarketing).div(100);
-//             feeBuyback = 0;
-//         }
-//         accumulatingBuyback = accumulatingBuyback.add(feeBuyback);
-//         accumulatingMarketing = accumulatingMarketing.add(feeMarketing);
-
-//         if(feeBuyback.add(feeMarketing) > 0)
-//             super._transfer(from, address(this), feeBuyback.add(feeMarketing));
-
-//         if(feeStaking > 0){
-//             super._transfer(from, address(staking), feeStaking);
-//             staking.notifySendRewardFromToken(feeStaking);
-//         }
-
-//         amount = amount.sub(feeBuyback.add(feeMarketing).add(feeStaking));
-//         super._transfer(from, to, amount);
-//     }
-
-//     function swapAndSendFee() public lockTheSwap {
-//         uint256 contractTokenBalance = balanceOf(address(this));
-//         uint256 beforeSwapBalance = address(this).balance;
-//         swapTokensForEth(contractTokenBalance);
-//         uint256 delta = address(this).balance.sub(beforeSwapBalance);
-//         uint256 marketingAmount = delta.mul(accumulatingMarketing).div(accumulatingMarketing.add(accumulatingBuyback));
-//         payable(marketingWallet).transfer(marketingAmount);
-
-//         // Reset
-//         accumulatingMarketing = 0;
-//         accumulatingBuyback = 0;
-//     }
-
-//     function swapTokensForEth(uint256 tokenAmount) private {
-//         // generate the uniswap pair path of token -> weth
-//         address[] memory path = new address[](2);
-//         path[0] = address(this);
-//         path[1] = uniswapV2Router.WETH();
-
-//         _approve(address(this), address(uniswapV2Router), tokenAmount);
-
-//         // make the swap
-//         uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-//             tokenAmount,
-//             0, // accept any amount of ETH
-//             path,
-//             address(this),
-//             block.timestamp.add(300)
-//         );
-//     }
-
-//     function buyBackAndBurn(uint256 amount) private {
-//         // generate the uniswap pair path of token -> weth
-//         address[] memory path = new address[](2);
-//         path[0] = uniswapV2Router.WETH();
-//         path[1] = address(this);
-
-//         // make the swap
-//         uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: amount}(
-//             0, // accept any amount of Tokens
-//             path,
-//             DEAD, // Burn address
-//             block.timestamp.add(300)
-//         );
-//     }
-// }
+  /**
+   * @notice Public price function for Token to ETH trades with an exact output.
+   * @param ethBought Amount of output ETH.
+   * @return Amount of Tokens needed to buy output ETH.
+   */
+  function getTokenToEthOutputPrice(uint256 ethBought) public view returns (uint256) {
+    require(ethBought > 0);
+    uint256 tokenReserve = balanceOf(address(this));
+    return getOutputPrice(ethBought, tokenReserve, address(this).balance);
+  }
+}
