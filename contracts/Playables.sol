@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "./ERC721B.sol";
 
-abstract contract PlayableRights is ERC721B {
+abstract contract Playables is ERC721B {
   using Counters for Counters.Counter;
   using Strings for uint256;
 
@@ -90,25 +90,25 @@ abstract contract PlayableRights is ERC721B {
   }
 }
 
-contract DarkAssasin is PlayableRights {
-  constructor() ERC721("MBH Dark Assasin", "MBHDA") {}
+// contract DarkAssasin is PlayableRights {
+//   constructor() ERC721("MBH Dark Assasin", "MBHDA") {}
 
-  function getStakingMultiplier(uint256) public pure override returns (uint64) {
-    return 1;
-  }
+//   function getStakingMultiplier(uint256) public pure override returns (uint64) {
+//     return 1;
+//   }
 
-  //     /**
-  //  * Public mint function mints token and return its URI.
-  //  */
-  // function mint() external payable returns (string memory) {
-  //     return _mint();
-  // }
+//   //     /**
+//   //  * Public mint function mints token and return its URI.
+//   //  */
+//   // function mint() external payable returns (string memory) {
+//   //     return _mint();
+//   // }
 
-  // /**
-  //  * Presale mint function mints token and return its URI. In order to mint
-  //  * user needs to provide merkle proof.
-  //  */
-  // function mint(bytes32[] memory proof) external payable returns (string memory) {
-  //     return _mint(proof);
-  // }
-}
+//   // /**
+//   //  * Presale mint function mints token and return its URI. In order to mint
+//   //  * user needs to provide merkle proof.
+//   //  */
+//   // function mint(bytes32[] memory proof) external payable returns (string memory) {
+//   //     return _mint(proof);
+//   // }
+// }
