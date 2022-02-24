@@ -9,11 +9,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./extensions/IERC721Transferrable.sol";
 import "./extensions/ERC721SafeTransfer.sol";
 import "./extensions/ERC1155TokenReceiver.sol";
 import "./extensions/IERC721StakingSupport.sol";
+import "./Coin.sol";
 
 interface ERC721S is IERC721Transferrable, IERC721StakingSupport {}
 
@@ -22,7 +24,7 @@ interface ERC721S is IERC721Transferrable, IERC721StakingSupport {}
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Staking is ERC1155TokenReceiver, Ownable {
+contract Staking is ERC1155TokenReceiver, Ownable, Pausable {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
@@ -93,7 +95,8 @@ contract Staking is ERC1155TokenReceiver, Ownable {
 
   uint256 public startTimestamp;
 
-  IERC20 public immutable rewardsTokenContract;
+  Coin public immutable coin;
+
   uint32 public immutable cycleLengthInSeconds;
   uint16 public immutable periodLengthInCycles;
 
@@ -124,16 +127,6 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     _;
   }
 
-  modifier isEnabled() {
-    require(enabled, "NftStaking: contract is not enabled");
-    _;
-  }
-
-  modifier isNotEnabled() {
-    require(!enabled, "NftStaking: contract is enabled");
-    _;
-  }
-
   /**
    * Constructor.
    * @dev Reverts if the period length value is zero.
@@ -141,19 +134,33 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @dev Warning: cycles and periods need to be calibrated carefully. Small values will increase computation load while estimating and claiming rewards. Big values will increase the time to wait before a new period becomes claimable.
    * @param cycleLengthInSeconds_ The length of a cycle, in seconds.
    * @param periodLengthInCycles_ The length of a period, in cycles.
-   * @param rewardsTokenContract_ The ERC20-based token used as staking rewards.
+   * @param coin_ The ERC20-based token used as staking rewards.
    */
   constructor(
     uint32 cycleLengthInSeconds_,
     uint16 periodLengthInCycles_,
-    IERC20 rewardsTokenContract_
+    Coin coin_
   ) {
     require(cycleLengthInSeconds_ >= 1 minutes, "NftStaking: invalid cycle length");
     require(periodLengthInCycles_ >= 2, "NftStaking: invalid period length");
 
     cycleLengthInSeconds = cycleLengthInSeconds_;
     periodLengthInCycles = periodLengthInCycles_;
-    rewardsTokenContract = rewardsTokenContract_;
+    coin = coin_;
+  }
+
+  /**
+   * @dev Will pause the contract.
+   */
+  function pause() external onlyOwner {
+    _pause();
+  }
+
+  /**
+   * @dev Will unpause the contract.
+   */
+  function unpause() external onlyOwner {
+    _unpause();
   }
 
   /**
@@ -178,24 +185,17 @@ contract Staking is ERC1155TokenReceiver, Ownable {
   ) external onlyOwner {
     require(startPeriod != 0 && startPeriod <= endPeriod, "NftStaking: wrong period range");
 
-    uint16 periodLengthInCycles_ = periodLengthInCycles;
-
     if (startTimestamp != 0) {
-      require(startPeriod >= _getCurrentPeriod(periodLengthInCycles_), "NftStaking: already committed reward schedule");
+      require(startPeriod >= _getCurrentPeriod(periodLengthInCycles), "NftStaking: already committed reward schedule");
     }
 
     for (uint256 period = startPeriod; period <= endPeriod; ++period) {
       rewardsSchedule[period] = rewardsSchedule[period].add(rewardsPerCycle);
     }
 
-    uint256 addedRewards = rewardsPerCycle.mul(periodLengthInCycles_).mul(endPeriod - startPeriod + 1);
+    uint256 addedRewards = rewardsPerCycle.mul(periodLengthInCycles).mul(endPeriod - startPeriod + 1);
 
     totalRewardsPool = totalRewardsPool.add(addedRewards);
-
-    require(
-      rewardsTokenContract.transferFrom(_msgSender(), address(this), addedRewards),
-      "NftStaking: failed to add funds to the reward pool"
-    );
 
     emit RewardsAdded(startPeriod, endPeriod, rewardsPerCycle);
   }
@@ -212,29 +212,12 @@ contract Staking is ERC1155TokenReceiver, Ownable {
   }
 
   /**
-   * Permanently disables all staking and claiming.
-   * This is an emergency recovery feature which is NOT part of the normal contract operation.
-   * @dev Reverts if not called by the owner.
-   * @dev Emits a Disabled event.
+   * Will distribute the reward.
+   * @param to account to give a reward.
+   * @param amount The amount of reward.
    */
-  function disable() public onlyOwner {
-    enabled = false;
-    emit Disabled();
-  }
-
-  /**
-   * Withdraws a specified amount of reward tokens from the contract it has been disabled.
-   * @dev Reverts if not called by the owner.
-   * @dev Reverts if the contract has not been disabled.
-   * @dev Reverts if the reward tokens transfer fails.
-   * @dev The rewards token contract emits an ERC20 Transfer event for the reward tokens transfer.
-   * @param amount The amount to withdraw.
-   */
-  function withdrawRewardsPool(uint256 amount) public onlyOwner isNotEnabled {
-    require(
-      rewardsTokenContract.transfer(_msgSender(), amount),
-      "NftStaking: failed to withdraw from the rewards pool"
-    );
+  function distribute(address to, uint256 amount) internal {
+    require(coin.transferFrom(address(coin), to, amount), "NftStaking: failed to withdraw from the rewards pool");
   }
 
   /**
@@ -283,7 +266,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     uint256 cycleRewards = rewardsSchedule[period];
     require(cycleRewards != 0, "NftStaking: rewardless cycle");
     withdrawnLostCycles[cycle] = true;
-    rewardsTokenContract.transfer(to, cycleRewards);
+    distribute(to, cycleRewards);
   }
 
   /**
@@ -297,7 +280,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     uint256, /*value*/
     bytes calldata /*data*/
   ) external returns (bytes4) {
-    _stakeNft(id, from);
+    _stake(id, from);
     return _ERC1155_RECEIVED;
   }
 
@@ -309,7 +292,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @param tokenId Identifier of the staked NFT.
    * @param owner Owner of the staked NFT.
    */
-  function _stakeNft(uint256 tokenId, address owner) internal isEnabled hasStarted {
+  function _stake(uint256 tokenId, address owner) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
@@ -347,7 +330,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     uint256[] calldata, /*values*/
     bytes calldata /*data*/
   ) external returns (bytes4) {
-    _batchStakeNfts(ids, from);
+    _batchStake(ids, from);
     return _ERC1155_BATCH_RECEIVED;
   }
 
@@ -360,7 +343,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @param tokenIds Identifiers of the staked NFTs.
    * @param owner Owner of the staked NFTs.
    */
-  function _batchStakeNfts(uint256[] memory tokenIds, address owner) internal isEnabled hasStarted {
+  function _batchStake(uint256[] memory tokenIds, address owner) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
@@ -405,7 +388,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @dev Emits a NftUnstaked event.
    * @param tokenId The token identifier, referencing the NFT being unstaked.
    */
-  function unstakeNft(address nft, uint256 tokenId) external {
+  function unstake(address nft, uint256 tokenId) external {
     ContractStaking storage staker = staking[nft];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
@@ -447,7 +430,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @dev Emits the NftsBatchUnstaked event for each NFT unstaked.
    * @param tokenIds The token identifiers, referencing the NFTs being unstaked.
    */
-  function batchUnstakeNfts(address nft, uint256[] calldata tokenIds) external {
+  function batchUnstake(address nft, uint256[] calldata tokenIds) external {
     ContractStaking storage staker = staking[nft];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
@@ -508,7 +491,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
   function estimateRewards(uint16 maxPeriods)
     external
     view
-    isEnabled
+    whenNotPaused
     hasStarted
     returns (
       uint16 startPeriod,
@@ -531,7 +514,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
    * @dev Emits a RewardsClaimed event.
    * @param maxPeriods The maximum number of periods to claim for.
    */
-  function claimRewards(uint16 maxPeriods) external isEnabled hasStarted {
+  function claimRewards(uint16 maxPeriods) external whenNotPaused hasStarted {
     NextClaim memory nextClaim = nextClaims[_msgSender()];
 
     (ComputedClaim memory claim, NextClaim memory newNextClaim) = _computeRewards(_msgSender(), maxPeriods);
@@ -564,7 +547,7 @@ contract Staking is ERC1155TokenReceiver, Ownable {
     }
 
     if (claim.amount != 0) {
-      require(rewardsTokenContract.transfer(_msgSender(), claim.amount), "NftStaking: failed to transfer rewards");
+      distribute(_msgSender(), claim.amount);
     }
 
     emit RewardsClaimed(_msgSender(), _getCycle(block.timestamp), claim.startPeriod, claim.periods, claim.amount);

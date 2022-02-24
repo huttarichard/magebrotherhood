@@ -23,11 +23,6 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
   mapping(uint256 => uint64) private weights;
 
   /**
-   * @dev wether contract is frozen or not
-   */
-  bool public frozen;
-
-  /**
    * @dev base uri of ipfs:// or ar://
    */
   string private baseURI;
@@ -36,21 +31,6 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
    * @dev  Private counter, incrementing with every mint.
    */
   Counters.Counter private tokenIds;
-
-  /**
-   * @dev modifier to allow actions only when the contract IS paused
-   */
-  modifier notFrozen() {
-    if (frozen) revert ContractIsFrozen();
-    _;
-  }
-
-  /**
-   * @dev  Will freeze the contract.
-   */
-  function freeze() external onlyOwner notFrozen {
-    frozen = true;
-  }
 
   /**
    * @dev  To comply with ERC721-Stakable. It returns weight of produced stake.
@@ -70,21 +50,21 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
   /**
    * @dev Will set the base URI.
    */
-  function setBaseURI(string calldata _tokenBaseURI) external onlyOwner notFrozen {
+  function setBaseURI(string calldata _tokenBaseURI) external onlyOwner {
     baseURI = _tokenBaseURI;
   }
 
   /**
    * @dev Will pause the contract.
    */
-  function pause() external onlyOwner notFrozen {
+  function pause() external onlyOwner {
     _pause();
   }
 
   /**
    * @dev Will unpause the contract.
    */
-  function unpause() external onlyOwner notFrozen {
+  function unpause() external onlyOwner {
     _unpause();
   }
 
