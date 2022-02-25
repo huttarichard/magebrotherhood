@@ -1,9 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import "./navigation.scss";
-
 body {
   font-family: 'Noto Sans', sans-serif;
   background: #f2f2f2;

@@ -10,7 +10,6 @@ import {
   faCartArrowDown,
   faCommentsQuestion,
 } from "@fortawesome/pro-light-svg-icons";
-import { Button } from "@vechaiui/react";
 
 export const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const router = useRouter();
@@ -87,9 +86,7 @@ export const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         />
 
         <div className="absolute bottom-0 w-full my-8 ">
-          <Button color="primary" variant="solid">
-            Connect Wallet
-          </Button>
+          <button>Connect Wallet</button>
         </div>
       </div>
     </React.Fragment>
