@@ -35,28 +35,28 @@ abstract contract Playables is ERC721B {
   /**
    * Will freeze the contract.
    */
-  function setPresaleRoot(bytes32 root) external onlyOwner notFrozen {
+  function setPresaleRoot(bytes32 root) external onlyOwner {
     presaleRoot = root;
   }
 
   /**
    * Will enable presale at specific time.
    */
-  function enablePresaleMintAt(uint256 at) public onlyOwner notFrozen {
+  function enablePresaleMintAt(uint256 at) public onlyOwner {
     state = SaleLaunch(Sale.Presale, at);
   }
 
   /**
    * Will enable minting at specific time.
    */
-  function enablePublicMintAt(uint256 at) public onlyOwner notFrozen {
+  function enablePublicMintAt(uint256 at) public onlyOwner {
     state = SaleLaunch(Sale.PublicSale, at);
   }
 
   /**
    * Disables the minting.
    */
-  function disable() public onlyOwner notFrozen {
+  function disable() public onlyOwner {
     state = SaleLaunch(Sale.NoSale, 0);
   }
 

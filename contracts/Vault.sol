@@ -24,7 +24,7 @@ interface ERC721S is IERC721Transferrable, IERC721StakingSupport {}
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Staking is ERC1155TokenReceiver, Ownable, Pausable {
+contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
@@ -95,7 +95,7 @@ contract Staking is ERC1155TokenReceiver, Ownable, Pausable {
 
   uint256 public startTimestamp;
 
-  Coin public immutable coin;
+  IERC20 public immutable coin;
 
   uint32 public immutable cycleLengthInSeconds;
   uint16 public immutable periodLengthInCycles;
@@ -139,14 +139,14 @@ contract Staking is ERC1155TokenReceiver, Ownable, Pausable {
   constructor(
     uint32 cycleLengthInSeconds_,
     uint16 periodLengthInCycles_,
-    Coin coin_
+    address coin_
   ) {
     require(cycleLengthInSeconds_ >= 1 minutes, "NftStaking: invalid cycle length");
     require(periodLengthInCycles_ >= 2, "NftStaking: invalid period length");
 
     cycleLengthInSeconds = cycleLengthInSeconds_;
     periodLengthInCycles = periodLengthInCycles_;
-    coin = coin_;
+    coin = IERC20(coin_);
   }
 
   /**

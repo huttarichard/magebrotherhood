@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./extensions/IERC721StakingSupport.sol";
 
@@ -14,6 +15,7 @@ import "./extensions/IERC721StakingSupport.sol";
  */
 abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
   using Counters for Counters.Counter;
+  using Address for address;
 
   error ContractIsFrozen();
 
@@ -28,9 +30,21 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
   string private baseURI;
 
   /**
-   * @dev  Private counter, incrementing with every mint.
+   * @dev liquidity receiver address.
+   */
+  address payable liquidityReceiver;
+
+  /**
+   * @dev Private counter, incrementing with every mint.
    */
   Counters.Counter private tokenIds;
+
+  /**
+   * @dev Contructor will accept ERC20 coin which will be used as reward taker.
+   */
+  constructor(address receiver) {
+    liquidityReceiver = payable(receiver);
+  }
 
   /**
    * @dev  To comply with ERC721-Stakable. It returns weight of produced stake.
@@ -52,6 +66,13 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
    */
   function setBaseURI(string calldata _tokenBaseURI) external onlyOwner {
     baseURI = _tokenBaseURI;
+  }
+
+  /**
+   * @dev set liquidity receiver.
+   */
+  function setLiquidityReceiver(address receiver) external onlyOwner {
+    liquidityReceiver = payable(receiver);
   }
 
   /**
@@ -89,9 +110,13 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
    */
   function _internalMint(uint64 _amount, uint256 _value) internal whenNotPaused returns (uint256[] memory) {
     uint256[] memory tokens = new uint256[](_amount);
-    for (uint64 i = 1; i <= _amount; i++) {
-      tokens[i - 1] = _internalMint(_value / _amount);
+    for (uint64 i = 0; i < _amount; i++) {
+      tokens[i] = _internalMint(_value / _amount);
     }
     return tokens;
+  }
+
+  function withdrawal() public onlyOwner {
+    Address.sendValue(liquidityReceiver, address(this).balance);
   }
 }
