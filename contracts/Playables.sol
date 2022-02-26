@@ -7,108 +7,96 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "./ERC721B.sol";
+import "./Affiliate.sol";
 
 abstract contract Playables is ERC721B {
   using Counters for Counters.Counter;
   using Strings for uint256;
 
-  error SaleNotEnabled();
+  error NotLaunched();
 
-  enum Sale {
-    NoSale,
-    Presale,
-    PublicSale
+  uint256 public launchAt;
+
+  Rewarder public rewarder;
+
+  modifier whenLaunched() {
+    if (block.timestamp >= launchAt) revert NotLaunched();
+    _;
   }
 
-  struct SaleLaunch {
-    Sale Sale;
-    uint256 timestamp;
-  }
-
-  SaleLaunch public state;
-
-  /**
-   * Presale root to chekc merkle proof againts.
-   */
-  bytes32 private presaleRoot;
-
-  /**
-   * Will freeze the contract.
-   */
-  function setPresaleRoot(bytes32 root) external onlyOwner {
-    presaleRoot = root;
-  }
-
-  /**
-   * Will enable presale at specific time.
-   */
-  function enablePresaleMintAt(uint256 at) public onlyOwner {
-    state = SaleLaunch(Sale.Presale, at);
+  constructor(address rewarder_) {
+    require(rewarder_ != address(0), "empty rewarder");
+    rewarder = Rewarder(rewarder_);
   }
 
   /**
    * Will enable minting at specific time.
    */
-  function enablePublicMintAt(uint256 at) public onlyOwner {
-    state = SaleLaunch(Sale.PublicSale, at);
+  function launch(uint256 at) public onlyOwner {
+    launchAt = at;
   }
 
   /**
-   * Disables the minting.
+   * Will enable minting at current time.
    */
-  function disable() public onlyOwner {
-    state = SaleLaunch(Sale.NoSale, 0);
-  }
-
-  /**
-   * @dev Public mint function mints token and return its URI.
-   */
-  function mint(uint64 amount) external payable virtual returns (uint256[] memory) {
-    if (state.Sale != Sale.PublicSale || block.timestamp < state.timestamp) revert SaleNotEnabled();
-
-    return _internalMint(amount, msg.value);
-  }
-
-  /**
-   * @dev Public mint function mints token and return its URI.
-   */
-  function mint(uint64 amount, bytes32[] memory proof) external payable virtual returns (uint256[] memory) {
-    require(state.Sale == Sale.Presale, "mint disabled");
-    require(block.timestamp >= state.timestamp, "mint disabled");
-    require(balanceOf(_msgSender()) == 0, "already claimed");
-    require(_verify(msg.sender, proof), "not in presale");
-
-    return _internalMint(amount, msg.value);
-  }
-
-  /**
-   * Internal function which verifies the proof by hashing and comparing with root.
-   */
-  function _verify(address account, bytes32[] memory proof) internal view returns (bool) {
-    bytes32 leaf = keccak256(abi.encodePacked(account));
-    return MerkleProof.verify(proof, presaleRoot, leaf);
+  function launch() public onlyOwner {
+    launchAt = block.timestamp;
   }
 }
 
-// contract DarkAssasin is PlayableRights {
-//   constructor() ERC721("MBH Dark Assasin", "MBHDA") {}
+// Playables(rewarder)
+contract DarkAssasin is Playables {
+  /**
+   * @notice maximum supply of 10000
+   */
+  uint64 public immutable MAX_SUPPLY = 10_000;
 
-//   function getStakingMultiplier(uint256) public pure override returns (uint64) {
-//     return 1;
-//   }
+  /**
+   * @notice price per one token
+   */
+  uint64 public immutable PRICE = 0.2 ether;
 
-//   //     /**
-//   //  * Public mint function mints token and return its URI.
-//   //  */
-//   // function mint() external payable returns (string memory) {
-//   //     return _mint();
-//   // }
+  /**
+   * Constructor for dark assasin.
+   */
+  constructor(address rewarder, address receiver)
+    ERC721("MBH Dark Assasin", "MBHDA")
+    ERC721B(receiver)
+    Playables(rewarder)
+  {}
 
-//   // /**
-//   //  * Presale mint function mints token and return its URI. In order to mint
-//   //  * user needs to provide merkle proof.
-//   //  */
-//   // function mint(bytes32[] memory proof) external payable returns (string memory) {
-//   //     return _mint(proof);
-//   // }
-// }
+  function getStakingMultiplier(uint256) public pure override returns (uint64) {
+    return 1;
+  }
+
+  /**
+   * @dev Public mint function mints token and return its URI.
+   */
+  function mint(uint64 amount) public payable whenNotPaused whenLaunched returns (uint256[] memory) {
+    require(msg.value >= PRICE * amount, "not enough eth given");
+    require(totalSupply() + amount > MAX_SUPPLY, "supply exceeded");
+
+    return _internalMint(amount, msg.value);
+  }
+
+  /**
+   * @dev Public mint function mints token and return its URI.
+   */
+  function mint(uint64 amount, string memory discount)
+    public
+    payable
+    whenNotPaused
+    whenLaunched
+    returns (uint256[] memory)
+  {
+    require(msg.value >= (PRICE) * amount, "not enough eth given");
+    require(totalSupply() + amount > MAX_SUPPLY, "supply exceeded");
+
+    rewarder.reward(discount);
+    return _internalMint(amount, msg.value);
+  }
+
+  receive() external payable {
+    revert();
+  }
+}

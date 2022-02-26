@@ -3,6 +3,7 @@ pragma solidity 0.8.12;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -13,11 +14,9 @@ import "./extensions/IERC721StakingSupport.sol";
  * ERC721Base is base contract for easy start with some basic commong
  * properties. Such as staking, access and minting.
  */
-abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
+abstract contract ERC721B is ERC721Enumerable, Ownable, Stakable, Pausable {
   using Counters for Counters.Counter;
   using Address for address;
-
-  error ContractIsFrozen();
 
   /**
    * @dev Weights maps the given tokenId to staking weight.
@@ -59,6 +58,14 @@ abstract contract ERC721B is ERC721, Ownable, Stakable, Pausable {
    */
   function _baseURI() internal view override returns (string memory) {
     return baseURI;
+  }
+
+  /**
+   * @dev See {IERC721Metadata-tokenURI}.
+   */
+  function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    return _baseURI();
   }
 
   /**

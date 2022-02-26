@@ -2,4 +2,4 @@
 
 pragma solidity 0.8.12;
 
-contract Player {}
+contract Clan {}

@@ -7,12 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
-// import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
-
-// todo improt uniswap here
-
 contract Coin is ERC20, ERC20Votes, Ownable {
   using SafeMath for uint256;
 
