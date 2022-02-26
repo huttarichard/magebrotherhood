@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
 import "./extensions/IERC721StakingSupport.sol";
 
@@ -14,7 +15,7 @@ import "./extensions/IERC721StakingSupport.sol";
  * ERC721Base is base contract for easy start with some basic commong
  * properties. Such as staking, access and minting.
  */
-abstract contract ERC721B is ERC721Enumerable, Ownable, Stakable, Pausable {
+abstract contract ERC721B is ERC721Enumerable, ERC2981, Ownable, Stakable, Pausable {
   using Counters for Counters.Counter;
   using Address for address;
 
@@ -38,11 +39,18 @@ abstract contract ERC721B is ERC721Enumerable, Ownable, Stakable, Pausable {
    */
   Counters.Counter private tokenIds;
 
+  uint96 royaltyFeeInBips = 550;
+
+  address royaltyReceiver = address(this);
+
+  string public contractURI;
+
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
    */
   constructor(address receiver) {
     liquidityReceiver = payable(receiver);
+    _setDefaultRoyalty(receiver, 550);
   }
 
   /**
@@ -123,6 +131,40 @@ abstract contract ERC721B is ERC721Enumerable, Ownable, Stakable, Pausable {
     return tokens;
   }
 
+  /**
+   * @dev See {IERC165-supportsInterface}.
+   */
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(ERC721Enumerable, ERC2981)
+    returns (bool)
+  {
+    return super.supportsInterface(interfaceId);
+  }
+
+  /**
+   * @dev will set default royalty info.
+   */
+  function setDefaultRoyalty(address receiver, uint96 feeNumerator) public onlyOwner {
+    _setDefaultRoyalty(receiver, feeNumerator);
+  }
+
+  /**
+   * @dev will set token royalty.
+   */
+  function setTokenRoyalty(
+    uint256 tokenId,
+    address receiver,
+    uint96 feeNumerator
+  ) public onlyOwner {
+    _setTokenRoyalty(tokenId, receiver, feeNumerator);
+  }
+
+  /**
+   * @dev withdraw funds againts the liquidity receiver.
+   */
   function withdrawal() public onlyOwner {
     Address.sendValue(liquidityReceiver, address(this).balance);
   }
