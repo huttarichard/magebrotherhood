@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
+
 import "./extensions/IERC721StakingSupport.sol";
 
 /**
@@ -39,11 +40,10 @@ abstract contract ERC721B is ERC721Enumerable, ERC2981, Ownable, Stakable, Pausa
    */
   Counters.Counter private tokenIds;
 
-  uint96 royaltyFeeInBips = 550;
-
-  address royaltyReceiver = address(this);
-
-  string public contractURI;
+  /**
+   * @dev keeps contract uri.
+   */
+  string private _contractURI;
 
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
@@ -160,6 +160,20 @@ abstract contract ERC721B is ERC721Enumerable, ERC2981, Ownable, Stakable, Pausa
     uint96 feeNumerator
   ) public onlyOwner {
     _setTokenRoyalty(tokenId, receiver, feeNumerator);
+  }
+
+  /**
+   * @dev will set contract uri. See https://docs.opensea.io/docs/contract-level-metadata.
+   */
+  function setContractURI(string calldata uri) public onlyOwner {
+    _contractURI = uri;
+  }
+
+  /**
+   * @dev will return contract uri. See https://docs.opensea.io/docs/contract-level-metadata.
+   */
+  function contractURI() public view returns (string memory) {
+    return _contractURI;
   }
 
   /**
