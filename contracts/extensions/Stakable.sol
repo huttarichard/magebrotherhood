@@ -3,10 +3,20 @@
 pragma solidity 0.8.12;
 
 /**
+ * Stakable provides method to get weight for staking IERC 1155/721.
+ */
+interface IStaking {
+  /**
+   * @dev returns staking weight for given NFT.
+   */
+  function getStakingWeight(uint256 tokenId) external view returns (uint64);
+}
+
+/**
  * @title IERC721Transferrable
  * Interface for transferring 721 and/or 1155 NFTs.
  */
-interface IERC721Transferrable {
+interface IStakingSupport is IStaking {
   /**
    * @notice Transfers `values` amount(s) of `ids` from the `from` address to the `to` address specified (with safety call).
    * @dev Caller must be approved to manage the tokens being transferred out of the `from` account (see "Approval" section of the standard).
@@ -66,4 +76,42 @@ interface IERC721Transferrable {
     address to,
     uint256 tokenId
   ) external;
+}
+
+/**
+ * @title SafeTransfer
+ * Library used to fall back on ERC721 non-safe transfer(s)
+ * in case of ERC1155 safe transfer failure. A failure can be
+ * caused by a contract-based wallet not implementing the
+ * ERC1155Receiver interface.
+ */
+library SafeTransfer {
+  function safeBatchTransferFromWithFallback(
+    IStakingSupport self,
+    address from,
+    address to,
+    uint256[] memory ids,
+    uint256[] memory values,
+    bytes memory data
+  ) internal {
+    try self.safeBatchTransferFrom(from, to, ids, values, data) {} catch {
+      uint256 length = ids.length;
+      for (uint256 i = 0; i < length; ++i) {
+        self.transferFrom(from, to, ids[i]);
+      }
+    }
+  }
+
+  function safeTransferFromWithFallback(
+    IStakingSupport self,
+    address from,
+    address to,
+    uint256 id,
+    uint256 value,
+    bytes memory data
+  ) internal {
+    try self.safeTransferFrom(from, to, id, value, data) {} catch {
+      self.transferFrom(from, to, id);
+    }
+  }
 }
