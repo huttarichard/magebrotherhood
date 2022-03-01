@@ -11,6 +11,7 @@ import {
   faCartArrowDown,
   faCommentsQuestion,
 } from "@fortawesome/pro-light-svg-icons";
+import HeaderWallet from "./HeaderWallet";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -95,7 +96,6 @@ const StyledNav = styled.nav`
 
 export default function Header() {
   const [show, setShow] = useState(false);
-
   const navClass = show ? "toggled" : "";
 
   return (
@@ -166,6 +166,7 @@ export default function Header() {
           </li>
         </ul>
       </StyledNav>
+      <HeaderWallet />
       <Icon name="burger" onClick={() => setShow(true)} />
     </StyledHeader>
   );
