@@ -24,6 +24,7 @@
     "@walletconnect/web3-provider": "^1.7.1",
     "awesome-react-icons": "^1.4.8",
     "next": "12.0.10",
+    "normalize.css": "^8.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-minimal-side-navigation": "^1.9.2",

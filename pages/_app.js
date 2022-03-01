@@ -4,6 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { WalletContextProvider } from "../contexts/walletContext";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../styles/globals.css";
+import "normalize.css";
 
 config.autoAddCss = false;
 
