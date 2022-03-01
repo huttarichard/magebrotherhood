@@ -1,8 +1,7 @@
-import React from "react";
 import Head from "next/head";
 import ReactFullpage from "../components/ReactFullPage";
-import Layout from "../components/Layout/Layout.js";
-import Slide1 from "../components/Home/Welcome.js";
+import Layout from "../components/Layout/Layout";
+import Slide1 from "../components/Home/Welcome";
 
 export default function Home() {
   return (
@@ -13,7 +12,7 @@ export default function Home() {
 
       <Layout>
         <ReactFullpage
-          scrollingSpeed={1000} /* Options here */
+          scrollingSpeed={1000}
           render={({ state, fullpageApi }) => {
             return (
               <ReactFullpage.Wrapper>

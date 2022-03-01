@@ -1,6 +1,5 @@
-import React from "react";
 import Head from "next/head";
-import Layout from "../../components/Layout/Layout.js";
+import Layout from "../../components/Layout/Layout";
 
 export default function ID() {
   return (
