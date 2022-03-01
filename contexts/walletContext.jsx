@@ -1,4 +1,5 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
+import detectEthereumProvider from "@metamask/detect-provider";
 import Wallet from "../classes/wallet";
 
 export const WalletContext = createContext({
@@ -31,6 +32,20 @@ export function WalletContextProvider({ children }) {
     setWallet(null);
     setWalletConnected(false);
   };
+
+  useEffect(() => {
+    detectEthereumProvider({
+      silent: process.env.NODE_ENV === "production",
+    }).then((provider) => {
+      if (provider) {
+        const w = new Wallet();
+        w.connectWithInjectedProvider(provider);
+
+        setWallet(w);
+        setWalletConnected(true);
+      }
+    });
+  }, []);
 
   const value = {
     wallet,

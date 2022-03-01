@@ -24,11 +24,13 @@ export default class Wallet {
       const provider = await modal.connect();
 
       this.web3 = new Web3(provider);
-
-      window.web3 = this.web3;
     } catch (e) {
       console.log(e);
     }
+  }
+
+  async connectWithInjectedProvider(provider) {
+    this.web3 = new Web3(provider);
   }
 
   get address() {

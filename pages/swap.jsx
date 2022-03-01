@@ -1,6 +1,5 @@
 import React from "react";
 import Layout from "../components/Layout/Layout";
-import Wallet from "../classes/wallet";
 
 export default function Swap() {
   return (
