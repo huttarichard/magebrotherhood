@@ -164,6 +164,13 @@ export default function Header() {
               </a>
             </Link>
           </li>
+          <li>
+            <Link href="/mint">
+              <a>
+                <span>Mint</span>
+              </a>
+            </Link>
+          </li>
         </ul>
       </StyledNav>
       <HeaderWallet />
