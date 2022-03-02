@@ -80,7 +80,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 transferAmount = amount;
     if(takeFee){
       uint256 fees = amount.mul(taxFee).div(100);
-      super._transfer(from, address(this), fees);
+      _burn(from, fees);
       transferAmount = amount.sub(fees);
     }
 
