@@ -45,7 +45,7 @@ const mockRequest = ({ delay = 500, success = true, eventName }) => {
   });
 };
 
-const initialSteps = [
+let steps = [
   {
     title: "step 1",
     processing: false,
@@ -85,21 +85,21 @@ const events = [
 ];
 
 export default function MintModal({ show, handleClose }) {
-  const [steps, setSteps] = useState(initialSteps);
+  const [renderSteps, setRenderSteps] = useState(steps);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const listener = (e) => {
         const stepIndex = steps.findIndex((s) => s.eventName === e.type);
 
-        console.log(steps[stepIndex]);
-
         steps[stepIndex].processing = false;
         steps[stepIndex].done = true;
 
-        console.log(steps[stepIndex]);
+        if (stepIndex + 1 !== steps.length) {
+          steps[stepIndex + 1].processing = true;
+        }
 
-        setSteps([...steps]);
+        setRenderSteps([...steps]);
       };
 
       for (const e of events) {
@@ -112,7 +112,7 @@ export default function MintModal({ show, handleClose }) {
   const mintMockTest = () => {
     steps[0].processing = true;
 
-    setSteps([...steps]);
+    setRenderSteps([...steps]);
 
     for (const event of events) {
       event.action(event.actionParams);
@@ -128,9 +128,7 @@ export default function MintModal({ show, handleClose }) {
           <h2>Mint</h2>
           <StepsWrapper>
             <ul>
-              {Object.keys(steps).map((key) => {
-                const step = steps[key];
-
+              {renderSteps.map((step) => {
                 const stepClass = [
                   step.processing ? "processing" : false,
                   step.done ? "done" : false,
