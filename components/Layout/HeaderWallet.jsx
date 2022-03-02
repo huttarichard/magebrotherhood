@@ -2,7 +2,13 @@ import { useContext } from "react";
 import styled from "@emotion/styled";
 import { WalletContext } from "../../contexts/walletContext";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: none;
+
+  @media (min-width: 992px) {
+    display: block;
+  }
+`;
 
 const StyledButton = styled.button``;
 
