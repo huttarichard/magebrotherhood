@@ -4,24 +4,15 @@ pragma solidity 0.8.12;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-/**
- * @notice Rewarder is interface allowing to give affiliaters reward.
- */
-interface Rewarder {
-  /**
-   * @param code affiliaters marketing code.
-   */
-  function reward(string memory code) external;
-}
+import "./ICoin.sol";
 
 /**
  * @notice Affiliate marketing is contract distibuting rewards for marketing.
  */
 contract Affiliate is Context, Ownable, Pausable {
-  IERC20 public immutable coin;
+  ICoin public immutable coin;
 
   /**
    * @notice mapping of addresses and balances.
@@ -44,10 +35,10 @@ contract Affiliate is Context, Ownable, Pausable {
   mapping(address => bool) private _used;
 
   /**
-   * @param coin_ is ERC20 coin with spend allowed.
+   * @param _coin is ERC20 coin with spend allowed.
    */
-  constructor(address coin_) {
-    coin = IERC20(coin_);
+  constructor(address _coin) {
+    coin = ICoin(_coin);
   }
 
   /**
@@ -71,10 +62,10 @@ contract Affiliate is Context, Ownable, Pausable {
   }
 
   /**
-   * Discount calculates discount for given rewarder.
+   * payoff calculates discount for given rewarder.
    * @param cont as contract address which is allowed to reward. See `allowRewarding`.
    */
-  function rewardOfContract(address cont) public view returns (uint256) {
+  function payoff(address cont) public view returns (uint256) {
     require(_rewarders[cont] != 0, "invalid rewarder");
     return _rewarders[cont] * tx.gasprice;
   }
@@ -85,9 +76,9 @@ contract Affiliate is Context, Ownable, Pausable {
    */
   function reward(string memory code) external returns (uint256) {
     address addr = _codes[code];
-    require(addr != address(0), "invalid address");
+    require(addr != address(0), "invalid affiliate code");
     require(!_used[addr], "already used discount");
-    uint256 rw = rewardOfContract(_msgSender());
+    uint256 rw = payoff(_msgSender());
     _balances[addr] += rw;
     _used[addr] = true;
     return rw;

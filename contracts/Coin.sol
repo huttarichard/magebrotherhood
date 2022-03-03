@@ -146,7 +146,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of Tokens bought.
    */
-  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) public payable returns (uint256) {
+  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable returns (uint256) {
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, msg.sender);
   }
 
@@ -162,7 +162,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 minTokens,
     uint256 deadline,
     address recipient
-  ) public payable returns (uint256) {
+  ) external payable returns (uint256) {
     require(recipient != address(this) && recipient != address(0));
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
   }
@@ -194,7 +194,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of ETH sold.
    */
-  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline) public payable returns (uint256) {
+  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline) external payable returns (uint256) {
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
   }
 
@@ -210,7 +210,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 tokensBought,
     uint256 deadline,
     address recipient
-  ) public payable returns (uint256) {
+  ) external payable returns (uint256) {
     require(recipient != address(this) && recipient != address(0));
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), recipient);
   }
@@ -245,7 +245,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 tokensSold,
     uint256 minEth,
     uint256 deadline
-  ) public returns (uint256) {
+  ) external returns (uint256) {
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -263,7 +263,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 minEth,
     uint256 deadline,
     address payable recipient
-  ) public returns (uint256) {
+  ) external returns (uint256) {
     require(recipient != address(this) && recipient != address(0));
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
   }
@@ -298,7 +298,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 ethBought,
     uint256 maxTokens,
     uint256 deadline
-  ) public returns (uint256) {
+  ) external returns (uint256) {
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -316,7 +316,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 maxTokens,
     uint256 deadline,
     address payable recipient
-  ) public returns (uint256) {
+  ) external returns (uint256) {
     require(recipient != address(this) && recipient != address(0));
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, recipient);
   }
@@ -326,7 +326,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param ethSold Amount of ETH sold.
    * @return Amount of Tokens that can be bought with input ETH.
    */
-  function getEthToTokenInputPrice(uint256 ethSold) public view returns (uint256) {
+  function getEthToTokenInputPrice(uint256 ethSold) external view returns (uint256) {
     require(ethSold > 0);
     uint256 tokenReserve = balanceOf(address(this));
     return getInputPrice(ethSold, address(this).balance, tokenReserve);
@@ -337,7 +337,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param tokensBought Amount of Tokens bought.
    * @return Amount of ETH needed to buy output Tokens.
    */
-  function getEthToTokenOutputPrice(uint256 tokensBought) public view returns (uint256) {
+  function getEthToTokenOutputPrice(uint256 tokensBought) external view returns (uint256) {
     require(tokensBought > 0);
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethSold = getOutputPrice(tokensBought, address(this).balance, tokenReserve);
@@ -349,7 +349,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param tokensSold Amount of Tokens sold.
    * @return Amount of ETH that can be bought with input Tokens.
    */
-  function getTokenToEthInputPrice(uint256 tokensSold) public view returns (uint256) {
+  function getTokenToEthInputPrice(uint256 tokensSold) external view returns (uint256) {
     require(tokensSold > 0);
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
@@ -361,7 +361,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @param ethBought Amount of output ETH.
    * @return Amount of Tokens needed to buy output ETH.
    */
-  function getTokenToEthOutputPrice(uint256 ethBought) public view returns (uint256) {
+  function getTokenToEthOutputPrice(uint256 ethBought) external view returns (uint256) {
     require(ethBought > 0);
     uint256 tokenReserve = balanceOf(address(this));
     return getOutputPrice(ethBought, tokenReserve, address(this).balance);

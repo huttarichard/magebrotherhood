@@ -2,33 +2,32 @@
 
 pragma solidity 0.8.12;
 
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import "./extensions/IERC721Transferrable.sol";
-import "./extensions/ERC721SafeTransfer.sol";
-import "./extensions/ERC1155TokenReceiver.sol";
-import "./extensions/IERC721StakingSupport.sol";
+import "./Stakable.sol";
 import "./Coin.sol";
-
-interface ERC721S is IERC721Transferrable, IERC721StakingSupport {}
 
 /**
  * @title NFT Staking
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
+contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721Receiver {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
-  using ERC721SafeTransfer for ERC721S;
+  using StakableSafeTransfer for Stakable;
 
   event Started();
   event Disabled();
@@ -46,7 +45,8 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
    */
   struct TokenInfo {
     address owner;
-    uint64 weight;
+    uint128 weight;
+    uint256 amount;
     uint16 depositCycle;
     uint16 withdrawCycle;
   }
@@ -84,7 +84,7 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
    * The ERC1155-compliant (optional ERC721-compliance) contract from which staking is accepted.
    */
   struct ContractStaking {
-    ERC721S nft;
+    Stakable nft;
     mapping(uint256 => TokenInfo) tokens;
     bool enabled;
   }
@@ -116,6 +116,10 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
 
   /* staking => hold info on staking */
   mapping(address => ContractStaking) public staking;
+
+  bytes4 private constant _ERC165_INTERFACE_ID = type(IERC165).interfaceId;
+
+  bytes4 private constant _ERC1155_TOKEN_RECEIVER_INTERFACE_ID = type(IERC1155Receiver).interfaceId;
 
   modifier hasStarted() {
     require(startTimestamp != 0, "NftStaking: staking not started");
@@ -277,11 +281,30 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
     address, /*operator*/
     address from,
     uint256 id,
-    uint256, /*value*/
+    uint256 amount,
     bytes calldata /*data*/
   ) external returns (bytes4) {
-    _stake(id, from);
-    return _ERC1155_RECEIVED;
+    _stake(id, from, amount);
+    return this.onERC1155Received.selector;
+  }
+
+  /**
+   * @dev Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom}
+   * by `operator` from `from`, this function is called.
+   *
+   * It must return its Solidity selector to confirm the token transfer.
+   * If any other value is returned or the interface is not implemented by the recipient, the transfer will be reverted.
+   *
+   * The selector can be obtained in Solidity with `IERC721.onERC721Received.selector`.
+   */
+  function onERC721Received(
+    address, /*operator*/
+    address from,
+    uint256 id,
+    bytes calldata /*data*/
+  ) external returns (bytes4) {
+    _stake(id, from, 1);
+    return this.onERC721Received.selector;
   }
 
   /**
@@ -292,15 +315,19 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
    * @param tokenId Identifier of the staked NFT.
    * @param owner Owner of the staked NFT.
    */
-  function _stake(uint256 tokenId, address owner) internal whenNotPaused hasStarted {
+  function _stake(
+    uint256 tokenId,
+    address owner,
+    uint256 amount
+  ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
     uint16 periodLengthInCycles_ = periodLengthInCycles;
     uint16 currentCycle = _getCycle(block.timestamp);
-    uint64 weight = staker.nft.getStakingWeight(tokenId);
+    uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
 
-    _updateHistories(owner, int128(int64(weight)), currentCycle);
+    _updateHistories(owner, int128(weight), currentCycle);
 
     // initialise the next claim if it was the first stake for this staker or if
     // the next claim was re-initialised (ie. rewards were claimed until the last
@@ -314,7 +341,7 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
     require(currentCycle != withdrawCycle, "NftStaking: unstaked token cooldown");
 
     // set the staked token's info
-    staker.tokens[tokenId] = TokenInfo(owner, weight, currentCycle, 0);
+    staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);
 
     emit NftStaked(owner, currentCycle, address(staker.nft), tokenId, weight);
   }
@@ -327,11 +354,11 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
     address, /*operator*/
     address from,
     uint256[] calldata ids,
-    uint256[] calldata, /*values*/
+    uint256[] calldata amounts,
     bytes calldata /*data*/
   ) external returns (bytes4) {
-    _batchStake(ids, from);
-    return _ERC1155_BATCH_RECEIVED;
+    _batchStake(ids, from, amounts);
+    return this.onERC1155BatchReceived.selector;
   }
 
   /**
@@ -343,7 +370,11 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
    * @param tokenIds Identifiers of the staked NFTs.
    * @param owner Owner of the staked NFTs.
    */
-  function _batchStake(uint256[] memory tokenIds, address owner) internal whenNotPaused hasStarted {
+  function _batchStake(
+    uint256[] memory tokenIds,
+    address owner,
+    uint256[] memory amounts
+  ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
     require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
 
@@ -356,11 +387,12 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
 
     for (uint256 index = 0; index < numTokens; ++index) {
       uint256 tokenId = tokenIds[index];
+      uint256 amount = amounts[index];
       require(currentCycle != staker.tokens[tokenId].withdrawCycle, "NftStaking: unstaked token cooldown");
-      uint64 weight = staker.nft.getStakingWeight(tokenId);
+      uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
       totalStakedWeight += weight; // This is safe
       weights[index] = weight;
-      staker.tokens[tokenId] = TokenInfo(owner, weight, currentCycle, 0);
+      staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);
     }
 
     _updateHistories(owner, int128(totalStakedWeight), currentCycle);
@@ -397,7 +429,7 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
     require(tokenInfo.owner == _msgSender(), "NftStaking: not staked for owner");
 
     uint16 currentCycle = _getCycle(block.timestamp);
-    uint64 weight = tokenInfo.weight;
+    uint128 weight = tokenInfo.weight;
 
     if (enabled) {
       // ensure that at least an entire cycle has elapsed before unstaking the token to avoid
@@ -416,7 +448,7 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
       staker.tokens[tokenId] = tokenInfo;
     }
 
-    staker.nft.safeTransferFromWithFallback(address(this), _msgSender(), tokenId, 1, "");
+    staker.nft.safeTransferFromWithFallback(address(this), _msgSender(), tokenId, tokenInfo.amount, "");
     emit NftUnstaked(_msgSender(), currentCycle, address(staker.nft), tokenId, weight);
   }
 
@@ -463,12 +495,12 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
         // we can use unsafe math here since the maximum total staked
         // weight that a staker can unstake must fit within uint128
         // (i.e. the staker snapshot stake limit)
-        uint64 weight = tokenInfo.weight;
+        uint128 weight = tokenInfo.weight;
         totalUnstakedWeight += int128(uint128(weight)); // this is safe
         weights[index] = weight;
       }
 
-      values[index] = 1;
+      values[index] = tokenInfo.amount;
     }
 
     if (enabled) {
@@ -834,5 +866,15 @@ contract Vault is ERC1155TokenReceiver, Ownable, Pausable {
    */
   function _getCurrentPeriod(uint16 periodLengthInCycles_) internal view returns (uint16) {
     return _getPeriod(_getCycle(block.timestamp), periodLengthInCycles_);
+  }
+
+  /**
+   * @dev See {IERC165-supportsInterface}.
+   */
+  function supportsInterface(bytes4 interfaceId) public view override(IERC165, ERC165) returns (bool) {
+    return
+      type(IERC721Receiver).interfaceId == interfaceId ||
+      type(IERC1155Receiver).interfaceId == interfaceId ||
+      super.supportsInterface(interfaceId);
   }
 }
