@@ -43,6 +43,8 @@ export function WalletContextProvider({ children }) {
 
         setWallet(w);
         setWalletConnected(true);
+
+        w.connectToContract();
       }
     });
   }, []);

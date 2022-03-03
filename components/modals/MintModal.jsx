@@ -1,5 +1,6 @@
+import { useEffect, useState, useContext } from "react";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { WalletContext } from "../../contexts/walletContext";
 
 const ModalBase = styled.div`
   position: fixed;
@@ -28,107 +29,122 @@ const ModalWrapper = styled.div`
   }
 `;
 
-const StepsWrapper = styled.div``;
+const StepsWrapper = styled.div`
+  > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
 
-const mockRequest = ({ delay = 500, success = true, eventName }) => {
-  return new Promise(function (resolve, reject) {
-    setTimeout(() => {
-      if (success) {
-        const event = new Event(eventName);
-        window.dispatchEvent(event);
-
-        resolve("success");
-      } else {
-        reject("error");
+    > li {
+      &.processing {
+        background-color: #75e0db;
       }
-    }, delay);
-  });
-};
 
-let steps = [
-  {
-    title: "step 1",
-    processing: false,
-    done: false,
-    error: false,
-    eventName: "event0",
-  },
-  {
-    title: "step 2",
-    processing: false,
-    done: false,
-    error: false,
-    eventName: "event1",
-  },
-  {
-    title: "step 3",
-    processing: false,
-    done: false,
-    error: false,
-    eventName: "event2",
-  },
-];
+      &.done {
+        background-color: #a1dd5c;
+      }
 
-const events = [
+      &.error {
+        background-color: #c76c6c;
+      }
+    }
+  }
+`;
+
+const initialSteps = [
   {
-    action: mockRequest, // mock only
-    actionParams: { delay: 1000, success: true, eventName: "event0" },
+    title: "sending",
+    eventName: "sending",
   },
   {
-    action: mockRequest, // mock only
-    actionParams: { delay: 2000, success: true, eventName: "event1" },
+    title: "transactionHash",
+    eventName: "transactionHash",
   },
   {
-    action: mockRequest, // mock only
-    actionParams: { delay: 3000, success: true, eventName: "event2" },
+    title: "receipt",
+    eventName: "receipt",
   },
 ];
 
 export default function MintModal({ show, handleClose }) {
-  const [renderSteps, setRenderSteps] = useState(steps);
+  const [steps, setSteps] = useState(initialSteps);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const listener = (e) => {
-        const stepIndex = steps.findIndex((s) => s.eventName === e.type);
+  const { wallet } = useContext(WalletContext);
 
-        steps[stepIndex].processing = false;
-        steps[stepIndex].done = true;
+  const handleError = (error, receipt) => {
+    console.log(error);
 
-        if (stepIndex + 1 !== steps.length) {
-          steps[stepIndex + 1].processing = true;
-        }
+    const currentStepIndex = steps.findIndex((s) => s.processing === true);
 
-        setRenderSteps([...steps]);
-      };
+    steps[currentStepIndex].processing = false;
+    steps[currentStepIndex].error = true;
 
-      for (const e of events) {
-        window.removeEventListener(e.actionParams.eventName, listener);
-        window.addEventListener(e.actionParams.eventName, listener);
-      }
+    setSteps([...steps]);
+  };
+
+  const handleTransactionHash = (hash) => {
+    const stepIndex = steps.findIndex((s) => s.eventName === "transactionHash");
+
+    steps[stepIndex].processing = false;
+    steps[stepIndex].done = true;
+
+    if (stepIndex + 1 < steps.length) {
+      steps[stepIndex + 1].processing = true;
+      // temp fix
+      steps[stepIndex + 1].error = false;
+      steps[stepIndex + 1].done = false;
     }
-  }, []);
+
+    setSteps([...steps]);
+  };
+
+  const defaultTransactionEventHandler = (eventName) => {
+    const stepIndex = steps.findIndex((s) => s.eventName === eventName);
+
+    steps[stepIndex].processing = false;
+    steps[stepIndex].done = true;
+
+    if (stepIndex + 1 < steps.length) {
+      steps[stepIndex + 1].processing = true;
+      // temp fix
+      steps[stepIndex + 1].error = false;
+      steps[stepIndex + 1].done = false;
+    }
+
+    setSteps([...steps]);
+  };
 
   const mintMockTest = () => {
-    steps[0].processing = true;
+    let resetedSteps = initialSteps.map((s) => {
+      return {
+        ...s,
+        processing: false,
+        done: false,
+        error: false,
+      };
+    });
 
-    setRenderSteps([...steps]);
+    resetedSteps[0].processing = true;
+    setSteps(resetedSteps);
 
-    for (const event of events) {
-      event.action(event.actionParams);
-    }
+    const callbacks = {
+      sending: () => defaultTransactionEventHandler("sending"),
+      transactionHash: handleTransactionHash,
+      receipt: () => defaultTransactionEventHandler("receipt"),
+      error: handleError,
+    };
+
+    wallet.mint(callbacks);
   };
 
   if (show) {
-    console.log("render");
-
     return (
       <ModalBase onClick={handleClose}>
         <ModalWrapper onClick={(e) => e.stopPropagation()}>
           <h2>Mint</h2>
           <StepsWrapper>
             <ul>
-              {renderSteps.map((step) => {
+              {steps.map((step) => {
                 const stepClass = [
                   step.processing ? "processing" : false,
                   step.done ? "done" : false,
@@ -138,7 +154,12 @@ export default function MintModal({ show, handleClose }) {
                   .join(" ");
                 return (
                   <li className={stepClass} key={step.title}>
-                    {step.title} - processing: {step.processing ? "true" : "false"}
+                    <strong>{step.title}</strong>
+                    <ul>
+                      <li>processing: {step.processing ? "true" : "false"}</li>
+                      <li>done: {step.done ? "true" : "false"}</li>
+                      <li>error: {step.error ? "true" : "false"}</li>
+                    </ul>
                   </li>
                 );
               })}
