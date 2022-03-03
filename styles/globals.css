@@ -1,9 +1,14 @@
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Barlow Condensed', sans-serif;
   background: #f2f2f2;
   color: black;
 }
 
-h1,h2,h3,h4,h5,h6 {
-  font-family: 'Aclonica', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Barlow Condensed', sans-serif;
 }

@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 export function Polygon({ ...props }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 465" version="1.1" {...props}>
@@ -28,15 +26,10 @@ export function Polygon({ ...props }) {
 export default function Slide1() {
   return (
     <>
-      <style jsx>{`
-        .section {
-        }
-      `}</style>
-
-      <div className="section flex flex-col h-full">
-        <div className="flex justify-center content-center align-items-center">
+      <div>
+        <div>
           <div>
-            <h3 className="text-5xl">
+            <h3>
               First Mage Battle <br /> Royale NFT game
             </h3>
             <p>Play to earn NFT game, magic battle royle</p>

@@ -1,8 +1,7 @@
-import React from "react";
 import Head from "next/head";
-import Layout from "../components/Layout/Layout.js";
+import Layout from "../components/Layout/Layout";
 
-export default function Home() {
+export default function Marketplace() {
   return (
     <>
       <Head>
@@ -10,7 +9,7 @@ export default function Home() {
       </Head>
 
       <Layout>
-        <h1>FAQ</h1>
+        <h1>Marketplace</h1>
       </Layout>
     </>
   );

@@ -11,6 +11,7 @@ import {
   faCartArrowDown,
   faCommentsQuestion,
 } from "@fortawesome/pro-light-svg-icons";
+import HeaderWallet from "./HeaderWallet";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -22,16 +23,66 @@ const StyledHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background-color: #ddd;
+  background-color: #111;
 
   @media (min-width: 992px) {
-    position: static;
+    position: relative;
     height: 100vh;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+    padding: 3rem 2rem;
 
     > .icon-wrapper {
       display: none;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: url("/images/navBg.png"), url("/images/navBg2.png");
+      background-repeat: no-repeat;
+      background-size: contain;
+      mix-blend-mode: color-dodge;
+    }
+  }
+`;
+
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+
+  svg {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin-right: 1rem;
+  }
+
+  span {
+    display: inline-block;
+    font-family: "Bebas Neue", sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+    max-width: 85px;
+  }
+
+  @media (min-width: 992px) {
+    margin-bottom: 5rem;
+
+    svg {
+      width: 77px;
+      height: 77px;
+    }
+
+    span {
+      font-size: 34px;
+      max-width: 160px;
     }
   }
 `;
@@ -44,10 +95,14 @@ const StyledNav = styled.nav`
   z-index: 999;
   display: flex;
   flex-direction: column;
-  padding: 4rem 2rem;
+  padding: 6rem 2rem 4rem;
   transform: translateX(100%);
   transition: transform 0.3s;
-  background-color: #ccc;
+  background: url("/images/navBg.png"), url("/images/navBg2.png");
+  background-color: #111;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* mix-blend-mode: color-dodge; */
 
   .icon-wrapper {
     position: absolute;
@@ -62,18 +117,25 @@ const StyledNav = styled.nav`
   }
 
   li {
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
   }
 
   a {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #000;
+    color: #fff;
+    text-transform: uppercase;
+    font-family: "Bebas Neue", sans-serif;
+    letter-spacing: 1px;
+    font-size: 18px;
 
     svg {
       display: inline-block;
-      margin-right: 0.5rem;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      margin-right: 1rem;
     }
   }
 
@@ -86,29 +148,41 @@ const StyledNav = styled.nav`
     transform: none;
     transition: none;
     background-color: transparent;
+    background: none;
+    padding: 0;
 
     .icon-wrapper {
       display: none;
+    }
+
+    li {
+      margin-bottom: 1.5rem;
+    }
+
+    a {
+      font-size: 25px;
+
+      svg {
+        width: 32px;
+        height: 32px;
+        margin-right: 1.5rem;
+      }
     }
   }
 `;
 
 export default function Header() {
   const [show, setShow] = useState(false);
-
   const navClass = show ? "toggled" : "";
 
   return (
     <StyledHeader>
-      <Logo
-        style={{
-          display: "block",
-          height: 32,
-          width: "auto",
-        }}
-      />
+      <Brand>
+        <Logo color="#fff" />
+        <span>Mage Brotherhood</span>
+      </Brand>
       <StyledNav className={navClass}>
-        <Icon name="x" size={32} onClick={() => setShow(false)} />
+        <Icon name="x" size={32} color="#fff" onClick={() => setShow(false)} />
         <ul>
           <li>
             <Link href="/">
@@ -164,9 +238,17 @@ export default function Header() {
               </a>
             </Link>
           </li>
+          <li>
+            <Link href="/mint">
+              <a>
+                <span>Mint</span>
+              </a>
+            </Link>
+          </li>
         </ul>
       </StyledNav>
-      <Icon name="burger" onClick={() => setShow(true)} />
+      <HeaderWallet />
+      <Icon name="burger" stroke="#fff" size={32} onClick={() => setShow(true)} />
     </StyledHeader>
   );
 }

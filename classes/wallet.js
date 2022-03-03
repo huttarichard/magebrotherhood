@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import contract from "../dev-temp/RichApesClub.json";
 
 export default class Wallet {
   async connectWithModal() {
@@ -24,11 +25,13 @@ export default class Wallet {
       const provider = await modal.connect();
 
       this.web3 = new Web3(provider);
-
-      window.web3 = this.web3;
     } catch (e) {
       console.log(e);
     }
+  }
+
+  async connectWithInjectedProvider(provider) {
+    this.web3 = new Web3(provider);
   }
 
   get address() {
@@ -50,5 +53,29 @@ export default class Wallet {
     };
 
     return this.web3.eth.sendTransaction(transactionObject);
+  }
+
+  connectToContract() {
+    this.contract = new this.web3.eth.Contract(contract.abi, process.env.NEXT_PUBLIC_MINT_MOCK_CONTRACT);
+  }
+
+  mint(callbacks) {
+    const eventEmitter = this.contract.methods.mint(1).send(
+      {
+        from: this.address,
+        value: "1000000000000000",
+      },
+      (error, result) => {
+        if (error) {
+          callbacks.error(error) ?? function () {};
+        }
+      }
+    );
+
+    const eventNames = ["sending", "sent", "transactionHash", "receipt"];
+
+    eventNames.forEach((eventName) => {
+      eventEmitter.on(eventName, callbacks[eventName] ?? function () {});
+    });
   }
 }

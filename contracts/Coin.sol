@@ -16,9 +16,13 @@ contract Coin is ERC20, ERC20Votes, Ownable {
 
   mapping(address => bool) private isExcludedFromFees;
 
+  uint256 public taxFee = 5;
+
   string constant NAME = "Brotherhood Coin";
 
   string constant TICK = "BHC";
+
+  address public vaultAddress;
 
   constructor() ERC20(NAME, TICK) ERC20Permit(NAME) {
     excludeFromFee(owner());
@@ -26,6 +30,71 @@ contract Coin is ERC20, ERC20Votes, Ownable {
 
     _mint(address(this), 10**18);
   }
+
+  /**
+   * @notice Set Vault Address.
+   */
+  function setVaultAddress(address _vaultAddress) public onlyOwner {
+    require(vaultAddress == address(0), "You already set Vault address");
+    vaultAddress = _vaultAddress;
+  }
+
+  /**
+   * @notice only Vault can mint.
+   */
+  function mint(address to, uint256 amount) public {
+    require(msg.sender == address(vaultAddress));
+    _mint(to, amount);
+  }
+
+  /**
+   * @notice only Vault can burn.
+   */
+  function burn(address account, uint256 amount) public {
+    require(msg.sender == address(vaultAddress));
+    _burn(account, amount);
+  }
+
+  /**
+   * @notice Deposit ETH to pool.
+   */
+  function addEthToPool() public payable {}
+
+  /**
+   * @notice Customized _transfer function.
+   */
+  function _transfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal override(ERC20Votes, ERC20) {
+    require(from != address(0), "ERC20: transfer from the zero address");
+    require(to != address(0), "ERC20: transfer to the zero address");
+    require(amount > 0, "Transfer amount must be greater than zero");
+
+    bool takeFee = true;
+    if(isExcludedFromFees[from] || isExcludedFromFees[to]) {
+        takeFee = false;
+    }
+
+    uint256 transferAmount = amount;
+    if(takeFee){
+      uint256 fees = amount.mul(taxFee).div(100);
+      _burn(from, fees);
+      transferAmount = amount.sub(fees);
+    }
+
+    super._transfer(from, to, transferAmount);
+  }
+
+  /**
+   * @notice Set tax fee.
+   */
+  function setTaxFee(uint256 _feePercent) public onlyOwner {
+    require(_feePercent < 15);
+    taxFee = _feePercent;
+  }
+
 
   /**
    * @notice Convert ETH to Tokens.
