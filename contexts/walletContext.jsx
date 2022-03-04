@@ -38,6 +38,8 @@ export function WalletContextProvider({ children }) {
       silent: process.env.NODE_ENV === "production",
     }).then((provider) => {
       if (provider) {
+        window.ethereum.request({ method: "eth_requestAccounts" });
+
         const w = new Wallet();
         w.connectWithInjectedProvider(provider);
 

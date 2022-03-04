@@ -64,20 +64,40 @@ const initialSteps = [
     title: "receipt",
     eventName: "receipt",
   },
-];
+].map((s) => ({
+  ...s,
+  processing: false,
+  done: false,
+  error: false,
+}));
 
 export default function MintModal({ show, handleClose }) {
-  const [steps, setSteps] = useState(initialSteps);
+  const [steps, setSteps] = useState([...initialSteps]);
 
   const { wallet } = useContext(WalletContext);
 
   const handleError = (error, receipt) => {
-    console.log(error);
-
     const currentStepIndex = steps.findIndex((s) => s.processing === true);
+
+    if (currentStepIndex === -1) {
+      return;
+    }
 
     steps[currentStepIndex].processing = false;
     steps[currentStepIndex].error = true;
+
+    setSteps([...steps]);
+  };
+
+  const handleSending = () => {
+    const stepIndex = steps.findIndex((s) => s.eventName === "sending");
+
+    steps[stepIndex].processing = false;
+    steps[stepIndex].done = true;
+
+    if (stepIndex + 1 < steps.length) {
+      steps[stepIndex + 1].processing = true;
+    }
 
     setSteps([...steps]);
   };
@@ -90,52 +110,66 @@ export default function MintModal({ show, handleClose }) {
 
     if (stepIndex + 1 < steps.length) {
       steps[stepIndex + 1].processing = true;
-      // temp fix
-      steps[stepIndex + 1].error = false;
-      steps[stepIndex + 1].done = false;
     }
 
     setSteps([...steps]);
   };
 
-  const defaultTransactionEventHandler = (eventName) => {
-    const stepIndex = steps.findIndex((s) => s.eventName === eventName);
+  const handleReceipt = () => {
+    const stepIndex = steps.findIndex((s) => s.eventName === "receipt");
 
     steps[stepIndex].processing = false;
     steps[stepIndex].done = true;
 
     if (stepIndex + 1 < steps.length) {
       steps[stepIndex + 1].processing = true;
-      // temp fix
-      steps[stepIndex + 1].error = false;
-      steps[stepIndex + 1].done = false;
     }
 
     setSteps([...steps]);
   };
 
+  // const defaultTransactionEventHandler = (eventName) => {
+  //   const stepIndex = steps.findIndex((s) => s.eventName === eventName);
+
+  //   steps[stepIndex].processing = false;
+  //   steps[stepIndex].done = true;
+  //   steps[stepIndex].error = false;
+
+  //   if (stepIndex + 1 < steps.length) {
+  //     steps[stepIndex + 1].processing = true;
+  //     steps[stepIndex + 1].done = false;
+  //     steps[stepIndex + 1].error = false;
+  //   }
+
+  //   setSteps([...steps]);
+  // };
+
   const mintMockTest = () => {
-    let resetedSteps = initialSteps.map((s) => {
-      return {
+    const resetedSteps = [
+      ...initialSteps.map((s) => ({
         ...s,
         processing: false,
         done: false,
         error: false,
-      };
-    });
+      })),
+    ];
 
     resetedSteps[0].processing = true;
-    setSteps(resetedSteps);
 
-    const callbacks = {
-      sending: () => defaultTransactionEventHandler("sending"),
-      transactionHash: handleTransactionHash,
-      receipt: () => defaultTransactionEventHandler("receipt"),
-      error: handleError,
-    };
+    setSteps([...resetedSteps]);
 
-    wallet.mint(callbacks);
+    wallet.mint({
+      callbacks: {
+        sending: handleSending,
+        transactionHash: handleTransactionHash,
+        receipt: handleReceipt,
+        error: handleError,
+      },
+      quantity: 1,
+    });
   };
+
+  // console.log(steps);
 
   if (show) {
     return (
