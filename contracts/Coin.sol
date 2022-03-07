@@ -8,19 +8,28 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+
+import "hardhat/console.sol";
 
 contract Coin is ERC20, ERC20Votes, AccessControl {
   using SafeMath for uint256;
 
-  event Deposit(address indexed buyer, uint256 indexed ethSold, uint256 indexed tokensBought);
+  event Bought(address indexed buyer, uint256 indexed bought);
 
-  event Withdrawal(address indexed buyer, uint256 indexed tokensSold, uint256 indexed ethBought);
+  event Deposit(address indexed depositer, uint256 indexed added);
+
+  event Sold(address indexed buyer, uint256 indexed sold);
 
   mapping(address => bool) private isExcludedFromFees;
 
   uint256 public taxFee = 5;
 
-  uint256 public constant DECIMALS = 18**10;
+  uint256 public liqudityGuard = 3;
+
+  uint256 public liqudityGuardDenominator = 1000;
+
+  uint256 public constant DECIMALS = 10**18;
 
   string public constant NAME = "Brotherhood Coin";
 
@@ -28,24 +37,21 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
-  bytes32 public constant MANIPULATOR = keccak256("MANIPULATOR");
+  bytes32 public constant BURNER = keccak256("BURNER");
+
+  bytes32 public constant MINTER = keccak256("MINTER");
 
   constructor(uint256 liquidity) ERC20(NAME, TICK) ERC20Permit(NAME) {
-    excludeFromFee(_msgSender());
-    excludeFromFee(address(this));
-
-    _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    // make sure admin controls it all
+    _setRoleAdmin(BURNER, ADMIN);
+    _setRoleAdmin(MINTER, ADMIN);
     _setupRole(ADMIN, _msgSender());
-    _setupRole(MANIPULATOR, _msgSender());
+
+    isExcludedFromFees[_msgSender()] = true;
+    isExcludedFromFees[address(this)] = true;
 
     _mint(address(this), liquidity * DECIMALS);
-  }
-
-  /**
-   * @notice Deposit ETH to pool.
-   */
-  function addEthToPool() public payable {
-    emit Deposit(_msgSender(), msg.value, 0);
+    _delegate(address(this), _msgSender());
   }
 
   /**
@@ -54,6 +60,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   function setTaxFee(uint256 _feePercent) public onlyRole(ADMIN) {
     require(_feePercent < 15, "maximum tax fee is 15%");
     taxFee = _feePercent;
+  }
+
+  /**
+   * @notice set guard for constant product market maker.
+   * @dev this is the percantage making the slippage possible.
+   */
+  function setLiqudityGuard(uint256 _guard, uint256 _denominator) public onlyRole(ADMIN) {
+    liqudityGuard = _guard;
+    liqudityGuardDenominator = _denominator;
   }
 
   /**
@@ -66,19 +81,26 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   }
 
   /**
+   * @dev will mint tokens to given address
+   */
+  function mint(address recipient, uint256 amount) external onlyRole(MINTER) {
+    _mint(recipient, amount);
+  }
+
+  /**
    * @dev will burn tokens.
    */
-  function tokenBurn(address who, uint256 tokensToBeBurned) external onlyRole(MANIPULATOR) {
-    _burn(who, tokensToBeBurned);
+  function tokenBurn(address burnee, uint256 tokensToBeBurned) external onlyRole(BURNER) {
+    _burn(burnee, tokensToBeBurned);
   }
 
   /**
    * @dev will burn tokens in amount of eth
    */
-  function tokenEthBurn(address who, uint256 ethToBeBurned) external onlyRole(MANIPULATOR) {
+  function tokenEthBurn(address burnee, uint256 ethToBeBurned) external onlyRole(BURNER) {
     uint256 tokenReserve = balanceOf(address(this));
     uint256 coins = getOutputPrice(ethToBeBurned, tokenReserve, address(this).balance);
-    _burn(who, coins);
+    _burn(burnee, coins);
   }
 
   /**
@@ -89,14 +111,14 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
    * @return Amount of ETH or Tokens bought.
    */
   function getInputPrice(
-    uint256 inputAmount,
-    uint256 inputReserve,
-    uint256 outputReserve
-  ) public pure returns (uint256) {
+    uint256 inputAmount, // eth sold
+    uint256 inputReserve, // balance - eth sold
+    uint256 outputReserve // token balance of this
+  ) public view returns (uint256) {
     require(inputReserve > 0 && outputReserve > 0, "INVALID_VALUE");
-    uint256 inputAmountWithFee = inputAmount.mul(997);
+    uint256 inputAmountWithFee = inputAmount.mul(liqudityGuardDenominator - liqudityGuard);
     uint256 numerator = inputAmountWithFee.mul(outputReserve);
-    uint256 denominator = inputReserve.mul(1000).add(inputAmountWithFee);
+    uint256 denominator = inputReserve.mul(liqudityGuardDenominator).add(inputAmountWithFee);
     return numerator / denominator;
   }
 
@@ -111,10 +133,10 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 outputAmount,
     uint256 inputReserve,
     uint256 outputReserve
-  ) public pure returns (uint256) {
+  ) public view returns (uint256) {
     require(inputReserve > 0 && outputReserve > 0, "invalid input");
-    uint256 numerator = inputReserve.mul(outputAmount).mul(1000);
-    uint256 denominator = (outputReserve.sub(outputAmount)).mul(997);
+    uint256 numerator = inputReserve.mul(outputAmount).mul(liqudityGuardDenominator);
+    uint256 denominator = (outputReserve.sub(outputAmount)).mul(liqudityGuardDenominator - liqudityGuard);
     return (numerator / denominator).add(1);
   }
 
@@ -291,60 +313,16 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   }
 
   /**
-   * @notice Customized _transfer function.
-   */
-  function _transfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override {
-    require(from != address(0), "transfer from the zero address");
-    require(to != address(0), "transfer to the zero address");
-    require(amount > 0, "amount must be greater than zero");
-
-    bool takeFee = true;
-    if (isExcludedFromFees[from] || isExcludedFromFees[to]) {
-      takeFee = false;
-    }
-
-    uint256 transferAmount = amount;
-    if (takeFee) {
-      uint256 fees = amount.mul(taxFee).div(100);
-      _burn(from, fees);
-      transferAmount = amount.sub(fees);
-    }
-
-    super._transfer(from, to, transferAmount);
-  }
-
-  /**
-   * @dev Snapshots the totalSupply after it has been increased.
-   */
-  function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) onlyRole(MANIPULATOR) {
-    super._mint(to, amount);
-  }
-
-  /**
-   * @dev Snapshots the totalSupply after it has been decreased.
-   */
-  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) onlyRole(MANIPULATOR) {
-    super._burn(account, amount);
-  }
-
-  /**
    * @dev Spend `amount` form the allowance of `owner` toward `spender`.
-   *
-   * Does not update the allowance amount in case of infinite allowance.
-   * Revert if not enough allowance is available.
-   *
-   * Might emit an {Approval} event.
+   * @notice it does not check the allowence if you are admin, giving
+   * you raw power to transfer assets
    */
   function _spendAllowance(
     address owner,
     address spender,
     uint256 amount
   ) internal virtual override {
-    if (!hasRole(MANIPULATOR, _msgSender())) {
+    if (hasRole(ADMIN, _msgSender())) {
       return;
     }
     super._spendAllowance(owner, spender, amount);
@@ -373,9 +351,8 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     require(deadline >= block.timestamp && ethSold > 0 && minTokens > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
-    require(tokensBought >= minTokens, "invalid input");
-    require(transfer(recipient, tokensBought), "transfer failed");
-    emit Deposit(buyer, ethSold, tokensBought);
+    require(tokensBought >= minTokens, "buy amount not satisfied");
+    _deposit(buyer, recipient, tokensBought);
     return tokensBought;
   }
 
@@ -383,7 +360,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 tokensBought,
     uint256 maxEth,
     uint256 deadline,
-    address payable buyer,
+    address buyer,
     address recipient
   ) private returns (uint256) {
     require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0, "invalid input");
@@ -392,11 +369,19 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     // Throws if ethSold > maxEth
     uint256 ethRefund = maxEth.sub(ethSold);
     if (ethRefund > 0) {
-      buyer.transfer(ethRefund);
+      Address.sendValue(payable(buyer), ethRefund);
     }
-    require(transfer(recipient, tokensBought), "tranfer failed");
-    emit Deposit(buyer, ethSold, tokensBought);
+    _deposit(buyer, recipient, tokensBought);
     return ethSold;
+  }
+
+  function _deposit(
+    address buyer,
+    address recipient,
+    uint256 tokensBought
+  ) internal {
+    _transfer(address(this), recipient, tokensBought);
+    emit Bought(buyer, tokensBought);
   }
 
   function tokenToEthInput(
@@ -409,12 +394,9 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
-    uint256 weiBought = ethBought;
-    require(weiBought >= minEth, "invalid input");
-    recipient.transfer(weiBought);
-    require(transferFrom(buyer, address(this), tokensSold), "transfer failed");
-    emit Withdrawal(buyer, tokensSold, weiBought);
-    return weiBought;
+    require(ethBought >= minEth, "invalid input");
+    _withdraw(buyer, recipient, tokensSold, ethBought);
+    return ethBought;
   }
 
   function tokenToEthOutput(
@@ -429,10 +411,38 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 tokensSold = getOutputPrice(ethBought, tokenReserve, address(this).balance);
     // tokens sold is always > 0
     require(maxTokens >= tokensSold, "invalid input");
-    recipient.transfer(ethBought);
-    require(transferFrom(buyer, address(this), tokensSold), "transfer failed");
-    emit Withdrawal(buyer, tokensSold, ethBought);
+    _withdraw(buyer, recipient, tokensSold, ethBought);
     return tokensSold;
+  }
+
+  function _withdraw(
+    address buyer,
+    address payable recipient,
+    uint256 tokensSold,
+    uint256 ethBought
+  ) internal {
+    if (!isExcludedFromFees[buyer]) {
+      // We subtract taxFee. Intention is here to balance
+      // out the inflation given to MINTER role.
+      ethBought = ethBought.sub(ethBought.div(100).mul(taxFee));
+    }
+    Address.sendValue(recipient, ethBought);
+    _transfer(buyer, address(this), tokensSold);
+    emit Sold(buyer, tokensSold);
+  }
+
+  /**
+   * @dev Snapshots the totalSupply after it has been increased.
+   */
+  function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
+    super._mint(to, amount);
+  }
+
+  /**
+   * @dev Snapshots the totalSupply after it has been decreased.
+   */
+  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) {
+    super._burn(account, amount);
   }
 
   /**
@@ -441,6 +451,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
    * @dev User cannot specify minimum output or deadline.
    */
   receive() external payable {
-    ethToTokenInput(msg.value, 1, block.timestamp, msg.sender, msg.sender);
+    emit Deposit(_msgSender(), msg.value);
   }
 }
