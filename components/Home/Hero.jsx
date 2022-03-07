@@ -7,7 +7,19 @@ const Wrapper = styled.div`
   background-color: #eee;
 `;
 
-const Background = styled.div``;
+const Background = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: transparent url("/images/heroBg2.png") no-repeat;
+  background-size: cover;
+
+  @media (min-width: 1200px) {
+    background-position-x: 10vw;
+  }
+`;
 
 const Model = styled.div`
   position: absolute;
@@ -29,6 +41,11 @@ const Model = styled.div`
 
   @media (min-width: 992px) {
     top: 0;
+    width: 70%;
+  }
+
+  @media (min-width: 1200px) {
+    bottom: -20%;
     width: 70%;
   }
 `;
