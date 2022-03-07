@@ -186,7 +186,7 @@ export default function Hero() {
   return (
     <Wrapper>
       <Background></Background>
-      {/* <Model>
+      <Model>
         <model-viewer
           src="/assets/1.glb"
           ios-src="/assets/1.usdz"
@@ -197,7 +197,7 @@ export default function Hero() {
           environment-image="neutral"
           ar
         />
-      </Model> */}
+      </Model>
       <Main>
         <h1>
           Get your knight and <span>earn cash!</span>
