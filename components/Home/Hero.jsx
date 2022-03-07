@@ -25,6 +25,11 @@ const Model = styled.div`
     left: auto;
     width: 60vw;
   }
+
+  @media (min-width: 992px) {
+    top: 0;
+    width: 70%;
+  }
 `;
 
 const Main = styled.div`
@@ -78,7 +83,7 @@ const Main = styled.div`
         display: inline-block;
         font-weight: 700;
 
-        &:first-child {
+        &:first-of-type {
           font-size: 42px;
           background: -webkit-linear-gradient(#8d11db, #ec12f9);
           background-clip: text;
@@ -121,8 +126,43 @@ const Main = styled.div`
         margin-right: 2.5rem;
 
         span {
-          &:first-child {
+          &:first-of-type {
             font-size: 54px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 992px) {
+    top: 0;
+  }
+
+  @media (min-width: 1200px) {
+    left: 3rem;
+
+    h1 {
+      font-size: 100px;
+      max-width: 500px;
+    }
+
+    p {
+      font-size: 28px;
+      max-width: 380px;
+      margin-bottom: 3rem;
+    }
+
+    ul {
+      li {
+        margin-right: 3rem;
+
+        span {
+          &:first-of-type {
+            font-size: 82px;
+          }
+
+          &:last-of-type {
+            font-size: 18px;
           }
         }
       }
