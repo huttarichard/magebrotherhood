@@ -1,0 +1,24 @@
+// Your variable overrides
+$body-bg: #000;
+$body-color: #111;
+
+// Bootstrap and its default variables
+@import "@fortawesome/fontawesome-svg-core/styles.css";
+@import "bootstrap/scss/bootstrap";
+// @import "normalize.css";
+
+body {
+  font-family: 'Barlow Condensed', sans-serif;
+  background: #fff;
+  color: black;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+}

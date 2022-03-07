@@ -1,9 +1,7 @@
 import Head from "next/head";
 import Script from "next/script";
 import { WalletContextProvider } from "../contexts/walletContext";
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import "../styles/globals.css";
-import "normalize.css";
+import "../styles/globals.scss";
 
 function MageBrotherHoodApp({ Component, pageProps }) {
   return (

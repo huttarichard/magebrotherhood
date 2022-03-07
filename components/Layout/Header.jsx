@@ -10,6 +10,7 @@ import {
   faCoinBlank,
   faCartArrowDown,
   faCommentsQuestion,
+  faArrowsLeftRight,
 } from "@fortawesome/pro-light-svg-icons";
 import HeaderWallet from "./HeaderWallet";
 
@@ -217,31 +218,18 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Link href="/faq">
-              <a>
-                <FontAwesomeIcon icon={faCommentsQuestion} />
-                <span>FAQ</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/account">
-              <a>
-                <span>Account</span>
-              </a>
-            </Link>
-          </li>
-          <li>
             <Link href="/swap">
               <a>
+                <FontAwesomeIcon icon={faArrowsLeftRight} />
                 <span>Swap</span>
               </a>
             </Link>
           </li>
           <li>
-            <Link href="/mint">
+            <Link href="/faq">
               <a>
-                <span>Mint</span>
+                <FontAwesomeIcon icon={faCommentsQuestion} />
+                <span>FAQ</span>
               </a>
             </Link>
           </li>
