@@ -231,6 +231,7 @@ export default function Hero() {
           camera-orbit="-7.436deg 107.8deg auto"
           camera-target="-0.6m 1.5m -1m"
           environment-image="neutral"
+          loading="eager"
           ar
         />
       </Model>
