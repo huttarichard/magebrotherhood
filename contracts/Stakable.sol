@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.12;
 
 /**
@@ -86,7 +87,9 @@ library StakableSafeTransfer {
     uint256[] memory values,
     bytes memory data
   ) internal {
-    try self.safeBatchTransferFrom(from, to, ids, values, data) {} catch {
+    try self.safeBatchTransferFrom(from, to, ids, values, data) {
+      return;
+    } catch {
       uint256 length = ids.length;
       for (uint256 i = 0; i < length; ++i) {
         self.transferFrom(from, to, ids[i]);
@@ -102,7 +105,9 @@ library StakableSafeTransfer {
     uint256 value,
     bytes memory data
   ) internal {
-    try self.safeTransferFrom(from, to, id, value, data) {} catch {
+    try self.safeTransferFrom(from, to, id, value, data) {
+      return;
+    } catch {
       self.transferFrom(from, to, id);
     }
   }

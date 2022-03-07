@@ -130,4 +130,14 @@ interface ICoin is IERC20, IVotes {
    * @return Amount of Tokens needed to buy output ETH.
    */
   function getTokenToEthOutputPrice(uint256 ethBought) external view returns (uint256);
+
+  /**
+   * @notice will burn amount of tokens of given address.
+   */
+  function tokenBurn(address who, uint256 tokensToBeBurned) external;
+
+  /**
+   * @notice will burn amount of token in amount of eth.
+   */
+  function tokenEthBurn(address who, uint256 ethToBeBurned) external;
 }

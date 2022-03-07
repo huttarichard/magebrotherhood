@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+/* solhint-disable not-rely-on-time */
 
 pragma solidity 0.8.12;
 
@@ -6,153 +7,78 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract Coin is ERC20, ERC20Votes, Ownable {
+contract Coin is ERC20, ERC20Votes, AccessControl {
   using SafeMath for uint256;
 
-  event TokenPurchase(address indexed buyer, uint256 indexed ethSold, uint256 indexed tokensBought);
+  event Deposit(address indexed buyer, uint256 indexed ethSold, uint256 indexed tokensBought);
 
-  event EthPurchase(address indexed buyer, uint256 indexed tokensSold, uint256 indexed ethBought);
+  event Withdrawal(address indexed buyer, uint256 indexed tokensSold, uint256 indexed ethBought);
 
   mapping(address => bool) private isExcludedFromFees;
 
   uint256 public taxFee = 5;
 
-  string constant NAME = "Brotherhood Coin";
+  uint256 public constant DECIMALS = 18**10;
 
-  string constant TICK = "BHC";
+  string public constant NAME = "Brotherhood Coin";
 
-  address public vaultAddress;
+  string public constant TICK = "BHC";
 
-  constructor() ERC20(NAME, TICK) ERC20Permit(NAME) {
-    excludeFromFee(owner());
+  bytes32 public constant ADMIN = keccak256("ADMIN");
+
+  bytes32 public constant MANIPULATOR = keccak256("MANIPULATOR");
+
+  constructor(uint256 liquidity) ERC20(NAME, TICK) ERC20Permit(NAME) {
+    excludeFromFee(_msgSender());
     excludeFromFee(address(this));
 
-    _mint(address(this), 10**18);
-  }
+    _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    _setupRole(ADMIN, _msgSender());
+    _setupRole(MANIPULATOR, _msgSender());
 
-  /**
-   * @notice Set Vault Address.
-   */
-  function setVaultAddress(address _vaultAddress) public onlyOwner {
-    require(vaultAddress == address(0), "You already set Vault address");
-    vaultAddress = _vaultAddress;
-  }
-
-  /**
-   * @notice only Vault can mint.
-   */
-  function mint(address to, uint256 amount) public {
-    require(msg.sender == address(vaultAddress));
-    _mint(to, amount);
-  }
-
-  /**
-   * @notice only Vault can burn.
-   */
-  function burn(address account, uint256 amount) public {
-    require(msg.sender == address(vaultAddress));
-    _burn(account, amount);
+    _mint(address(this), liquidity * DECIMALS);
   }
 
   /**
    * @notice Deposit ETH to pool.
    */
-  function addEthToPool() public payable {}
-
-  /**
-   * @notice Customized _transfer function.
-   */
-  function _transfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override(ERC20Votes, ERC20) {
-    require(from != address(0), "ERC20: transfer from the zero address");
-    require(to != address(0), "ERC20: transfer to the zero address");
-    require(amount > 0, "Transfer amount must be greater than zero");
-
-    bool takeFee = true;
-    if(isExcludedFromFees[from] || isExcludedFromFees[to]) {
-        takeFee = false;
-    }
-
-    uint256 transferAmount = amount;
-    if(takeFee){
-      uint256 fees = amount.mul(taxFee).div(100);
-      _burn(from, fees);
-      transferAmount = amount.sub(fees);
-    }
-
-    super._transfer(from, to, transferAmount);
+  function addEthToPool() public payable {
+    emit Deposit(_msgSender(), msg.value, 0);
   }
 
   /**
    * @notice Set tax fee.
    */
-  function setTaxFee(uint256 _feePercent) public onlyOwner {
-    require(_feePercent < 15);
+  function setTaxFee(uint256 _feePercent) public onlyRole(ADMIN) {
+    require(_feePercent < 15, "maximum tax fee is 15%");
     taxFee = _feePercent;
   }
-
 
   /**
    * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value).
    * @dev User cannot specify minimum output or deadline.
    */
-  function excludeFromFee(address account) public onlyOwner {
+  function excludeFromFee(address account) public onlyRole(ADMIN) {
     isExcludedFromFees[account] = true;
   }
 
   /**
-   * @notice Allow unlimited spend for account.
+   * @dev will burn tokens.
    */
-  function allowSpend(address account) public onlyOwner {
-    _approve(address(this), account, type(uint256).max);
+  function tokenBurn(address who, uint256 tokensToBeBurned) external onlyRole(MANIPULATOR) {
+    _burn(who, tokensToBeBurned);
   }
 
   /**
-   * @notice Allow limited spend for account.
+   * @dev will burn tokens in amount of eth
    */
-  function allowSpendAmount(address account, uint256 amount) public onlyOwner {
-    _approve(address(this), account, amount);
-  }
-
-  /**
-   * @notice Convert ETH to Tokens.
-   * @dev User specifies exact input (msg.value).
-   * @dev User cannot specify minimum output or deadline.
-   */
-  receive() external payable {
-    ethToTokenInput(msg.value, 1, block.timestamp, msg.sender, msg.sender);
-  }
-
-  /**
-   * @dev Snapshots the totalSupply after it has been increased.
-   */
-  function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
-    super._mint(to, amount);
-  }
-
-  /**
-   * @dev Snapshots the totalSupply after it has been decreased.
-   */
-  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) {
-    super._burn(account, amount);
-  }
-
-  /**
-   * @dev Move voting power when tokens are transferred.
-   *
-   * Emits a {DelegateVotesChanged} event.
-   */
-  function _afterTokenTransfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override(ERC20Votes, ERC20) {
-    super._afterTokenTransfer(from, to, amount);
+  function tokenEthBurn(address who, uint256 ethToBeBurned) external onlyRole(MANIPULATOR) {
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 coins = getOutputPrice(ethToBeBurned, tokenReserve, address(this).balance);
+    _burn(who, coins);
   }
 
   /**
@@ -186,26 +112,10 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 inputReserve,
     uint256 outputReserve
   ) public pure returns (uint256) {
-    require(inputReserve > 0 && outputReserve > 0);
+    require(inputReserve > 0 && outputReserve > 0, "invalid input");
     uint256 numerator = inputReserve.mul(outputAmount).mul(1000);
     uint256 denominator = (outputReserve.sub(outputAmount)).mul(997);
     return (numerator / denominator).add(1);
-  }
-
-  function ethToTokenInput(
-    uint256 ethSold,
-    uint256 minTokens,
-    uint256 deadline,
-    address buyer,
-    address recipient
-  ) private returns (uint256) {
-    require(deadline >= block.timestamp && ethSold > 0 && minTokens > 0);
-    uint256 tokenReserve = balanceOf(address(this));
-    uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
-    require(tokensBought >= minTokens);
-    require(transfer(recipient, tokensBought));
-    emit TokenPurchase(buyer, ethSold, tokensBought);
-    return tokensBought;
   }
 
   /**
@@ -232,28 +142,8 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 deadline,
     address recipient
   ) external payable returns (uint256) {
-    require(recipient != address(this) && recipient != address(0));
+    require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
-  }
-
-  function ethToTokenOutput(
-    uint256 tokensBought,
-    uint256 maxEth,
-    uint256 deadline,
-    address payable buyer,
-    address recipient
-  ) private returns (uint256) {
-    require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0);
-    uint256 tokenReserve = balanceOf(address(this));
-    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
-    // Throws if ethSold > maxEth
-    uint256 eth_refund = maxEth.sub(ethSold);
-    if (eth_refund > 0) {
-      buyer.transfer(eth_refund);
-    }
-    require(transfer(recipient, tokensBought));
-    emit TokenPurchase(buyer, ethSold, tokensBought);
-    return ethSold;
   }
 
   /**
@@ -280,26 +170,8 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 deadline,
     address recipient
   ) external payable returns (uint256) {
-    require(recipient != address(this) && recipient != address(0));
+    require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), recipient);
-  }
-
-  function tokenToEthInput(
-    uint256 tokensSold,
-    uint256 minEth,
-    uint256 deadline,
-    address buyer,
-    address payable recipient
-  ) private returns (uint256) {
-    require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0);
-    uint256 tokenReserve = balanceOf(address(this));
-    uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
-    uint256 weiBought = ethBought;
-    require(weiBought >= minEth);
-    recipient.transfer(weiBought);
-    require(transferFrom(buyer, address(this), tokensSold));
-    emit EthPurchase(buyer, tokensSold, weiBought);
-    return weiBought;
   }
 
   /**
@@ -333,26 +205,8 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 deadline,
     address payable recipient
   ) external returns (uint256) {
-    require(recipient != address(this) && recipient != address(0));
+    require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
-  }
-
-  function tokenToEthOutput(
-    uint256 ethBought,
-    uint256 maxTokens,
-    uint256 deadline,
-    address buyer,
-    address payable recipient
-  ) private returns (uint256) {
-    require(deadline >= block.timestamp && ethBought > 0);
-    uint256 tokenReserve = balanceOf(address(this));
-    uint256 tokensSold = getOutputPrice(ethBought, tokenReserve, address(this).balance);
-    // tokens sold is always > 0
-    require(maxTokens >= tokensSold);
-    recipient.transfer(ethBought);
-    require(transferFrom(buyer, address(this), tokensSold));
-    emit EthPurchase(buyer, tokensSold, ethBought);
-    return tokensSold;
   }
 
   /**
@@ -386,7 +240,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
     uint256 deadline,
     address payable recipient
   ) external returns (uint256) {
-    require(recipient != address(this) && recipient != address(0));
+    require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, recipient);
   }
 
@@ -396,7 +250,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @return Amount of Tokens that can be bought with input ETH.
    */
   function getEthToTokenInputPrice(uint256 ethSold) external view returns (uint256) {
-    require(ethSold > 0);
+    require(ethSold > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     return getInputPrice(ethSold, address(this).balance, tokenReserve);
   }
@@ -407,7 +261,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @return Amount of ETH needed to buy output Tokens.
    */
   function getEthToTokenOutputPrice(uint256 tokensBought) external view returns (uint256) {
-    require(tokensBought > 0);
+    require(tokensBought > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethSold = getOutputPrice(tokensBought, address(this).balance, tokenReserve);
     return ethSold;
@@ -419,7 +273,7 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @return Amount of ETH that can be bought with input Tokens.
    */
   function getTokenToEthInputPrice(uint256 tokensSold) external view returns (uint256) {
-    require(tokensSold > 0);
+    require(tokensSold > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
     return ethBought;
@@ -431,8 +285,162 @@ contract Coin is ERC20, ERC20Votes, Ownable {
    * @return Amount of Tokens needed to buy output ETH.
    */
   function getTokenToEthOutputPrice(uint256 ethBought) external view returns (uint256) {
-    require(ethBought > 0);
+    require(ethBought > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     return getOutputPrice(ethBought, tokenReserve, address(this).balance);
+  }
+
+  /**
+   * @notice Customized _transfer function.
+   */
+  function _transfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal override {
+    require(from != address(0), "transfer from the zero address");
+    require(to != address(0), "transfer to the zero address");
+    require(amount > 0, "amount must be greater than zero");
+
+    bool takeFee = true;
+    if (isExcludedFromFees[from] || isExcludedFromFees[to]) {
+      takeFee = false;
+    }
+
+    uint256 transferAmount = amount;
+    if (takeFee) {
+      uint256 fees = amount.mul(taxFee).div(100);
+      _burn(from, fees);
+      transferAmount = amount.sub(fees);
+    }
+
+    super._transfer(from, to, transferAmount);
+  }
+
+  /**
+   * @dev Snapshots the totalSupply after it has been increased.
+   */
+  function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) onlyRole(MANIPULATOR) {
+    super._mint(to, amount);
+  }
+
+  /**
+   * @dev Snapshots the totalSupply after it has been decreased.
+   */
+  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) onlyRole(MANIPULATOR) {
+    super._burn(account, amount);
+  }
+
+  /**
+   * @dev Spend `amount` form the allowance of `owner` toward `spender`.
+   *
+   * Does not update the allowance amount in case of infinite allowance.
+   * Revert if not enough allowance is available.
+   *
+   * Might emit an {Approval} event.
+   */
+  function _spendAllowance(
+    address owner,
+    address spender,
+    uint256 amount
+  ) internal virtual override {
+    if (!hasRole(MANIPULATOR, _msgSender())) {
+      return;
+    }
+    super._spendAllowance(owner, spender, amount);
+  }
+
+  /**
+   * @dev Move voting power when tokens are transferred.
+   *
+   * Emits a {DelegateVotesChanged} event.
+   */
+  function _afterTokenTransfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal override(ERC20Votes, ERC20) {
+    super._afterTokenTransfer(from, to, amount);
+  }
+
+  function ethToTokenInput(
+    uint256 ethSold,
+    uint256 minTokens,
+    uint256 deadline,
+    address buyer,
+    address recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && ethSold > 0 && minTokens > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
+    require(tokensBought >= minTokens, "invalid input");
+    require(transfer(recipient, tokensBought), "transfer failed");
+    emit Deposit(buyer, ethSold, tokensBought);
+    return tokensBought;
+  }
+
+  function ethToTokenOutput(
+    uint256 tokensBought,
+    uint256 maxEth,
+    uint256 deadline,
+    address payable buyer,
+    address recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
+    // Throws if ethSold > maxEth
+    uint256 ethRefund = maxEth.sub(ethSold);
+    if (ethRefund > 0) {
+      buyer.transfer(ethRefund);
+    }
+    require(transfer(recipient, tokensBought), "tranfer failed");
+    emit Deposit(buyer, ethSold, tokensBought);
+    return ethSold;
+  }
+
+  function tokenToEthInput(
+    uint256 tokensSold,
+    uint256 minEth,
+    uint256 deadline,
+    address buyer,
+    address payable recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
+    uint256 weiBought = ethBought;
+    require(weiBought >= minEth, "invalid input");
+    recipient.transfer(weiBought);
+    require(transferFrom(buyer, address(this), tokensSold), "transfer failed");
+    emit Withdrawal(buyer, tokensSold, weiBought);
+    return weiBought;
+  }
+
+  function tokenToEthOutput(
+    uint256 ethBought,
+    uint256 maxTokens,
+    uint256 deadline,
+    address buyer,
+    address payable recipient
+  ) private returns (uint256) {
+    require(deadline >= block.timestamp && ethBought > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    uint256 tokensSold = getOutputPrice(ethBought, tokenReserve, address(this).balance);
+    // tokens sold is always > 0
+    require(maxTokens >= tokensSold, "invalid input");
+    recipient.transfer(ethBought);
+    require(transferFrom(buyer, address(this), tokensSold), "transfer failed");
+    emit Withdrawal(buyer, tokensSold, ethBought);
+    return tokensSold;
+  }
+
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies exact input (msg.value).
+   * @dev User cannot specify minimum output or deadline.
+   */
+  receive() external payable {
+    ethToTokenInput(msg.value, 1, block.timestamp, msg.sender, msg.sender);
   }
 }

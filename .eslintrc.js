@@ -1,4 +1,9 @@
 module.exports = {
+  env: {
+    browser: true,
+    mocha: true,
+    node: true,
+  },
   extends: ["next", "prettier", "next/core-web-vitals"],
   plugins: ["prettier"],
   rules: {
@@ -12,4 +17,10 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["hardhat.config.js"],
+      globals: { task: true },
+    },
+  ],
 };
