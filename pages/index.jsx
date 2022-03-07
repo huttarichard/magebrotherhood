@@ -1,7 +1,7 @@
 import Head from "next/head";
 import ReactFullpage from "../components/ReactFullPage";
 import Layout from "../components/Layout/Layout";
-import Slide1 from "../components/Home/Welcome";
+import Hero from "../components/Home/Hero";
 
 export default function Home() {
   return (
@@ -16,12 +16,11 @@ export default function Home() {
           render={({ state, fullpageApi }) => {
             return (
               <ReactFullpage.Wrapper>
-                <div className="section home">
-                  <Slide1 />
-                </div>
-
                 <div className="section">
-                  <p>Section 1 (welcome to fullpage.js)</p>
+                  <Hero />
+                </div>
+                <div className="section">
+                  <p>Section 2</p>
                 </div>
               </ReactFullpage.Wrapper>
             );

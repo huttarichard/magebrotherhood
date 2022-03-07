@@ -47,7 +47,7 @@ const StyledHeader = styled.header`
       left: 0;
       background: url("/images/navBg.png"), url("/images/navBg2.png");
       background-repeat: no-repeat;
-      background-size: contain;
+      background-size: auto 103%;
       mix-blend-mode: color-dodge;
     }
   }
