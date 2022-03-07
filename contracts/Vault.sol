@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+/* solhint-disable not-rely-on-time */
 
 pragma solidity 0.8.12;
 
@@ -122,12 +123,12 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
   bytes4 private constant _ERC1155_TOKEN_RECEIVER_INTERFACE_ID = type(IERC1155Receiver).interfaceId;
 
   modifier hasStarted() {
-    require(startTimestamp != 0, "NftStaking: staking not started");
+    require(startTimestamp != 0, "staking not started");
     _;
   }
 
   modifier hasNotStarted() {
-    require(startTimestamp == 0, "NftStaking: staking has started");
+    require(startTimestamp == 0, "staking has started");
     _;
   }
 
@@ -145,8 +146,8 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint16 periodLengthInCycles_,
     address coin_
   ) {
-    require(cycleLengthInSeconds_ >= 1 minutes, "NftStaking: invalid cycle length");
-    require(periodLengthInCycles_ >= 2, "NftStaking: invalid period length");
+    require(cycleLengthInSeconds_ >= 1 minutes, "invalid cycle length");
+    require(periodLengthInCycles_ >= 2, "invalid period length");
 
     cycleLengthInSeconds = cycleLengthInSeconds_;
     periodLengthInCycles = periodLengthInCycles_;
@@ -187,10 +188,11 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint16 endPeriod,
     uint256 rewardsPerCycle
   ) external onlyOwner {
-    require(startPeriod != 0 && startPeriod <= endPeriod, "NftStaking: wrong period range");
+    require(startPeriod != 0 && startPeriod <= endPeriod, "wrong period range");
 
     if (startTimestamp != 0) {
-      require(startPeriod >= _getCurrentPeriod(periodLengthInCycles), "NftStaking: already committed reward schedule");
+      // solhint-disable-next-line
+      require(startPeriod >= _getCurrentPeriod(periodLengthInCycles), "already committed reward schedule");
     }
 
     for (uint256 period = startPeriod; period <= endPeriod; ++period) {
@@ -221,7 +223,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    * @param amount The amount of reward.
    */
   function distribute(address to, uint256 amount) internal {
-    require(coin.transferFrom(address(coin), to, amount), "NftStaking: failed to withdraw from the rewards pool");
+    require(coin.transferFrom(address(coin), to, amount), "failed to withdraw");
   }
 
   /**
@@ -247,28 +249,28 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint16 cycle,
     int256 globalSnapshotIndex
   ) external onlyOwner {
-    require(to != address(0), "NftStaking: zero address");
-    require(cycle < _getCycle(block.timestamp), "NftStaking: non-past cycle");
-    require(withdrawnLostCycles[cycle] == false, "NftStaking: already withdrawn");
+    require(to != address(0), "zero address");
+    require(cycle < _getCycle(block.timestamp), "non-past cycle");
+    require(withdrawnLostCycles[cycle] == false, "already withdrawn");
     if (globalSnapshotIndex == -1) {
-      require(globalHistory.length == 0 || cycle < globalHistory[0].startCycle, "NftStaking: cycle has snapshot");
+      require(globalHistory.length == 0 || cycle < globalHistory[0].startCycle, "cycle has snapshot");
     } else if (globalSnapshotIndex >= 0) {
       uint256 snapshotIndex = uint256(globalSnapshotIndex);
       Snapshot memory snapshot = globalHistory[snapshotIndex];
-      require(cycle >= snapshot.startCycle, "NftStaking: cycle < snapshot");
+      require(cycle >= snapshot.startCycle, "cycle < snapshot");
       require(
         globalHistory.length == snapshotIndex + 1 || // last snapshot
           cycle < globalHistory[snapshotIndex + 1].startCycle,
-        "NftStaking: cycle > snapshot"
+        "cycle > snapshot"
       );
-      require(snapshot.stake == 0, "NftStaking: non-lost cycle");
+      require(snapshot.stake == 0, "non-lost cycle");
     } else {
-      revert("NftStaking: wrong index value");
+      revert("wrong index value");
     }
 
     uint16 period = _getPeriod(cycle, periodLengthInCycles);
     uint256 cycleRewards = rewardsSchedule[period];
-    require(cycleRewards != 0, "NftStaking: rewardless cycle");
+    require(cycleRewards != 0, "rewardless cycle");
     withdrawnLostCycles[cycle] = true;
     distribute(to, cycleRewards);
   }
@@ -321,7 +323,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint256 amount
   ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
-    require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
+    require(!staker.enabled, "contract not enabled");
 
     uint16 periodLengthInCycles_ = periodLengthInCycles;
     uint16 currentCycle = _getCycle(block.timestamp);
@@ -338,7 +340,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     }
 
     uint16 withdrawCycle = staker.tokens[tokenId].withdrawCycle;
-    require(currentCycle != withdrawCycle, "NftStaking: unstaked token cooldown");
+    require(currentCycle != withdrawCycle, "unstaked token cooldown");
 
     // set the staked token's info
     staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);
@@ -376,10 +378,10 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint256[] memory amounts
   ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
-    require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
+    require(!staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
-    require(numTokens != 0, "NftStaking: no tokens");
+    require(numTokens != 0, "no tokens");
 
     uint16 currentCycle = _getCycle(block.timestamp);
     uint128 totalStakedWeight = 0;
@@ -388,7 +390,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     for (uint256 index = 0; index < numTokens; ++index) {
       uint256 tokenId = tokenIds[index];
       uint256 amount = amounts[index];
-      require(currentCycle != staker.tokens[tokenId].withdrawCycle, "NftStaking: unstaked token cooldown");
+      require(currentCycle != staker.tokens[tokenId].withdrawCycle, "unstaked token cooldown");
       uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
       totalStakedWeight += weight; // This is safe
       weights[index] = weight;
@@ -422,11 +424,11 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function unstake(address nft, uint256 tokenId) external {
     ContractStaking storage staker = staking[nft];
-    require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
+    require(!staker.enabled, "contract not enabled");
 
     TokenInfo memory tokenInfo = staker.tokens[tokenId];
 
-    require(tokenInfo.owner == _msgSender(), "NftStaking: not staked for owner");
+    require(tokenInfo.owner == _msgSender(), "not staked for owner");
 
     uint16 currentCycle = _getCycle(block.timestamp);
     uint128 weight = tokenInfo.weight;
@@ -435,7 +437,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
       // ensure that at least an entire cycle has elapsed before unstaking the token to avoid
       // an exploit where a full cycle would be claimable if staking just before the end
       // of a cycle and unstaking right after the start of the new cycle
-      require(currentCycle - tokenInfo.depositCycle >= 2, "NftStaking: token still frozen");
+      require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
 
       _updateHistories(_msgSender(), -int128(uint128(weight)), currentCycle);
 
@@ -464,10 +466,10 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function batchUnstake(address nft, uint256[] calldata tokenIds) external {
     ContractStaking storage staker = staking[nft];
-    require(!staker.enabled, "NftStaking: contract not whitelisted or enabled for staking");
+    require(!staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
-    require(numTokens != 0, "NftStaking: no tokens");
+    require(numTokens != 0, "no tokens");
 
     uint16 currentCycle = _getCycle(block.timestamp);
     int128 totalUnstakedWeight = 0;
@@ -479,14 +481,14 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
 
       TokenInfo memory tokenInfo = staker.tokens[tokenId];
 
-      require(tokenInfo.owner == _msgSender(), "NftStaking: not staked for owner");
+      require(tokenInfo.owner == _msgSender(), "not staked for owner");
 
       if (enabled) {
         // ensure that at least an entire cycle has elapsed before
         // unstaking the token to avoid an exploit where a a fukll cycle
         // would be claimable if staking just before the end of a cycle
         // and unstaking right after the start of the new cycle
-        require(currentCycle - tokenInfo.depositCycle >= 2, "NftStaking: token still frozen");
+        require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
 
         // clear the token owner to ensure it cannot be unstaked again
         // without being re-staked
@@ -608,7 +610,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function lastGlobalSnapshotIndex() external view returns (uint256) {
     uint256 length = globalHistory.length;
-    require(length != 0, "NftStaking: empty global history");
+    require(length != 0, "empty global history");
     return length - 1;
   }
 
@@ -619,7 +621,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function lastStakerSnapshotIndex(address staker) external view returns (uint256) {
     uint256 length = stakerHistories[staker].length;
-    require(length != 0, "NftStaking: empty staker history");
+    require(length != 0, "empty staker history");
     return length - 1;
   }
 
@@ -843,7 +845,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    * @return The cycle (index-1 based) at the specified timestamp.
    */
   function _getCycle(uint256 timestamp) internal view returns (uint16) {
-    require(timestamp >= startTimestamp, "NftStaking: timestamp preceeds contract start");
+    require(timestamp >= startTimestamp, "timestamp preceeds start");
     return (((timestamp - startTimestamp) / uint256(cycleLengthInSeconds)) + 1).toUint16();
   }
 
@@ -855,7 +857,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    * @return The period (index-1 based) for the specified cycle and period length.
    */
   function _getPeriod(uint16 cycle, uint16 periodLengthInCycles_) internal pure returns (uint16) {
-    require(cycle != 0, "NftStaking: cycle cannot be zero");
+    require(cycle != 0, "cycle cannot be zero");
     return (cycle - 1) / periodLengthInCycles_ + 1;
   }
 

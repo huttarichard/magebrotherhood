@@ -17,7 +17,7 @@ contract Affiliate is Context, Ownable, Pausable {
   /**
    * @notice mapping of addresses and balances.
    */
-  mapping(address => uint256) private _balances;
+  mapping(address => uint256) public balances;
 
   /**
    * @notice mapping of affiliate codes and addresses.
@@ -45,7 +45,7 @@ contract Affiliate is Context, Ownable, Pausable {
    * Marketing code used for promotion.
    * @param code string marketing code.
    */
-  function addAffiliate(string memory code) public {
+  function register(string memory code) public {
     require(bytes(code).length > 0 && bytes(code).length <= 20, "invalid code length");
     require(_codes[code] == address(0), "code already used");
     _codes[code] = _msgSender();
@@ -79,7 +79,7 @@ contract Affiliate is Context, Ownable, Pausable {
     require(addr != address(0), "invalid affiliate code");
     require(!_used[addr], "already used discount");
     uint256 rw = payoff(_msgSender());
-    _balances[addr] += rw;
+    balances[addr] += rw;
     _used[addr] = true;
     return rw;
   }
@@ -89,9 +89,9 @@ contract Affiliate is Context, Ownable, Pausable {
    * @param affiliater address of the affiliater
    */
   function release(address affiliater) public {
-    uint256 cds = _balances[affiliater];
+    uint256 cds = balances[affiliater];
     require(cds != 0, "zero balance");
     require(coin.transferFrom(address(coin), affiliater, cds), "could not be paid");
-    _balances[affiliater] = 0;
+    balances[affiliater] = 0;
   }
 }
