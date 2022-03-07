@@ -5,6 +5,7 @@ const Wrapper = styled.div`
   position: relative;
   height: 100%;
   background-color: #eee;
+  overflow: hidden;
 `;
 
 const Background = styled.div`
@@ -45,8 +46,18 @@ const Model = styled.div`
   }
 
   @media (min-width: 1200px) {
-    bottom: -20%;
-    width: 70%;
+    top: 10%;
+    bottom: -30%;
+    width: 60%;
+
+    model-viewer {
+      transform: translateY(100px);
+    }
+  }
+
+  @media (min-width: 1600px) {
+    top: 0;
+    width: 50%;
   }
 `;
 
