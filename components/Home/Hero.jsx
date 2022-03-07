@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
+import Button from "../ui/Button";
 
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
-  background-color: #fff;
+  background-color: #eee;
 `;
 
 const Background = styled.div``;
@@ -170,11 +171,22 @@ const Main = styled.div`
   }
 `;
 
+const Actions = styled.div`
+  display: none;
+
+  @media (min-width: 992px) {
+    display: flex;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+  }
+`;
+
 export default function Hero() {
   return (
     <Wrapper>
       <Background></Background>
-      <Model>
+      {/* <Model>
         <model-viewer
           src="/assets/1.glb"
           ios-src="/assets/1.usdz"
@@ -185,7 +197,7 @@ export default function Hero() {
           environment-image="neutral"
           ar
         />
-      </Model>
+      </Model> */}
       <Main>
         <h1>
           Get your knight and <span>earn cash!</span>
@@ -206,6 +218,9 @@ export default function Hero() {
           </li>
         </ul>
       </Main>
+      <Actions>
+        <Button>Connect wallet</Button>
+      </Actions>
     </Wrapper>
   );
 }
