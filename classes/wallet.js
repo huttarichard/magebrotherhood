@@ -59,23 +59,19 @@ export default class Wallet {
     this.contract = new this.web3.eth.Contract(contract.abi, process.env.NEXT_PUBLIC_MINT_MOCK_CONTRACT);
   }
 
-  mint(callbacks) {
-    const eventEmitter = this.contract.methods.mint(1).send(
-      {
-        from: this.address,
-        value: "1000000000000000",
-      },
-      (error, result) => {
-        if (error) {
-          callbacks.error(error) ?? function () {};
-        }
-      }
-    );
-
-    const eventNames = ["sending", "sent", "transactionHash", "receipt"];
-
-    eventNames.forEach((eventName) => {
-      eventEmitter.on(eventName, callbacks[eventName] ?? function () {});
+  mint({ quantity, callbacks }) {
+    const eventEmitter = this.contract.methods.mint(quantity).send({
+      from: this.address,
+      value: "1000000000000000",
     });
+
+    const eventNames = ["sending", "sent", "transactionHash", "receipt", "confirmation", "error"];
+
+    for (const eventName in callbacks) {
+      if (typeof callbacks[eventName] === "function" && eventNames.includes(eventName)) {
+        eventEmitter.off(eventName, callbacks[eventName]);
+        eventEmitter.on(eventName, callbacks[eventName]);
+      }
+    }
   }
 }
