@@ -1,12 +1,26 @@
 import styled from "@emotion/styled";
+import Button from "../ui/Button";
 
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
-  background-color: #fff;
+  background-color: #eee;
+  overflow: hidden;
 `;
 
-const Background = styled.div``;
+const Background = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: transparent url("/images/heroBg2.png") no-repeat;
+  background-size: cover;
+
+  @media (min-width: 1200px) {
+    background-position-x: 10vw;
+  }
+`;
 
 const Model = styled.div`
   position: absolute;
@@ -29,6 +43,21 @@ const Model = styled.div`
   @media (min-width: 992px) {
     top: 0;
     width: 70%;
+  }
+
+  @media (min-width: 1200px) {
+    top: 10%;
+    bottom: -30%;
+    width: 60%;
+
+    model-viewer {
+      transform: translateY(100px);
+    }
+  }
+
+  @media (min-width: 1600px) {
+    top: 0;
+    width: 50%;
   }
 `;
 
@@ -170,6 +199,17 @@ const Main = styled.div`
   }
 `;
 
+const Actions = styled.div`
+  display: none;
+
+  @media (min-width: 992px) {
+    display: flex;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+  }
+`;
+
 export default function Hero() {
   return (
     <Wrapper>
@@ -206,6 +246,9 @@ export default function Hero() {
           </li>
         </ul>
       </Main>
+      <Actions>
+        <Button>Connect wallet</Button>
+      </Actions>
     </Wrapper>
   );
 }
