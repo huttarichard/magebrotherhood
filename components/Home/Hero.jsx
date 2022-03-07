@@ -24,10 +24,10 @@ const Background = styled.div`
 
 const Model = styled.div`
   position: absolute;
-  top: 20%;
+  left: 0;
   right: 0;
-  bottom: 0;
-  left: 20%;
+  width: 100%;
+  height: 100%;
 
   model-viewer {
     width: 100%;
@@ -37,27 +37,25 @@ const Model = styled.div`
   @media (min-width: 768px) {
     top: 68px;
     left: auto;
-    width: 60vw;
+    /* width: 60vw; */
   }
 
   @media (min-width: 992px) {
     top: 0;
-    width: 70%;
+    /* width: 70%; */
   }
 
   @media (min-width: 1200px) {
-    top: 10%;
-    bottom: -30%;
-    width: 60%;
+    /* top: 10%; */
+    /* bottom: -30%; */
+    /* width: 60%; */
 
     model-viewer {
-      transform: translateY(100px);
     }
   }
 
   @media (min-width: 1600px) {
     top: 0;
-    width: 50%;
   }
 `;
 
@@ -171,13 +169,13 @@ const Main = styled.div`
     left: 3rem;
 
     h1 {
-      font-size: 100px;
-      max-width: 500px;
+      font-size: 80px;
+      max-width: 550px;
     }
 
     p {
       font-size: 28px;
-      max-width: 380px;
+      max-width: 550px;
       margin-bottom: 3rem;
     }
 
@@ -187,7 +185,7 @@ const Main = styled.div`
 
         span {
           &:first-of-type {
-            font-size: 82px;
+            font-size: 70px;
           }
 
           &:last-of-type {
@@ -195,6 +193,18 @@ const Main = styled.div`
           }
         }
       }
+    }
+  }
+
+  @media (min-width: 1700px) {
+    left: 4rem;
+
+    h1 {
+      max-width: 800px;
+    }
+
+    p {
+      max-width: 700px;
     }
   }
 `;
@@ -216,34 +226,36 @@ export default function Hero() {
       <Background></Background>
       <Model>
         <model-viewer
-          src="/assets/1.glb"
-          ios-src="/assets/1.usdz"
-          camera-controls
+          src="/assets/5.glb"
           autoplay
-          disable-zoom
-          // camera-orbit="calc(-1.5rad + env(window-scroll-y) * 4rad) calc(0deg + env(window-scroll-y) * 180deg) calc(3m - env(window-scroll-y) * 1.5m)"
+          camera-orbit="-7.436deg 107.8deg auto"
+          camera-target="-0.6m 1.5m -1m"
           environment-image="neutral"
           ar
         />
       </Model>
       <Main>
         <h1>
-          Get your knight and <span>earn cash!</span>
+          Play for victory, earn <span>rewards.</span>
         </h1>
         <p>NFT P2E game powered by blockchain enhanced by AR</p>
         <ul>
           <li>
-            <span>10K</span>
-            <span>Active Users</span>
-          </li>
-          <li>
             <span>8K</span>
-            <span>Artworks</span>
+            <span>NFT LEFT</span>
           </li>
+          {/* <li>
+            <span>123</span>
+            <span>GOVERNORS</span>
+          </li> */}
           <li>
+            <span>$.0001</span>
+            <span>BROTHERHOOD COIN</span>
+          </li>
+          {/* <li>
             <span>2K</span>
             <span>Artists</span>
-          </li>
+          </li> */}
         </ul>
       </Main>
       <Actions>

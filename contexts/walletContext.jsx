@@ -33,23 +33,23 @@ export function WalletContextProvider({ children }) {
     setWalletConnected(false);
   };
 
-  useEffect(() => {
-    detectEthereumProvider({
-      silent: process.env.NODE_ENV === "production",
-    }).then((provider) => {
-      if (provider) {
-        window.ethereum.request({ method: "eth_requestAccounts" });
+  // useEffect(() => {
+  //   detectEthereumProvider({
+  //     silent: process.env.NODE_ENV === "production",
+  //   }).then((provider) => {
+  //     if (provider) {
+  //       window.ethereum.request({ method: "eth_requestAccounts" });
 
-        const w = new Wallet();
-        w.connectWithInjectedProvider(provider);
+  //       const w = new Wallet();
+  //       w.connectWithInjectedProvider(provider);
 
-        setWallet(w);
-        setWalletConnected(true);
+  //       setWallet(w);
+  //       setWalletConnected(true);
 
-        w.connectToContract();
-      }
-    });
-  }, []);
+  //       w.connectToContract();
+  //     }
+  //   });
+  // }, []);
 
   const value = {
     wallet,

@@ -16,11 +16,7 @@ export default function HeaderWallet() {
   const { wallet, walletConnected, connectWallet } = useContext(WalletContext);
 
   if (!walletConnected) {
-    return (
-      <Wrapper>
-        <StyledButton onClick={() => connectWallet()}>Connect wallet</StyledButton>
-      </Wrapper>
-    );
+    return <Wrapper>{/* <StyledButton onClick={() => connectWallet()}>Connect wallet</StyledButton> */}</Wrapper>;
   } else {
     return <Wrapper>Wallet connected</Wrapper>;
   }
