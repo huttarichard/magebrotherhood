@@ -19,6 +19,12 @@ const Model = styled.div`
     width: 100%;
     height: 100%;
   }
+
+  @media (min-width: 768px) {
+    top: 68px;
+    left: auto;
+    width: 60vw;
+  }
 `;
 
 const Main = styled.div`
@@ -87,6 +93,38 @@ const Main = styled.div`
 
       &:last-child {
         margin-right: 0;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    top: 68px;
+    justify-content: center;
+
+    h1 {
+      max-width: 320px;
+      font-size: 68px;
+      line-height: 0.9;
+
+      span {
+        padding-right: 10px;
+      }
+    }
+
+    p {
+      max-width: 350px;
+      font-size: 26px;
+    }
+
+    ul {
+      li {
+        margin-right: 2.5rem;
+
+        span {
+          &:first-child {
+            font-size: 54px;
+          }
+        }
       }
     }
   }
