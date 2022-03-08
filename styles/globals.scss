@@ -5,7 +5,8 @@
 // Bootstrap and its default variables
 @import "@fortawesome/fontawesome-svg-core/styles.css";
 @import "bootstrap/scss/bootstrap";
-// @import "normalize.css";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
 body {
   font-family: 'Barlow Condensed', sans-serif;
