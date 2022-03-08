@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Land",
+  "sourceName": "contracts/Land.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220068bf63adbf67a6ed01fbde723d856375b2cc29a4fd6145afe4a4931db2b33e464736f6c634300080c0033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220068bf63adbf67a6ed01fbde723d856375b2cc29a4fd6145afe4a4931db2b33e464736f6c634300080c0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
