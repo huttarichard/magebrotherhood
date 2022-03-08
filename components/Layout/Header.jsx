@@ -46,7 +46,7 @@ const StyledHeader = styled.header`
       right: 0;
       bottom: 0;
       left: 0;
-      background: url("/images/navBg.png"), url("/images/navBg2.png");
+      /* background: url("/images/navBg.png"), url("/images/navBg2.png"); */
       background-repeat: no-repeat;
       background-size: 100% auto;
       mix-blend-mode: color-dodge;
