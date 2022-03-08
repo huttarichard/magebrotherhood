@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
-import Wallet from "../classes/wallet";
+import Wallet from "../services/wallet";
 
 export const WalletContext = createContext({
   wallet: null,
