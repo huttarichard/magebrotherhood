@@ -28,6 +28,7 @@ const Header = styled.div`
     color: #fff;
   }
 `;
+
 const StyledSlider = styled.div`
   width: 100%;
 `;
@@ -51,6 +52,7 @@ const StyledSlide = styled.div`
 
   p {
     color: #fff;
+    opacity: 0.7;
   }
 
   @media (min-width: 992px) {
