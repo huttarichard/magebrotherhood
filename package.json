@@ -29,8 +29,9 @@
     "react": "17.0.2",
     "react-bootstrap": "^2.2.0",
     "react-dom": "17.0.2",
+    "react-slick": "^0.28.1",
     "sass": "^1.49.9",
-    "swiper": "^8.0.7",
+    "slick-carousel": "^1.8.1",
     "web3": "^1.7.0",
     "web3modal": "^1.9.5"
   },

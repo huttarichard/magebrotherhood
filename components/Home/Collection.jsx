@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
+import Slider from "react-slick";
 
 const Wrapper = styled.div`
   position: relative;
@@ -29,11 +28,13 @@ const Header = styled.div`
     color: #fff;
   }
 `;
-const Slider = styled.div`
+const StyledSlider = styled.div`
   width: 100%;
 `;
 
 const StyledSlide = styled.div`
+  padding-right: 2rem;
+
   .img-wrapper {
     position: relative;
     height: 240px;
@@ -82,19 +83,30 @@ const slides = [
   },
 ];
 
-const swiperConfig = {
-  spaceBetween: 50,
-  slidesPerView: 1.5,
-  breakpoints: {
-    500: {
-      slidesPerView: 2.5,
+const sliderConfig = {
+  dots: false,
+  infinite: false,
+  slidesToShow: 3.5,
+  responsive: [
+    {
+      breakpoint: 1200,
+      settings: {
+        slidesToShow: 3.5,
+      },
     },
-  },
-  breakpoints: {
-    992: {
-      slidesPerView: 3.5,
+    {
+      breakpoint: 992,
+      settings: {
+        slidesToShow: 2.5,
+      },
     },
-  },
+    {
+      breakpoint: 500,
+      settings: {
+        slidesToShow: 1.5,
+      },
+    },
+  ],
 };
 
 export default function Collection() {
@@ -104,23 +116,21 @@ export default function Collection() {
         <h2>Dark Knights</h2>
         <p>Regularly updated collections</p>
       </Header>
-      <Slider>
-        <Swiper {...swiperConfig}>
+      <StyledSlider>
+        <Slider {...sliderConfig}>
           {slides.map((slide) => {
             return (
-              <SwiperSlide key={slide.title}>
-                <StyledSlide>
-                  <div className="img-wrapper">
-                    <Image src={slide.img} layout="fill" objectFit="cover" alt={slide.title} />
-                  </div>
-                  <h3>{slide.title}</h3>
-                  <p>{slide.text}</p>
-                </StyledSlide>
-              </SwiperSlide>
+              <StyledSlide key={slide.title}>
+                <div className="img-wrapper">
+                  <Image src={slide.img} layout="fill" objectFit="cover" alt={slide.title} />
+                </div>
+                <h3>{slide.title}</h3>
+                <p>{slide.text}</p>
+              </StyledSlide>
             );
           })}
-        </Swiper>
-      </Slider>
+        </Slider>
+      </StyledSlider>
     </Wrapper>
   );
 }
