@@ -224,7 +224,7 @@ export default function Hero() {
   return (
     <Wrapper>
       <Background></Background>
-      <Model>
+      {/* <Model>
         <model-viewer
           src="/assets/5.glb"
           autoplay
@@ -234,7 +234,7 @@ export default function Hero() {
           loading="eager"
           ar
         />
-      </Model>
+      </Model> */}
       <Main>
         <h1>
           Play for victory, earn <span>rewards.</span>
