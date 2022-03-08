@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import Web3Modal from "web3modal";
+// import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export default class Wallet {
@@ -13,20 +13,20 @@ export default class Wallet {
       },
     };
 
-    const modal = new Web3Modal({
-      network: "rinkeby",
-      cacheProvider: true,
-      providerOptions,
-      theme: "dark",
-    });
+    // const modal = new Web3Modal({
+    //   network: "rinkeby",
+    //   cacheProvider: true,
+    //   providerOptions,
+    //   theme: "dark",
+    // });
 
-    try {
-      const provider = await modal.connect();
+    // try {
+    //   const provider = await modal.connect();
 
-      this.web3 = new Web3(provider);
-    } catch (e) {
-      console.log(e);
-    }
+    //   this.web3 = new Web3(provider);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 
   async connectWithInjectedProvider(provider) {

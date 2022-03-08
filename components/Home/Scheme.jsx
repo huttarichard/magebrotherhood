@@ -1,16 +1,28 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
+import Ecosystem from "./Ecosystem";
 
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
   background-color: #111;
+
+  svg {
+    height: 100%;
+    max-width: 100%;
+    max-height: 700px;
+  }
+
+  h1 {
+    color: white;
+  }
 `;
 
 export default function Scheme() {
   return (
     <Wrapper>
-      <Image src="/images/scheme.png" layout="fill" objectFit="contain" alt="Scheme" />
+      <h1>Powerful Ecosystem</h1>
+      <Ecosystem />
     </Wrapper>
   );
 }
