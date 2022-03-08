@@ -64,7 +64,7 @@ const StyledSlide = styled.div`
 
 const slides = [
   {
-    title: "Bendy",
+    title: "Bendy2",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant in cursus proin.",
     img: "/images/knight.png",
   },
