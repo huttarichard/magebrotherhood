@@ -5,7 +5,6 @@ const Wrapper = styled.div`
   position: relative;
   height: 100%;
   background-color: #111;
-  overflow: hidden;
 `;
 
 export default function Scheme() {
