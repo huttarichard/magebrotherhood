@@ -18,16 +18,14 @@ export class Wallet {
 
 export function Connector({ children }) {
   const [wallet, setWallet] = useState(null);
-  const [modal, setModal] = useState(new Modal());
+  const [modal] = useState(new Modal());
   const [provider, setProvider] = useState(null);
-  const [chainId, setChainId] = useState(null);
   const [connected, setConnected] = useState(false);
 
   const value = {
     provider,
     wallet,
     modal,
-    chainId,
     connected,
 
     async connect() {
@@ -47,6 +45,10 @@ export function Connector({ children }) {
     },
   };
 
+  if (typeof window !== "undefined") {
+    window.connector = value;
+  }
+
   const onConnect = (instance) => {
     const provider = new ethers.providers.Web3Provider(instance);
     let wallet = new Wallet(provider);
@@ -64,31 +66,3 @@ export function Connector({ children }) {
 }
 
 export const useConnector = () => useContext(ConnectorContext);
-
-// import { ICoreOptions, ThemeColors, SimpleFunction } from "../helpers";
-// export declare class Core {
-//     private show;
-//     private themeColors;
-//     private eventController;
-//     private lightboxOpacity;
-//     private providerController;
-//     private userOptions;
-//     constructor(opts?: Partial<ICoreOptions>);
-//     get cachedProvider(): string;
-//     connect: () => Promise<any>;
-//     wconnectTo: (id: string) => Promise<any>;
-//     toggleModal(): Promise<void>;
-//     on(event: string, callback: SimpleFunction): SimpleFunction;
-//     off(event: string, callback?: SimpleFunction): void;
-//     clearCachedProvider(): void;
-//     setCachedProvider(id: string): void;
-//     updateTheme(theme: string | ThemeColors): Promise<void>;
-//     private renderModal;
-//     private _toggleModal;
-//     private onError;
-//     private onConnect;
-//     private onClose;
-//     private updateState;
-//     private resetState;
-// }
-// //# sourceMappingURL=index.d.ts.map

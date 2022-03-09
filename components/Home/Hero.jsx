@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useConnector } from "components/Web3/Connector";
 import Button from "../ui/Button";
 
 const Wrapper = styled.div`
@@ -233,6 +234,9 @@ const Actions = styled.div`
 `;
 
 export default function Hero() {
+  let connector = useConnector();
+  console.log(connector);
+
   return (
     <Wrapper>
       <Background></Background>
@@ -272,7 +276,7 @@ export default function Hero() {
         </ul>
       </Main>
       <Actions>
-        <Button>Connect wallet</Button>
+        <Button onClick={(e) => connector.connect()}>Connect wallet</Button>
       </Actions>
     </Wrapper>
   );

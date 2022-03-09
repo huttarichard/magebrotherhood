@@ -84,67 +84,33 @@ const SModalCard = styled.div`
   }
 `;
 
-const INITIAL_STATE = {
-  show: false,
-  lightboxOffset: 0,
-};
-
-export default class Modal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.show && !this.state.show) {
-      this.props.resetState();
-    }
-    if (this.lightboxRef) {
-      const lightboxRect = this.lightboxRef.getBoundingClientRect();
-      const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0;
-      if (lightboxOffset !== INITIAL_STATE.lightboxOffset && lightboxOffset !== this.state.lightboxOffset) {
-        this.setState({ lightboxOffset });
-      }
-    }
-  }
-
-  render() {
-    const { show, lightboxOffset } = this.state;
-    const { onClose, lightboxOpacity, userOptions, themeColors } = this.props;
-    return (
-      <SLightbox
-        className={MODAL_LIGHTBOX_CLASSNAME}
-        offset={lightboxOffset}
-        opacity={lightboxOpacity}
-        ref={(c) => (this.lightboxRef = c)}
-        show={show}
-      >
-        <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
-          <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <SModalCard
-            className={MODAL_CARD_CLASSNAME}
-            show={show}
-            themeColors={themeColors}
-            maxWidth={userOptions.length < 3 ? 500 : 800}
-            ref={(c) => (this.mainModalCard = c)}
-          >
-            {userOptions.map((provider) =>
-              !!provider ? (
-                <Provider
-                  name={provider.name}
-                  logo={provider.logo}
-                  description={provider.description}
-                  key={provider.name}
-                  themeColors={themeColors}
-                  onClick={provider.onClick}
-                />
-              ) : null
-            )}
-          </SModalCard>
-        </SModalContainer>
-      </SLightbox>
-    );
-  }
+export default function Modal({ onClose, lightboxOpacity, userOptions, themeColors, show = false } = {}) {
+  return (
+    <SLightbox className={MODAL_LIGHTBOX_CLASSNAME} offset={0} opacity={lightboxOpacity} show={show}>
+      <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
+        <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
+        <SModalCard
+          className={MODAL_CARD_CLASSNAME}
+          show={show}
+          themeColors={themeColors}
+          maxWidth={userOptions.length < 3 ? 500 : 800}
+        >
+          {userOptions.map((provider) =>
+            !!provider ? (
+              <Provider
+                name={provider.name}
+                logo={provider.logo}
+                description={provider.description}
+                key={provider.name}
+                themeColors={themeColors}
+                onClick={provider.onClick}
+              />
+            ) : null
+          )}
+        </SModalCard>
+      </SModalContainer>
+    </SLightbox>
+  );
 }
 
 Modal.propTypes = {

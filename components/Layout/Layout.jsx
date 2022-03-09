@@ -19,18 +19,13 @@ const Wrapper = styled.div`
 `;
 
 export default function Layout({ children }) {
-  let { connected, modal } = useConnector();
-
-  // attempt to connect eagerly on mount
-  useEffect(() => {
-    // network.activate();
-  }, []);
+  let { modal } = useConnector();
 
   return (
     <Wrapper>
       <Header />
       <main>{children}</main>
-      {modal.Component}
+      {modal.render()}
     </Wrapper>
   );
 }

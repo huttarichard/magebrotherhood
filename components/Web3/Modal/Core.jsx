@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { useReducer } from "react";
 import { getThemeColors } from "./helpers";
 import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT } from "./constants";
 import { themesList } from "./themes";
@@ -6,9 +7,7 @@ import { EventController, ProviderController } from "./controllers";
 
 const INITIAL_STATE = { show: false };
 
-const Modal = dynamic(() => import("./Modal"), { ssr: false });
-
-const defaultOpts = {
+const defaultOptions = {
   lightboxOpacity: 0.4,
   theme: themesList.default.name,
   cacheProvider: false,
@@ -17,10 +16,15 @@ const defaultOpts = {
   network: "",
 };
 
+const Modal = dynamic(() => import("./Modal"), { ssr: false });
+
 export default class Core {
   constructor(opts) {
     this.show = INITIAL_STATE.show;
     this.eventController = new EventController();
+
+    // eslint-disable-next-line
+    const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
     this.connect = () =>
       new Promise(async (resolve, reject) => {
@@ -80,16 +84,15 @@ export default class Core {
       Object.keys(state).forEach((key) => {
         this[key] = state[key];
       });
-      await window.updateWeb3Modal(state);
+      forceUpdate();
     };
 
     this.resetState = () => this.updateState({ ...INITIAL_STATE });
 
     const options = {
-      ...defaultOpts,
+      ...defaultOptions,
       ...opts,
     };
-
     this.lightboxOpacity = options.lightboxOpacity;
     this.themeColors = getThemeColors(options.theme);
     this.providerController = new ProviderController({
@@ -151,7 +154,7 @@ export default class Core {
     await this.updateState({ themeColors: this.themeColors });
   }
 
-  get Component() {
+  render() {
     return (
       <Modal
         themeColors={this.themeColors}
@@ -159,6 +162,7 @@ export default class Core {
         onClose={this.onClose}
         resetState={this.resetState}
         lightboxOpacity={this.lightboxOpacity}
+        show={this.show}
       />
     );
   }
