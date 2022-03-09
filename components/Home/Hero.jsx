@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { useConnector } from "components/Web3/Connector";
 import Button from "../ui/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Wrapper = styled.div`
   position: relative;
@@ -48,7 +50,6 @@ const Model = styled.div`
   }
 
   @media (min-width: 768px) {
-    top: 68px;
     left: auto;
     /* width: 60vw; */
   }
@@ -230,6 +231,26 @@ const Actions = styled.div`
     position: absolute;
     top: 2rem;
     right: 2rem;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+    }
+
+    li {
+      margin-right: 2rem;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    a {
+      display: block;
+      color: #fff;
+    }
   }
 `;
 
@@ -276,7 +297,18 @@ export default function Hero() {
         </ul>
       </Main>
       <Actions>
-        <Button onClick={(e) => connector.connect()}>Connect wallet</Button>
+        <ul>
+          <li>
+            <a href="https://discord.com/" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+              <FontAwesomeIcon icon={faDiscord} size={"2x"} />
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <FontAwesomeIcon icon={faTwitter} size={"2x"} />
+            </a>
+          </li>
+        </ul>
       </Actions>
     </Wrapper>
   );

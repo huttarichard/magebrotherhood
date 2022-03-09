@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import Button from "components/ui/Button";
 
 const Wrapper = styled.div`
   display: none;
@@ -8,11 +9,6 @@ const Wrapper = styled.div`
   }
 `;
 
-const StyledButton = styled.button``;
-
 export default function HeaderWallet() {
-  // if (false) {
-  //   return <Wrapper>Wallet connected</Wrapper>;
-  // }
-  return <Wrapper>{/* <StyledButton onClick={() => connectWallet()}>Connect wallet</StyledButton> */}</Wrapper>;
+  return <Wrapper>{<Button>Connect wallet</Button>}</Wrapper>;
 }

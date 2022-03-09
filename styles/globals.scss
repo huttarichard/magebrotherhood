@@ -1,6 +1,6 @@
 // Your variable overrides
-// $body-bg: #000;
-// $body-color: #111;
+$body-bg: #111;
+$body-color: #fff;
 
 // Bootstrap and its default variables
 @import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -10,7 +10,6 @@
 
 body {
   font-family: 'Barlow Condensed', sans-serif;
-  background: #fff;
   color: black;
 }
 

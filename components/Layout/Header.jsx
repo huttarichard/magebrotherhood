@@ -91,19 +91,18 @@ const Brand = styled.div`
 const StyledNav = styled.nav`
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   bottom: 0;
   z-index: 999;
   display: flex;
   flex-direction: column;
   padding: 6rem 2rem 4rem;
-  transform: translateX(100%);
+  transform: translateX(-100%);
   transition: transform 0.3s;
   background: url("/images/navBg.png"), url("/images/navBg2.png");
   background-color: #111;
   background-repeat: no-repeat;
   background-size: contain;
-  /* mix-blend-mode: color-dodge; */
 
   .icon-wrapper {
     position: absolute;
@@ -151,6 +150,7 @@ const StyledNav = styled.nav`
     background-color: transparent;
     background: none;
     padding: 0;
+    flex: 1;
 
     .icon-wrapper {
       display: none;
@@ -172,12 +172,34 @@ const StyledNav = styled.nav`
   }
 `;
 
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0);
+  transition: all 0.3s;
+
+  &.toggled {
+    visibility: visible;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+  }
+
+  @media (min-width: 992px) {
+    display: none !important;
+  }
+`;
+
 export default function Header() {
   const [show, setShow] = useState(false);
   const navClass = show ? "toggled" : "";
 
   return (
     <StyledHeader>
+      <Backdrop className={navClass} onClick={() => setShow(false)} />
       <Brand>
         <Logo color="#fff" />
         <span>Mage Brotherhood</span>
