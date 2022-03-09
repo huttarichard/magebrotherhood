@@ -5,6 +5,7 @@ import Slider from "react-slick";
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

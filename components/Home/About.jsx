@@ -1,16 +1,27 @@
 import Image from "next/image";
+import Link from "next/link";
 import styled from "@emotion/styled";
 import Button from "components/ui/Button";
 import Slider from "react-slick";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
   background-color: #111;
+`;
+
+const Main = styled.div`
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const Header = styled.div`
@@ -68,6 +79,80 @@ const StyledSlide = styled.div`
   }
 `;
 
+const Footer = styled.footer`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background-color: #fff;
+
+  nav {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    a {
+      text-decoration: none;
+      font-family: "Bebas Neue", sans-serif;
+      color: #000;
+    }
+  }
+
+  > ul {
+    width: 50%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+
+    li {
+      margin-right: 1rem;
+    }
+
+    a {
+      color: #000;
+    }
+  }
+
+  span {
+    display: block;
+    width: 50%;
+    text-align: right;
+    font-family: "Bebas Neue", sans-serif;
+  }
+
+  @media (min-width: 992px) {
+    padding: 2rem 3rem;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    nav {
+      width: auto;
+      justify-content: flex-start;
+      margin-bottom: 0;
+
+      li {
+        margin-right: 1rem;
+      }
+    }
+
+    > ul {
+      width: auto;
+    }
+
+    span {
+      width: auto;
+    }
+  }
+`;
+
 const team = [
   {
     name: "Tamara roja",
@@ -94,12 +179,12 @@ const team = [
 const sliderConfig = {
   dots: false,
   infinite: false,
-  slidesToShow: 3.5,
+  slidesToShow: 4,
   responsive: [
     {
       breakpoint: 1200,
       settings: {
-        slidesToShow: 3.5,
+        slidesToShow: 4,
       },
     },
     {
@@ -120,35 +205,71 @@ const sliderConfig = {
 export default function About() {
   return (
     <Wrapper>
-      <Header>
-        <div className="text">
-          <h2>About Brotherhood</h2>
-          <p>
-            brotherhood is a collection of 10,000 unique brotherhood NFTs— unique digital collectibles living on the
-            Ethereum blockchain. Your brotherhood as your Yacht Club membership card, and grants access to members-only
-            benefits, the first of which is access to brotherhood, a collaborative graffiti board. Future areas and
-            perks can be unlocked by the community through roadmap activation.
-          </p>
-        </div>
-        <div className="actions">
-          <Button>Connect Wallet</Button>
-        </div>
-      </Header>
-      <StyledSlider>
-        <Slider {...sliderConfig}>
-          {team.map((person) => {
-            return (
-              <StyledSlide key={person.name}>
-                <div className="img-wrapper">
-                  <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
-                </div>
-                <h3>{person.name}</h3>
-                <span>{person.position}</span>
-              </StyledSlide>
-            );
-          })}
-        </Slider>
-      </StyledSlider>
+      <Main>
+        <Header>
+          <div className="text">
+            <h2>About Brotherhood</h2>
+            <p>
+              brotherhood is a collection of 10,000 unique brotherhood NFTs— unique digital collectibles living on the
+              Ethereum blockchain. Your brotherhood as your Yacht Club membership card, and grants access to
+              members-only benefits, the first of which is access to brotherhood, a collaborative graffiti board. Future
+              areas and perks can be unlocked by the community through roadmap activation.
+            </p>
+          </div>
+          <div className="actions">
+            <Button>Connect Wallet</Button>
+          </div>
+        </Header>
+        <StyledSlider>
+          <Slider {...sliderConfig}>
+            {team.map((person) => {
+              return (
+                <StyledSlide key={person.name}>
+                  <div className="img-wrapper">
+                    <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
+                  </div>
+                  <h3>{person.name}</h3>
+                  <span>{person.position}</span>
+                </StyledSlide>
+              );
+            })}
+          </Slider>
+        </StyledSlider>
+      </Main>
+      <Footer>
+        <nav>
+          <ul>
+            <li>
+              <Link href="/privacy-policy">
+                <a>Privacy Policy</a>
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms-of-use">
+                <a>Terms of use</a>
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact">
+                <a>Contact</a>
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <ul>
+          <li>
+            <a href="https://discord.com/" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+              <FontAwesomeIcon icon={faDiscord} />
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <FontAwesomeIcon icon={faTwitter} />
+            </a>
+          </li>
+        </ul>
+        <span>All rights reserved</span>
+      </Footer>
     </Wrapper>
   );
 }
