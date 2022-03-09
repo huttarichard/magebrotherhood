@@ -4,8 +4,8 @@ import Button from "../ui/Button";
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
-  background-color: #eee;
   overflow: hidden;
+  background-color: #eee;
 `;
 
 const Background = styled.div`
@@ -16,6 +16,18 @@ const Background = styled.div`
   left: 0;
   background: transparent url("/images/heroBg2.png") no-repeat;
   background-size: cover;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: transparent url("/images/heroGhost.png") no-repeat;
+    background-size: contain;
+    background-position: center left;
+  }
 
   @media (min-width: 1200px) {
     background-position-x: 10vw;
@@ -225,7 +237,7 @@ export default function Hero() {
     <Wrapper>
       <Background></Background>
       <Model>
-        {/* <model-viewer
+        <model-viewer
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"
@@ -233,7 +245,7 @@ export default function Hero() {
           environment-image="neutral"
           loading="eager"
           ar
-        /> */}
+        />
       </Model>
       <Main>
         <h1>

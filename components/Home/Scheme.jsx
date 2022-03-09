@@ -5,6 +5,7 @@ import Ecosystem from "./Ecosystem";
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
+  overflow: hidden;
   background-color: #111;
 
   svg {

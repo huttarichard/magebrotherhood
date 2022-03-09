@@ -4,6 +4,7 @@ import Slider from "react-slick";
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   background-color: #fff;
@@ -17,12 +18,34 @@ const Background = styled.div`
   left: 0;
 
   @media (min-width: 1200px) {
-    background-color: #9e18dd;
-    clip-path: polygon(0 0, 44% 0, 24% 66%, 100% 100%, 0 100%);
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: #9e18dd;
+      clip-path: polygon(0 0, 44% 0, 20% 68%, 100% 100%, 0 100%);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 50%;
+      bottom: 0;
+      left: 0;
+      z-index: 9;
+      background: transparent url("/images/roadmapKnight.png") no-repeat;
+      background-size: contain;
+      background-position: left bottom;
+    }
   }
 `;
 
 const Main = styled.div`
+  position: relative;
   width: 100%;
   padding-left: 2rem;
 
