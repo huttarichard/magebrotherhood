@@ -237,7 +237,7 @@ export default function Hero() {
     <Wrapper>
       <Background></Background>
       <Model>
-        {/* <model-viewer
+        <model-viewer
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"
@@ -245,7 +245,7 @@ export default function Hero() {
           environment-image="neutral"
           loading="eager"
           ar
-        /> */}
+        />
       </Model>
       <Main>
         <h1>
