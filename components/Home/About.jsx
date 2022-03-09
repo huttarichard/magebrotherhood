@@ -9,11 +9,20 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
+  padding-top: 6rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   background-color: #111;
+
+  @media (min-width: 992px) {
+    padding-top: 4rem;
+  }
+
+  @media (min-width: 1200px) {
+    padding-top: 0;
+  }
 `;
 
 const Main = styled.div`
@@ -25,6 +34,7 @@ const Main = styled.div`
 `;
 
 const Header = styled.div`
+  width: 100%;
   padding: 0 1rem;
   margin-bottom: 3rem;
 
@@ -45,10 +55,47 @@ const Header = styled.div`
   .actions {
     display: none;
   }
+
+  @media (min-width: 992px) {
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    .text {
+      flex: 1;
+      margin-right: 4rem;
+
+      p {
+        max-width: 1000px;
+      }
+    }
+
+    .actions {
+      display: block;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .text {
+      h2 {
+        font-size: 95px;
+      }
+
+      p {
+        font-size: 20px;
+      }
+    }
+  }
 `;
 
 const StyledSlider = styled.div`
   width: 100%;
+  margin-bottom: 6rem;
+
+  @media (min-width: 992px) {
+    margin-bottom: 0;
+  }
 `;
 
 const StyledSlide = styled.div`
@@ -149,6 +196,18 @@ const Footer = styled.footer`
 
     span {
       width: auto;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    nav {
+      a {
+        font-size: 25px;
+      }
+    }
+
+    span {
+      font-size: 25px;
     }
   }
 `;
