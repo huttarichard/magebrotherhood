@@ -1,5 +1,7 @@
 import Header from "./Header";
 import styled from "@emotion/styled";
+import { useEffect } from "react";
+import { useConnector } from "components/Web3/Connector";
 
 const Wrapper = styled.div`
   main {
@@ -17,10 +19,18 @@ const Wrapper = styled.div`
 `;
 
 export default function Layout({ children }) {
+  let { connected, modal } = useConnector();
+
+  // attempt to connect eagerly on mount
+  useEffect(() => {
+    // network.activate();
+  }, []);
+
   return (
     <Wrapper>
       <Header />
       <main>{children}</main>
+      {modal.Component}
     </Wrapper>
   );
 }

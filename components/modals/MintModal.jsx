@@ -108,8 +108,6 @@ export default function MintModal({ show, handleClose }) {
     steps.sending.processing = false;
     steps.sending.done = true;
 
-    console.log("steps after sending", steps);
-
     if (steps.sending.nextEvent) {
       steps[steps.sending.nextEvent].processing = true;
     }
@@ -180,8 +178,6 @@ export default function MintModal({ show, handleClose }) {
       quantity: 1,
     });
   };
-
-  console.log(steps);
 
   if (show) {
     return (

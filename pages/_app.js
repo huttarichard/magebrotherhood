@@ -1,18 +1,18 @@
 import Head from "next/head";
 import Script from "next/script";
-import { WalletContextProvider } from "../contexts/walletContext";
+import { Connector } from "components/Web3/Connector";
 import "../styles/globals.scss";
 
 function MageBrotherHoodApp({ Component, pageProps }) {
   return (
-    <WalletContextProvider>
+    <Connector>
       <Head>
         <title>Mage Brotherhood - Homepage</title>
       </Head>
       <Component {...pageProps} />
       <Script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" />
       <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" />
-    </WalletContextProvider>
+    </Connector>
   );
 }
 

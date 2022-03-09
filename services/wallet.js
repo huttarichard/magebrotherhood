@@ -25,7 +25,6 @@ export default class Wallet {
 
     //   this.web3 = new Web3(provider);
     // } catch (e) {
-    //   console.log(e);
     // }
   }
 

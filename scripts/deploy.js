@@ -19,7 +19,7 @@ async function main() {
 
   await coin.deployed();
 
-  console.log("Coin deployed to:", coin.address);
+  console.info("Coin deployed to:", coin.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
