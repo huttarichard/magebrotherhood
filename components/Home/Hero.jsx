@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useConnector } from "components/Web3/Connector";
+import { useConnector } from "components/web3/Connector";
 import Button from "../ui/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";

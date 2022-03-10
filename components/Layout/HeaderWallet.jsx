@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import Button from "components/ui/Button";
-import { useConnector } from "components/Web3/Connector";
+import { useConnector } from "components/web3/Connector";
 
 const Wrapper = styled.div`
   /* display: none;

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import Modal, { CONNECT_EVENT } from "./Modal";
+import Modal, { CONNECT_EVENT } from "./modal";
 import { ethers } from "ethers";
 
 export const ConnectorContext = createContext({

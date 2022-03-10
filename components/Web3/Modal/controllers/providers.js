@@ -51,23 +51,6 @@ export class ProviderController {
         package: providerInfo.package,
       };
     });
-
-    // parse custom providers
-    Object.keys(this.providerOptions)
-      .filter((key) => key.startsWith("custom-"))
-      .map((id) => {
-        if (id && this.providerOptions[id]) {
-          const options = this.providerOptions[id];
-          if (typeof options.display !== "undefined" && typeof options.connector !== "undefined") {
-            this.providers.push({
-              ...list.providers.FALLBACK,
-              id,
-              ...options.display,
-              connector: options.connector,
-            });
-          }
-        }
-      });
   }
 
   async connectTo(id, connector) {

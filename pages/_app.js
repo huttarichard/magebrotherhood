@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Script from "next/script";
-import { Connector } from "components/Web3/Connector";
+import { Connector } from "components/web3/Connector";
 import "../styles/globals.scss";
 
 function MageBrotherHoodApp({ Component, pageProps }) {

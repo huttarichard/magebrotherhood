@@ -103,6 +103,7 @@ export default class Core {
     });
     this.providerController.on(CONNECT_EVENT, (provider) => this.onConnect(provider));
     this.providerController.on(ERROR_EVENT, (error) => this.onError(error));
+    console.log(this.providerController.getUserOptions());
     this.userOptions = this.providerController.getUserOptions();
   }
 

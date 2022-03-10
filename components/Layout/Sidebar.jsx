@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
   faRectangleVerticalHistory,
+  faMoneyCheckDollar,
   faCoinBlank,
   faCartArrowDown,
   faCommentsQuestion,
@@ -231,6 +232,14 @@ export default function Header() {
               <a>
                 <FontAwesomeIcon icon={faCoinBlank} />
                 <span>Staking</span>
+              </a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/affiliate">
+              <a>
+                <FontAwesomeIcon icon={faMoneyCheckDollar} />
+                <span>Affiliate</span>
               </a>
             </Link>
           </li>
