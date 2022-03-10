@@ -79,7 +79,7 @@ const Header = styled.div`
   @media (min-width: 1200px) {
     .text {
       h2 {
-        font-size: 95px;
+        font-size: 5rem;
       }
 
       p {

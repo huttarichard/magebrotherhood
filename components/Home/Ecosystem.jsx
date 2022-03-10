@@ -1,5 +1,3 @@
-import styled from "@emotion/styled";
-
 export default function Ecosystem() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="1446" height="1582" viewBox="0 0 1446 1582" fill="none">
