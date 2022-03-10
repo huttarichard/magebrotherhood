@@ -61,7 +61,7 @@ const Header = styled.div`
   @media (min-width: 1200px) {
     .text {
       h2 {
-        font-size: 95px;
+        font-size: 5rem;
       }
 
       p {
@@ -172,7 +172,13 @@ export default function Collection() {
             return (
               <StyledSlide key={slide.title}>
                 <div className="img-wrapper">
-                  <Image src={slide.img} layout="fill" objectFit="cover" alt={slide.title} />
+                  <Image
+                    src={slide.img}
+                    layout="fill"
+                    objectFit="contain"
+                    objectPosition="left bottom"
+                    alt={slide.title}
+                  />
                 </div>
                 <h3>{slide.title}</h3>
                 <p>{slide.text}</p>

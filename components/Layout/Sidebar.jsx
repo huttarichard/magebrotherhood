@@ -109,8 +109,8 @@ const StyledNav = styled.nav`
 
   .icon-wrapper {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1.5rem;
+    right: 1.5rem;
   }
 
   ul {
