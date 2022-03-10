@@ -11,7 +11,6 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
         <title>Mage Brotherhood - Homepage</title>
       </Head>
       <Component {...pageProps} />
-      <Script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" />
       <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" />
     </div>
   );

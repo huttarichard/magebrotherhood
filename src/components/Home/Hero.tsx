@@ -3,6 +3,8 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 // import Button from "../ui/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import ModelViewerDynamic from "../ui/ModelViewerDynamic";
+
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
@@ -258,7 +260,7 @@ export default function Hero() {
     <Wrapper>
       <Background></Background>
       <Model>
-        <model-viewer
+        <ModelViewerDynamic
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"

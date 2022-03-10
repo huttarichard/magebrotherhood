@@ -1,10 +1,9 @@
-import "@google/model-viewer/lib/model-viewer";
-
 // import { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
 import Head from "next/head";
 import Image from "next/image";
 
 import Layout from "../../components/Layout/Layout";
+import ModelViewerDynamic from "../../components/ui/ModelViewerDynamic";
 
 export default function ID() {
   return (
@@ -75,7 +74,7 @@ export default function ID() {
             transition: transform 0.3s, opacity 0.3s;
           }
         `}</style>
-        <model-viewer
+        <ModelViewerDynamic
           class="min-h-[100vh] w-full"
           src="/assets/2.glb"
           ar
@@ -109,7 +108,7 @@ export default function ID() {
           <div id="ar-prompt">
             <Image src="https://modelviewer.dev/shared-assets/icons/hand.png" alt="hand" />
           </div>
-        </model-viewer>
+        </ModelViewerDynamic>
       </Layout>
     </>
   );

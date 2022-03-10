@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import React from "react";
 
 const StyledButton = styled.button`
   position: relative;
@@ -56,6 +57,6 @@ const StyledButton = styled.button`
   }
 `;
 
-export default function Button(props) {
+export default function Button(props: React.PropsWithChildren<any>) {
   return <StyledButton {...props}>{props.children}</StyledButton>;
 }
