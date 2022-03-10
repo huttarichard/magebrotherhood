@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
-// import Button from "../ui/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import Button from "../ui/Button";
+import React from "react";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
@@ -255,12 +256,13 @@ const Actions = styled.div`
   }
 `;
 
-export default function Hero() {
+export default function Hero(props: React.PropsWithChildren<{ leaving: boolean }>) {
   return (
     <Wrapper>
       <Background></Background>
       <Model>
         <ModelViewerDynamic
+          animating={!props.leaving}
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"

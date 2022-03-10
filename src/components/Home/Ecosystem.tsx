@@ -1,6 +1,6 @@
-export default function Ecosystem() {
+export default function Ecosystem(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1446" height="1582" viewBox="0 0 1446 1582" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1446" height="1582" viewBox="0 0 1446 1582" fill="none" {...props}>
       <g opacity=".5" style={{ mixBlendMode: "screen" }}>
         <path
           fill="url(#a)"

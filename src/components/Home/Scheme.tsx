@@ -46,11 +46,11 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function Scheme() {
+export default function Scheme(props: React.PropsWithChildren<{ leaving: boolean }>) {
   return (
     <Wrapper>
       <h2>Powerful Ecosystem</h2>
-      <Ecosystem />
+      <Ecosystem style={{ display: props.leaving ? "none" : "block" }} />
     </Wrapper>
   );
 }
