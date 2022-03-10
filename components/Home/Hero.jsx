@@ -75,14 +75,14 @@ const Model = styled.div`
 
 const Main = styled.div`
   position: absolute;
-  top: 22%;
+  top: 0px;
   right: 1rem;
-  bottom: 0;
+  bottom: 50px;
   left: 1rem;
   z-index: 9;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
   pointer-events: none;
 
   h1 {
@@ -273,28 +273,30 @@ export default function Hero() {
         />
       </Model>
       <Main>
-        <h1>
-          Play for victory, earn <span>rewards.</span>
-        </h1>
-        <p>NFT P2E game powered by blockchain enhanced by AR</p>
-        <ul>
-          <li>
-            <span>8K</span>
-            <span>NFT LEFT</span>
-          </li>
-          {/* <li>
+        <div>
+          <h1>
+            Play for victory, earn <span>rewards.</span>
+          </h1>
+          <p>NFT P2E game powered by blockchain enhanced by AR</p>
+          <ul>
+            <li>
+              <span>8K</span>
+              <span>NFT LEFT</span>
+            </li>
+            {/* <li>
             <span>123</span>
             <span>GOVERNORS</span>
           </li> */}
-          <li>
-            <span>$.0001</span>
-            <span>BROTHERHOOD COIN</span>
-          </li>
-          {/* <li>
+            <li>
+              <span>$.0001</span>
+              <span>BROTHERHOOD COIN</span>
+            </li>
+            {/* <li>
             <span>2K</span>
             <span>Artists</span>
           </li> */}
-        </ul>
+          </ul>
+        </div>
       </Main>
       <Actions>
         <ul>
