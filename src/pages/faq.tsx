@@ -1,8 +1,8 @@
 import Head from "next/head";
 
-import Layout from "../../components/Layout/Layout";
+import Layout from "../components/Layout/Layout";
 
-export default function CollectionsIndex() {
+export default function FAQ() {
   return (
     <>
       <Head>
@@ -10,7 +10,7 @@ export default function CollectionsIndex() {
       </Head>
 
       <Layout>
-        <h1>Collections</h1>
+        <h1>FAQ</h1>
       </Layout>
     </>
   );
