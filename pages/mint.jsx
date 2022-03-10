@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "../components/Layout/Layout";
-import MintModal from "../components/modals/MintModal";
+import MintModal from "../components/modals/MintModal.jsx";
 
 export default function Mint() {
   const [showModal, setShowModal] = useState(true);

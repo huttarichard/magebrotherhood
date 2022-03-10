@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import styled from "@emotion/styled";
-import { WalletContext } from "../../contexts/walletContext";
+// import { WalletContext } from "../../contexts/walletContext";
 
 const ModalBase = styled.div`
   position: fixed;
@@ -89,7 +89,7 @@ const initialSteps = [
 export default function MintModal({ show, handleClose }) {
   const [steps, setSteps] = useState({ ...eventSteps });
 
-  const { wallet } = useContext(WalletContext);
+  // const { wallet } = useContext(WalletContext);
 
   const handleError = (error, receipt) => {
     const currentStepIndex = steps.findIndex((s) => s.processing === true);
@@ -168,15 +168,15 @@ export default function MintModal({ show, handleClose }) {
 
     setSteps(foo);
 
-    wallet.mint({
-      callbacks: {
-        sending: handleSending,
-        transactionHash: handleTransactionHash,
-        receipt: handleReceipt,
-        // error: handleError,
-      },
-      quantity: 1,
-    });
+    // wallet.mint({
+    //   callbacks: {
+    //     sending: handleSending,
+    //     transactionHash: handleTransactionHash,
+    //     receipt: handleReceipt,
+    //     // error: handleError,
+    //   },
+    //   quantity: 1,
+    // });
   };
 
   if (show) {

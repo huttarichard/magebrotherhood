@@ -35,6 +35,7 @@ const StyledHeader = styled.header`
     align-items: flex-start;
     box-sizing: border-box;
     padding: 3rem 2rem;
+    box-shadow: 0px 0px 20px 1px #ffffff0f;
 
     > .icon-wrapper {
       display: none;
