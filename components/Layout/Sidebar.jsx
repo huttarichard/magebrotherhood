@@ -25,6 +25,7 @@ const StyledHeader = styled.header`
   justify-content: space-between;
   padding: 1rem;
   background-color: #111;
+  height: 80px;
 
   @media (min-width: 992px) {
     position: relative;
@@ -46,7 +47,6 @@ const StyledHeader = styled.header`
       right: 0;
       bottom: 0;
       left: 0;
-      /* background: url("/images/navBg.png"), url("/images/navBg2.png"); */
       background-repeat: no-repeat;
       background-size: 100% auto;
       mix-blend-mode: color-dodge;
@@ -70,20 +70,22 @@ const Brand = styled.div`
     font-family: "Bebas Neue", sans-serif;
     color: #fff;
     letter-spacing: 1px;
-    max-width: 85px;
+    max-width: 100%;
+    font-size: 22px;
   }
 
   @media (min-width: 992px) {
     margin-bottom: 5rem;
 
     svg {
-      width: 77px;
-      height: 77px;
+      width: 70px;
+      height: 70px;
     }
 
     span {
-      font-size: 34px;
-      max-width: 160px;
+      font-size: 28px;
+      line-height: 28px;
+      max-width: 159px;
     }
   }
 `;
@@ -91,7 +93,7 @@ const Brand = styled.div`
 const StyledNav = styled.nav`
   position: fixed;
   top: 0;
-  left: 0;
+  left: -1px;
   bottom: 0;
   z-index: 999;
   display: flex;
@@ -99,10 +101,10 @@ const StyledNav = styled.nav`
   padding: 6rem 2rem 4rem;
   transform: translateX(-100%);
   transition: transform 0.3s;
-  background: url("/images/navBg.png"), url("/images/navBg2.png");
   background-color: #111;
   background-repeat: no-repeat;
   background-size: contain;
+  justify-content: space-between;
 
   .icon-wrapper {
     position: absolute;
@@ -128,7 +130,7 @@ const StyledNav = styled.nav`
     text-transform: uppercase;
     font-family: "Bebas Neue", sans-serif;
     letter-spacing: 1px;
-    font-size: 18px;
+    font-size: 22px;
 
     svg {
       display: inline-block;
@@ -256,8 +258,8 @@ export default function Header() {
             </Link>
           </li>
         </ul>
+        <HeaderWallet />
       </StyledNav>
-      <HeaderWallet />
       <Icon name="burger" stroke="#fff" size={32} onClick={() => setShow(true)} />
     </StyledHeader>
   );

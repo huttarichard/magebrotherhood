@@ -1,4 +1,4 @@
-import Header from "./Header";
+import Sidebar from "./Sidebar";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
 import { useConnector } from "components/Web3/Connector";
@@ -23,7 +23,7 @@ export default function Layout({ children }) {
 
   return (
     <Wrapper>
-      <Header />
+      <Sidebar />
       <main>{children}</main>
       {modal.render()}
     </Wrapper>
