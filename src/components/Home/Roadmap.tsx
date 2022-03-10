@@ -25,6 +25,7 @@ const Background = styled.div`
       right: 0;
       bottom: 0;
       left: 0;
+      z-index: 9;
       background-color: #9e18dd;
       clip-path: polygon(0 0, 44% 0, 20% 68%, 100% 100%, 0 100%);
     }
@@ -61,6 +62,10 @@ const Main = styled.div`
 
     h2 {
       font-size: 95px;
+    }
+
+    .slick-list {
+      overflow: visible;
     }
   }
 `;
