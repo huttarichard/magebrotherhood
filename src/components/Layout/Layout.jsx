@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import styled from "@emotion/styled";
-import { useEffect } from "react";
-import { useConnector } from "components/web3/Connector";
+// import { useEffect } from "react";
+// import { useConnector } from "components/web3/Connector";
 
 const Wrapper = styled.div`
   main {
@@ -19,13 +19,13 @@ const Wrapper = styled.div`
 `;
 
 export default function Layout({ children }) {
-  let { modal } = useConnector();
+  // let { modal } = useConnector();
 
   return (
     <Wrapper>
       <Sidebar />
       <main>{children}</main>
-      {modal.render()}
+      {/* {modal.render()} */}
     </Wrapper>
   );
 }

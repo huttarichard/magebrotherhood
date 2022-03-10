@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import Button from "components/ui/Button";
-import { useConnector } from "components/web3/Connector";
 
 const Wrapper = styled.div`
   /* display: none;
@@ -11,10 +10,10 @@ const Wrapper = styled.div`
 `;
 
 export default function HeaderWallet() {
-  let connector = useConnector();
+  // let connector = useConnector();
 
   let handleConnect = async () => {
-    await connector.connect();
+    // await connector.connect();
   };
 
   return (

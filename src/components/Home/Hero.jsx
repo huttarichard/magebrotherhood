@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { useConnector } from "components/web3/Connector";
-import Button from "../ui/Button";
+// import Button from "../ui/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
@@ -255,9 +254,6 @@ const Actions = styled.div`
 `;
 
 export default function Hero() {
-  let connector = useConnector();
-  console.log(connector);
-
   return (
     <Wrapper>
       <Background></Background>
