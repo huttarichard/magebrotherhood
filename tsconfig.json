@@ -30,6 +30,9 @@
     "baseUrl": "src",
     "incremental": true
   },
+  "files": [
+    "next-env.d.ts"
+  ],
   "exclude": [
     "node_modules"
   ],
