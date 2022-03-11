@@ -85,6 +85,7 @@ const Main = styled.div`
   flex-direction: column;
   justify-content: center;
   pointer-events: none;
+  color: ${({ theme }) => theme.text2};
 
   h1 {
     text-transform: uppercase;
@@ -94,8 +95,9 @@ const Main = styled.div`
     margin: 0 0 2rem;
 
     span {
-      display: inline-block;
       padding-right: 5px;
+      display: inline-block;
+      background: linear-gradient(#8d11db, #ec12f9);
       background: -webkit-linear-gradient(#8d11db, #ec12f9);
       background-clip: text;
       -webkit-background-clip: text;
@@ -127,6 +129,7 @@ const Main = styled.div`
 
         &:first-of-type {
           font-size: 42px;
+          background: linear-gradient(#8d11db, #ec12f9);
           background: -webkit-linear-gradient(#8d11db, #ec12f9);
           background-clip: text;
           -webkit-background-clip: text;

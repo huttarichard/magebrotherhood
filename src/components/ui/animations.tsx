@@ -1,0 +1,68 @@
+import { css, keyframes } from "@emotion/react";
+
+export const float = keyframes`
+	0% {
+		transform: translatey(0);
+	}
+	50% {
+		transform: translatey(-5px);
+	}
+	100% {
+		transform: translatey(0);
+	}
+`;
+
+export const brighten = keyframes`
+	0% {
+	  filter: brightness(1);
+	}
+	50% {
+		filter: brightness(1.3);
+	}
+	100% {
+		filter: brightness(1);
+	}
+`;
+
+export const glow = keyframes`
+  0% {
+    filter: drop-shadow(0 0 0 #fff);
+	}
+	50% {
+    filter: drop-shadow(0 0 2px #fff);
+	}
+	100% {
+    filter: drop-shadow(0 0 0 #fff);
+	}
+`;
+
+export const animations = css`
+  .sg0 {
+    animation: ${float} 2s ease-in-out infinite;
+  }
+
+  .sg1 {
+    animation: ${float} 2s ease-in-out infinite;
+    // animation-delay: 0.05s;
+  }
+
+  .sg2 {
+    animation: ${float} 2s ease-in-out infinite;
+  }
+
+  .sg3 {
+    animation: ${float} 2s ease-in-out infinite;
+  }
+
+  .sg4 {
+    animation: ${float} 2s ease-in-out infinite;
+  }
+
+  .raysg {
+    animation: ${brighten} 2s ease-in-out infinite;
+  }
+
+  .text-game-white {
+    animation: ${glow} 2s ease-in-out infinite;
+  }
+`;

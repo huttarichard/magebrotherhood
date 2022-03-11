@@ -7,7 +7,8 @@ const Wrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.bg2};
+  color: ${({ theme }) => theme.text2};
 `;
 
 const Background = styled.div`

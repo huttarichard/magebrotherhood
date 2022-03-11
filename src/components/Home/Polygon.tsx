@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   background: #fff url("/images/polygonLogo.png") no-repeat;
   background-size: contain;
   background-position: center;
+  color: ${({ theme }) => theme.text2};
 `;
 
 const Main = styled.div`
