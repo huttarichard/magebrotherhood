@@ -43,13 +43,10 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "prettier/prettier": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "react/react-in-jsx-scope": "off",
-    "object-shorthand": ["error", "always"],
     "no-restricted-imports": [
       "error",
       {
@@ -59,22 +56,9 @@ module.exports = {
             message: "Please import from '@ethersproject/module' directly to support tree-shaking.",
           },
           {
-            name: "styled-components",
-            message: "Please import from styled-components/macro.",
-          },
-          {
             name: "@lingui/macro",
             importNames: ["t"],
             message: "Please use <Trans> instead of t.",
-          },
-        ],
-        patterns: [
-          {
-            group: ["**/dist"],
-            message: "Do not import from dist/ - this is an implementation detail, and breaks tree-shaking.",
-          },
-          {
-            group: ["!styled-components/macro"],
           },
         ],
       },
@@ -84,6 +68,12 @@ module.exports = {
     {
       files: ["hardhat.config.js"],
       globals: { task: true },
+    },
+    {
+      files: ["**/*.stories.tsx"],
+      rules: {
+        "import/no-anonymous-default-export": "off",
+      },
     },
   ],
 };

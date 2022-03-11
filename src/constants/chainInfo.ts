@@ -1,11 +1,11 @@
-import { SupportedChainId } from "./chains";
+import { ChainId } from "./chains";
 
 export enum NetworkType {
   L1,
   L2,
 }
 
-interface BaseChainInfo {
+interface ChainInfo {
   readonly networkType: NetworkType;
   readonly docs: string;
   readonly bridge?: string;
@@ -19,45 +19,45 @@ interface BaseChainInfo {
   };
 }
 
-export type ChainInfoMap = { readonly [chainId: number]: BaseChainInfo };
+export type ChainInfoMap = { readonly [chainId: number]: ChainInfo };
 
 export const CHAIN_INFO: ChainInfoMap = {
-  [SupportedChainId.MAINNET]: {
+  [ChainId.MAINNET]: {
     networkType: NetworkType.L1,
     docs: "https://docs.uniswap.org/",
     explorer: "https://etherscan.io/",
     label: "Ethereum",
     nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   },
-  [SupportedChainId.RINKEBY]: {
+  [ChainId.RINKEBY]: {
     networkType: NetworkType.L1,
     docs: "https://docs.uniswap.org/",
     explorer: "https://rinkeby.etherscan.io/",
     label: "Rinkeby",
     nativeCurrency: { name: "Rinkeby Ether", symbol: "rETH", decimals: 18 },
   },
-  [SupportedChainId.ROPSTEN]: {
+  [ChainId.ROPSTEN]: {
     networkType: NetworkType.L1,
     docs: "https://docs.uniswap.org/",
     explorer: "https://ropsten.etherscan.io/",
     label: "Ropsten",
     nativeCurrency: { name: "Ropsten Ether", symbol: "ropETH", decimals: 18 },
   },
-  [SupportedChainId.KOVAN]: {
+  [ChainId.KOVAN]: {
     networkType: NetworkType.L1,
     docs: "https://docs.uniswap.org/",
     explorer: "https://kovan.etherscan.io/",
     label: "Kovan",
     nativeCurrency: { name: "Kovan Ether", symbol: "kovETH", decimals: 18 },
   },
-  [SupportedChainId.GOERLI]: {
+  [ChainId.GOERLI]: {
     networkType: NetworkType.L1,
     docs: "https://docs.uniswap.org/",
     explorer: "https://goerli.etherscan.io/",
     label: "Görli",
     nativeCurrency: { name: "Görli Ether", symbol: "görETH", decimals: 18 },
   },
-  [SupportedChainId.OPTIMISM]: {
+  [ChainId.OPTIMISM]: {
     networkType: NetworkType.L2,
     bridge: "https://gateway.optimism.io/?chainId=1",
     docs: "https://optimism.io/",
@@ -66,7 +66,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     helpCenterUrl: "https://help.uniswap.org/en/collections/3137778-uniswap-on-optimistic-ethereum-oξ",
     nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   },
-  [SupportedChainId.OPTIMISTIC_KOVAN]: {
+  [ChainId.OPTIMISTIC_KOVAN]: {
     networkType: NetworkType.L2,
     bridge: "https://gateway.optimism.io/",
     docs: "https://optimism.io/",
@@ -75,7 +75,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     helpCenterUrl: "https://help.uniswap.org/en/collections/3137778-uniswap-on-optimistic-ethereum-oξ",
     nativeCurrency: { name: "Optimistic Kovan Ether", symbol: "kovOpETH", decimals: 18 },
   },
-  [SupportedChainId.ARBITRUM_ONE]: {
+  [ChainId.ARBITRUM_ONE]: {
     networkType: NetworkType.L2,
     bridge: "https://bridge.arbitrum.io/",
     docs: "https://offchainlabs.com/",
@@ -84,7 +84,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     helpCenterUrl: "https://help.uniswap.org/en/collections/3137787-uniswap-on-arbitrum",
     nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   },
-  [SupportedChainId.ARBITRUM_RINKEBY]: {
+  [ChainId.ARBITRUM_RINKEBY]: {
     networkType: NetworkType.L2,
     bridge: "https://bridge.arbitrum.io/",
     docs: "https://offchainlabs.com/",
@@ -93,7 +93,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     helpCenterUrl: "https://help.uniswap.org/en/collections/3137787-uniswap-on-arbitrum",
     nativeCurrency: { name: "Rinkeby Arbitrum Ether", symbol: "rinkArbETH", decimals: 18 },
   },
-  [SupportedChainId.POLYGON]: {
+  [ChainId.POLYGON]: {
     networkType: NetworkType.L1,
     bridge: "https://wallet.polygon.technology/bridge",
     docs: "https://polygon.io/",
@@ -101,7 +101,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     label: "Polygon",
     nativeCurrency: { name: "Polygon Matic", symbol: "MATIC", decimals: 18 },
   },
-  [SupportedChainId.POLYGON_MUMBAI]: {
+  [ChainId.POLYGON_MUMBAI]: {
     networkType: NetworkType.L1,
     bridge: "https://wallet.polygon.technology/bridge",
     docs: "https://polygon.io/",

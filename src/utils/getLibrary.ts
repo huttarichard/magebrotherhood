@@ -1,13 +1,13 @@
 import { Web3Provider } from "@ethersproject/providers";
 import ms from "ms.macro";
 
-import { SupportedChainId } from "../constants/chains";
+import { ChainId } from "../constants/chains";
 
 const NETWORK_POLLING_INTERVALS: { [chainId: number]: number } = {
-  [SupportedChainId.ARBITRUM_ONE]: ms`1s`,
-  [SupportedChainId.ARBITRUM_RINKEBY]: ms`1s`,
-  [SupportedChainId.OPTIMISM]: ms`1s`,
-  [SupportedChainId.OPTIMISTIC_KOVAN]: ms`1s`,
+  [ChainId.ARBITRUM_ONE]: ms`1s`,
+  [ChainId.ARBITRUM_RINKEBY]: ms`1s`,
+  [ChainId.OPTIMISM]: ms`1s`,
+  [ChainId.OPTIMISTIC_KOVAN]: ms`1s`,
 };
 
 export default function getLibrary(provider: any): Web3Provider {

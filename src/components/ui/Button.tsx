@@ -3,9 +3,11 @@ import React from "react";
 
 const StyledButton = styled.button`
   position: relative;
+  height: 50px;
   padding: 0 40px;
   border: 0;
   background: #fff;
+  color: black;
   text-transform: uppercase;
   line-height: 44px;
   border-left: solid 5px #00ff29;

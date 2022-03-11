@@ -1,7 +1,7 @@
 /**
  * List of all the networks supported by the Uniswap Interface
  */
-export enum SupportedChainId {
+export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,
   RINKEBY = 4,
@@ -19,44 +19,44 @@ export enum SupportedChainId {
 }
 
 export const CHAIN_IDS_TO_NAMES = {
-  [SupportedChainId.MAINNET]: "mainnet",
-  [SupportedChainId.ROPSTEN]: "ropsten",
-  [SupportedChainId.RINKEBY]: "rinkeby",
-  [SupportedChainId.GOERLI]: "goerli",
-  [SupportedChainId.KOVAN]: "kovan",
-  [SupportedChainId.POLYGON]: "polygon",
-  [SupportedChainId.POLYGON_MUMBAI]: "polygon_mumbai",
-  [SupportedChainId.ARBITRUM_ONE]: "arbitrum",
-  [SupportedChainId.ARBITRUM_RINKEBY]: "arbitrum_rinkeby",
-  [SupportedChainId.OPTIMISM]: "optimism",
-  [SupportedChainId.OPTIMISTIC_KOVAN]: "optimistic_kovan",
+  [ChainId.MAINNET]: "mainnet",
+  [ChainId.ROPSTEN]: "ropsten",
+  [ChainId.RINKEBY]: "rinkeby",
+  [ChainId.GOERLI]: "goerli",
+  [ChainId.KOVAN]: "kovan",
+  [ChainId.POLYGON]: "polygon",
+  [ChainId.POLYGON_MUMBAI]: "polygon_mumbai",
+  [ChainId.ARBITRUM_ONE]: "arbitrum",
+  [ChainId.ARBITRUM_RINKEBY]: "arbitrum_rinkeby",
+  [ChainId.OPTIMISM]: "optimism",
+  [ChainId.OPTIMISTIC_KOVAN]: "optimistic_kovan",
 };
 
 /**
  * Array of all the supported chain IDs
  */
-export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(SupportedChainId).filter(
+export const ALL_SUPPORTED_CHAIN_IDS: ChainId[] = Object.values(ChainId).filter(
   (id) => typeof id === "number"
-) as SupportedChainId[];
+) as ChainId[];
 
 export const SUPPORTED_GAS_ESTIMATE_CHAIN_IDS = [
-  SupportedChainId.MAINNET,
-  SupportedChainId.POLYGON,
-  SupportedChainId.OPTIMISM,
-  SupportedChainId.ARBITRUM_ONE,
+  ChainId.MAINNET,
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.ARBITRUM_ONE,
 ];
 
 /**
  * All the chain IDs that are running the Ethereum protocol.
  */
 export const L1_CHAIN_IDS = [
-  SupportedChainId.MAINNET,
-  SupportedChainId.ROPSTEN,
-  SupportedChainId.RINKEBY,
-  SupportedChainId.GOERLI,
-  SupportedChainId.KOVAN,
-  SupportedChainId.POLYGON,
-  SupportedChainId.POLYGON_MUMBAI,
+  ChainId.MAINNET,
+  ChainId.ROPSTEN,
+  ChainId.RINKEBY,
+  ChainId.GOERLI,
+  ChainId.KOVAN,
+  ChainId.POLYGON,
+  ChainId.POLYGON_MUMBAI,
 ] as const;
 
 export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number];
@@ -66,10 +66,10 @@ export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number];
  * The expectation is that all of these networks have immediate transaction confirmation.
  */
 export const L2_CHAIN_IDS = [
-  SupportedChainId.ARBITRUM_ONE,
-  SupportedChainId.ARBITRUM_RINKEBY,
-  SupportedChainId.OPTIMISM,
-  SupportedChainId.OPTIMISTIC_KOVAN,
+  ChainId.ARBITRUM_ONE,
+  ChainId.ARBITRUM_RINKEBY,
+  ChainId.OPTIMISM,
+  ChainId.OPTIMISTIC_KOVAN,
 ] as const;
 
 export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number];

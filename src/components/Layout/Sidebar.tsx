@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import {
   faArrowsLeftRight,
+  faBurger,
   faCartArrowDown,
+  faClose,
   faCoinBlank,
   faCommentsQuestion,
   faHouse,
@@ -9,7 +11,6 @@ import {
   faRectangleVerticalHistory,
 } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Icon from "awesome-react-icons";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -28,6 +29,7 @@ const StyledHeader = styled.header`
   padding: 1rem;
   background-color: #111;
   height: 80px;
+  padding: 0 20px;
 
   @media (min-width: 992px) {
     position: relative;
@@ -210,7 +212,7 @@ export default function Header() {
         <span>Mage Brotherhood</span>
       </Brand>
       <StyledNav className={navClass}>
-        <Icon name="x" size={32} onClick={() => setShow(false)} />
+        <FontAwesomeIcon className="icon-wrapper" icon={faClose} onClick={() => setShow(false)} />
         <ul>
           <li>
             <Link href="/">
@@ -271,7 +273,7 @@ export default function Header() {
         </ul>
         <HeaderWallet />
       </StyledNav>
-      <Icon name="burger" stroke="#fff" size={32} onClick={() => setShow(true)} />
+      <FontAwesomeIcon className="icon-wrapper" icon={faBurger} onClick={() => setShow(true)} />
     </StyledHeader>
   );
 }
