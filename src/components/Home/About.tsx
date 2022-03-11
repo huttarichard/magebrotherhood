@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/ui/Button";
 import Image from "next/image";
 import Link from "next/link";
-import Slider from "react-slick";
+import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
@@ -27,10 +27,15 @@ const Wrapper = styled.div`
 
 const Main = styled.div`
   width: 100%;
+  box-sizing: border-box;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  @media (min-width: 992px) {
+    padding-right: 2rem;
+  }
 `;
 
 const Header = styled.div`
@@ -40,6 +45,7 @@ const Header = styled.div`
 
   .text {
     h2 {
+      margin: 0 0 2rem;
       color: #fff;
       font-family: "Bebas Neue", sans-serif;
       font-weight: 400;
@@ -72,7 +78,6 @@ const Header = styled.div`
 
     .actions {
       display: block;
-      padding-right: 2rem;
     }
   }
 
@@ -95,19 +100,19 @@ const StyledSlider = styled.div`
 
   @media (min-width: 992px) {
     margin-bottom: 0;
+    margin-right: 2rem;
   }
 `;
 
 const StyledSlide = styled.div`
-  padding-right: 2rem;
-
   .img-wrapper {
     position: relative;
     height: 300px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   h3 {
+    margin: 0 0 0.5rem;
     color: ${({ theme }) => theme.primary1};
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
@@ -235,30 +240,20 @@ const team = [
   },
 ];
 
-const sliderConfig = {
-  dots: false,
-  infinite: false,
-  slidesToShow: 4,
-  responsive: [
-    {
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 4,
-      },
+const sliderConfig: SwiperProps = {
+  slidesPerView: 1.5,
+  spaceBetween: 50,
+  breakpoints: {
+    500: {
+      slidesPerView: 1.5,
     },
-    {
-      breakpoint: 992,
-      settings: {
-        slidesToShow: 2.5,
-      },
+    992: {
+      slidesPerView: 2.5,
     },
-    {
-      breakpoint: 500,
-      settings: {
-        slidesToShow: 1.5,
-      },
+    1200: {
+      slidesPerView: 4,
     },
-  ],
+  },
 };
 
 export default function About() {
@@ -280,19 +275,21 @@ export default function About() {
           </div>
         </Header>
         <StyledSlider>
-          <Slider {...sliderConfig}>
+          <Swiper {...sliderConfig}>
             {team.map((person) => {
               return (
-                <StyledSlide key={person.name}>
-                  <div className="img-wrapper">
-                    <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
-                  </div>
-                  <h3>{person.name}</h3>
-                  <span>{person.position}</span>
-                </StyledSlide>
+                <SwiperSlide key={person.name}>
+                  <StyledSlide>
+                    <div className="img-wrapper">
+                      <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
+                    </div>
+                    <h3>{person.name}</h3>
+                    <span>{person.position}</span>
+                  </StyledSlide>
+                </SwiperSlide>
               );
             })}
-          </Slider>
+          </Swiper>
         </StyledSlider>
       </Main>
       <Footer>
