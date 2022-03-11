@@ -13,7 +13,7 @@ import ReactFullpage from "../components/ReactFullPage";
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const handleOnLeave = (origin: any, destination: any, direction: any) => {
+  const handleOnLeave = (origin: any, destination: any) => {
     setCurrentIndex(destination.index);
   };
 

@@ -72,7 +72,7 @@ const StyledDialogContent = styled(AnimatedDialogContent, { shouldForwardProp: i
         min-height: ${minHeight}vh;
       `}
     display: flex;
-    border-radius: ${(props) => props.theme.borderRadius};
+    border-radius: ${({ theme }) => theme.borderRadius};
 
     ${({ mobile, theme }) =>
       mobile &&

@@ -10,8 +10,8 @@ const StyledButton = styled.button`
   color: black;
   text-transform: uppercase;
   line-height: 44px;
-  border-left: solid 5px #00ff29;
-  border-right: solid 5px #ec12f9;
+  border-left: solid 5px ${({ theme }) => theme.primary3};
+  border-right: solid 5px ${({ theme }) => theme.primary1};
   clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
   font-family: "Bebas Neue", sans-serif;
   font-size: 19px;
@@ -27,7 +27,7 @@ const StyledButton = styled.button`
       position: absolute;
       left: 2px;
       width: 100%;
-      text-shadow: -1px 0 #ec12f9;
+      text-shadow: -1px 0 ${({ theme }) => theme.primary1};
       top: 0;
       color: #000;
       background: #fff;
@@ -41,7 +41,7 @@ const StyledButton = styled.button`
       position: absolute;
       left: -2px;
       width: 100%;
-      text-shadow: 1px 0 #00ff29;
+      text-shadow: 1px 0 ${({ theme }) => theme.primary3};
       top: 0;
       color: #000;
       background: #fff;
@@ -60,7 +60,7 @@ const StyledButton = styled.button`
     height: 0;
     border-style: solid;
     border-width: 22px 22px 0 0;
-    border-color: #00ff29 transparent transparent transparent;
+    border-color: ${({ theme }) => theme.primary3} transparent transparent transparent;
   }
 
   &::after {
@@ -72,14 +72,14 @@ const StyledButton = styled.button`
     height: 0;
     border-style: solid;
     border-width: 0 0 22px 22px;
-    border-color: transparent transparent #ec12f9 transparent;
+    border-color: transparent transparent ${({ theme }) => theme.primary1} transparent;
   }
 
   @media (min-width: 992px) {
     line-height: 50px;
     font-size: 22px;
-    border-left: solid 7px #00ff29;
-    border-right: solid 7px #ec12f9;
+    border-left: solid 7px ${({ theme }) => theme.primary3};
+    border-right: solid 7px ${({ theme }) => theme.primary1};
     clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
 
     &::before {
@@ -224,7 +224,7 @@ const StyledButton = styled.button`
   }
 `;
 
-export default function Button(props: React.PropsWithChildren<any>) {
+export default function Button(props: React.PropsWithChildren<{ text: string }>) {
   return (
     <StyledButton {...props}>
       <span data-text={props.text}>{props.text}</span>
