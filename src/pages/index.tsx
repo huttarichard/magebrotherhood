@@ -1,4 +1,3 @@
-import type { fullpageApi } from "@fullpage/react-fullpage";
 import Head from "next/head";
 import { useState } from "react";
 
@@ -12,16 +11,20 @@ import Layout from "../components/Layout/Layout";
 import ReactFullpage from "../components/ReactFullPage";
 
 export default function Home() {
-  const [leaving, setLeaving] = useState<boolean>(true);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const render = (comp: { state: any; fullpageApi: fullpageApi }) => {
+  const handleOnLeave = (origin: any, destination: any, direction: any) => {
+    setCurrentIndex(destination.index);
+  };
+
+  const render = () => {
     return (
       <ReactFullpage.Wrapper>
         <div className="section">
-          <Hero leaving={leaving} />
+          <Hero active={currentIndex === 0} />
         </div>
         <div className="section">
-          <Scheme leaving={leaving} />
+          <Scheme active={currentIndex === 1} />
         </div>
         <div className="section">
           <Polygon />
@@ -46,12 +49,7 @@ export default function Home() {
       </Head>
 
       <Layout>
-        <ReactFullpage
-          onLeave={() => setLeaving(true)}
-          afterLoad={() => setLeaving(false)}
-          scrollingSpeed={800}
-          render={render}
-        />
+        <ReactFullpage onLeave={handleOnLeave} scrollingSpeed={800} render={render} />
       </Layout>
     </>
   );

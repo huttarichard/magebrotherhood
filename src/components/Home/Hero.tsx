@@ -255,13 +255,13 @@ const Actions = styled.div`
   }
 `;
 
-export default function Hero(props: React.PropsWithChildren<{ leaving: boolean }>) {
+export default function Hero(props: React.PropsWithChildren<{ active: boolean }>) {
   return (
     <Wrapper>
       <Background></Background>
       <Model>
         <ModelViewerDynamic
-          animating={!props.leaving}
+          animating={props.active}
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"

@@ -20,11 +20,26 @@ const Wrapper = styled.div`
     text-align: center;
   }
 
-  svg {
+  .scheme-wrapper {
     flex: 1;
-    height: 100%;
-    max-width: 100%;
-    max-height: 70vh;
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    svg {
+      height: 100%;
+      width: 100%;
+    }
+
+    &.visible {
+      opacity: 1;
+      transition: opacity 1s;
+      transition-delay: 0.4s;
+    }
+  }
+
+  p {
+    padding: 0 1rem;
+    color: #fff;
   }
 
   @media (min-width: 992px) {
@@ -46,11 +61,17 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function Scheme(props: React.PropsWithChildren<{ leaving: boolean }>) {
+export default function Scheme(props: React.PropsWithChildren<{ active: boolean }>) {
   return (
     <Wrapper>
       <h2>Powerful Ecosystem</h2>
-      <Ecosystem style={{ display: props.leaving ? "none" : "block" }} />
+      <div className={`scheme-wrapper ${props.active ? "visible" : ""}`}>
+        <Ecosystem />
+      </div>
+      <p>
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam consectetur culpa nulla repellat nisi
+        repellendus nihil perspiciatis amet excepturi architecto?
+      </p>
     </Wrapper>
   );
 }
