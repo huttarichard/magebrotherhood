@@ -18,7 +18,7 @@ export default function HeaderWallet() {
 
   return (
     <Wrapper>
-      <Button onClick={handleConnect}>Connect wallet</Button>
+      <Button onClick={handleConnect} text="Connect wallet" />
     </Wrapper>
   );
 }

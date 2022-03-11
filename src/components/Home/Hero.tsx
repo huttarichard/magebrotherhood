@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import Button from "../ui/Button";
 import React from "react";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
@@ -86,6 +85,7 @@ const Main = styled.div`
   flex-direction: column;
   justify-content: center;
   pointer-events: none;
+  color: ${({ theme }) => theme.text2};
 
   h1 {
     text-transform: uppercase;

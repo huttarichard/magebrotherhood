@@ -276,7 +276,7 @@ export default function About() {
             </p>
           </div>
           <div className="actions">
-            <Button>Connect Wallet</Button>
+            <Button text="Connect Wallet" />
           </div>
         </Header>
         <StyledSlider>

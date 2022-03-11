@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import { css, Global, Theme } from "@emotion/react";
+import { animations } from "components/ui/animations";
 import ThemeProvider from "components/ui/Theme";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -39,6 +40,8 @@ const GlobalStyle = (theme: Theme) => css`
   model-viewer {
     --poster-color: transparent;
   }
+
+  ${animations}
 `;
 
 function MageBrotherHoodApp({ Component, pageProps }: AppProps) {

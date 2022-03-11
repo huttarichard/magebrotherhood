@@ -163,7 +163,7 @@ export default function Collection() {
           <p>Regularly updated collections</p>
         </div>
         <div className="actions">
-          <Button>Go to marketplace</Button>
+          <Button text="Go to marketplace" />
         </div>
       </Header>
       <StyledSlider>
@@ -193,7 +193,7 @@ export default function Collection() {
           <p>Regularly updated collections</p>
         </div>
         <div className="actions">
-          <Button>Go to marketplace</Button>
+          <Button text="Go to marketplace" />
         </div>
       </Header>
       <StyledSlider>
