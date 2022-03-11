@@ -1,0 +1,17 @@
+<svg width="383" height="383" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="b">
+            <stop stop-color="#2E66F8" offset="0%"/>
+            <stop stop-color="#124ADB" offset="100%"/>
+        </linearGradient>
+        <rect id="a" x="0" y="0" width="383" height="383" rx="64"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <mask id="c" fill="#fff">
+            <use xlink:href="#a"/>
+        </mask>
+        <rect stroke="#979797" x=".5" y=".5" width="382" height="382" rx="64"/>
+        <path fill="url(#b)" fill-rule="nonzero" mask="url(#c)" d="M0 0h383v384H0z"/>
+        <path d="M60.107 191.572c0 73.394 59.498 132.891 132.891 132.891 73.394 0 132.891-59.497 132.891-132.891 0-73.393-59.497-132.89-132.891-132.89-73.393 0-132.89 59.497-132.89 132.89Zm98.93-42.82a8.859 8.859 0 0 0-8.859 8.859v67.922a8.86 8.86 0 0 0 8.859 8.86h67.922a8.86 8.86 0 0 0 8.859-8.86v-67.922a8.859 8.859 0 0 0-8.859-8.859h-67.922Z" fill="#FFF"/>
+    </g>
+</svg>

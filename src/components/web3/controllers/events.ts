@@ -19,14 +19,12 @@ export class EventController {
       if (eventObj.callback) {
         this._eventCallbacks = this._eventCallbacks.filter(
           (eventCallback: IEventCallback) =>
-            eventCallback.event !== eventObj.event ||
-            eventCallback.callback !== eventObj.callback
+            eventCallback.event !== eventObj.event || eventCallback.callback !== eventObj.callback
         );
       } // No callback to remove, remove entire event
       else {
         this._eventCallbacks = this._eventCallbacks.filter(
-          (eventCallback: IEventCallback) =>
-            eventCallback.event !== eventObj.event
+          (eventCallback: IEventCallback) => eventCallback.event !== eventObj.event
         );
       }
     } else {
@@ -35,7 +33,7 @@ export class EventController {
   }
 
   public trigger(event: string, result?: any): void {
-    let eventCallbacks: IEventCallback[] = this._eventCallbacks.filter(
+    const eventCallbacks: IEventCallback[] = this._eventCallbacks.filter(
       (eventCallback: IEventCallback) => eventCallback.event === event
     );
 

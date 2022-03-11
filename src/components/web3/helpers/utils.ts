@@ -1,23 +1,17 @@
 import * as env from "detect-browser";
 
 import { CHAIN_DATA_LIST } from "../constants";
+import { injected, providers } from "../providers";
 import { themesList } from "../themes";
-import { providers, injected } from "../providers";
-import {
-  IProviderInfo,
-  IInjectedProvidersMap,
-  ChainData,
-  ThemeColors,
-  RequiredOption
-} from "./types";
+import { ChainData, IInjectedProvidersMap, IProviderInfo, RequiredOption, ThemeColors } from "./types";
 
 export function checkInjectedProviders(): IInjectedProvidersMap {
   const result = {
-    injectedAvailable: !!window.ethereum || !!window.web3
+    injectedAvailable: !!window.ethereum || !!window.web3,
   };
   if (result.injectedAvailable) {
     let fallbackProvider = true;
-    Object.values(injected).forEach(provider => {
+    Object.values(injected).forEach((provider) => {
       const isAvailable = verifyInjectedProvider(provider.check);
       if (isAvailable) {
         result[provider.check] = true;
@@ -43,9 +37,7 @@ export function checkInjectedProviders(): IInjectedProvidersMap {
 export function verifyInjectedProvider(check: string): boolean {
   return window.ethereum
     ? window.ethereum[check]
-    : window.web3 &&
-        window.web3.currentProvider &&
-        window.web3.currentProvider[check];
+    : window.web3 && window.web3.currentProvider && window.web3.currentProvider[check];
 }
 
 export function getInjectedProvider(): IProviderInfo | null {
@@ -69,14 +61,12 @@ export function getInjectedProviderName(): string | null {
 export function getProviderInfo(provider: any): IProviderInfo {
   if (!provider) return providers.FALLBACK;
   const checks = Object.values(providers)
-    .filter(x => provider[x.check])
-    .map(x => x.check);
+    .filter((x) => provider[x.check])
+    .map((x) => x.check);
   return getProviderInfoFromChecksArray(checks);
 }
 
-export function getProviderInfoFromChecksArray(
-  checks: string[]
-): IProviderInfo {
+export function getProviderInfoFromChecksArray(checks: string[]): IProviderInfo {
   const check = filterProviderChecks(checks);
   return filterProviders("check", check);
 }
@@ -94,7 +84,7 @@ export function getProviderInfoByCheck(check: string | null): IProviderInfo {
 }
 
 export function isMobile(): boolean {
-  let mobile: boolean = false;
+  let mobile = false;
 
   function hasTouchEvent(): boolean {
     try {
@@ -126,9 +116,7 @@ export function isMobile(): boolean {
   return mobile;
 }
 
-export function getProviderDescription(
-  providerInfo: Partial<IProviderInfo>
-): string {
+export function getProviderDescription(providerInfo: Partial<IProviderInfo>): string {
   if (providerInfo.description) {
     return providerInfo.description;
   }
@@ -152,11 +140,7 @@ export function getProviderDescription(
   return description;
 }
 
-export function filterMatches<T>(
-  array: T[],
-  condition: (x: T) => boolean,
-  fallback: T | undefined
-): T | undefined {
+export function filterMatches<T>(array: T[], condition: (x: T) => boolean, fallback: T | undefined): T | undefined {
   let result = fallback;
   const matches = array.filter(condition);
 
@@ -167,26 +151,16 @@ export function filterMatches<T>(
   return result;
 }
 
-export function filterProviders(
-  param: string,
-  value: string | null
-): IProviderInfo {
+export function filterProviders(param: string, value: string | null): IProviderInfo {
   if (!value) return providers.FALLBACK;
-  const match = filterMatches<IProviderInfo>(
-    Object.values(providers),
-    x => x[param] === value,
-    providers.FALLBACK
-  );
+  const match = filterMatches<IProviderInfo>(Object.values(providers), (x) => x[param] === value, providers.FALLBACK);
   return match || providers.FALLBACK;
 }
 
 export function filterProviderChecks(checks: string[]): string {
   if (!!checks && checks.length) {
     if (checks.length > 1) {
-      if (
-        checks[0] === injected.METAMASK.check ||
-        checks[0] === injected.CIPHER.check
-      ) {
+      if (checks[0] === injected.METAMASK.check || checks[0] === injected.CIPHER.check) {
         return checks[1];
       }
     }
@@ -197,11 +171,7 @@ export function filterProviderChecks(checks: string[]): string {
 
 export function getChainId(network: string): number {
   const chains: ChainData[] = Object.values(CHAIN_DATA_LIST);
-  const match = filterMatches<ChainData>(
-    chains,
-    x => x.network === network,
-    undefined
-  );
+  const match = filterMatches<ChainData>(chains, (x) => x.network === network, undefined);
   if (!match) {
     throw new Error(`No chainId found match ${network}`);
   }
@@ -216,21 +186,18 @@ export function findMatchingRequiredOptions(
   requiredOptions: RequiredOption[],
   providedOptions: { [key: string]: any }
 ): RequiredOption[] {
-  const matches = requiredOptions.filter(requiredOption => {
+  const matches = requiredOptions.filter((requiredOption) => {
     if (typeof requiredOption === "string") {
       return requiredOption in providedOptions;
     }
-    const matches = findMatchingRequiredOptions(
-      requiredOption,
-      providedOptions
-    );
+    const matches = findMatchingRequiredOptions(requiredOption, providedOptions);
     return matches && matches.length;
   });
   return matches;
 }
 
 export function isLocalStorageAvailable() {
-  let test = "test";
+  const test = "test";
   try {
     localStorage.setItem(test, test);
     localStorage.removeItem(test);

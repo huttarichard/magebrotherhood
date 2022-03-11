@@ -15,7 +15,7 @@ import {
   removeLocal,
   setLocal,
 } from "../helpers";
-import * as list from "../providers";
+import { ConnectorKey, connectors, getConnector, providers } from "../providers";
 import { EventController } from "./events";
 
 export class ProviderController {
@@ -39,45 +39,19 @@ export class ProviderController {
 
     this.injectedProvider = getInjectedProvider();
 
-    this.providers = Object.keys(list.connectors).map((id: string) => {
+    this.providers = Object.keys(connectors).map((id) => {
       let providerInfo: IProviderInfo;
       if (id === INJECTED_PROVIDER_ID) {
-        providerInfo = this.injectedProvider || list.providers.FALLBACK;
+        providerInfo = this.injectedProvider || providers.FALLBACK;
       } else {
         providerInfo = getProviderInfoById(id);
       }
-      // parse custom display options
-      if (this.providerOptions[id]) {
-        const options = this.providerOptions[id];
-        if (typeof options.display !== "undefined") {
-          providerInfo = {
-            ...providerInfo,
-            ...this.providerOptions[id].display,
-          };
-        }
-      }
       return {
         ...providerInfo,
-        connector: list.connectors[id],
+        connector: getConnector(id as ConnectorKey),
         package: providerInfo.package,
       };
     });
-    // parse custom providers
-    Object.keys(this.providerOptions)
-      .filter((key) => key.startsWith("custom-"))
-      .map((id) => {
-        if (id && this.providerOptions[id]) {
-          const options = this.providerOptions[id];
-          if (typeof options.display !== "undefined" && typeof options.connector !== "undefined") {
-            this.providers.push({
-              ...list.providers.FALLBACK,
-              id,
-              ...options.display,
-              connector: options.connector,
-            });
-          }
-        }
-      });
   }
 
   public shouldDisplayProvider(id: string) {
@@ -154,12 +128,6 @@ export class ProviderController {
     return filterMatches<IProviderDisplayWithConnector>(this.providers, (x) => x.id === id, undefined);
   }
 
-  public getProviderOption(id: string, key: string) {
-    return this.providerOptions && this.providerOptions[id] && this.providerOptions[id][key]
-      ? this.providerOptions[id][key]
-      : {};
-  }
-
   public clearCachedProvider() {
     this.cachedProvider = "";
     removeLocal(CACHED_PROVIDER_KEY);
@@ -172,10 +140,9 @@ export class ProviderController {
 
   public connectTo = async (id: string, connector: (providerPackage: any, opts: any) => Promise<any>) => {
     try {
-      const providerPackage = this.getProviderOption(id, "package");
-      const providerOptions = this.getProviderOption(id, "options");
-      const opts = { network: this.network || undefined, ...providerOptions };
-      const provider = await connector(providerPackage, opts);
+      const options = this.providerOptions[id];
+      const opts = { network: this.network || undefined, ...(options?.options || {}) };
+      const provider = await connector(options.package, opts);
       this.eventController.trigger(CONNECT_EVENT, provider);
       if (this.shouldCacheProvider && this.cachedProvider !== id) {
         this.setCachedProvider(id);

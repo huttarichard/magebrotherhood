@@ -1,13 +1,10 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 import { Modal } from "../components";
-import { CLOSE_EVENT, CONNECT_EVENT, ERROR_EVENT, WEB3_CONNECT_MODAL_ID } from "../constants";
+import { CLOSE_EVENT, CONNECT_EVENT, ERROR_EVENT } from "../constants";
 import { EventController, ProviderController } from "../controllers";
 import { getThemeColors, ICoreOptions, IProviderUserOptions, SimpleFunction, ThemeColors } from "../helpers";
 import { themesList } from "../themes";
-
-const INITIAL_STATE = { show: false };
 
 const defaultOpts: ICoreOptions = {
   lightboxOpacity: 0.4,
@@ -19,7 +16,7 @@ const defaultOpts: ICoreOptions = {
 };
 
 export class Core {
-  private show: boolean = INITIAL_STATE.show;
+  private show = false;
   private themeColors: ThemeColors;
   private eventController: EventController = new EventController();
   private lightboxOpacity: number;
@@ -46,14 +43,11 @@ export class Core {
     this.providerController.on(ERROR_EVENT, (error) => this.onError(error));
 
     this.userOptions = this.providerController.getUserOptions();
-    this.renderModal();
   }
 
   get cachedProvider(): string {
     return this.providerController.cachedProvider;
   }
-
-  // --------------- PUBLIC METHODS --------------- //
 
   public connect = (): Promise<any> =>
     new Promise(async (resolve, reject) => {
@@ -115,41 +109,20 @@ export class Core {
     this.providerController.setCachedProvider(id);
   }
 
-  public async updateTheme(theme: string | ThemeColors): Promise<void> {
-    this.themeColors = getThemeColors(theme);
-    await this.updateState({ themeColors: this.themeColors });
-  }
-
-  // --------------- PRIVATE METHODS --------------- //
-
-  private renderModal() {
-    const el = document.createElement("div");
-    el.id = WEB3_CONNECT_MODAL_ID;
-    document.body.appendChild(el);
-
-    ReactDOM.render(
+  get modal() {
+    return (
       <Modal
         themeColors={this.themeColors}
         userOptions={this.userOptions}
         onClose={this.onClose}
         resetState={this.resetState}
         lightboxOpacity={this.lightboxOpacity}
-      />,
-      document.getElementById(WEB3_CONNECT_MODAL_ID)
+      />
     );
   }
 
   private _toggleModal = async () => {
-    const d = typeof window !== "undefined" ? document : "";
-    const body = d ? d.body || d.getElementsByTagName("body")[0] : "";
-    if (body) {
-      if (this.show) {
-        body.style.overflow = "";
-      } else {
-        body.style.overflow = "hidden";
-      }
-    }
-    await this.updateState({ show: !this.show });
+    this.updateState({ show: !this.show });
   };
 
   private onError = async (error: any) => {
