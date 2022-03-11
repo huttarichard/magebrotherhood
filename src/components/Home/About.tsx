@@ -108,7 +108,7 @@ const StyledSlide = styled.div`
   }
 
   h3 {
-    color: #8b5cf6;
+    color: ${({ theme }) => theme.primary1};
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
     font-size: 2rem;

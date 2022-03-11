@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Input, Label } from "@rebass/forms";
 import Layout from "components/Layout/Layout";
 import Card from "components/ui/Card";
 import { Formik } from "formik";
@@ -9,6 +10,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const CardWrapper = styled(Card)`
   max-width: 400px;
   margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
 `;
 
 interface SwapForm {
@@ -21,7 +26,7 @@ export default function Swap() {
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
   const [resultAmount, setResultAmount] = useState(0);
 
-  const exchangeRateText = exchangeRate === null ? "" : `Exchange rate: 1ETH = ${exchangeRate}COIN`;
+  const exchangeRateText = exchangeRate === null ? "" : `Exchange rate: 1ETH = ${exchangeRate}BHC`;
 
   return (
     <Layout>
@@ -31,7 +36,7 @@ export default function Swap() {
           validate={async (values) => {
             const errors: { eth?: string } = {};
 
-            if (values.eth === 0) {
+            if (isNaN(values.eth)) {
               errors.eth = "Invalid value";
             } else if (values.eth === 0) {
               errors.eth = "Amount must be greater than 0";
@@ -55,37 +60,29 @@ export default function Swap() {
             }, 100);
           }}
         >
-          {({ values, errors, handleChange, handleSubmit, isSubmitting, isValidating }) =>
-            // <Form onSubmit={handleSubmit}>
-            //   <Form.Group controlId="eth">
-            //     <Form.Label>ETH</Form.Label>
-            //     <Form.Control
-            //       name="eth"
-            //       type="number"
-            //       step={0.001}
-            //       value={values.eth}
-            //       onChange={handleChange}
-            //       isInvalid={!!errors.eth}
-            //     />
-            //     <Form.Control.Feedback type="invalid">{errors.eth}</Form.Control.Feedback>
-            //   </Form.Group>
+          {({ values, errors, handleChange, handleSubmit, isSubmitting, isValidating }) => (
+            <form onSubmit={handleSubmit}>
+              <div>
+                <Label htmlFor="eth">ETH</Label>
+                <Input name="eth" type="number" step={0.001} value={values.eth} onChange={handleChange} />
+                {errors.eth && <span>{errors.eth}</span>}
+              </div>
 
-            //   <Form.Group>
-            //     <Form.Label>Coin</Form.Label>
-            //     <Form.Control type="text" placeholder="0.00" value={resultAmount} disabled />
-            //     <Form.Text muted>{exchangeRateText}</Form.Text>
-            //   </Form.Group>
+              <div>
+                <Label>Coin</Label>
+                <Input type="text" placeholder="0.00" value={resultAmount} disabled />
+                <span>{exchangeRateText}</span>
+              </div>
 
-            //   <br />
+              <br />
 
-            //   <div className="d-grid gap-2">
-            //     <Button size="lg" type="submit" variant="primary" disabled={isSubmitting || isValidating}>
-            //       Swap
-            //     </Button>
-            //   </div>
-            // </Form>
-            null
-          }
+              <div className="d-grid gap-2">
+                <button type="submit" disabled={isSubmitting || isValidating}>
+                  Swap
+                </button>
+              </div>
+            </form>
+          )}
         </Formik>
       </CardWrapper>
     </Layout>
