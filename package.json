@@ -42,10 +42,7 @@
     "@typescript-eslint/parser": "^5.14.0",
     "@web3-onboard/core": "^2.0.10",
     "@web3-onboard/injected-wallets": "^2.0.2",
-<<<<<<< Updated upstream
-=======
     "@web3-onboard/react": "^2.0.3",
->>>>>>> Stashed changes
     "copy-to-clipboard": "^3.3.1",
     "formik": "^2.2.9",
     "jotai": "^1.6.1",
