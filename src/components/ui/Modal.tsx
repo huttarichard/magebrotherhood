@@ -8,7 +8,7 @@ import transparentize from "polished/lib/color/transparentize";
 import React from "react";
 import { animated, useSpring, useTransition } from "react-spring";
 import { useGesture } from "react-use-gesture";
-import { isMobile } from "utils/userAgent";
+import { isMobile } from "lib/userAgent";
 
 export interface DialogProps {
   mobile: boolean;
