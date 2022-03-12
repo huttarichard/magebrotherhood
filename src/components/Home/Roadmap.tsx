@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import Slider from "react-slick";
+import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
@@ -27,7 +27,7 @@ const Background = styled.div`
       bottom: 0;
       left: 0;
       z-index: 9;
-      background-color: #9e18dd;
+      background-color: ${({ theme }) => theme.primary2};
       clip-path: polygon(0 0, 44% 0, 20% 68%, 100% 100%, 0 100%);
     }
 
@@ -50,6 +50,7 @@ const Main = styled.div`
   position: relative;
   width: 100%;
   padding-left: 2rem;
+  box-sizing: border-box;
 
   h2 {
     margin: 0 0 3rem;
@@ -65,14 +66,14 @@ const Main = styled.div`
       font-size: 95px;
     }
 
-    .slick-list {
+    .swiper {
       overflow: visible;
     }
   }
 `;
 
 const StyledSlide = styled.div`
-  display: flex !important;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
 
@@ -84,7 +85,7 @@ const StyledSlide = styled.div`
       margin: 0 0 1rem;
       font-family: "Bebas Neue", sans-serif;
       font-weight: 400;
-      color: #8b5cf6;
+      color: ${({ theme }) => theme.primary2};
       font-size: 32px;
     }
 
@@ -97,7 +98,7 @@ const StyledSlide = styled.div`
   .arrow {
     width: 100%;
     height: 10px;
-    background-color: #9e18dd;
+    background-color: ${({ theme }) => theme.primary2};
     clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 50%, calc(100% - 5px) 100%, 0 100%, 5px 50%);
   }
 
@@ -140,30 +141,20 @@ const phases = [
   },
 ];
 
-const sliderConfig = {
-  dots: false,
-  infinite: false,
-  slidesToShow: 3.5,
-  responsive: [
-    {
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 3.5,
-      },
+const sliderConfig: SwiperProps = {
+  slidesPerView: 1.5,
+  spaceBetween: 5,
+  breakpoints: {
+    500: {
+      slidesPerView: 1.5,
     },
-    {
-      breakpoint: 992,
-      settings: {
-        slidesToShow: 2.5,
-      },
+    992: {
+      slidesPerView: 2.5,
     },
-    {
-      breakpoint: 500,
-      settings: {
-        slidesToShow: 1.5,
-      },
+    1200: {
+      slidesPerView: 3.5,
     },
-  ],
+  },
 };
 
 export default function Roadmap() {
@@ -172,20 +163,22 @@ export default function Roadmap() {
       <Background></Background>
       <Main>
         <h2>Roadmap</h2>
-        <Slider {...sliderConfig}>
+        <Swiper {...sliderConfig}>
           {phases.map((phase, i) => {
             return (
-              <StyledSlide className={i % 2 ? "odd" : ""} key={i}>
-                <div className="content">
-                  <h3>Phase {i + 1}</h3>
-                  <p>{phase.text}</p>
-                </div>
-                <div className="arrow"></div>
-                <div className="whitespace"></div>
-              </StyledSlide>
+              <SwiperSlide key={i}>
+                <StyledSlide className={i % 2 ? "odd" : ""}>
+                  <div className="content">
+                    <h3>Phase {i + 1}</h3>
+                    <p>{phase.text}</p>
+                  </div>
+                  <div className="arrow"></div>
+                  <div className="whitespace"></div>
+                </StyledSlide>
+              </SwiperSlide>
             );
           })}
-        </Slider>
+        </Swiper>
       </Main>
     </Wrapper>
   );

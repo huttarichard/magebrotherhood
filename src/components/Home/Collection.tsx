@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Button from "components/ui/Button";
 import Image from "next/image";
-import Slider from "react-slick";
+import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
@@ -22,6 +22,7 @@ const Header = styled.div`
 
   .text {
     h2 {
+      margin: 0 0 2rem;
       color: #fff;
       font-family: "Bebas Neue", sans-serif;
       font-weight: 400;
@@ -77,16 +78,15 @@ const StyledSlider = styled.div`
 `;
 
 const StyledSlide = styled.div`
-  padding-right: 2rem;
-
   .img-wrapper {
     position: relative;
     height: 240px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     background-color: #fff;
   }
 
   h3 {
+    margin: 0 0 0.5rem;
     color: ${({ theme }) => theme.primary1};
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
@@ -94,6 +94,7 @@ const StyledSlide = styled.div`
   }
 
   p {
+    margin: 0;
     color: #fff;
     opacity: 0.7;
   }
@@ -128,30 +129,20 @@ const slides = [
   },
 ];
 
-const sliderConfig = {
-  dots: false,
-  infinite: false,
-  slidesToShow: 3.5,
-  responsive: [
-    {
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 3.5,
-      },
+const sliderConfig: SwiperProps = {
+  slidesPerView: 1.5,
+  spaceBetween: 50,
+  breakpoints: {
+    500: {
+      slidesPerView: 1.5,
     },
-    {
-      breakpoint: 992,
-      settings: {
-        slidesToShow: 2.5,
-      },
+    992: {
+      slidesPerView: 2.5,
     },
-    {
-      breakpoint: 500,
-      settings: {
-        slidesToShow: 1.5,
-      },
+    1200: {
+      slidesPerView: 3.5,
     },
-  ],
+  },
 };
 
 export default function Collection() {
@@ -167,25 +158,27 @@ export default function Collection() {
         </div>
       </Header>
       <StyledSlider>
-        <Slider {...sliderConfig}>
+        <Swiper {...sliderConfig}>
           {slides.map((slide) => {
             return (
-              <StyledSlide key={slide.title}>
-                <div className="img-wrapper">
-                  <Image
-                    src={slide.img}
-                    layout="fill"
-                    objectFit="contain"
-                    objectPosition="left bottom"
-                    alt={slide.title}
-                  />
-                </div>
-                <h3>{slide.title}</h3>
-                <p>{slide.text}</p>
-              </StyledSlide>
+              <SwiperSlide key={slide.title}>
+                <StyledSlide>
+                  <div className="img-wrapper">
+                    <Image
+                      src={slide.img}
+                      layout="fill"
+                      objectFit="contain"
+                      objectPosition="left bottom"
+                      alt={slide.title}
+                    />
+                  </div>
+                  <h3>{slide.title}</h3>
+                  <p>{slide.text}</p>
+                </StyledSlide>
+              </SwiperSlide>
             );
           })}
-        </Slider>
+        </Swiper>
       </StyledSlider>
       <Header>
         <div className="text">
@@ -197,25 +190,27 @@ export default function Collection() {
         </div>
       </Header>
       <StyledSlider>
-        <Slider {...sliderConfig}>
+        <Swiper {...sliderConfig}>
           {slides.map((slide) => {
             return (
-              <StyledSlide key={slide.title}>
-                <div className="img-wrapper">
-                  <Image
-                    src={slide.img}
-                    layout="fill"
-                    objectFit="contain"
-                    objectPosition="left bottom"
-                    alt={slide.title}
-                  />
-                </div>
-                <h3>{slide.title}</h3>
-                <p>{slide.text}</p>
-              </StyledSlide>
+              <SwiperSlide key={slide.title}>
+                <StyledSlide>
+                  <div className="img-wrapper">
+                    <Image
+                      src={slide.img}
+                      layout="fill"
+                      objectFit="contain"
+                      objectPosition="left bottom"
+                      alt={slide.title}
+                    />
+                  </div>
+                  <h3>{slide.title}</h3>
+                  <p>{slide.text}</p>
+                </StyledSlide>
+              </SwiperSlide>
             );
           })}
-        </Slider>
+        </Swiper>
       </StyledSlider>
     </Wrapper>
   );
