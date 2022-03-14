@@ -4,7 +4,7 @@ import "swiper/css";
 
 import { css, Global, Theme } from "@emotion/react";
 import { OnboardAPI } from "@web3-onboard/core";
-import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
+import { useConnectWallet, useWallets } from "@web3-onboard/react";
 import { animations } from "components/ui/animations";
 import ThemeProvider from "components/ui/Theme";
 import initWeb3Onboard from "lib/web3/web3";
@@ -48,8 +48,7 @@ const GlobalStyle = (theme: Theme) => css`
 `;
 
 function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
-  const [{ wallet }, connect, disconnect] = useConnectWallet();
-  const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
+  const [{ wallet }, connect] = useConnectWallet();
   const connectedWallets = useWallets();
 
   const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI>();
@@ -59,7 +58,9 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (!connectedWallets.length) return;
+    if (!connectedWallets.length) {
+      return;
+    }
 
     const connectedWalletsLabelArray = connectedWallets.map(({ label }) => label);
 
@@ -67,15 +68,15 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
   }, [connectedWallets]);
 
   useEffect(() => {
-    const previouslyConnectedWallets = JSON.parse(window.localStorage.getItem("connectedWallets") || "[]");
+    const setWalletFromLocalStorage = async () => {
+      const previouslyConnectedWallets = JSON.parse(window.localStorage.getItem("connectedWallets") || "[]");
 
-    if (previouslyConnectedWallets?.length) {
-      async function setWalletFromLocalStorage() {
+      if (previouslyConnectedWallets?.length) {
         await connect({ autoSelect: { label: previouslyConnectedWallets[0], disableModals: true } });
       }
+    };
 
-      setWalletFromLocalStorage();
-    }
+    setWalletFromLocalStorage();
   }, [web3Onboard, connect]);
 
   return (

@@ -224,10 +224,14 @@ const StyledButton = styled.button`
   }
 `;
 
-export default function Button(props: React.PropsWithChildren<{ text: string; onClick: any }>) {
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  text: string;
+}
+
+export default function Button({ text, ...props }: Props) {
   return (
     <StyledButton {...props}>
-      <span data-text={props.text}>{props.text}</span>
+      <span data-text={text}>{text}</span>
     </StyledButton>
   );
 }
