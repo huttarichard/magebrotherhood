@@ -4585,11 +4585,7 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
-<<<<<<< Updated upstream
-"@web3-onboard/common@^2.0.2":
-=======
 "@web3-onboard/common@^2.0.1", "@web3-onboard/common@^2.0.2":
->>>>>>> Stashed changes
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@web3-onboard/common/-/common-2.0.2.tgz#e5bcda22a6e14bd66d2f7d9b7ef9329f0c086cac"
   integrity sha512-foFyWJIqmv83lhqyXqwW8vUdOULdRvIvj4ScxFcd3hGDYJArKnnocvAIcAAfP7Rmte3TDWejuFKz+H4dmaoUUA==
@@ -4598,11 +4594,7 @@
     joi "^17.4.2"
     rxjs "^7.5.2"
 
-<<<<<<< Updated upstream
-"@web3-onboard/core@^2.0.10":
-=======
 "@web3-onboard/core@^2.0.10", "@web3-onboard/core@^2.0.6":
->>>>>>> Stashed changes
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/@web3-onboard/core/-/core-2.0.10.tgz#4aed26c9e7eee58ec9d7d1e71ddad6adee0075e8"
   integrity sha512-4AvZKNCZLLHbDhueCBz5jvfRE9dQzEpsoA2lBVpwtXHhJzRRdYjVTUSBx1DgflzCnZUdOEuECSTwvM0OI3PtwQ==
@@ -4627,8 +4619,6 @@
     joi "^17.4.2"
     lodash.uniqby "^4.7.0"
 
-<<<<<<< Updated upstream
-=======
 "@web3-onboard/react@^2.0.3":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@web3-onboard/react/-/react-2.0.3.tgz#3e0edea32f175eb2b3f83bbfd6b4b0d0fdac4e94"
@@ -4637,7 +4627,6 @@
     "@web3-onboard/common" "^2.0.1"
     "@web3-onboard/core" "^2.0.6"
 
->>>>>>> Stashed changes
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.11.1.tgz#2bfd767eae1a6996f432ff7e8d7fc75679c0b6a7"

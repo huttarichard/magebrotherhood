@@ -118,10 +118,6 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
   /* staking => hold info on staking */
   mapping(address => ContractStaking) public staking;
 
-  bytes4 private constant _ERC165_INTERFACE_ID = type(IERC165).interfaceId;
-
-  bytes4 private constant _ERC1155_TOKEN_RECEIVER_INTERFACE_ID = type(IERC1155Receiver).interfaceId;
-
   modifier hasStarted() {
     require(startTimestamp != 0, "staking not started");
     _;
