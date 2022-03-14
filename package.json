@@ -17,7 +17,6 @@
     "@walletconnect/ethereum-provider": "1.7.1"
   },
   "dependencies": {
-    "@coinbase/wallet-sdk": "^3.0.3",
     "@emotion/css": "^11.7.1",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
