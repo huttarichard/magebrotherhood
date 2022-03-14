@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
+import { useConnectWallet, useWallets } from "@web3-onboard/react";
 import Button from "components/ui/Button";
 
 const Wrapper = styled.div`
@@ -12,12 +12,19 @@ const Wrapper = styled.div`
 
 export default function HeaderWallet() {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
-  const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
   const connectedWallets = useWallets();
+
+  const handleDisconnect = () => {
+    disconnect(connectedWallets[0]);
+  };
 
   return (
     <Wrapper>
-      <Button onClick={() => connect()} text="Connect wallet" disabled={connecting} />
+      {connectedWallets.length ? (
+        <Button onClick={handleDisconnect} text="Disconnect wallet" />
+      ) : (
+        <Button onClick={() => connect({})} text="Connect wallet" disabled={connecting} />
+      )}
     </Wrapper>
   );
 }

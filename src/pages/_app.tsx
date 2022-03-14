@@ -72,7 +72,12 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
       const previouslyConnectedWallets = JSON.parse(window.localStorage.getItem("connectedWallets") || "[]");
 
       if (previouslyConnectedWallets?.length) {
-        await connect({ autoSelect: { label: previouslyConnectedWallets[0], disableModals: true } });
+        await connect({
+          autoSelect: {
+            label: previouslyConnectedWallets[0],
+            disableModals: false,
+          },
+        });
       }
     };
 
