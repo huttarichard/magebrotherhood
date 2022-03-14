@@ -224,7 +224,7 @@ const StyledButton = styled.button`
   }
 `;
 
-export default function Button(props: React.PropsWithChildren<{ text: string }>) {
+export default function Button(props: React.PropsWithChildren<{ text: string; onClick: any }>) {
   return (
     <StyledButton {...props}>
       <span data-text={props.text}>{props.text}</span>

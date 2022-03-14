@@ -1,4 +1,4 @@
-import { ChainId } from "./chains";
+import { ChainId } from "./_chains";
 
 type AddressMap = { [chainId: number]: string };
 
