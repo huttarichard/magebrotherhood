@@ -17,7 +17,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 import "./Stakable.sol";
-import "./Coin.sol";
+import "./ICoin.sol";
 
 /**
  * @title NFT Staking
@@ -86,6 +86,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   struct ContractStaking {
     Stakable nft;
+    uint128 reward;
     mapping(uint256 => TokenInfo) tokens;
     bool enabled;
   }
@@ -96,7 +97,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
 
   uint256 public startTimestamp;
 
-  IERC20 public immutable coin;
+  ICoin public immutable coin;
 
   uint32 public immutable cycleLengthInSeconds;
   uint16 public immutable periodLengthInCycles;
@@ -147,7 +148,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
 
     cycleLengthInSeconds = cycleLengthInSeconds_;
     periodLengthInCycles = periodLengthInCycles_;
-    coin = IERC20(coin_);
+    coin = ICoin(coin_);
   }
 
   /**
@@ -214,61 +215,20 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
   }
 
   /**
-   * Will distribute the reward.
-   * @param to account to give a reward.
-   * @param amount The amount of reward.
+   * Will enable contract and staking for give contract
    */
-  function distribute(address to, uint256 amount) internal {
-    require(coin.transferFrom(address(coin), to, amount), "failed to withdraw");
+  function addContract(address nft, uint128 reward) public onlyOwner {
+    staking[nft].nft = Stakable(nft);
+    staking[nft].enabled = true;
+    staking[nft].reward = reward;
   }
 
   /**
-   * Withdraws the rewards associated with a lost cycle (ie. a past cycle with 0 global stake).
-   * @dev Reverts if not called by the owner.
-   * @dev Reverts if `to` is the zero address.
-   * @dev Reverts if the contract is not started.
-   * @dev Reverts if `cycle` is not past.
-   * @dev Reverts if the rewards for the lost cycle is already withdrawn.
-   * @dev Reverts if `globalSnapshotIndex` is < -1.
-   * @dev Reverts if `globalSnapshotIndex` is -1 but `cycle` is part of an existing snapshot.
-   * @dev Reverts (with "invalid opcode") if `globalSnapshotIndex` is >= 0 and points to an non existing snapshot.
-   * @dev Reverts if `globalSnapshotIndex` is >= 0 and does not point to a snapshot containing `cycle`.
-   * @dev Reverts if `cycle` is not a lost cycle (ie. global stake > 0).
-   * @dev Reverts if `cycle` does not have scheduled rewards.
-   * @dev The rewards token contract emits an ERC20 Transfer event for the reward tokens transfer.
-   * @param to The address to send the lost cycle rewards to.
-   * @param cycle The lost cycle.
-   * @param globalSnapshotIndex The index of the global snapshot which contains `cycle`, or -1 if the cycle was before the first snapshot.
+   * Will enable contract and staking for give contract
    */
-  function withdrawLostCycleRewards(
-    address to,
-    uint16 cycle,
-    int256 globalSnapshotIndex
-  ) external onlyOwner {
-    require(to != address(0), "zero address");
-    require(cycle < _getCycle(block.timestamp), "non-past cycle");
-    require(withdrawnLostCycles[cycle] == false, "already withdrawn");
-    if (globalSnapshotIndex == -1) {
-      require(globalHistory.length == 0 || cycle < globalHistory[0].startCycle, "cycle has snapshot");
-    } else if (globalSnapshotIndex >= 0) {
-      uint256 snapshotIndex = uint256(globalSnapshotIndex);
-      Snapshot memory snapshot = globalHistory[snapshotIndex];
-      require(cycle >= snapshot.startCycle, "cycle < snapshot");
-      require(
-        globalHistory.length == snapshotIndex + 1 || // last snapshot
-          cycle < globalHistory[snapshotIndex + 1].startCycle,
-        "cycle > snapshot"
-      );
-      require(snapshot.stake == 0, "non-lost cycle");
-    } else {
-      revert("wrong index value");
-    }
-
-    uint16 period = _getPeriod(cycle, periodLengthInCycles);
-    uint256 cycleRewards = rewardsSchedule[period];
-    require(cycleRewards != 0, "rewardless cycle");
-    withdrawnLostCycles[cycle] = true;
-    distribute(to, cycleRewards);
+  function removeContract(address nft) public onlyOwner {
+    staking[nft].enabled = false;
+    staking[nft].reward = 0;
   }
 
   /**
@@ -319,11 +279,11 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint256 amount
   ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
-    require(!staker.enabled, "contract not enabled");
+    require(staker.enabled, "contract not enabled");
 
     uint16 periodLengthInCycles_ = periodLengthInCycles;
     uint16 currentCycle = _getCycle(block.timestamp);
-    uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
+    uint128 weight = uint128(staker.reward * amount);
 
     _updateHistories(owner, int128(weight), currentCycle);
 
@@ -374,7 +334,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     uint256[] memory amounts
   ) internal whenNotPaused hasStarted {
     ContractStaking storage staker = staking[_msgSender()];
-    require(!staker.enabled, "contract not enabled");
+    require(staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
     require(numTokens != 0, "no tokens");
@@ -387,7 +347,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
       uint256 tokenId = tokenIds[index];
       uint256 amount = amounts[index];
       require(currentCycle != staker.tokens[tokenId].withdrawCycle, "unstaked token cooldown");
-      uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
+      uint128 weight = uint128(staker.reward * amount);
       totalStakedWeight += weight; // This is safe
       weights[index] = weight;
       staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);
@@ -420,7 +380,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function unstake(address nft, uint256 tokenId) external {
     ContractStaking storage staker = staking[nft];
-    require(!staker.enabled, "contract not enabled");
+    require(staker.enabled, "contract not enabled");
 
     TokenInfo memory tokenInfo = staker.tokens[tokenId];
 
@@ -462,7 +422,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function batchUnstake(address nft, uint256[] calldata tokenIds) external {
     ContractStaking storage staker = staking[nft];
-    require(!staker.enabled, "contract not enabled");
+    require(staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
     require(numTokens != 0, "no tokens");
@@ -577,10 +537,17 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     }
 
     if (claim.amount != 0) {
-      distribute(_msgSender(), claim.amount);
+      coin.tokenMint(_msgSender(), claim.amount);
     }
 
     emit RewardsClaimed(_msgSender(), _getCycle(block.timestamp), claim.startPeriod, claim.periods, claim.amount);
+  }
+
+  /**
+   * @return the token info for given token and contract.
+   */
+  function getTokenInfo(address nft, uint256 id) public view returns (TokenInfo memory) {
+    return staking[nft].tokens[id];
   }
 
   /**
@@ -652,8 +619,8 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
       return (claim, nextClaim);
     }
 
-    uint16 periodLengthInCycles_ = periodLengthInCycles;
-    uint16 endClaimPeriod = _getCurrentPeriod(periodLengthInCycles_);
+    uint16 periodLengthInCycles_ = periodLengthInCycles; // 2
+    uint16 endClaimPeriod = _getCurrentPeriod(periodLengthInCycles_); // 35
 
     // current period is not claimable
     if (nextClaim.period == endClaimPeriod) {
@@ -664,7 +631,9 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
     Snapshot[] memory stakerHistory = stakerHistories[staker];
 
     Snapshot memory globalSnapshot = globalHistory[nextClaim.globalSnapshotIndex];
+
     Snapshot memory stakerSnapshot = stakerHistory[nextClaim.stakerSnapshotIndex];
+
     Snapshot memory nextGlobalSnapshot;
     Snapshot memory nextStakerSnapshot;
 
@@ -689,9 +658,9 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
 
     // iterate over periods
     while (nextClaim.period != endClaimPeriod) {
-      uint16 nextPeriodStartCycle = nextClaim.period * periodLengthInCycles_ + 1;
+      uint16 nextPeriodStartCycle = nextClaim.period * periodLengthInCycles_ + 1; // 21
       uint256 rewardPerCycle = rewardsSchedule[nextClaim.period];
-      uint256 startCycle = nextPeriodStartCycle - periodLengthInCycles_;
+      uint256 startCycle = nextPeriodStartCycle - periodLengthInCycles_; // 19
       uint256 endCycle = 0;
 
       // iterate over global snapshots

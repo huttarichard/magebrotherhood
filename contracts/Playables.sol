@@ -137,13 +137,6 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
   }
 
   /**
-   * @dev See {IERC165-supportsInterface}.
-   */
-  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
-    return super.supportsInterface(interfaceId);
-  }
-
-  /**
    * @dev mint function, use this to min tokenId
    */
   function mint(
@@ -199,5 +192,12 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
    */
   receive() external payable {
     revert("use minting function explicitly");
+  }
+
+  /**
+   * @dev See {IERC165-supportsInterface}.
+   */
+  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
+    return super.supportsInterface(interfaceId);
   }
 }

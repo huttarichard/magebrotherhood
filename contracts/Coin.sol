@@ -83,7 +83,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   /**
    * @dev will mint tokens to given address
    */
-  function mint(address recipient, uint256 amount) external onlyRole(MINTER) {
+  function tokenMint(address recipient, uint256 amount) external onlyRole(MINTER) {
     _mint(recipient, amount);
   }
 

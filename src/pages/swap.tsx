@@ -24,6 +24,7 @@ interface SwapForm {
 
 export default function Swap() {
   const connectedWallets = useWallets();
+  console.log(connectedWallets);
   const wallet = connectedWallets[0];
 
   const initialValues: SwapForm = { eth: 0 };

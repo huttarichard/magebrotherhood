@@ -49,6 +49,7 @@ const GlobalStyle = (theme: Theme) => css`
 
 function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
   const [{ wallet }, connect] = useConnectWallet();
+  console.log("w", wallet);
   const connectedWallets = useWallets();
 
   const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI>();

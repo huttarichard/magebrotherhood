@@ -42,6 +42,20 @@ contract Affiliate is Context, Ownable, Pausable {
   }
 
   /**
+   * @dev Will pause the contract.
+   */
+  function pause() external onlyOwner {
+    _pause();
+  }
+
+  /**
+   * @dev Will unpause the contract.
+   */
+  function unpause() external onlyOwner {
+    _unpause();
+  }
+
+  /**
    * Marketing code used for promotion.
    * @param code string marketing code.
    */
