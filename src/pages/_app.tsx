@@ -56,8 +56,6 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
 
   const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI>();
 
-  console.log(wallet);
-
   useEffect(() => {
     setWallet(() => ({
       data: wallet,
