@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { Input, Label } from "@rebass/forms";
-import { useWallets } from "@web3-onboard/react";
 import Layout from "components/Layout/Layout";
 import Card from "components/ui/Card";
 import { Formik } from "formik";
+import useWallet from "hooks/useWallet";
 import { useState } from "react";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,9 +23,7 @@ interface SwapForm {
 }
 
 export default function Swap() {
-  const connectedWallets = useWallets();
-  console.log(connectedWallets);
-  const wallet = connectedWallets[0];
+  const wallet = useWallet();
 
   const initialValues: SwapForm = { eth: 0 };
 
@@ -37,7 +35,7 @@ export default function Swap() {
   return (
     <Layout>
       <CardWrapper>
-        <p>Balance: {JSON.stringify(wallet?.accounts[0].balance)}</p>
+        <p>Balance: {JSON.stringify(wallet?.data?.accounts[0].balance)}</p>
         <Formik
           initialValues={initialValues}
           validate={async (values) => {
