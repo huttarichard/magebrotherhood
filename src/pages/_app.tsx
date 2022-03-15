@@ -7,11 +7,13 @@ import { OnboardAPI } from "@web3-onboard/core";
 import { useConnectWallet, useWallets } from "@web3-onboard/react";
 import { animations } from "components/ui/animations";
 import ThemeProvider from "components/ui/Theme";
+import { useAtom } from "jotai";
 import initWeb3Onboard from "lib/web3/web3";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { walletAtom } from "store/wallet";
 
 const GlobalStyle = (theme: Theme) => css`
   html {
@@ -48,10 +50,22 @@ const GlobalStyle = (theme: Theme) => css`
 `;
 
 function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
-  const [{ wallet }, connect] = useConnectWallet();
+  const [, setWallet] = useAtom(walletAtom);
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const connectedWallets = useWallets();
 
   const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI>();
+
+  console.log(wallet);
+
+  useEffect(() => {
+    setWallet(() => ({
+      data: wallet,
+      connecting,
+      connect,
+      disconnect,
+    }));
+  }, [wallet, connecting, connect, disconnect, setWallet]);
 
   useEffect(() => {
     setWeb3Onboard(initWeb3Onboard);
@@ -75,7 +89,7 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
         await connect({
           autoSelect: {
             label: previouslyConnectedWallets[0],
-            disableModals: false,
+            disableModals: true,
           },
         });
       }
