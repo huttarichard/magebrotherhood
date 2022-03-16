@@ -97,7 +97,7 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
   }, [web3Onboard, connect]);
 
   return (
-    <div>
+    <>
       <Head>
         <title>Mage Brotherhood - Homepage</title>
       </Head>
@@ -106,7 +106,7 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </ThemeProvider>
       <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" />
-    </div>
+    </>
   );
 }
 

@@ -16,7 +16,7 @@ export default function HeaderWallet() {
   return (
     <Wrapper>
       {wallet.data ? (
-        <Button onClick={() => wallet.disconnect()} text="Disconnect wallet" />
+        <button onClick={() => wallet.disconnect()}>Disconnect wallet</button>
       ) : (
         <Button onClick={() => wallet.connect({})} text="Connect wallet" disabled={wallet.connecting} />
       )}
