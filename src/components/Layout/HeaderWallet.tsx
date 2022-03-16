@@ -13,16 +13,10 @@ const Wrapper = styled.div`
 export default function HeaderWallet() {
   const wallet = useWallet();
 
-  const handleDisconnect = async () => {
-    if (wallet.data && wallet.disconnect) {
-      await wallet.disconnect();
-    }
-  };
-
   return (
     <Wrapper>
       {wallet.data ? (
-        <Button onClick={handleDisconnect} text="Disconnect" block />
+        <button onClick={() => wallet.disconnect()}>Disconnect</button>
       ) : (
         <Button onClick={() => wallet.connect({})} text="Connect wallet" disabled={wallet.connecting} />
       )}

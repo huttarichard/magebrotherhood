@@ -7,7 +7,7 @@ export interface Wallet {
   data: WalletState | null;
   connecting: boolean;
   connect: (options: ConnectOptions) => Promise<void> | void;
-  disconnect?: () => Promise<void> | void;
+  disconnect: () => Promise<void> | void;
 }
 
 export default function useWallet(): Wallet {
