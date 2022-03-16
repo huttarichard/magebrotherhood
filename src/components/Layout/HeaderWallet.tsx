@@ -15,15 +15,14 @@ export default function HeaderWallet() {
 
   const handleDisconnect = async () => {
     if (wallet.data && wallet.disconnect) {
-      const foo = await wallet.disconnect();
-      console.log(foo);
+      await wallet.disconnect();
     }
   };
 
   return (
     <Wrapper>
       {wallet.data ? (
-        <Button onClick={handleDisconnect} text="Disconnect wallet" />
+        <Button onClick={handleDisconnect} text="Disconnect" block />
       ) : (
         <Button onClick={() => wallet.connect({})} text="Connect wallet" disabled={wallet.connecting} />
       )}

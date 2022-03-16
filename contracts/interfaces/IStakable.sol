@@ -4,7 +4,7 @@ pragma solidity 0.8.12;
 /**
  * Stakable provides method to get weight for staking IERC 1155/721.
  */
-interface Stakable {
+interface IStakable {
   /**
    * @notice Transfers `values` amount(s) of `ids` from the `from` address to the `to` address specified (with safety call).
    * @dev Caller must be approved to manage the tokens being transferred out of the `from` account (see "Approval" section of the standard).
@@ -69,46 +69,4 @@ interface Stakable {
    * @dev returns staking weight for given NFT.
    */
   function getStakingWeight(uint256 tokenId) external view returns (uint128);
-}
-
-/**
- * @title ERC1155721SafeTransferFallback
- * Library used to fall back on ERC721 non-safe transfer(s)
- * in case of ERC1155 safe transfer failure. A failure can be
- * caused by a contract-based wallet not implementing the
- * ERC1155Receiver interface.
- */
-library StakableSafeTransfer {
-  function safeBatchTransferFromWithFallback(
-    Stakable self,
-    address from,
-    address to,
-    uint256[] memory ids,
-    uint256[] memory values,
-    bytes memory data
-  ) internal {
-    try self.safeBatchTransferFrom(from, to, ids, values, data) {
-      return;
-    } catch {
-      uint256 length = ids.length;
-      for (uint256 i = 0; i < length; ++i) {
-        self.transferFrom(from, to, ids[i]);
-      }
-    }
-  }
-
-  function safeTransferFromWithFallback(
-    Stakable self,
-    address from,
-    address to,
-    uint256 id,
-    uint256 value,
-    bytes memory data
-  ) internal {
-    try self.safeTransferFrom(from, to, id, value, data) {
-      return;
-    } catch {
-      self.transferFrom(from, to, id);
-    }
-  }
 }

@@ -30,6 +30,7 @@ const StyledHeader = styled.header`
   background-color: #111;
   height: 80px;
   padding: 0 20px;
+  border-right: 1px solid #2c2c2c;
 
   @media (min-width: 992px) {
     position: relative;
@@ -39,7 +40,6 @@ const StyledHeader = styled.header`
     align-items: flex-start;
     box-sizing: border-box;
     padding: 3rem 2rem;
-    box-shadow: 0px 0px 20px 1px #ffffff0f;
 
     > .icon-wrapper {
       display: none;
@@ -110,6 +110,7 @@ const StyledNav = styled.nav`
   background-repeat: no-repeat;
   background-size: contain;
   justify-content: space-between;
+  width: 100%;
 
   .icon-wrapper {
     position: absolute;

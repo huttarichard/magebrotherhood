@@ -19,6 +19,8 @@ const GlobalStyle = (theme: Theme) => css`
   html {
     color: ${theme.text1};
     background-color: ${theme.bg1} !important;
+    min-height: 100%;
+    height: 100%;
   }
 
   a {
@@ -55,8 +57,6 @@ function MageBrotherHoodApp({ Component, pageProps }: AppProps) {
   const connectedWallets = useWallets();
 
   const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI>();
-
-  console.log(wallet);
 
   useEffect(() => {
     setWallet(() => ({

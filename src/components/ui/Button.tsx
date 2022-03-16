@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ block: boolean }>`
   position: relative;
   height: 50px;
   padding: 0 40px;
@@ -17,6 +17,12 @@ const StyledButton = styled.button`
   font-size: 19px;
   letter-spacing: 0.12em;
   cursor: pointer;
+
+  ${(props) =>
+    props.block &&
+    `
+    width: 100%;
+  `}
 
   span {
     position: relative;
@@ -226,11 +232,12 @@ const StyledButton = styled.button`
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
+  block?: boolean;
 }
 
-export default function Button({ text, ...props }: Props) {
+export default function Button({ text, block = false, ...props }: Props) {
   return (
-    <StyledButton {...props}>
+    <StyledButton block={block} {...props}>
       <span data-text={text}>{text}</span>
     </StyledButton>
   );

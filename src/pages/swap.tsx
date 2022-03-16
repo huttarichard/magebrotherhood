@@ -4,7 +4,12 @@ import Layout from "components/Layout/Layout";
 import Card from "components/ui/Card";
 import { Formik } from "formik";
 import useWallet from "hooks/useWallet";
+import dynamic from "next/dynamic";
 import { useState } from "react";
+
+const CoinPriceChart = dynamic(() => import("components/Swap/Chart"), {
+  ssr: false,
+});
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -16,6 +21,17 @@ const CardWrapper = styled(Card)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+`;
+
+const BackgroundChart = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
 `;
 
 interface SwapForm {
@@ -34,6 +50,10 @@ export default function Swap() {
 
   return (
     <Layout>
+      <BackgroundChart>
+        <CoinPriceChart />
+      </BackgroundChart>
+
       <CardWrapper>
         <p>Balance: {JSON.stringify(wallet?.data?.accounts[0].balance)}</p>
         <Formik

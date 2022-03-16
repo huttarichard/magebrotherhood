@@ -16,8 +16,9 @@ import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import "./Stakable.sol";
-import "./ICoin.sol";
+import "./interfaces/IStakable.sol";
+import "./interfaces/ICoin.sol";
+import "./SafeTransfer.sol";
 
 /**
  * @title NFT Staking
@@ -86,7 +87,6 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   struct ContractStaking {
     Stakable nft;
-    uint128 reward;
     mapping(uint256 => TokenInfo) tokens;
     bool enabled;
   }
@@ -217,10 +217,9 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
   /**
    * Will enable contract and staking for give contract
    */
-  function addContract(address nft, uint128 reward) public onlyOwner {
+  function addContract(address nft) public onlyOwner {
     staking[nft].nft = Stakable(nft);
     staking[nft].enabled = true;
-    staking[nft].reward = reward;
   }
 
   /**
@@ -228,7 +227,6 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
    */
   function removeContract(address nft) public onlyOwner {
     staking[nft].enabled = false;
-    staking[nft].reward = 0;
   }
 
   /**
@@ -283,7 +281,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
 
     uint16 periodLengthInCycles_ = periodLengthInCycles;
     uint16 currentCycle = _getCycle(block.timestamp);
-    uint128 weight = uint128(staker.reward * amount);
+    uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
 
     _updateHistories(owner, int128(weight), currentCycle);
 
@@ -347,7 +345,7 @@ contract Vault is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721R
       uint256 tokenId = tokenIds[index];
       uint256 amount = amounts[index];
       require(currentCycle != staker.tokens[tokenId].withdrawCycle, "unstaked token cooldown");
-      uint128 weight = uint128(staker.reward * amount);
+      uint128 weight = uint128(staker.nft.getStakingWeight(tokenId) * amount);
       totalStakedWeight += weight; // This is safe
       weights[index] = weight;
       staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);

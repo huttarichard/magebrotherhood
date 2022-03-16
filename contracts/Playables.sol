@@ -11,8 +11,8 @@ import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-import "./IAffiliate.sol";
-import "./ICoin.sol";
+import "./interfaces/ICoin.sol";
+import "./interfaces/IAffiliate.sol";
 
 /**
  * Playables contract.
@@ -39,7 +39,7 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
   /**
    * @dev Rewarder address;
    */
-  IAffiliate public rewarder;
+  IAffiliate public affiliate;
 
   /**
    * @dev keeps contract uri.
@@ -56,12 +56,12 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
    */
   constructor(
-    address _rewarder,
     address _coin,
+    address _affiliate,
     string memory _uri
   ) ERC1155(_uri) {
     coin = ICoin(_coin);
-    rewarder = IAffiliate(_rewarder);
+    affiliate = IAffiliate(_affiliate);
     _setDefaultRoyalty(_coin, 500);
   }
 
@@ -99,6 +99,13 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
    */
   function setDefaultRoyalty(address _receiver, uint96 feeNumerator) public onlyOwner {
     _setDefaultRoyalty(_receiver, feeNumerator);
+  }
+
+  /**
+   * @dev will set the rewarder
+   */
+  function setAffiliate(address _affiliate) public onlyOwner {
+    affiliate = IAffiliate(_affiliate);
   }
 
   /**
@@ -167,7 +174,7 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
     Collection storage collection = collections[tokenId];
 
     require(collection.minted + amount <= collection.supply, "supply exceeded");
-    uint256 rw = rewarder.reward(discount);
+    uint256 rw = affiliate.reward(discount);
     uint256 price = collection.price * amount - rw;
 
     _payment(price, payWithCoin);

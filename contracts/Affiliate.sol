@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-import "./ICoin.sol";
+import "./interfaces/ICoin.sol";
 
 /**
  * @notice Affiliate marketing is contract distibuting rewards for marketing.
@@ -59,7 +59,7 @@ contract Affiliate is Context, Ownable, Pausable {
    * Marketing code used for promotion.
    * @param code string marketing code.
    */
-  function register(string memory code) public {
+  function register(string memory code) public whenNotPaused {
     require(bytes(code).length > 0 && bytes(code).length <= 20, "invalid code length");
     require(_codes[code] == address(0), "code already used");
     _codes[code] = _msgSender();
@@ -76,26 +76,19 @@ contract Affiliate is Context, Ownable, Pausable {
   }
 
   /**
-   * payoff calculates discount for given rewarder.
-   * @param cont as contract address which is allowed to reward. See `allowRewarding`.
-   */
-  function payoff(address cont) public view returns (uint256) {
-    require(_rewarders[cont] != 0, "invalid rewarder");
-    return _rewarders[cont] * tx.gasprice;
-  }
-
-  /**
    * Reward will distribte reward according to register.
    * @param code marketing code
    */
   function reward(string memory code) external returns (uint256) {
     address addr = _codes[code];
     require(addr != address(0), "invalid affiliate code");
+    uint256 ratio = _rewarders[_msgSender()];
+    require(ratio != 0, "invalid rewarder");
     require(!_used[addr], "already used discount");
-    uint256 rw = payoff(_msgSender());
-    balances[addr] += rw;
+    uint256 payoff = ratio * tx.gasprice;
+    balances[addr] += payoff;
     _used[addr] = true;
-    return rw;
+    return payoff;
   }
 
   /**

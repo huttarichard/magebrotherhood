@@ -279,7 +279,7 @@ export default function Hero(props: React.PropsWithChildren<{ active: boolean }>
           <h1>
             Play for victory, earn <span>rewards.</span>
           </h1>
-          <p>NFT P2E game powered by blockchain enhanced by AR</p>
+          <p>NFT P2E game powered by blockchain enhanced by AR, managed by DAO.</p>
           <ul>
             <li>
               <span>8K</span>

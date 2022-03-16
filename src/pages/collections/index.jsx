@@ -11,6 +11,7 @@ export default function CollectionsIndex() {
 
       <Layout>
         <h1>Collections</h1>
+        https://codepen.io/ykadosh/pen/ZEJLapj https://codepen.io/gayane-gasparyan/pen/jOmaBQK
       </Layout>
     </>
   );

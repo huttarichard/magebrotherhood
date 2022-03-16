@@ -21,8 +21,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
 
   event Sold(address indexed buyer, uint256 indexed sold);
 
-  mapping(address => bool) private isExcludedFromFees;
-
   uint256 public taxFee = 5;
 
   uint256 public liqudityGuard = 3;
@@ -41,14 +39,17 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
 
   bytes32 public constant MINTER = keccak256("MINTER");
 
+  bytes32 public constant SPENDER = keccak256("SPENDER");
+
+  bytes32 public constant FREELOADER = keccak256("FREELOADER");
+
   constructor(uint256 liquidity) ERC20(NAME, TICK) ERC20Permit(NAME) {
     // make sure admin controls it all
     _setRoleAdmin(BURNER, ADMIN);
     _setRoleAdmin(MINTER, ADMIN);
+    _setRoleAdmin(SPENDER, ADMIN);
+    _setRoleAdmin(FREELOADER, ADMIN);
     _setupRole(ADMIN, _msgSender());
-
-    isExcludedFromFees[_msgSender()] = true;
-    isExcludedFromFees[address(this)] = true;
 
     _mint(address(this), liquidity * DECIMALS);
     _delegate(address(this), _msgSender());
@@ -71,14 +72,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     liqudityGuardDenominator = _denominator;
   }
 
-  /**
-   * @notice Convert ETH to Tokens.
-   * @dev User specifies exact input (msg.value).
-   * @dev User cannot specify minimum output or deadline.
-   */
-  function excludeFromFee(address account) public onlyRole(ADMIN) {
-    isExcludedFromFees[account] = true;
-  }
 
   /**
    * @dev will mint tokens to given address
@@ -312,35 +305,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     return getOutputPrice(ethBought, tokenReserve, address(this).balance);
   }
 
-  /**
-   * @dev Spend `amount` form the allowance of `owner` toward `spender`.
-   * @notice it does not check the allowence if you are admin, giving
-   * you raw power to transfer assets
-   */
-  function _spendAllowance(
-    address owner,
-    address spender,
-    uint256 amount
-  ) internal virtual override {
-    if (hasRole(ADMIN, _msgSender())) {
-      return;
-    }
-    super._spendAllowance(owner, spender, amount);
-  }
-
-  /**
-   * @dev Move voting power when tokens are transferred.
-   *
-   * Emits a {DelegateVotesChanged} event.
-   */
-  function _afterTokenTransfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override(ERC20Votes, ERC20) {
-    super._afterTokenTransfer(from, to, amount);
-  }
-
   function ethToTokenInput(
     uint256 ethSold,
     uint256 minTokens,
@@ -375,15 +339,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     return ethSold;
   }
 
-  function _deposit(
-    address buyer,
-    address recipient,
-    uint256 tokensBought
-  ) internal {
-    _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, tokensBought);
-  }
-
   function tokenToEthInput(
     uint256 tokensSold,
     uint256 minEth,
@@ -415,13 +370,59 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     return tokensSold;
   }
 
+  /**
+   * @dev Spend `amount` form the allowance of `owner` toward `spender`.
+   * @notice it does not check the allowence if you are admin or a minter, giving
+   * you raw power to transfer assets.
+   */
+  function _spendAllowance(
+    address owner,
+    address spender,
+    uint256 amount
+  ) internal virtual override {
+    if (hasRole(ADMIN, spender)) {
+      return;
+    }
+    if (hasRole(SPENDER, spender)) {
+      return;
+    }
+    super._spendAllowance(owner, spender, amount);
+  }
+
+  /**
+   * @dev Move voting power when tokens are transferred.
+   * Emits a {DelegateVotesChanged} event.
+   */
+  function _afterTokenTransfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal override(ERC20Votes, ERC20) {
+    super._afterTokenTransfer(from, to, amount);
+  }
+
+  /**
+   * @dev Deposit function used to deposit from current balance to recipient.
+   */
+  function _deposit(
+    address buyer,
+    address recipient,
+    uint256 tokensBought
+  ) internal {
+    _transfer(address(this), recipient, tokensBought);
+    emit Bought(buyer, tokensBought);
+  }
+
+  /**
+   * @dev Only function allowing to withdraw the eth out of contract.
+   */
   function _withdraw(
     address buyer,
     address payable recipient,
     uint256 tokensSold,
     uint256 ethBought
   ) internal {
-    if (!isExcludedFromFees[buyer]) {
+    if (!hasRole(FREELOADER, buyer)) {
       // We subtract taxFee. Intention is here to balance
       // out the inflation given to MINTER role.
       ethBought = ethBought.sub(ethBought.div(100).mul(taxFee));
