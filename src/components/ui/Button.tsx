@@ -1,5 +1,6 @@
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import ButtonBase from "@mui/material/ButtonBase";
-import { styled } from "@mui/system";
 import React from "react";
 
 interface StyleModificationProps {
@@ -27,35 +28,35 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
 
   ${({ theme, borders }) =>
     borders &&
-    `
-    clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
-    border-left: solid 5px ${theme.palette.primary.main};
-    border-right: solid 5px ${theme.palette.secondary.main};
+    css`
+      clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
+      border-left: solid 5px ${theme.palette.primary.main};
+      border-right: solid 5px ${theme.palette.secondary.main};
 
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 22px 22px 0 0;
-      border-color: ${theme.palette.primary.main} transparent transparent transparent;
-    }
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 22px 22px 0 0;
+        border-color: ${theme.palette.primary.main} transparent transparent transparent;
+      }
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 0 0 22px 22px;
-      border-color: transparent transparent ${theme.palette.secondary.main} transparent;
-    }
-  `}
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0 22px 22px;
+        border-color: transparent transparent ${theme.palette.secondary.main} transparent;
+      }
+    `}
 
   span {
     position: relative;
@@ -64,37 +65,37 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
 
   ${({ theme, distorted }) =>
     distorted &&
-    `
-    span {
-      &::after {
-        content: attr(data-text);
-        position: absolute;
-        left: 2px;
-        width: 100%;
-        text-shadow: -1px 0 ${theme.palette.primary.main};
-        top: 0;
-        color: #000;
-        background: #fff;
-        overflow: hidden;
-        clip: rect(0, 900px, 0, 0);
-        animation: noise-anim 2s infinite linear alternate-reverse;
-      }
+    css`
+      span {
+        &::after {
+          content: attr(data-text);
+          position: absolute;
+          left: 2px;
+          width: 100%;
+          text-shadow: -1px 0 ${theme.palette.primary.main};
+          top: 0;
+          color: #000;
+          background: #fff;
+          overflow: hidden;
+          clip: rect(0, 900px, 0, 0);
+          animation: noise-anim 2s infinite linear alternate-reverse;
+        }
 
-      &::before {
-        content: attr(data-text);
-        position: absolute;
-        left: -2px;
-        width: 100%;
-        text-shadow: 1px 0 ${theme.palette.secondary.main};
-        top: 0;
-        color: #000;
-        background: #fff;
-        overflow: hidden;
-        clip: rect(0, 900px, 0, 0);
-        animation: noise-anim-2 3s infinite linear alternate-reverse;
+        &::before {
+          content: attr(data-text);
+          position: absolute;
+          left: -2px;
+          width: 100%;
+          text-shadow: 1px 0 ${theme.palette.secondary.main};
+          top: 0;
+          color: #000;
+          background: #fff;
+          overflow: hidden;
+          clip: rect(0, 900px, 0, 0);
+          animation: noise-anim-2 3s infinite linear alternate-reverse;
+        }
       }
-    }
-  `}
+    `}
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     line-height: 50px;
@@ -102,19 +103,19 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
 
     ${({ theme, borders }) =>
       borders &&
-      `
-      border-left: solid 7px ${theme.palette.primary.main};
-      border-right: solid 7px ${theme.palette.secondary.main};
-      clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
+      css`
+        border-left: solid 7px ${theme.palette.primary.main};
+        border-right: solid 7px ${theme.palette.secondary.main};
+        clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
 
-      &::before {
-        border-width: 25px 25px 0 0;
-      }
+        &::before {
+          border-width: 25px 25px 0 0;
+        }
 
-      &::after {
-        border-width: 0 0 25px 25px;
-      }
-    `}
+        &::after {
+          border-width: 0 0 25px 25px;
+        }
+      `}
   }
 
   @keyframes noise-anim {
