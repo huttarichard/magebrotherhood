@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import Layout from "../../components/Layout/Layout";
+import Layout from "../../components/OldLayout/Layout";
 
 export default function CollectionsIndex() {
   return (

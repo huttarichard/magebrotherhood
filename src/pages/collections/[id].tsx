@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import MintButton from "components/ui/MintButton";
 import Head from "next/head";
 
-import Layout from "../../components/Layout/Layout";
+import Layout from "../../components/OldLayout/Layout";
 import ModelViewerDynamic from "../../components/ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`

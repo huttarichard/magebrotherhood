@@ -26,11 +26,12 @@ export default function FullPage<E extends Props>({ ...props }: E) {
         fadeContent: false,
         perspective: 0,
       }}
-      paddingTop={isBigScreen ? "0px" : "80px"}
+      menu
       scrollOverflow
       licenseKey={`5949m7cV-Yeq5s7Sp-pKh9aLSJ-T8pshEbi`}
     />
   );
+  // paddingTop={isBigScreen ? "0px" : "60px"}
 }
 
 FullPage.Wrapper = ReactFullpage.Wrapper;

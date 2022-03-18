@@ -1,45 +1,49 @@
 import "@emotion/react";
 
-export type Color = string;
+import type { Theme as MuiTheme } from "@mui/system";
 
-export interface Colors {
+export interface Options extends MuiTheme {
   // base
-  white: Color;
-  black: Color;
+  white: string;
+  black: string;
 
   // text
-  text1: Color;
-  text2: Color;
-  text3: Color;
+  text1: string;
+  text2: string;
+  text3: string;
 
   // backgrounds / greys
-  bg1: Color;
-  bg2: Color;
-  bg3: Color;
+  bg1: string;
+  bg2: string;
+  bg3: string;
 
   //blues
-  primary1: Color;
-  primary2: Color;
-  primary3: Color;
-  secondary1: Color;
-  secondary2: Color;
+  primary1: string;
+  primary2: string;
+  primary3: string;
+  secondary1: string;
+  secondary2: string;
 
   // other
-  red: Color;
-  green: Color;
-  yellow: Color;
-  blue: Color;
+  red: string;
+  green: string;
+  yellow: string;
+  blue: string;
 
-  error: Color;
-  success: Color;
-  warning: Color;
+  error: string;
+  success: string;
+  warning: string;
 
-  shadow: Color;
+  shadow: string;
   borderRadius: string;
 }
 
 declare module "@emotion/react" {
   // eslint-disable-next-line
-  export interface Theme extends Colors {
-  }
+  export interface Theme extends Options {}
+}
+
+declare module "@mui/material/styles" {
+  // eslint-disable-next-line
+  export interface Theme extends Options {}
 }

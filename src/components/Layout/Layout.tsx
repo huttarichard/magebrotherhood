@@ -1,34 +1,95 @@
 import styled from "@emotion/styled";
-import React from "react";
+import { Breakpoint, Drawer, Grid } from "@mui/material";
+import Container from "@mui/material/Container";
+import { PropsWithChildren } from "react";
 
+import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-// import { useEffect } from "react";
-// import { useConnector } from "components/web3/Connector";
+import { useLayout } from "./store";
 
-const Wrapper = styled.div`
-  main {
-    position: relative;
-    /* margin-top: 68px; */
-  }
+const MainGrid = styled(Grid)`
+  min-height: 100vh;
+  flex-direction: column;
 
-  @media (min-width: 992px) {
-    display: flex;
-
-    main {
-      flex: 1;
-      /* margin-top: 0; */
-    }
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    flex-direction: row;
   }
 `;
 
-export default function Layout({ children }: React.PropsWithChildren<unknown>) {
-  // let { modal } = useConnector();
+const SidebarGrid = styled(Grid)`
+  border-right: 1px solid #2c2c2c;
+  height: 100%;
+  width: 340px;
+  position: relative;
+  display: none;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    display: block;
+  }
+`;
+
+const NavbarGrid = styled(Grid)`
+  height: 60px;
+  width: 100%;
+  position: relative;
+  display: block;
+  border-bottom: 1px solid #2c2c2c;
+  position: fixed;
+  background: ${(props) => props.theme.bg1};
+  z-index: 10;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    display: none;
+  }
+`;
+
+const SidebarContent = styled.div`
+  height: 100%;
+  width: 340px;
+  position: fixed;
+  background: ${(props) => props.theme.bg1};
+  border-right: 1px solid #2c2c2c;
+`;
+
+const ContentGrid = styled(Grid)`
+  padding-top: 60px;
+  z-index: 9;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    padding: 0;
+  }
+`;
+
+export interface LayoutProps {
+  maxContainerSize?: Breakpoint | false | undefined;
+}
+
+export default function Layout({ maxContainerSize = "lg", children }: PropsWithChildren<LayoutProps>) {
+  const { menuOpened, closeMenu } = useLayout();
 
   return (
-    <Wrapper>
-      <Sidebar />
-      <main>{children}</main>
-      {/* {modal.render()} */}
-    </Wrapper>
+    <MainGrid container>
+      <SidebarGrid item>
+        <SidebarContent>
+          <Sidebar />
+        </SidebarContent>
+      </SidebarGrid>
+
+      <Drawer anchor="left" open={menuOpened} onClose={closeMenu}>
+        <SidebarContent>
+          <Sidebar closeIcon />
+        </SidebarContent>
+      </Drawer>
+
+      <NavbarGrid item>
+        <Navbar />
+      </NavbarGrid>
+
+      <ContentGrid item xs>
+        <Container disableGutters maxWidth={maxContainerSize}>
+          {children}
+        </Container>
+      </ContentGrid>
+    </MainGrid>
   );
 }

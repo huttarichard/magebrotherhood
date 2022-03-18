@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import {
   faArrowsLeftRight,
-  faBurger,
   faCartArrowDown,
   faClose,
   faCoinBlank,
@@ -11,121 +11,37 @@ import {
   faRectangleVerticalHistory,
 } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Grid } from "@mui/material";
+import Brand from "components/Brand";
 import Link from "next/link";
-import { useState } from "react";
 
-import HeaderWallet from "./HeaderWallet";
-import Logo from "./Logo";
+import { useLayout } from "./store";
 
-const StyledHeader = styled.header`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background-color: #111;
-  height: 80px;
-  padding: 0 20px;
-  border-right: 1px solid #2c2c2c;
-
-  @media (min-width: 992px) {
-    position: relative;
-    height: 100vh;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    box-sizing: border-box;
-    padding: 3rem 2rem;
-
-    > .icon-wrapper {
-      display: none;
-    }
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background-repeat: no-repeat;
-      background-size: 100% auto;
-      mix-blend-mode: color-dodge;
-    }
-  }
-`;
-
-const Brand = styled.div`
-  display: flex;
-  align-items: center;
-
-  svg {
-    display: block;
-    width: 32px;
-    height: 32px;
-    margin-right: 1rem;
-  }
-
-  span {
-    display: inline-block;
-    font-family: "Bebas Neue", sans-serif;
-    color: #fff;
-    letter-spacing: 1px;
-    max-width: 100%;
-    font-size: 22px;
-  }
-
-  @media (min-width: 992px) {
-    margin-bottom: 5rem;
-
-    svg {
-      width: 70px;
-      height: 70px;
-    }
-
-    span {
-      font-size: 28px;
-      line-height: 28px;
-      max-width: 159px;
-    }
-  }
-`;
-
-const StyledNav = styled.nav`
-  position: fixed;
-  top: 0;
-  left: -1px;
-  bottom: 0;
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-  padding: 6rem 2rem 4rem;
-  transform: translateX(-100%);
+const Navbar = styled(Grid)`
+  padding: 2rem;
   transition: transform 0.3s;
   background-color: #111;
   background-repeat: no-repeat;
   background-size: contain;
-  justify-content: space-between;
   width: 100%;
+  height: 100%;
 
-  .icon-wrapper {
+  .close-icon {
     position: absolute;
-    top: 1.5rem;
+    top: 1.2rem;
     right: 1.5rem;
   }
 
   ul {
+    margin: 0;
+    margin-top: 5rem;
     list-style: none;
     padding: 0;
-    margin: 0;
   }
 
   li {
     margin-bottom: 1rem;
+    font-weight: 600;
   }
 
   a {
@@ -134,147 +50,71 @@ const StyledNav = styled.nav`
     text-decoration: none;
     color: #fff;
     text-transform: uppercase;
-    font-family: "Bebas Neue", sans-serif;
     letter-spacing: 1px;
-    font-size: 22px;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    line-height: 2rem;
+
+    ${(props) => props.theme.breakpoints.up("lg")} {
+      font-size: 1.4rem;
+      line-height: 2.7rem;
+    }
 
     svg {
       display: inline-block;
-      width: 20px;
-      height: 20px;
+      width: 50px;
+      height: 30px;
+      font-size: 20px;
       object-fit: contain;
       margin-right: 1rem;
     }
   }
-
-  &.toggled {
-    transform: translateX(0);
-  }
-
-  @media (min-width: 992px) {
-    position: static;
-    transform: none;
-    transition: none;
-    background-color: transparent;
-    background: none;
-    padding: 0;
-    flex: 1;
-
-    .icon-wrapper {
-      display: none;
-    }
-
-    li {
-      margin-bottom: 1.5rem;
-    }
-
-    a {
-      font-size: 25px;
-
-      svg {
-        width: 32px;
-        height: 32px;
-        margin-right: 1.5rem;
-      }
-    }
-  }
 `;
 
-const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  visibility: hidden;
-  background-color: rgba(0, 0, 0, 0);
-  transition: all 0.3s;
+export interface LayoutNavbarProps {
+  closeIcon?: boolean;
+}
 
-  &.toggled {
-    visibility: visible;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: all 0.3s;
-  }
+interface ItemProps {
+  icon: IconDefinition;
+  name: string;
+  link: string;
+}
 
-  @media (min-width: 992px) {
-    display: none !important;
-  }
-`;
+function Item({ icon, name, link }: ItemProps) {
+  return (
+    <li>
+      <Link href={link}>
+        <a>
+          <FontAwesomeIcon icon={icon} />
+          <span>{name}</span>
+        </a>
+      </Link>
+    </li>
+  );
+}
 
-export default function Header() {
-  const [show, setShow] = useState(false);
-  const navClass = show ? "toggled" : "";
+export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
+  const { closeMenu } = useLayout();
 
   return (
-    <StyledHeader>
-      <Backdrop className={navClass} onClick={() => setShow(false)} />
-      <Brand>
-        <Logo color="#fff" />
-        <span>Mage Brotherhood</span>
-      </Brand>
-      <StyledNav className={navClass}>
-        <FontAwesomeIcon className="icon-wrapper" icon={faClose} onClick={() => setShow(false)} />
+    <Navbar container direction="column">
+      {closeIcon && <FontAwesomeIcon className="close-icon" icon={faClose} onClick={closeMenu} />}
+      <Grid item xs="auto">
+        <Brand block />
+      </Grid>
+      <Grid item flexGrow="1">
         <ul>
-          <li>
-            <Link href="/">
-              <a>
-                <FontAwesomeIcon icon={faHouse} />
-                <span>Home</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/collections">
-              <a>
-                <FontAwesomeIcon icon={faRectangleVerticalHistory} />
-                <span>Collections</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/staking">
-              <a>
-                <FontAwesomeIcon icon={faCoinBlank} />
-                <span>Staking</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/affiliate">
-              <a>
-                <FontAwesomeIcon icon={faMoneyCheckDollar} />
-                <span>Affiliate</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/marketplace">
-              <a>
-                <FontAwesomeIcon icon={faCartArrowDown} />
-                <span>Marketplace</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/swap">
-              <a>
-                <FontAwesomeIcon icon={faArrowsLeftRight} />
-                <span>Swap</span>
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/faq">
-              <a>
-                <FontAwesomeIcon icon={faCommentsQuestion} />
-                <span>FAQ</span>
-              </a>
-            </Link>
-          </li>
+          <Item icon={faHouse} name="Home" link="/" />
+          <Item icon={faRectangleVerticalHistory} name="Collections" link="/collections" />
+          <Item icon={faCoinBlank} name="Staking" link="/staking" />
+          <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
+          <Item icon={faCartArrowDown} name="Marketplace" link="/marketplace" />
+          <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
+          <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </ul>
-        <HeaderWallet />
-      </StyledNav>
-      <FontAwesomeIcon className="icon-wrapper" icon={faBurger} onClick={() => setShow(true)} />
-    </StyledHeader>
+      </Grid>
+      <Grid item>bottom</Grid>
+    </Navbar>
   );
 }
