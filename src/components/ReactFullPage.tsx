@@ -1,6 +1,6 @@
 import type { fullpageApi, fullpageOptions } from "@fullpage/react-fullpage";
 import ReactFullpage from "@fullpage/react-fullpage";
-import { useMediaQuery } from "react-responsive";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface FullPageProps extends fullpageOptions {
   licenseKey?: string;
@@ -15,7 +15,7 @@ export type RenderProps = { state: any; fullpageApi: fullpageApi };
 
 //
 export default function FullPage<E extends Props>({ ...props }: E) {
-  const isBigScreen = useMediaQuery({ query: "(min-width: 992px)" });
+  const isBigScreen = useMediaQuery("(min-width: 992px)");
 
   return (
     <ReactFullpage

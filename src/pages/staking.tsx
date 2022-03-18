@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Input, Label } from "@rebass/forms";
+import TextField from "@mui/material/TextField";
 import Card from "components/ui/Card";
 import { Formik } from "formik";
 
@@ -96,13 +96,19 @@ export default function Staking() {
               }, 100);
             }}
           >
-            {({ values, errors, handleChange, handleSubmit, isSubmitting, isValidating }) => (
+            {({ values, errors, touched, handleChange, handleSubmit, isSubmitting, isValidating }) => (
               <form onSubmit={handleSubmit}>
-                <div>
-                  <Label htmlFor="bhc">Enter amount of BHC You want to stake</Label>
-                  <Input name="bhc" type="number" step={1} value={values.bhc} onChange={handleChange} />
-                  {errors.bhc && <span>{errors.bhc}</span>}
-                </div>
+                <TextField
+                  fullWidth
+                  id="bhc"
+                  name="bhc"
+                  label="Enter amount of BHC You want to stake"
+                  value={values.bhc}
+                  type="number"
+                  onChange={handleChange}
+                  error={touched.bhc && Boolean(errors.bhc)}
+                  helperText={touched.bhc && errors.bhc}
+                />
 
                 <br />
 

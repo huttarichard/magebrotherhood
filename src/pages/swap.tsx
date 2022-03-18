@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { Input, Label } from "@rebass/forms";
+import TextField from "@mui/material/TextField";
 import Layout from "components/Layout/Layout";
+import Button from "components/ui/Button";
 import Card from "components/ui/Card";
 import { Formik } from "formik";
 import useWallet from "hooks/useWallet";
@@ -24,14 +25,14 @@ const CardWrapper = styled(Card)`
 `;
 
 const BackgroundChart = styled.div`
-  width: 100%;
+  /* width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: -1;
+  z-index: -1; */
 `;
 
 interface SwapForm {
@@ -85,26 +86,29 @@ export default function Swap() {
             }, 100);
           }}
         >
-          {({ values, errors, handleChange, handleSubmit, isSubmitting, isValidating }) => (
+          {({ values, errors, touched, handleChange, handleSubmit, isSubmitting, isValidating }) => (
             <form onSubmit={handleSubmit}>
-              <div>
-                <Label htmlFor="eth">ETH</Label>
-                <Input name="eth" type="number" step={0.001} value={values.eth} onChange={handleChange} />
-                {errors.eth && <span>{errors.eth}</span>}
-              </div>
+              <TextField
+                fullWidth
+                id="eth"
+                name="eth"
+                label="ETH"
+                value={values.eth}
+                type="number"
+                onChange={handleChange}
+                error={touched.eth && Boolean(errors.eth)}
+                helperText={touched.eth && errors.eth}
+              />
 
               <div>
-                <Label>Coin</Label>
-                <Input type="text" placeholder="0.00" value={resultAmount} disabled />
-                <span>{exchangeRateText}</span>
+                <p>Result amount: {resultAmount}</p>
+                <p>{exchangeRateText}</p>
               </div>
 
               <br />
 
               <div className="d-grid gap-2">
-                <button type="submit" disabled={isSubmitting || isValidating}>
-                  Swap
-                </button>
+                <Button text="Swap" disabled={isSubmitting || isValidating} />
               </div>
             </form>
           )}

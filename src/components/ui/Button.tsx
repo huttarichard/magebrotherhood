@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
+import { distortion, distortionAlternative } from "./animations";
+
 interface StyleModificationProps {
   borders?: boolean;
   distorted?: boolean;
@@ -14,22 +16,29 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, StyleModi
 
 const StyledButton = styled(ButtonBase)<StyleModificationProps>`
   position: relative;
-  height: 50px;
-  padding: 0 40px;
+  box-sizing: border-box;
+  padding: 0 2.5rem;
   border: 0;
   background: #fff;
   color: black;
   text-transform: uppercase;
-  line-height: 44px;
+  line-height: 2.5rem;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 19px;
+  font-size: 1.2rem;
   letter-spacing: 0.12em;
+  transition: opacity 0.2s;
   cursor: pointer;
 
+  span {
+    position: relative;
+    display: block;
+  }
+
+  /* borders */
   ${({ theme, borders }) =>
     borders &&
     css`
-      clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
+      clip-path: polygon(1.2rem 0%, 100% 0, 100% 1.3rem, calc(100% - 1.2rem) 100%, 0 100%, 0 1.2rem);
       border-left: solid 5px ${theme.palette.primary.main};
       border-right: solid 5px ${theme.palette.secondary.main};
 
@@ -41,7 +50,7 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 22px 22px 0 0;
+        border-width: 1.25rem 1.25rem 0 0;
         border-color: ${theme.palette.primary.main} transparent transparent transparent;
       }
 
@@ -53,16 +62,12 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 0 0 22px 22px;
+        border-width: 0 0 1.25rem 1.25rem;
         border-color: transparent transparent ${theme.palette.secondary.main} transparent;
       }
     `}
 
-  span {
-    position: relative;
-    display: block;
-  }
-
+  /* distortion */
   ${({ theme, distorted }) =>
     distorted &&
     css`
@@ -78,7 +83,7 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
           background: #fff;
           overflow: hidden;
           clip: rect(0, 900px, 0, 0);
-          animation: noise-anim 2s infinite linear alternate-reverse;
+          animation: ${distortion} 2s infinite linear alternate-reverse;
         }
 
         &::before {
@@ -92,168 +97,44 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
           background: #fff;
           overflow: hidden;
           clip: rect(0, 900px, 0, 0);
-          animation: noise-anim-2 3s infinite linear alternate-reverse;
+          animation: ${distortionAlternative} 3s infinite linear alternate-reverse;
         }
       }
     `}
 
+  /* responsiveness */
   ${({ theme }) => theme.breakpoints.up("md")} {
-    line-height: 50px;
-    font-size: 22px;
+    line-height: 3rem;
+    font-size: 1.3rem;
 
     ${({ theme, borders }) =>
       borders &&
       css`
         border-left: solid 7px ${theme.palette.primary.main};
         border-right: solid 7px ${theme.palette.secondary.main};
-        clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
+        clip-path: polygon(1.4rem 0%, 100% 0, 100% 1.6rem, calc(100% - 1.4rem) 100%, 0 100%, 0 1.4rem);
 
         &::before {
-          border-width: 25px 25px 0 0;
+          border-width: 1.5rem 1.5rem 0 0;
         }
 
         &::after {
-          border-width: 0 0 25px 25px;
+          border-width: 0 0 1.5rem 1.5rem;
         }
       `}
   }
 
-  @keyframes noise-anim {
-    0% {
-      clip: rect(11px, 9999px, 68px, 0);
-    }
-    5% {
-      clip: rect(20px, 9999px, 6px, 0);
-    }
-    10% {
-      clip: rect(17px, 9999px, 15px, 0);
-    }
-    15% {
-      clip: rect(23px, 9999px, 63px, 0);
-    }
-    20% {
-      clip: rect(95px, 9999px, 95px, 0);
-    }
-    25% {
-      clip: rect(42px, 9999px, 6px, 0);
-    }
-    30% {
-      clip: rect(80px, 9999px, 66px, 0);
-    }
-    35% {
-      clip: rect(59px, 9999px, 34px, 0);
-    }
-    40% {
-      clip: rect(78px, 9999px, 72px, 0);
-    }
-    45% {
-      clip: rect(32px, 9999px, 91px, 0);
-    }
-    50% {
-      clip: rect(71px, 9999px, 58px, 0);
-    }
-    55% {
-      clip: rect(85px, 9999px, 12px, 0);
-    }
-    60% {
-      clip: rect(65px, 9999px, 61px, 0);
-    }
-    65% {
-      clip: rect(35px, 9999px, 35px, 0);
-    }
-    70% {
-      clip: rect(57px, 9999px, 49px, 0);
-    }
-    75% {
-      clip: rect(44px, 9999px, 68px, 0);
-    }
-    80% {
-      clip: rect(3px, 9999px, 81px, 0);
-    }
-    85% {
-      clip: rect(74px, 9999px, 19px, 0);
-    }
-    90% {
-      clip: rect(32px, 9999px, 59px, 0);
-    }
-    95% {
-      clip: rect(56px, 9999px, 93px, 0);
-    }
-    100% {
-      clip: rect(74px, 9999px, 36px, 0);
-    }
-  }
+  /* state */
 
-  @keyframes noise-anim-2 {
-    0% {
-      clip: rect(87px, 9999px, 99px, 0);
-    }
-    5% {
-      clip: rect(77px, 9999px, 86px, 0);
-    }
-    10% {
-      clip: rect(26px, 9999px, 68px, 0);
-    }
-    15% {
-      clip: rect(56px, 9999px, 67px, 0);
-    }
-    20% {
-      clip: rect(55px, 9999px, 73px, 0);
-    }
-    25% {
-      clip: rect(60px, 9999px, 77px, 0);
-    }
-    30% {
-      clip: rect(17px, 9999px, 82px, 0);
-    }
-    35% {
-      clip: rect(23px, 9999px, 83px, 0);
-    }
-    40% {
-      clip: rect(84px, 9999px, 95px, 0);
-    }
-    45% {
-      clip: rect(84px, 9999px, 17px, 0);
-    }
-    50% {
-      clip: rect(47px, 9999px, 75px, 0);
-    }
-    55% {
-      clip: rect(81px, 9999px, 60px, 0);
-    }
-    60% {
-      clip: rect(48px, 9999px, 49px, 0);
-    }
-    65% {
-      clip: rect(52px, 9999px, 88px, 0);
-    }
-    70% {
-      clip: rect(20px, 9999px, 59px, 0);
-    }
-    75% {
-      clip: rect(1px, 9999px, 61px, 0);
-    }
-    80% {
-      clip: rect(83px, 9999px, 64px, 0);
-    }
-    85% {
-      clip: rect(30px, 9999px, 45px, 0);
-    }
-    90% {
-      clip: rect(52px, 9999px, 45px, 0);
-    }
-    95% {
-      clip: rect(43px, 9999px, 9px, 0);
-    }
-    100% {
-      clip: rect(19px, 9999px, 2px, 0);
-    }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 `;
 
 export default function Button({ text, ...props }: Props) {
   return (
-    <StyledButton disableTouchRipple {...props}>
+    <StyledButton {...props}>
       <span data-text={text}>{text}</span>
     </StyledButton>
   );
