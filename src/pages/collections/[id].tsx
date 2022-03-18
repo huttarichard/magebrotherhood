@@ -1,6 +1,6 @@
 // import { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
 import styled from "@emotion/styled";
-import MintButton from "components/ui/MintButton";
+import Button from "components/ui/Button";
 import Head from "next/head";
 
 import Layout from "../../components/Layout/Layout";
@@ -103,7 +103,7 @@ export default function ID() {
             </div>
           </ModelViewerDynamic>
           <Actions>
-            <MintButton text="Mint" />
+            <Button text="Mint" />
           </Actions>
         </Wrapper>
       </Layout>
