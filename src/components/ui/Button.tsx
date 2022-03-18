@@ -14,22 +14,22 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, StyleModi
 
 const StyledButton = styled(ButtonBase)<StyleModificationProps>`
   position: relative;
-  height: 50px;
-  padding: 0 40px;
+  box-sizing: border-box;
+  padding: 0 2.5rem;
   border: 0;
   background: #fff;
   color: black;
   text-transform: uppercase;
-  line-height: 44px;
+  line-height: 2.5rem;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 19px;
+  font-size: 1.2rem;
   letter-spacing: 0.12em;
   cursor: pointer;
 
   ${({ theme, borders }) =>
     borders &&
     css`
-      clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
+      clip-path: polygon(1.2rem 0%, 100% 0, 100% 1.3rem, calc(100% - 1.2rem) 100%, 0 100%, 0 1.2rem);
       border-left: solid 5px ${theme.palette.primary.main};
       border-right: solid 5px ${theme.palette.secondary.main};
 
@@ -41,7 +41,7 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 22px 22px 0 0;
+        border-width: 1.25rem 1.25rem 0 0;
         border-color: ${theme.palette.primary.main} transparent transparent transparent;
       }
 
@@ -53,7 +53,7 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 0 0 22px 22px;
+        border-width: 0 0 1.25rem 1.25rem;
         border-color: transparent transparent ${theme.palette.secondary.main} transparent;
       }
     `}
@@ -98,22 +98,22 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
     `}
 
   ${({ theme }) => theme.breakpoints.up("md")} {
-    line-height: 50px;
-    font-size: 22px;
+    line-height: 3rem;
+    font-size: 1.3rem;
 
     ${({ theme, borders }) =>
       borders &&
       css`
         border-left: solid 7px ${theme.palette.primary.main};
         border-right: solid 7px ${theme.palette.secondary.main};
-        clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
+        clip-path: polygon(1.4rem 0%, 100% 0, 100% 1.6rem, calc(100% - 1.4rem) 100%, 0 100%, 0 1.4rem);
 
         &::before {
-          border-width: 25px 25px 0 0;
+          border-width: 1.5rem 1.5rem 0 0;
         }
 
         &::after {
-          border-width: 0 0 25px 25px;
+          border-width: 0 0 1.5rem 1.5rem;
         }
       `}
   }
@@ -253,7 +253,7 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
 
 export default function Button({ text, ...props }: Props) {
   return (
-    <StyledButton disableTouchRipple {...props}>
+    <StyledButton disableRipple {...props}>
       <span data-text={text}>{text}</span>
     </StyledButton>
   );
