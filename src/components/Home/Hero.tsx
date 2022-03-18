@@ -10,6 +10,10 @@ const Wrapper = styled.div`
   height: calc(100vh - 60px);
   overflow: hidden;
   background-color: #eee;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    height: 100vh;
+  }
 `;
 
 const Background = styled.div`

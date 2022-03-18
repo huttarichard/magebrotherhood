@@ -54,6 +54,8 @@ const SidebarContent = styled.div`
 const ContentGrid = styled(Grid)`
   padding-top: 60px;
   z-index: 9;
+  position: relative;
+  overflow: auto;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     padding: 0;
@@ -64,7 +66,7 @@ export interface LayoutProps {
   maxContainerSize?: Breakpoint | false | undefined;
 }
 
-export default function Layout({ maxContainerSize = "lg", children }: PropsWithChildren<LayoutProps>) {
+export default function Layout({ maxContainerSize = false, children }: PropsWithChildren<LayoutProps>) {
   const { menuOpened, closeMenu } = useLayout();
 
   return (
