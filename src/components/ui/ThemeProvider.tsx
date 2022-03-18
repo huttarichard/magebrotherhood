@@ -77,6 +77,7 @@ export const mui: ThemeOptions = {
       },
       styleOverrides: {
         root: {
+          borderRadius: "5px",
           // background: "#ffffff",
         },
       },
