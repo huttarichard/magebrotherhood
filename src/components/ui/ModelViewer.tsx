@@ -9,7 +9,6 @@ type Element = ModelViewerElement & HTMLDivElement;
 
 interface ModelProps {
   [key: string]: any;
-  animating?: boolean;
 }
 
 let counter = 0;

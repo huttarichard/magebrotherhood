@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import useOnScreen from "hooks/useOnScreen";
+import React, { createRef } from "react";
 
 import Ecosystem from "./Ecosystem";
 
@@ -61,11 +63,14 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function Scheme(props: React.PropsWithChildren<{ active: boolean }>) {
+export default function Scheme() {
+  const ref = createRef<HTMLDivElement>();
+  const visible = useOnScreen(ref);
+
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <h2>Powerful Ecosystem</h2>
-      <div className={`scheme-wrapper ${props.active ? "visible" : ""}`}>
+      <div className={`scheme-wrapper ${visible ? "visible" : ""}`}>
         <Ecosystem />
       </div>
       <p>

@@ -7,7 +7,7 @@ import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100%;
+  height: calc(100vh - 60px);
   overflow: hidden;
   background-color: #eee;
 `;
@@ -258,13 +258,13 @@ const Actions = styled.div`
   }
 `;
 
-export default function Hero(props: React.PropsWithChildren<{ active: boolean }>) {
+export default function Hero() {
   return (
     <Wrapper>
       <Background></Background>
       <Model>
         <ModelViewerDynamic
-          animating={props.active}
+          animating
           src="/assets/5.glb"
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"
@@ -285,18 +285,10 @@ export default function Hero(props: React.PropsWithChildren<{ active: boolean }>
               <span>8K</span>
               <span>NFT LEFT</span>
             </li>
-            {/* <li>
-            <span>123</span>
-            <span>GOVERNORS</span>
-          </li> */}
             <li>
               <span>$.0001</span>
               <span>BROTHERHOOD COIN</span>
             </li>
-            {/* <li>
-            <span>2K</span>
-            <span>Artists</span>
-          </li> */}
           </ul>
         </div>
       </Main>
