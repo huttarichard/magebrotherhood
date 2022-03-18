@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { Box } from "rebass/styled-components";
 
-const Row = styled(Box)<{
+const Row = styled.div<{
   width?: string;
   align?: string;
   justify?: string;

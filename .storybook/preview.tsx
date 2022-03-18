@@ -1,6 +1,6 @@
 import * as NextImage from "next/image";
-import ThemeProvider from "../src/components/ui/Theme";
 import { addDecorator } from "@storybook/react";
+import ThemeProvider from '../src/components/ui/ThemeProvider'
 import { css, Global } from "@emotion/react";
 
 const OriginalNextImage = NextImage.default;

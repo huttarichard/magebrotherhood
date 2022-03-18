@@ -1,7 +1,17 @@
-import styled from "@emotion/styled";
+import ButtonBase from "@mui/material/ButtonBase";
+import { styled } from "@mui/system";
 import React from "react";
 
-const StyledButton = styled.button<{ block: boolean }>`
+interface StyleModificationProps {
+  borders?: boolean;
+  distorted?: boolean;
+}
+
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, StyleModificationProps {
+  text: string;
+}
+
+const StyledButton = styled(ButtonBase)<StyleModificationProps>`
   position: relative;
   height: 50px;
   padding: 0 40px;
@@ -10,91 +20,101 @@ const StyledButton = styled.button<{ block: boolean }>`
   color: black;
   text-transform: uppercase;
   line-height: 44px;
-  border-left: solid 5px ${({ theme }) => theme.primary3};
-  border-right: solid 5px ${({ theme }) => theme.primary1};
-  clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
   font-family: "Bebas Neue", sans-serif;
   font-size: 19px;
   letter-spacing: 0.12em;
   cursor: pointer;
 
-  ${(props) =>
-    props.block &&
+  ${({ theme, borders }) =>
+    borders &&
     `
-    width: 100%;
+    clip-path: polygon(21px 0%, 100% 0, 100% 24px, calc(100% - 20px) 100%, 0 100%, 0 20px);
+    border-left: solid 5px ${theme.palette.primary.main};
+    border-right: solid 5px ${theme.palette.secondary.main};
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 22px 22px 0 0;
+      border-color: ${theme.palette.primary.main} transparent transparent transparent;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 0 22px 22px;
+      border-color: transparent transparent ${theme.palette.secondary.main} transparent;
+    }
   `}
 
   span {
     position: relative;
     display: block;
+  }
 
-    &::after {
-      content: attr(data-text);
-      position: absolute;
-      left: 2px;
-      width: 100%;
-      text-shadow: -1px 0 ${({ theme }) => theme.primary1};
-      top: 0;
-      color: #000;
-      background: #fff;
-      overflow: hidden;
-      clip: rect(0, 900px, 0, 0);
-      animation: noise-anim 2s infinite linear alternate-reverse;
+  ${({ theme, distorted }) =>
+    distorted &&
+    `
+    span {
+      &::after {
+        content: attr(data-text);
+        position: absolute;
+        left: 2px;
+        width: 100%;
+        text-shadow: -1px 0 ${theme.palette.primary.main};
+        top: 0;
+        color: #000;
+        background: #fff;
+        overflow: hidden;
+        clip: rect(0, 900px, 0, 0);
+        animation: noise-anim 2s infinite linear alternate-reverse;
+      }
+
+      &::before {
+        content: attr(data-text);
+        position: absolute;
+        left: -2px;
+        width: 100%;
+        text-shadow: 1px 0 ${theme.palette.secondary.main};
+        top: 0;
+        color: #000;
+        background: #fff;
+        overflow: hidden;
+        clip: rect(0, 900px, 0, 0);
+        animation: noise-anim-2 3s infinite linear alternate-reverse;
+      }
     }
+  `}
 
-    &::before {
-      content: attr(data-text);
-      position: absolute;
-      left: -2px;
-      width: 100%;
-      text-shadow: 1px 0 ${({ theme }) => theme.primary3};
-      top: 0;
-      color: #000;
-      background: #fff;
-      overflow: hidden;
-      clip: rect(0, 900px, 0, 0);
-      animation: noise-anim-2 3s infinite linear alternate-reverse;
-    }
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 22px 22px 0 0;
-    border-color: ${({ theme }) => theme.primary3} transparent transparent transparent;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 0 22px 22px;
-    border-color: transparent transparent ${({ theme }) => theme.primary1} transparent;
-  }
-
-  @media (min-width: 992px) {
+  ${({ theme }) => theme.breakpoints.up("md")} {
     line-height: 50px;
     font-size: 22px;
-    border-left: solid 7px ${({ theme }) => theme.primary3};
-    border-right: solid 7px ${({ theme }) => theme.primary1};
-    clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
 
-    &::before {
-      border-width: 25px 25px 0 0;
-    }
+    ${({ theme, borders }) =>
+      borders &&
+      `
+      border-left: solid 7px ${theme.palette.primary.main};
+      border-right: solid 7px ${theme.palette.secondary.main};
+      clip-path: polygon(22px 0%, 100% 0, 100% 27px, calc(100% - 23px) 100%, 0 100%, 0 22px);
 
-    &::after {
-      border-width: 0 0 25px 25px;
-    }
+      &::before {
+        border-width: 25px 25px 0 0;
+      }
+
+      &::after {
+        border-width: 0 0 25px 25px;
+      }
+    `}
   }
 
   @keyframes noise-anim {
@@ -230,14 +250,9 @@ const StyledButton = styled.button<{ block: boolean }>`
   }
 `;
 
-interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  text: string;
-  block?: boolean;
-}
-
-export default function Button({ text, block = false, ...props }: Props) {
+export default function Button({ text, ...props }: Props) {
   return (
-    <StyledButton block={block} {...props}>
+    <StyledButton disableTouchRipple {...props}>
       <span data-text={text}>{text}</span>
     </StyledButton>
   );

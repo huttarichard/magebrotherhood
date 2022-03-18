@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { Box } from "rebass";
 
-const Card = styled(Box)<{ width?: string; padding?: string; border?: string; $borderRadius?: string }>`
+const Card = styled.div<{ width?: string; padding?: string; border?: string; $borderRadius?: string }>`
   width: ${({ width }) => width ?? "100%"};
   padding: ${({ padding }) => padding ?? "1rem"};
   border-radius: ${({ $borderRadius, theme }) => $borderRadius ?? theme.borderRadius};
