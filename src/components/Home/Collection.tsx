@@ -5,14 +5,13 @@ import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100%;
-  padding-top: 6rem;
+  padding-top: 4rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  background-color: #111;
+  max-width: 100vw;
 `;
 
 const Header = styled.div`
@@ -75,6 +74,10 @@ const Header = styled.div`
 const StyledSlider = styled.div`
   width: 100%;
   margin-bottom: 6rem;
+
+  .swiper-slide {
+    max-width: 240px;
+  }
 `;
 
 const StyledSlide = styled.div`
@@ -150,40 +153,8 @@ export default function Collection() {
     <Wrapper>
       <Header>
         <div className="text">
-          <h2>Dark Knights</h2>
-          <p>Regularly updated collections</p>
-        </div>
-        <div className="actions">
-          <Button text="Go to marketplace" />
-        </div>
-      </Header>
-      <StyledSlider>
-        <Swiper {...sliderConfig}>
-          {slides.map((slide) => {
-            return (
-              <SwiperSlide key={slide.title}>
-                <StyledSlide>
-                  <div className="img-wrapper">
-                    <Image
-                      src={slide.img}
-                      layout="fill"
-                      objectFit="contain"
-                      objectPosition="left bottom"
-                      alt={slide.title}
-                    />
-                  </div>
-                  <h3>{slide.title}</h3>
-                  <p>{slide.text}</p>
-                </StyledSlide>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </StyledSlider>
-      <Header>
-        <div className="text">
-          <h2>Land</h2>
-          <p>Regularly updated collections</p>
+          <h2>Upcomming collection</h2>
+          <p>Collection of dark night ERC1155 comming later this month.</p>
         </div>
         <div className="actions">
           <Button text="Go to marketplace" />

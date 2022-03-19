@@ -21,7 +21,7 @@ function MageBrotherHoodApp(props: Props) {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>Mage Brotherhood - Homepage</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
       </Head>
       <ThemeProvider>
         <GlobalStyle />

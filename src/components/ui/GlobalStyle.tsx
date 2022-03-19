@@ -39,20 +39,13 @@ const GlobalStyle = (theme: Theme) => css`
   html {
     color: ${theme.text1};
     background-color: ${theme.bg1} !important;
-
     font-size: 100%;
+    height: 100%;
+    min-width: 375px;
 
     @media screen and (max-width: 900px) {
       font-size: 90%;
     }
-  }
-
-  html,
-  body {
-    min-height: 100%;
-    height: 100%;
-    width: 100%;
-    min-width: 375px;
   }
 
   body {
@@ -61,6 +54,11 @@ const GlobalStyle = (theme: Theme) => css`
     box-sizing: border-box;
     overscroll-behavior: none;
     font-size: 100%;
+    height: 100%;
+  }
+
+  #__next {
+    height: 100%;
   }
 
   a {

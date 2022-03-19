@@ -8,13 +8,13 @@ import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100%;
-  padding-top: 6rem;
+  padding-top: 4rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   background-color: #111;
+  max-width: 100vw;
 
   @media (min-width: 992px) {
     padding-top: 4rem;

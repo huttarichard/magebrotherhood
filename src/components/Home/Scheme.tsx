@@ -6,8 +6,7 @@ import Ecosystem from "./Ecosystem";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100%;
-  overflow: hidden;
+  height: auto;
   display: flex;
   flex-direction: column;
   background-color: #111;
@@ -15,7 +14,6 @@ const Wrapper = styled.div`
   h2 {
     padding: 0 1rem;
     margin: 0;
-    font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
     font-size: 3rem;
     color: #fff;
@@ -26,6 +24,7 @@ const Wrapper = styled.div`
     flex: 1;
     opacity: 0;
     transition: opacity 0.3s;
+    max-width: 100vh;
 
     svg {
       height: 100%;
@@ -55,10 +54,6 @@ const Wrapper = styled.div`
 
     h2 {
       font-size: 5rem;
-    }
-
-    svg {
-      max-height: 80vh;
     }
   }
 `;

@@ -40,7 +40,7 @@ const Navbar = styled(Grid)`
   }
 
   li {
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     font-weight: 600;
   }
 

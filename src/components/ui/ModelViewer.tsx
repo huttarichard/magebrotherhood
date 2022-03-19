@@ -4,6 +4,7 @@ import type { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
 import { useDebouncedEffect } from "hooks/useDebounce";
 import useOnScreen from "hooks/useOnScreen";
 import React, { createRef, useEffect, useMemo, useReducer, useState } from "react";
+import useWindowScroll from "react-use/esm/useWindowScroll";
 
 type Element = ModelViewerElement & HTMLDivElement;
 
@@ -17,7 +18,9 @@ export default function Model(props: React.PropsWithChildren<ModelProps>) {
   const ref = createRef<HTMLDivElement>();
   const visible = useOnScreen(ref);
   const [_id] = useState(counter);
-  const [x, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [c, forceUpdate] = useReducer((x) => x + 1, 0);
+  const { x, y } = useWindowScroll();
+  console.log(x, y);
 
   useEffect(() => {
     counter += 1;
@@ -53,7 +56,7 @@ export default function Model(props: React.PropsWithChildren<ModelProps>) {
       el.style.display = "block";
       el.play();
     },
-    [visible, id, x],
+    [visible, id, c],
     200
   );
 

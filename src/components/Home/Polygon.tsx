@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100%;
   overflow: hidden;
+  height: auto;
   padding: 0 1rem;
   display: flex;
   align-items: center;

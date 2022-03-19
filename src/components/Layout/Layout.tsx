@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Breakpoint, Drawer, Grid } from "@mui/material";
-import Container from "@mui/material/Container";
 import { PropsWithChildren } from "react";
 
 import Navbar from "./Navbar";
@@ -8,7 +7,7 @@ import Sidebar from "./Sidebar";
 import { useLayout } from "./store";
 
 const MainGrid = styled(Grid)`
-  min-height: 100vh;
+  height: 100%;
   flex-direction: column;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
@@ -20,6 +19,7 @@ const SidebarGrid = styled(Grid)`
   border-right: 1px solid #2c2c2c;
   height: 100%;
   width: 340px;
+  min-width: 340px;
   position: relative;
   display: none;
 
@@ -55,9 +55,10 @@ const ContentGrid = styled(Grid)`
   padding-top: 60px;
   z-index: 9;
   position: relative;
-  overflow: auto;
+  /* overflow: auto; */
 
   ${(props) => props.theme.breakpoints.up("lg")} {
+    width: calc(100% - 340px);
     padding: 0;
   }
 `;
@@ -87,10 +88,11 @@ export default function Layout({ maxContainerSize = false, children }: PropsWith
         <Navbar />
       </NavbarGrid>
 
-      <ContentGrid item xs>
-        <Container disableGutters maxWidth={maxContainerSize}>
-          {children}
-        </Container>
+      <ContentGrid item flexGrow="1">
+        {children}
+
+        {/* <Container disableGutters maxWidth={maxContainerSize}> */}
+        {/* </Container> */}
       </ContentGrid>
     </MainGrid>
   );

@@ -16,24 +16,12 @@ export default function Home() {
       </Head>
 
       <Layout>
-        <div className="section">
-          <Hero />
-        </div>
-        <div className="section">
-          <Scheme />
-        </div>
-        <div className="section">
-          <Polygon />
-        </div>
-        <div className="section">
-          <Collection />
-        </div>
-        <div className="section">
-          <Roadmap />
-        </div>
-        <div className="section">
-          <About />
-        </div>
+        <Hero />
+        <Scheme />
+        <Polygon />
+        <Collection />
+        <Roadmap />
+        <About />
       </Layout>
     </>
   );

@@ -7,13 +7,18 @@ import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  height: calc(100vh - 60px);
-  overflow: hidden;
   background-color: #eee;
+  height: 100%;
+  max-height: calc(100vh - 60px);
 
   ${(props) => props.theme.breakpoints.up("lg")} {
-    height: 100vh;
+    height: 100%;
+    max-height: 100vh;
   }
+
+  /* ${(props) => props.theme.breakpoints.up("lg")} {
+    height: 100vh;
+  } */
 `;
 
 const Background = styled.div`

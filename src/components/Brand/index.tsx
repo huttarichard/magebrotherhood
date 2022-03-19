@@ -31,7 +31,7 @@ const Wrapper = styled.div<BrandProps>`
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     span {
-      font-size: 1.6rem;
+      font-size: 1.8rem;
     }
   }
 
