@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
-import TextField from "@mui/material/TextField";
-import Card from "components/ui/Card";
-import { Formik } from "formik";
+import { Grid } from "@mui/material";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { DataGrid, GridColumns, GridRenderCellParams, GridSelectionModel } from "@mui/x-data-grid";
+import Button from "components/ui/Button";
+import { useState } from "react";
 
 import Layout from "../components/Layout/Layout";
 
@@ -10,19 +13,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-`;
 
-const CardWrapper = styled(Card)`
-  max-width: 400px;
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const CardHeader = styled.div`
   h1 {
     margin: 0 0 2rem;
     font-family: "Bebas Neue", sans-serif;
@@ -30,97 +21,99 @@ const CardHeader = styled.div`
     font-size: 3rem;
     text-transform: uppercase;
   }
-
-  p {
-    margin: 0;
-  }
 `;
 
-const Balances = styled.div`
-  display: flex;
-  margin-bottom: 2rem;
+enum ItemType {
+  Playable,
+  Land,
+}
 
-  div {
-    flex: 1;
+type StakingItem = {
+  id: number;
+  title: string;
+  type: ItemType;
+  staked: boolean;
+};
 
-    &:first-child {
-      margin-right: 2rem;
-    }
-  }
-`;
+const rows: StakingItem[] = [
+  { id: 1, title: "Knight", type: ItemType.Playable, staked: true },
+  { id: 2, title: "Mage", type: ItemType.Playable, staked: false },
+  { id: 3, title: "Dark wood", type: ItemType.Land, staked: true },
+];
+
+const columns: GridColumns = [
+  { field: "id", headerName: "ID", sortable: false },
+  { field: "title", headerName: "Name", flex: 1 },
+  {
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    renderCell: (params: GridRenderCellParams<StakingItem>) => {
+      const { staked } = params.row;
+      if (staked) {
+        return <button>Stake</button>;
+      } else {
+        return <button>Unstake</button>;
+      }
+    },
+  },
+];
 
 export default function Staking() {
-  const initialValues = { bhc: 0 };
+  enum Filter {
+    All,
+    Staked,
+    Available,
+  }
+
+  const filterMap = {
+    [Filter.All]: () => true,
+    [Filter.Staked]: (el: StakingItem) => el.staked,
+    [Filter.Available]: (el: StakingItem) => !el.staked,
+  };
+
+  const [filter, setFilter] = useState<Filter>(Filter.All);
+  const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
+
+  console.log(selectionModel);
+
+  const filteredRows = rows.filter(filterMap[filter]);
 
   return (
-    <Layout>
+    <Layout maxContainerSize="md">
       <Wrapper>
-        <CardWrapper>
-          <CardHeader>
-            <h1>Staking</h1>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, atque. Alias deleniti neque aperiam
-              autem rerum, dolorem libero ducimus sapiente!
-            </p>
-          </CardHeader>
-          <Balances>
-            <div>
-              <h2>Available</h2>
-              <span>0 BHC</span>
-            </div>
-            <div>
-              <h2>Staked</h2>
-              <span>0 BHC</span>
-            </div>
-          </Balances>
-          <Formik
-            initialValues={initialValues}
-            validate={async (values) => {
-              const errors: { bhc?: string } = {};
-
-              if (isNaN(values.bhc)) {
-                errors.bhc = "Invalid value";
-              } else if (values.bhc === 0) {
-                errors.bhc = "Amount must be greater than 0";
-              }
-
-              if (errors.bhc) {
-                return errors;
-              }
-
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                setSubmitting(false);
-              }, 100);
-            }}
-          >
-            {({ values, errors, touched, handleChange, handleSubmit, isSubmitting, isValidating }) => (
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  fullWidth
-                  id="bhc"
-                  name="bhc"
-                  label="Enter amount of BHC You want to stake"
-                  value={values.bhc}
-                  type="number"
-                  onChange={handleChange}
-                  error={touched.bhc && Boolean(errors.bhc)}
-                  helperText={touched.bhc && errors.bhc}
-                />
-
-                <br />
-
-                <div>
-                  <button type="submit" disabled={isSubmitting || isValidating}>
-                    Stake
-                  </button>
-                </div>
-              </form>
-            )}
-          </Formik>
-        </CardWrapper>
+        <h1>Staking</h1>
+        <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
+          <Tab label="All items" />
+          <Tab label="Staked" />
+          <Tab label="Available" />
+        </Tabs>
+        <DataGrid
+          rows={filteredRows}
+          columns={columns}
+          onSelectionModelChange={(newSelectionModel) => {
+            setSelectionModel(newSelectionModel);
+          }}
+          selectionModel={selectionModel}
+          checkboxSelection
+          disableSelectionOnClick
+          disableColumnFilter
+          disableColumnMenu
+          disableColumnSelector
+          disableDensitySelector
+          disableExtendRowFullWidth
+          hideFooter
+        />
+        {!!selectionModel.length && (
+          <Grid container justifyContent="space-between" sx={{ mb: 8 }}>
+            <Grid item>
+              <Button text="Stake Selected" />
+            </Grid>
+            <Grid item>
+              <Button text="Unstake Selected" />
+            </Grid>
+          </Grid>
+        )}
       </Wrapper>
     </Layout>
   );
