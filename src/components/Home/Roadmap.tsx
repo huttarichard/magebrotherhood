@@ -1,5 +1,8 @@
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Grid } from "@mui/material";
+import { Grid, Typography, useMediaQuery } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { useWindowScroll } from "react-use";
 
 const Wrapper = styled.div`
   position: relative;
@@ -12,8 +15,6 @@ const Wrapper = styled.div`
   }
 `;
 
-const GridWrapper = styled(Grid)``;
-
 const Background = styled.div`
   position: absolute;
 `;
@@ -22,14 +23,15 @@ const Knight = styled(Grid)`
   background: transparent url("/images/roadmapKnight.png") no-repeat;
   background-size: contain;
   background-position: left bottom;
-  opacity: 0.8;
+  opacity: 0.7;
   position: sticky;
   height: 480px;
   width: 100%;
   bottom: 0;
+  transition: opacity 0.3s ease-in-out;
 
-  ${(props) => props.theme.breakpoints.up("lg")} {
-    width: 50%;
+  &.visible {
+    opacity: 1;
   }
 `;
 
@@ -160,8 +162,8 @@ const Timeline = styled.div`
     right: -40px;
     content: " ";
     display: block;
-    width: 12px;
-    height: 12px;
+    width: 18px;
+    height: 18px;
     margin-top: -10px;
     background: #fff;
     border-radius: 10px;
@@ -360,9 +362,34 @@ const phases = [
 ];
 
 export default function Roadmap() {
+  const knightRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [upcommingVisible, setUpcommingVisible] = useState<boolean>(false);
+
+  const theme = useTheme();
+  const down = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const { y } = useWindowScroll();
+  useEffect(() => {
+    if (down) {
+      return;
+    }
+    const sh = scrollRef.current?.clientHeight || 0;
+    const kh = knightRef.current?.clientHeight || 0;
+    const ot = knightRef.current?.offsetTop || 0;
+    setUpcommingVisible(sh - kh - 1 <= ot + 100);
+  }, [y, down]);
+
+  // const { x: x2, y: y2 } = useScroll(scrollRef);
+
+  // console.log("a", x, y);
+  // console.log("b", x2, y2);
+
   return (
-    <Wrapper>
-      <h2>Roadmap</h2>
+    <Wrapper ref={scrollRef}>
+      <Typography sx={{ color: theme.text1 }} variant="h4" textAlign="center">
+        Roadmap
+      </Typography>
 
       <Background></Background>
 
@@ -428,13 +455,15 @@ export default function Roadmap() {
         </li>
       </Timeline>
 
-      <Knight container justifyContent="end">
-        <Grid item xs={6} sx={{ display: { xs: "none", sm: "block" } }}>
-          Upcomming Events
+      <Knight container justifyContent="end" ref={knightRef} className={upcommingVisible ? "visible" : ""}>
+        <Grid item container xs={6} sx={{ display: { xs: "none", sm: upcommingVisible ? "block" : "none" } }}>
+          <Grid item container alignContent="center" sx={{ height: "100%" }}>
+            <Typography sx={{ color: theme.text1 }} variant="h4">
+              Upcomming Events
+            </Typography>
+          </Grid>
         </Grid>
       </Knight>
-
-      {/* <Knight /> */}
     </Wrapper>
   );
 }
