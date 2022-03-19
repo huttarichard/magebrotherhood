@@ -5,7 +5,7 @@ import Button from "components/ui/Button";
 import Card from "components/ui/Card";
 import useWallet from "hooks/useWallet";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CoinPriceChart = dynamic(() => import("components/Swap/Chart"), {
   ssr: false,
@@ -51,6 +51,8 @@ enum Mode {
   BhcToEth,
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function Swap() {
   const wallet = useWallet();
 
@@ -60,33 +62,35 @@ export default function Swap() {
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      (async () => {
+        setIsValidating(true);
 
-  const validateEth = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsValidating(true);
+        await sleep(200);
 
-    const value = Number(event.target.value);
-    setEth(value);
+        setBhc(eth * 2);
 
-    await sleep(500);
+        setIsValidating(false);
+      })();
+    }, 200);
+    return () => clearTimeout(timeOutId);
+  }, [eth]);
 
-    setBhc(value * 2);
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      (async () => {
+        setIsValidating(true);
 
-    setIsValidating(false);
-  };
+        await sleep(200);
 
-  const validateBhc = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsValidating(true);
+        setEth(bhc / 2);
 
-    const value = Number(event.target.value);
-    setBhc(value);
-
-    await sleep(500);
-
-    setEth(value / 2);
-
-    setIsValidating(false);
-  };
+        setIsValidating(false);
+      })();
+    }, 200);
+    return () => clearTimeout(timeOutId);
+  }, [bhc]);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
@@ -110,7 +114,7 @@ export default function Swap() {
       label="ETH"
       value={eth}
       type="number"
-      onChange={validateEth}
+      onChange={(event) => setEth(Number(event.target.value))}
       helperText={"dolar value?"}
       key="eth"
     />,
@@ -123,7 +127,7 @@ export default function Swap() {
       label="BHC"
       value={bhc}
       type="number"
-      onChange={validateBhc}
+      onChange={(event) => setBhc(Number(event.target.value))}
       helperText={"dolar value?"}
       key="bhc"
     />,
