@@ -6,24 +6,30 @@ const Wrapper = styled.div`
   height: auto;
   background-color: ${({ theme }) => theme.primary2};
   color: ${({ theme }) => theme.text2};
-  padding: 2rem 0 3rem 0;
+  padding: 2rem 0 0 0;
   h2 {
     text-align: center;
   }
 `;
 
-const GridWrapper = styled(Grid)`
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 50%;
-    bottom: 0;
-    left: 0;
-    background: transparent url("/images/roadmapKnight.png") no-repeat;
-    background-size: contain;
-    background-position: left bottom;
-    opacity: 0.8;
+const GridWrapper = styled(Grid)``;
+
+const Background = styled.div`
+  position: absolute;
+`;
+
+const Knight = styled(Grid)`
+  background: transparent url("/images/roadmapKnight.png") no-repeat;
+  background-size: contain;
+  background-position: left bottom;
+  opacity: 0.8;
+  position: sticky;
+  height: 480px;
+  width: 100%;
+  bottom: 0;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    width: 50%;
   }
 `;
 
@@ -358,52 +364,77 @@ export default function Roadmap() {
     <Wrapper>
       <h2>Roadmap</h2>
 
-      <GridWrapper container>
-        <Grid item xs={0}></Grid>
-        <Grid item xs>
-          <Timeline>
-            <li>
-              <div className="direction-r">
-                <div className="flag-wrapper">
-                  <span className="flag">Freelancer</span>
-                  <span className="time-wrapper">
-                    <span className="time">2013 - present</span>
-                  </span>
-                </div>
-                <div className="desc">My current employment. Way better than the position before!</div>
-              </div>
-            </li>
+      <Background></Background>
 
-            <li>
-              <div className="direction-l">
-                <div className="flag-wrapper">
-                  <span className="flag">Apple Inc.</span>
-                  <span className="time-wrapper">
-                    <span className="time">2011 - 2013</span>
-                  </span>
-                </div>
-                <div className="desc">
-                  My first employer. All the stuff I've learned and projects I've been working on.
-                </div>
-              </div>
-            </li>
+      <Timeline>
+        <li>
+          <div className="direction-r">
+            <div className="flag-wrapper">
+              <span className="flag">Freelancer</span>
+              <span className="time-wrapper">
+                <span className="time">2013 - present</span>
+              </span>
+            </div>
+            <div className="desc">My current employment. Way better than the position before!</div>
+          </div>
+        </li>
 
-            <li>
-              <div className="direction-r">
-                <div className="flag-wrapper">
-                  <span className="flag">Harvard University</span>
-                  <span className="time-wrapper">
-                    <span className="time">2008 - 2011</span>
-                  </span>
-                </div>
-                <div className="desc">
-                  A description of all the lectures and courses I have taken and my final degree?
-                </div>
-              </div>
-            </li>
-          </Timeline>
+        <li>
+          <div className="direction-l">
+            <div className="flag-wrapper">
+              <span className="flag">Apple Inc.</span>
+              <span className="time-wrapper">
+                <span className="time">2011 - 2013</span>
+              </span>
+            </div>
+            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+          </div>
+        </li>
+
+        <li>
+          <div className="direction-r">
+            <div className="flag-wrapper">
+              <span className="flag">Apple Inc.</span>
+              <span className="time-wrapper">
+                <span className="time">2011 - 2013</span>
+              </span>
+            </div>
+            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+          </div>
+        </li>
+
+        <li>
+          <div className="direction-l">
+            <div className="flag-wrapper">
+              <span className="flag">Apple Inc.</span>
+              <span className="time-wrapper">
+                <span className="time">2011 - 2013</span>
+              </span>
+            </div>
+            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+          </div>
+        </li>
+
+        <li>
+          <div className="direction-r">
+            <div className="flag-wrapper">
+              <span className="flag">Harvard University</span>
+              <span className="time-wrapper">
+                <span className="time">2008 - 2011</span>
+              </span>
+            </div>
+            <div className="desc">A description of all the lectures and courses I have taken and my final degree?</div>
+          </div>
+        </li>
+      </Timeline>
+
+      <Knight container justifyContent="end">
+        <Grid item xs={6} sx={{ display: { xs: "none", sm: "block" } }}>
+          Upcomming Events
         </Grid>
-      </GridWrapper>
+      </Knight>
+
+      {/* <Knight /> */}
     </Wrapper>
   );
 }
