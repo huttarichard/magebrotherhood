@@ -3,16 +3,13 @@ import TextField from "@mui/material/TextField";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Card";
-import { Formik } from "formik";
 import useWallet from "hooks/useWallet";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CoinPriceChart = dynamic(() => import("components/Swap/Chart"), {
   ssr: false,
 });
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const CardWrapper = styled(Card)`
   max-width: 400px;
@@ -35,19 +32,106 @@ const BackgroundChart = styled.div`
   z-index: -1; */
 `;
 
-interface SwapForm {
-  eth: number;
+const CardHeader = styled.div`
+  h1 {
+    margin: 0 0 2rem;
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-size: 3rem;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin: 0;
+  }
+`;
+
+enum Mode {
+  EthToBhc,
+  BhcToEth,
 }
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Swap() {
   const wallet = useWallet();
 
-  const initialValues: SwapForm = { eth: 0 };
+  const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
+  const [eth, setEth] = useState<number>(0);
+  const [bhc, setBhc] = useState<number>(0);
+  const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
-  const [resultAmount, setResultAmount] = useState(0);
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      (async () => {
+        setIsValidating(true);
 
-  const exchangeRateText = exchangeRate === null ? "" : `Exchange rate: 1ETH = ${exchangeRate}BHC`;
+        await sleep(200);
+
+        setBhc(eth * 2);
+
+        setIsValidating(false);
+      })();
+    }, 200);
+    return () => clearTimeout(timeOutId);
+  }, [eth]);
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      (async () => {
+        setIsValidating(true);
+
+        await sleep(200);
+
+        setEth(bhc / 2);
+
+        setIsValidating(false);
+      })();
+    }, 200);
+    return () => clearTimeout(timeOutId);
+  }, [bhc]);
+
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+    setIsSubmitting(false);
+  };
+
+  const handleModeSwitch = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (mode === Mode.EthToBhc) {
+      setMode(Mode.BhcToEth);
+    } else {
+      setMode(Mode.EthToBhc);
+    }
+  };
+
+  const formElements = [
+    <TextField
+      fullWidth
+      name="eth"
+      label="ETH"
+      value={eth}
+      type="number"
+      onChange={(event) => setEth(Number(event.target.value))}
+      helperText={"dolar value?"}
+      key="eth"
+    />,
+    <button key="switch" onClick={handleModeSwitch}>
+      switch
+    </button>,
+    <TextField
+      fullWidth
+      name="bhc"
+      label="BHC"
+      value={bhc}
+      type="number"
+      onChange={(event) => setBhc(Number(event.target.value))}
+      helperText={"dolar value?"}
+      key="bhc"
+    />,
+  ];
 
   return (
     <Layout>
@@ -56,63 +140,15 @@ export default function Swap() {
       </BackgroundChart>
 
       <CardWrapper>
-        <p>Balance: {JSON.stringify(wallet?.data?.accounts[0].balance)}</p>
-        <Formik
-          initialValues={initialValues}
-          validate={async (values) => {
-            const errors: { eth?: string } = {};
+        <CardHeader>
+          <h1>Swap</h1>
+          {wallet.data && <p>Balance: {JSON.stringify(wallet.data.accounts[0].balance)}</p>}
+        </CardHeader>
 
-            if (isNaN(values.eth)) {
-              errors.eth = "Invalid value";
-            } else if (values.eth === 0) {
-              errors.eth = "Amount must be greater than 0";
-            }
-
-            if (errors.eth) {
-              return errors;
-            }
-
-            // check conversion rate
-            await sleep(1000);
-            const exchangeRate = 2;
-            setResultAmount(values.eth * exchangeRate);
-            setExchangeRate(exchangeRate);
-
-            return errors;
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              setSubmitting(false);
-            }, 100);
-          }}
-        >
-          {({ values, errors, touched, handleChange, handleSubmit, isSubmitting, isValidating }) => (
-            <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                id="eth"
-                name="eth"
-                label="ETH"
-                value={values.eth}
-                type="number"
-                onChange={handleChange}
-                error={touched.eth && Boolean(errors.eth)}
-                helperText={touched.eth && errors.eth}
-              />
-
-              <div>
-                <p>Result amount: {resultAmount}</p>
-                <p>{exchangeRateText}</p>
-              </div>
-
-              <br />
-
-              <div className="d-grid gap-2">
-                <Button text="Swap" disabled={isSubmitting || isValidating} />
-              </div>
-            </form>
-          )}
-        </Formik>
+        <form onSubmit={handleSubmit}>
+          {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+          <Button text="Swap" disabled={isValidating || isSubmitting} distorted />
+        </form>
       </CardWrapper>
     </Layout>
   );
