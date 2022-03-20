@@ -1,6 +1,34 @@
+import styled from "@emotion/styled";
+import { blink, fading, float } from "components/ui/animations";
+
+const StyledSVG = styled.svg`
+  #burn,
+  #battles,
+  #loans,
+  #quests,
+  #playables,
+  #land,
+  #items,
+  #renting {
+    animation: ${float} 2s ease-in-out infinite;
+  }
+  #eth-symbol {
+    animation-delay: 1s;
+    animation: ${float} 2s ease-in-out infinite;
+  }
+  #contacts-inner-light {
+    animation: ${blink} 6s linear infinite;
+    animation-delay: 1s;
+  }
+
+  #coin-light {
+    animation: ${fading} 2s ease-in-out infinite;
+  }
+`;
+
 export default function Ecosystem(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
+    <StyledSVG
       version="1.1"
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
@@ -5200,6 +5228,6 @@ export default function Ecosystem(props: React.SVGProps<SVGSVGElement>) {
           />
         </g>
       </g>
-    </svg>
+    </StyledSVG>
   );
 }

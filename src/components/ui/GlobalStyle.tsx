@@ -2,30 +2,9 @@ import { css, Theme } from "@emotion/react";
 import { Global } from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
 
-import { brighten, float, glow } from "./animations";
+import { brighten, glow } from "./animations";
 
 export const animations = css`
-  .sg0 {
-    animation: ${float} 2s ease-in-out infinite;
-  }
-
-  .sg1 {
-    animation: ${float} 2s ease-in-out infinite;
-    // animation-delay: 0.05s;
-  }
-
-  .sg2 {
-    animation: ${float} 2s ease-in-out infinite;
-  }
-
-  .sg3 {
-    animation: ${float} 2s ease-in-out infinite;
-  }
-
-  .sg4 {
-    animation: ${float} 2s ease-in-out infinite;
-  }
-
   .raysg {
     animation: ${brighten} 2s ease-in-out infinite;
   }

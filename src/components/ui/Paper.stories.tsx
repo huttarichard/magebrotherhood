@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { PrimaryCard } from "./Card";
+import { PrimaryCard } from "./Paper";
 
 export default {
   title: "components/ui/Card",

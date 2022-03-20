@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import Layout from "components/Layout/Layout";
-import Card from "components/ui/Card";
+import Card from "components/ui/Paper";
 import { Formik } from "formik";
 import { useState } from "react";
 

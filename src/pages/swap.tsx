@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import TextField from "@mui/material/TextField";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
-import Card from "components/ui/Card";
+import Card from "components/ui/Paper";
 import useWallet from "hooks/useWallet";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";

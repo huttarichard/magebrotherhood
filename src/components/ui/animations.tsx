@@ -5,7 +5,7 @@ export const float = keyframes`
     transform: translatey(0);
 }
 50% {
-    transform: translatey(-5px);
+    transform: translatey(-8px);
 }
 100% {
     transform: translatey(0);
@@ -166,4 +166,37 @@ export const distortionAlternative = keyframes`
     100% {
       clip: rect(19px, 9999px, 2px, 0);
     }
+`;
+
+export const blink = keyframes`
+0% {
+  opacity: 0;
+}
+1% {
+  opacity: 1;
+}
+9% {
+  opacity: 1;
+}
+10% {
+  opacity: 0;
+}
+11% {
+  opacity: 1;
+}
+100% {
+  opacity: 1;
+}
+`;
+
+export const fading = keyframes`
+0% {
+  opacity: 0.5;
+}
+50% {
+  opacity: 1;
+}
+100% {
+  opacity: 0.5;
+}
 `;
