@@ -414,7 +414,9 @@ export default function Roadmap() {
                 <span className="time">2011 - 2013</span>
               </span>
             </div>
-            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+            <div className="desc">
+              My first employer. All the stuff I&apos;ve learned and projects I&apos;ve been working on.
+            </div>
           </div>
         </li>
 
@@ -426,7 +428,9 @@ export default function Roadmap() {
                 <span className="time">2011 - 2013</span>
               </span>
             </div>
-            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+            <div className="desc">
+              My first employer. All the stuff I&apos;ve learned and projects I&apos;ve been working on.
+            </div>
           </div>
         </li>
 
@@ -438,7 +442,9 @@ export default function Roadmap() {
                 <span className="time">2011 - 2013</span>
               </span>
             </div>
-            <div className="desc">My first employer. All the stuff I've learned and projects I've been working on.</div>
+            <div className="desc">
+              My first employer. All the stuff I&apos;ve learned and projects I&apos;ve been working on.
+            </div>
           </div>
         </li>
 

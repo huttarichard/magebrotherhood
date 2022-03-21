@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { blink, fading, float } from "components/ui/animations";
+import { motion, useReducedMotion } from "framer-motion";
+import React from "react";
 
-const StyledSVG = styled.svg`
+const StyledSVG = styled(motion.svg)`
   #burn,
   #battles,
   #loans,
@@ -26,7 +28,33 @@ const StyledSVG = styled.svg`
   }
 `;
 
-export default function Ecosystem(props: React.SVGProps<SVGSVGElement>) {
+export default function Ecosystem(props: { active?: string }) {
+  const shouldReduceMotion = useReducedMotion();
+  let focus;
+
+  switch (props.active) {
+    case "nft": {
+      focus = "0 500 723 791";
+      break;
+    }
+    case "coin": {
+      focus = "723 791 723 791";
+      break;
+    }
+    case "staking": {
+      focus = "500 200 723 791";
+      break;
+    }
+    case "game": {
+      focus = "50 0 723 791";
+      break;
+    }
+    default: {
+      focus = "0 0 1446 1582";
+      break;
+    }
+  }
+
   return (
     <StyledSVG
       version="1.1"
@@ -36,6 +64,21 @@ export default function Ecosystem(props: React.SVGProps<SVGSVGElement>) {
       y="0px"
       viewBox="0 0 1446 1582"
       enableBackground="new 0 0 1446 1582"
+      initial={{
+        viewBox: "0 0 1446 1582",
+      }}
+      animate={
+        shouldReduceMotion
+          ? undefined
+          : {
+              viewBox: focus,
+            }
+      }
+      transition={{
+        duration: 0.5,
+        ease: "easeInOut",
+        elapsed: -1.5,
+      }}
       {...props}
     >
       <g id="coin-light" opacity="0.5">
