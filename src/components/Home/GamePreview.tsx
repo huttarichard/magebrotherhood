@@ -7,6 +7,7 @@ import ReactPlayer from "react-player/lazy";
 const Wrapper = styled.div`
   height: auto;
   padding: 10rem 1rem;
+  overflow: hidden;
 `;
 
 const VideoGrid = styled(Grid)`

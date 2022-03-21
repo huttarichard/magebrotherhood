@@ -4,7 +4,7 @@ import GamePreview from "components/Home/GamePreview";
 import Hero from "components/Home/Hero";
 import Polygon from "components/Home/Polygon";
 import Roadmap from "components/Home/Roadmap";
-import Scheme from "components/Home/Scheme";
+import Scheme from "components/Home/Ecosystem";
 import Layout from "components/Layout/Layout";
 import Head from "next/head";
 
