@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Breakpoint, Drawer, Grid } from "@mui/material";
+import { Drawer, Grid } from "@mui/material";
 import { PropsWithChildren } from "react";
 
 import Footer from "./Footer";
@@ -65,10 +65,10 @@ const ContentGrid = styled(Grid)`
 `;
 
 export interface LayoutProps {
-  maxContainerSize?: Breakpoint | false | undefined;
+  footer?: boolean;
 }
 
-export default function Layout({ maxContainerSize = false, children }: PropsWithChildren<LayoutProps>) {
+export default function Layout({ footer = false, children }: PropsWithChildren<LayoutProps>) {
   const { menuOpened, closeMenu } = useLayout();
 
   return (
@@ -92,9 +92,7 @@ export default function Layout({ maxContainerSize = false, children }: PropsWith
       <ContentGrid item flexGrow="1">
         {children}
 
-        {/* <Container disableGutters maxWidth={maxContainerSize}> */}
-        {/* </Container> */}
-        <Footer />
+        {footer && <Footer />}
       </ContentGrid>
     </MainGrid>
   );

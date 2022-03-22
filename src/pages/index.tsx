@@ -15,7 +15,7 @@ export default function Home() {
         <title>Mage Brotherhood - Homepage</title>
       </Head>
 
-      <Layout>
+      <Layout footer>
         <Hero />
         <GamePreview />
         <Scheme />
