@@ -13,6 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Grid } from "@mui/material";
 import Brand from "components/Brand";
+import Button from "components/ui/Button";
 import Link from "next/link";
 
 import { useLayout } from "./store";
@@ -71,6 +72,10 @@ const Navbar = styled(Grid)`
   }
 `;
 
+const Bottom = styled(Grid)`
+  margin: 0 auto;
+`;
+
 export interface LayoutNavbarProps {
   closeIcon?: boolean;
 }
@@ -114,7 +119,9 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </ul>
       </Grid>
-      <Grid item>bottom</Grid>
+      <Bottom item>
+        <Button distorted borders text="Connect Wallet" />
+      </Bottom>
     </Navbar>
   );
 }
