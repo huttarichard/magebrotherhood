@@ -13,7 +13,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  max-width: 100vw;
+  max-width: 1432px;
+  margin: 0 auto;
   padding: 6rem 1rem;
 `;
 
@@ -89,6 +90,8 @@ const StyledSlide = styled.div`
     height: 240px;
     margin-bottom: 1.5rem;
     background-color: #fff;
+    border-radius: 7px;
+    overflow: hidden;
   }
 
   h3 {
@@ -108,6 +111,7 @@ const StyledSlide = styled.div`
   @media (min-width: 992px) {
     .img-wrapper {
       height: 20vw;
+      max-height: 320px;
     }
   }
 `;

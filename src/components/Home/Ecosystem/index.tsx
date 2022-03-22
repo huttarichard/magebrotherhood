@@ -225,30 +225,12 @@ export default function Scheme() {
       return;
     }
     const xy = Math.floor(u2 / (u1 / items.length));
-    if (items.length == xy) return;
+    if (items.length == xy) {
+      setActive(-1);
+      return;
+    }
     setActive(xy);
   }, [y, ref, sticky, height, visible]);
-
-  // useThrottleFn<void, any>(
-  //   (y, ref, sticky, height) => {
-  //     if (!visible) return;
-  //     const sh = sticky.current?.clientHeight || 0;
-  //     const sot = sticky.current?.offsetTop || 0;
-  //     const rot = ref.current?.offsetTop || 0;
-  //     const offset = sot - rot + sh;
-  //     const u1 = height - sh;
-  //     const u2 = offset - sh;
-  //     if (u2 <= 180) {
-  //       setActive(-1);
-  //       return;
-  //     }
-  //     const xy = Math.floor(u2 / (u1 / items.length));
-  //     if (items.length == xy) return;
-  //     setActive(xy);
-  //   },
-  //   100,
-  //   [y, ref, sticky, height, visible]
-  // );
 
   return (
     <Wrapper>

@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "components/ui/Button";
+import { Grid } from "@mui/material";
+import team0 from "assets/images/team0.jpg";
+import team1 from "assets/images/team1.jpg";
+import team2 from "assets/images/team2.jpg";
+import team3 from "assets/images/team3.jpg";
 import Image from "next/image";
-import Link from "next/link";
-import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
   position: relative;
@@ -15,13 +15,10 @@ const Wrapper = styled.div`
   align-items: flex-start;
   background-color: #111;
   max-width: 100vw;
+  padding: 4rem 1rem 10rem 2rem;
 
   @media (min-width: 992px) {
     padding-top: 4rem;
-  }
-
-  @media (min-width: 1200px) {
-    padding-top: 0;
   }
 `;
 
@@ -94,126 +91,31 @@ const Header = styled.div`
   }
 `;
 
-const StyledSlider = styled.div`
-  width: 100%;
-  margin-bottom: 6rem;
+const Container = styled(Grid)``;
 
-  @media (min-width: 992px) {
-    margin-bottom: 0;
-    margin-right: 2rem;
-  }
-`;
+const StyledSlide = styled(Grid)`
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2rem;
 
-const StyledSlide = styled.div`
   .img-wrapper {
     position: relative;
-    height: 300px;
+    height: 200px;
+    width: 200px;
     margin-bottom: 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
   }
 
   h3 {
     margin: 0 0 0.5rem;
     color: ${({ theme }) => theme.primary1};
-    font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
     font-size: 2rem;
-  }
-
-  span {
-    color: #fff;
-    opacity: 0.7;
-  }
-
-  @media (min-width: 992px) {
-    .img-wrapper {
-      height: 20vw;
-    }
-  }
-`;
-
-const Footer = styled.footer`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem;
-  background-color: #fff;
-
-  nav {
-    width: 100%;
-    margin-bottom: 1rem;
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-evenly;
-    }
-
-    a {
-      text-decoration: none;
-      font-family: "Bebas Neue", sans-serif;
-      color: #000;
-    }
-  }
-
-  > ul {
-    width: 50%;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-
-    li {
-      margin-right: 1rem;
-    }
-
-    a {
-      color: #000;
-    }
-  }
-
-  span {
-    display: block;
-    width: 50%;
-    text-align: right;
-    font-family: "Bebas Neue", sans-serif;
-  }
-
-  @media (min-width: 992px) {
-    padding: 2rem 3rem;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-
-    nav {
-      width: auto;
-      justify-content: flex-start;
-      margin-bottom: 0;
-
-      li {
-        margin-right: 1rem;
-      }
-    }
-
-    > ul {
-      width: auto;
-    }
-
-    span {
-      width: auto;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    nav {
-      a {
-        font-size: 25px;
-      }
-    }
-
-    span {
-      font-size: 25px;
-    }
+    font-weight: bold;
   }
 `;
 
@@ -221,40 +123,24 @@ const team = [
   {
     name: "Tamara roja",
     position: "Founder",
-    img: "/images/team0.jpg",
+    img: team0.src,
   },
   {
     name: "james phelps",
     position: "Creative Director",
-    img: "/images/team1.jpg",
+    img: team1.src,
   },
   {
     name: "Giovanni Giorgio",
     position: "Financier",
-    img: "/images/team2.jpg",
+    img: team2.src,
   },
   {
     name: "Abdalla zuberi",
     position: "Artist",
-    img: "/images/team3.jpg",
+    img: team3.src,
   },
 ];
-
-const sliderConfig: SwiperProps = {
-  slidesPerView: 1.5,
-  spaceBetween: 50,
-  breakpoints: {
-    500: {
-      slidesPerView: 1.5,
-    },
-    992: {
-      slidesPerView: 2.5,
-    },
-    1200: {
-      slidesPerView: 4,
-    },
-  },
-};
 
 export default function About() {
   return (
@@ -270,62 +156,21 @@ export default function About() {
               areas and perks can be unlocked by the community through roadmap activation.
             </p>
           </div>
-          <div className="actions">
-            <Button text="Connect Wallet" />
-          </div>
         </Header>
-        <StyledSlider>
-          <Swiper {...sliderConfig}>
-            {team.map((person) => {
-              return (
-                <SwiperSlide key={person.name}>
-                  <StyledSlide>
-                    <div className="img-wrapper">
-                      <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
-                    </div>
-                    <h3>{person.name}</h3>
-                    <span>{person.position}</span>
-                  </StyledSlide>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </StyledSlider>
+        <Container container>
+          {team.map((person, i) => {
+            return (
+              <StyledSlide item key={i}>
+                <div className="img-wrapper">
+                  <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
+                </div>
+                <h3>{person.name}</h3>
+                <span>{person.position}</span>
+              </StyledSlide>
+            );
+          })}
+        </Container>
       </Main>
-      <Footer>
-        <nav>
-          <ul>
-            <li>
-              <Link href="/privacy-policy">
-                <a>Privacy Policy</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/terms-of-use">
-                <a>Terms of use</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact">
-                <a>Contact</a>
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <ul>
-          <li>
-            <a href="https://discord.com/" target="_blank" rel="noopener noreferrer" aria-label="Discord">
-              <FontAwesomeIcon icon={faDiscord} />
-            </a>
-          </li>
-          <li>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-              <FontAwesomeIcon icon={faTwitter} />
-            </a>
-          </li>
-        </ul>
-        <span>All rights reserved</span>
-      </Footer>
     </Wrapper>
   );
 }

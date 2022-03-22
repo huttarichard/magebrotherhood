@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Breakpoint, Drawer, Grid } from "@mui/material";
 import { PropsWithChildren } from "react";
 
+import Footer from "./Footer";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useLayout } from "./store";
@@ -93,6 +94,7 @@ export default function Layout({ maxContainerSize = false, children }: PropsWith
 
         {/* <Container disableGutters maxWidth={maxContainerSize}> */}
         {/* </Container> */}
+        <Footer />
       </ContentGrid>
     </MainGrid>
   );

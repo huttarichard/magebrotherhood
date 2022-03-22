@@ -13,6 +13,11 @@ const Wrapper = styled.div`
   justify-content: center;
   color: ${({ theme }) => theme.text2};
   height: 40vh;
+  min-height: 540px;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    height: 50vh;
+  }
 `;
 
 const Main = styled.div`
