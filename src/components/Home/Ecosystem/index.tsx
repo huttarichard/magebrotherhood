@@ -67,6 +67,9 @@ const SVGGridItem = styled(Grid)`
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   svg {
@@ -112,6 +115,11 @@ const Card = styled(Grid)`
 
     .title {
       font-size: 2rem;
+      padding-top: 1rem;
+
+      ${(props) => props.theme.breakpoints.up("lg")} {
+        padding-top: 0;
+      }
     }
 
     .body {
@@ -259,7 +267,7 @@ export default function Scheme() {
             <SVGGridItem item flexGrow="1" ref={infographics}>
               <InfoGraphics active={active === -1 ? "all" : items[active]?.focus} />
             </SVGGridItem>
-            <DescriptionGridItem item container lg={3} direction="column">
+            <DescriptionGridItem item container lg={3} direction="column" justifyContent="center">
               {items.map((e, i) => {
                 return (
                   <Card item key={i} className={`card ${active == i ? "active" : ""}`}>

@@ -12,8 +12,23 @@ const StyledSVG = styled.svg`
   transition: 1s ease-in-out;
 
   &.nft {
-    /* transform-origin: 100px 100px;
-    transform: scale(1.5); */
+    transform-origin: 0px 80%;
+    transform: scale(2);
+  }
+
+  &.coin {
+    transform-origin: 100% 100%;
+    transform: scale(1.5);
+  }
+
+  &.staking {
+    transform-origin: 60% 50%;
+    transform: scale(1.8);
+  }
+
+  &.game {
+    transform-origin: 20% 0%;
+    transform: scale(1.8);
   }
 
   #burn,
