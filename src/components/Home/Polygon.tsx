@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { Typography } from "@mui/material";
+import edge from "assets/images/edge.png";
 import Image from "next/image";
 
 const Wrapper = styled.div`
@@ -9,72 +11,65 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff url("/images/polygonLogo.png") no-repeat;
-  background-size: contain;
-  background-position: center;
   color: ${({ theme }) => theme.text2};
+  height: 40vh;
 `;
 
 const Main = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: end;
   width: 100%;
-
-  h2 {
-    margin-bottom: 0;
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
-    font-size: 2.5rem;
-  }
-
-  .img-wrapper {
-    position: relative;
-    width: 90%;
-    height: 25vw;
-    max-width: 500px;
-  }
+  height: 100%;
 
   p {
-    margin: 0;
+    max-width: 690px;
+    text-align: center;
+    padding-bottom: 30px;
   }
 
-  @media (min-width: 992px) {
-    h2 {
-      font-size: 60px;
-    }
-
-    .img-wrapper {
-      width: 100%;
-      height: 12vw;
-      max-width: 900px;
-    }
-
-    p {
-      font-size: 22px;
-    }
+  h5 {
+    color: #00000042;
+    font-style: italic;
+    font-size: 1.4rem;
   }
+`;
 
-  @media (min-width: 1200px) {
-    h2 {
-      font-size: 92px;
-    }
+const Background = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #ededed;
+  z-index: -1;
 
-    p {
-      font-size: 28px;
-    }
+  .imgtag {
+    filter: blur(10px);
+    top: -250px !important;
   }
 `;
 
 export default function Polygon() {
   return (
     <Wrapper>
+      <Background>
+        <Image src={edge.src} alt="ok" className="imgtag" layout="fill" objectFit="cover" />
+      </Background>
       <Main>
-        <h2>Coming soon</h2>
-        <div className="img-wrapper">
-          <Image src="/images/polygonText.png" layout="fill" objectFit="contain" alt="Polygon Technology" />
-        </div>
-        <p>But will power micro transactions and in-game spend.</p>
+        <Typography variant="h5" textAlign="center">
+          COMMING SOON
+        </Typography>
+        <Typography variant="h3" textAlign="center">
+          <span className="gradient">POLYGON POS L2 SCALING</span>
+        </Typography>
+        <p>
+          With Polygon Edge custom blockchain, in-game microtransactions will fly with incredible speed and will cost
+          just a fraction of network fees.
+        </p>
       </Main>
     </Wrapper>
   );

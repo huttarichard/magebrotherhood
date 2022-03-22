@@ -78,8 +78,8 @@ const SVGGridItem = styled(Grid)`
 
     ${(props) => props.theme.breakpoints.up("lg")} {
       border-radius: 6px;
-      border: 1px solid #1f1f1f;
-      max-height: 1000px;
+      /* border: 1px solid #1f1f1f; */
+      max-height: 800px;
     }
   }
 `;
