@@ -1,12 +1,6 @@
-import { css, keyframes } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Paper as MuiPaper } from "@mui/material";
-
-const spin = keyframes`
-    0%{background-position:10% 0%}
-    50%{background-position:91% 100%}
-    100%{background-position:10% 0%}
-`;
 
 const Paper = styled(MuiPaper)<{ magical?: boolean }>`
   border-radius: 5px;
@@ -30,7 +24,6 @@ const Paper = styled(MuiPaper)<{ magical?: boolean }>`
         top: -1%;
         left: -2%;
         background-size: 200% 200%;
-        animation: ${spin} 5s linear infinite;
       }
 
       &::after {
@@ -49,7 +42,6 @@ const Paper = styled(MuiPaper)<{ magical?: boolean }>`
         opacity: 1;
         transition: opacity 0.5s;
         background-size: 200% 200%;
-        animation: ${spin} 5s linear infinite;
       }
     `}
 `;

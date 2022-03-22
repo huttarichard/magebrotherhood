@@ -2,8 +2,7 @@ import styled from "@emotion/styled";
 import { Grid, Typography } from "@mui/material";
 import useOnScreen from "hooks/useOnScreen";
 import React, { createRef, useEffect, useState } from "react";
-import LinesEllipsis from "react-lines-ellipsis";
-import { useThrottleFn, useWindowScroll } from "react-use";
+import { useWindowScroll } from "react-use";
 
 import InfoGraphics from "./InfoGraphics";
 
@@ -48,31 +47,23 @@ const Wrapper = styled.div`
 const StickyContainer = styled(Grid)`
   position: sticky;
   /* background: yellow; */
-  top: -180px;
-  height: calc(100vh + 180px);
+  top: 60px;
+  height: calc(100vh - 60px);
 
   ${(props) => props.theme.breakpoints.up("lg")} {
-    height: 100vh;
-    top: -100px;
-  }
-
-  @media screen and (min-height: 1200px) {
-    height: 100vh;
-    top: 0px;
+    top: 15px;
+    height: calc(100vh - 30px);
   }
 `;
 
 const ContainerGrid = styled(Grid)`
   /* background: blue; */
-  height: calc(100% - 180px);
+  height: 100%;
 `;
 
 const SVGGridItem = styled(Grid)`
-  /* background: red; */
   overflow: hidden;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
+  max-height: 100vw;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     margin-right: 10px;
@@ -107,16 +98,9 @@ const Card = styled(Grid)`
   .title {
     font-size: 1.6rem;
     padding-bottom: 1rem;
-
-    @media screen and (max-height: 1200px) {
-      font-size: 1.2rem;
-    }
   }
 
   .body {
-    @media screen and (max-height: 1200px) {
-      font-size: 1rem;
-    }
   }
 
   &.active {
@@ -173,11 +157,6 @@ const items: Item[] = [
     distribution of rewards, incentivizing long term investors.`,
     focus: "staking",
   },
-  // {
-  //   title: "Marketplace",
-  //   text: `Unique oppurtunity of NFTs is to have our own marketplace. We want to offer participatns more than
-  //   opensea could thanks to tight integration. Swaps, auctions, and many more comming!`,
-  // },
   {
     title: "Game",
     text: `On its own game will be another major deflationary force of the ecosystem. Quests, in-game earnings,
@@ -186,34 +165,35 @@ const items: Item[] = [
     betting, but also risk of lossing your coins will be thrilling expirience.`,
     focus: "game",
   },
-  {
-    title: "Affiliate",
-    text: (
-      <span>
-        We want as much organic marketing as possible, so we decided to build first <b>decentralized marketing</b>. You
-        can register your code and receive BHC for every sell you make. Reward your community with discount and be
-        rewarded for influencing.
-      </span>
-    ),
-    shortText: `We want as much organic marketing as possible, so we decided to build first decentralized marketing. You
-    can register your code and receive BHC for every sell you make.`,
-    focus: "affiliate",
-  },
-  {
-    title: "DOA/Governance",
-    text: `We are entering new era of web 3 and allowing for decentralization and full governanace will be
-    essential part of our success. By obtaining BHC you will have right to vote, and these right will be
-    evenly distributed thanks to staking.`,
-    shortText: `We are entering new era of web 3 and allowing for decentralization and full governanace will be
-    essential part of our success.`,
-    focus: "governance",
-  },
+  // {
+  //   title: "Affiliate",
+  //   text: (
+  //     <span>
+  //       We want as much organic marketing as possible, so we decided to build first <b>decentralized marketing</b>. You
+  //       can register your code and receive BHC for every sell you make. Reward your community with discount and be
+  //       rewarded for influencing.
+  //     </span>
+  //   ),
+  //   shortText: `We want as much organic marketing as possible, so we decided to build first decentralized marketing. You
+  //   can register your code and receive BHC for every sell you make.`,
+  //   focus: "affiliate",
+  // },
+  // {
+  //   title: "DOA/Governance",
+  //   text: `We are entering new era of web 3 and allowing for decentralization and full governanace will be
+  //   essential part of our success. By obtaining BHC you will have right to vote, and these right will be
+  //   evenly distributed thanks to staking.`,
+  //   shortText: `We are entering new era of web 3 and allowing for decentralization and full governanace will be
+  //   essential part of our success.`,
+  //   focus: "governance",
+  // },
 ];
 
 export default function Scheme() {
   const ref = createRef<HTMLDivElement>();
   const sticky = createRef<HTMLDivElement>();
-  const visible = useOnScreen(ref);
+  const infographics = createRef<HTMLDivElement>();
+  const visible = useOnScreen(infographics);
   const [height, setHeight] = useState(0);
   const [active, setActive] = useState<number>(0);
 
@@ -224,42 +204,59 @@ export default function Scheme() {
     setHeight(h);
   }, []);
 
-  useThrottleFn<void, any>(
-    (y, ref, sticky, height) => {
-      // const kh = ref.current?.clientHeight || 0;
-      const sh = sticky.current?.clientHeight || 0;
-      const sot = sticky.current?.offsetTop || 0;
-      const rot = ref.current?.offsetTop || 0;
-      const offset = sot - rot + sh;
-      const u1 = height - sh;
-      const u2 = offset - sh;
-      if (u2 <= 180) {
-        setActive(-1);
-        return;
-      }
-      const xy = Math.floor(u2 / (u1 / items.length));
-      if (items.length == xy) return;
-      setActive(xy);
-    },
-    100,
-    [y, ref, sticky, height]
-  );
+  useEffect(() => {
+    if (!visible) return;
+    const sh = sticky.current?.clientHeight || 0;
+    const sot = sticky.current?.offsetTop || 0;
+    const rot = ref.current?.offsetTop || 0;
+    const offset = sot - rot + sh;
+    const u1 = height - sh;
+    const u2 = offset - sh;
+    if (u2 <= 180) {
+      setActive(-1);
+      return;
+    }
+    const xy = Math.floor(u2 / (u1 / items.length));
+    if (items.length == xy) return;
+    setActive(xy);
+  }, [y, ref, sticky, height, visible]);
+
+  // useThrottleFn<void, any>(
+  //   (y, ref, sticky, height) => {
+  //     if (!visible) return;
+  //     const sh = sticky.current?.clientHeight || 0;
+  //     const sot = sticky.current?.offsetTop || 0;
+  //     const rot = ref.current?.offsetTop || 0;
+  //     const offset = sot - rot + sh;
+  //     const u1 = height - sh;
+  //     const u2 = offset - sh;
+  //     if (u2 <= 180) {
+  //       setActive(-1);
+  //       return;
+  //     }
+  //     const xy = Math.floor(u2 / (u1 / items.length));
+  //     if (items.length == xy) return;
+  //     setActive(xy);
+  //   },
+  //   100,
+  //   [y, ref, sticky, height, visible]
+  // );
 
   return (
     <Wrapper>
       <div className="scrolling-area" ref={ref} style={{ height }}>
-        <StickyContainer ref={sticky}>
-          <div className="heading">
-            <Typography variant="h2" textAlign="center">
-              <span className="long">Powerful</span> Ecosystem
-            </Typography>
-            <Typography variant="body1" textAlign="center">
-              Fair to investors, fair to players. <span className="long">Balance is the key.</span>
-            </Typography>
-          </div>
+        <div className="heading">
+          <Typography variant="h2" textAlign="center">
+            <span className="long">Powerful</span> Ecosystem
+          </Typography>
+          <Typography variant="body1" textAlign="center">
+            Fair to investors, fair to players. <span className="long">Balance is the key.</span>
+          </Typography>
+        </div>
 
+        <StickyContainer ref={sticky}>
           <ContainerGrid container direction={{ xs: "column", lg: "row" }}>
-            <SVGGridItem item flexGrow="1">
+            <SVGGridItem item flexGrow="1" ref={infographics}>
               <InfoGraphics active={active === -1 ? "all" : items[active]?.focus} />
             </SVGGridItem>
             <DescriptionGridItem item container lg={3} direction="column">
@@ -270,7 +267,7 @@ export default function Scheme() {
                       {e.title}
                     </Typography>
                     <Typography className="body" variant="body2">
-                      {active == i ? e.text : <LinesEllipsis maxLine="1" text={e.shortText || ""}></LinesEllipsis>}
+                      {active == i ? e.text : e.shortText}
                     </Typography>
                   </Card>
                 );

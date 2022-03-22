@@ -1,9 +1,21 @@
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { blink, fading, float } from "components/ui/animations";
-import { motion, useReducedMotion } from "framer-motion";
 import React from "react";
+import { isSafari } from "react-device-detect";
 
-const StyledSVG = styled(motion.svg)`
+const StyledSVG = styled.svg`
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: 1s ease-in-out;
+
+  &.nft {
+    /* transform-origin: 100px 100px;
+    transform: scale(1.5); */
+  }
+
   #burn,
   #battles,
   #loans,
@@ -26,35 +38,26 @@ const StyledSVG = styled(motion.svg)`
   #coin-light {
     animation: ${fading} 2s ease-in-out infinite;
   }
+
+  ${isSafari &&
+  css`
+    #coin-light,
+    #contacts-inner-light,
+    #eth-symbol,
+    #burn,
+    #battles,
+    #loans,
+    #quests,
+    #playables,
+    #land,
+    #items,
+    #renting {
+      animation: none;
+    }
+  `}
 `;
 
 export default function InfoGraphics(props: { active?: string }) {
-  const shouldReduceMotion = useReducedMotion();
-  let focus;
-
-  switch (props.active) {
-    case "nft": {
-      focus = "0 500 723 791";
-      break;
-    }
-    case "coin": {
-      focus = "723 791 723 791";
-      break;
-    }
-    case "staking": {
-      focus = "500 200 723 791";
-      break;
-    }
-    case "game": {
-      focus = "50 0 723 791";
-      break;
-    }
-    default: {
-      focus = "0 0 1446 1582";
-      break;
-    }
-  }
-
   return (
     <StyledSVG
       version="1.1"
@@ -62,23 +65,9 @@ export default function InfoGraphics(props: { active?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
+      className={props.active}
       viewBox="0 0 1446 1582"
       enableBackground="new 0 0 1446 1582"
-      initial={{
-        viewBox: "0 0 1446 1582",
-      }}
-      animate={
-        shouldReduceMotion
-          ? undefined
-          : {
-              viewBox: focus,
-            }
-      }
-      transition={{
-        duration: 0.5,
-        ease: "easeInOut",
-        elapsed: -1.5,
-      }}
       {...props}
     >
       <g id="coin-light" opacity="0.5">
