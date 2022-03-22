@@ -2,9 +2,10 @@
 import styled from "@emotion/styled";
 import Button from "components/ui/Button";
 import Head from "next/head";
+import Link from "next/link";
 
-import Layout from "../../components/Layout/Layout";
-import ModelViewerDynamic from "../../components/ui/ModelViewerDynamic";
+import Layout from "../../../components/Layout/Layout";
+import ModelViewerDynamic from "../../../components/ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
@@ -13,12 +14,12 @@ const Wrapper = styled.div`
 
 const Actions = styled.div`
   position: absolute;
-  left: 1rem;
-  bottom: 1rem;
+  top: 1rem;
+  right: 1rem;
 
   @media (min-width: 992px) {
-    left: 2rem;
-    bottom: 3rem;
+    top: 2rem;
+    right: 3rem;
   }
 `;
 
@@ -98,12 +99,14 @@ export default function ID() {
               data-visibility-attribute="visible"
             >
               <div className="HotspotAnnotation">
-                <h1>Knight #1</h1>
+                <h1>Knight</h1>
               </div>
             </div>
           </ModelViewerDynamic>
           <Actions>
-            <Button text="Mint" />
+            <Link href="/collections/1">
+              <Button text="Close" />
+            </Link>
           </Actions>
         </Wrapper>
       </Layout>
