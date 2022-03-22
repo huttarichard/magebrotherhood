@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { Typography } from "@mui/material";
+import knight from "assets/images/knight.png";
 import Button from "components/ui/Button";
 import Image from "next/image";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
@@ -12,6 +14,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   justify-content: center;
   max-width: 100vw;
+  padding: 6rem 1rem;
 `;
 
 const Header = styled.div`
@@ -113,22 +116,27 @@ const slides = [
   {
     title: "Bendy2",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant in cursus proin.",
-    img: "/images/knight.png",
+    img: knight.src,
   },
   {
     title: "Dark knight",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
-    img: "/images/knight.png",
+    img: knight.src,
   },
   {
     title: "Ninja",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant.",
-    img: "/images/knight.png",
+    img: knight.src,
   },
   {
     title: "Bendy",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
-    img: "/images/knight.png",
+    img: knight.src,
+  },
+  {
+    title: "Bendy",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
+    img: knight.src,
   },
 ];
 
@@ -153,7 +161,8 @@ export default function Collection() {
     <Wrapper>
       <Header>
         <div className="text">
-          <h2>Upcomming collection</h2>
+          <Typography variant="h3">Upcoming collection</Typography>
+
           <p>Collection of dark night ERC1155 comming later this month.</p>
         </div>
         <div className="actions">

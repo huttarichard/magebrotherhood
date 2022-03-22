@@ -10,15 +10,16 @@ const Wrapper = styled.div`
   background-color: #eee;
   height: 100%;
   max-height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
+
+  @supports (-webkit-touch-callout: none) {
+    height: calc(100vh - 120px);
+  }
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     height: 100%;
     max-height: 100vh;
   }
-
-  /* ${(props) => props.theme.breakpoints.up("lg")} {
-    height: 100vh;
-  } */
 `;
 
 const Background = styled.div`

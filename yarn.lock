@@ -1224,7 +1224,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
-"@emotion/is-prop-valid@0.8.8", "@emotion/is-prop-valid@^0.8.6":
+"@emotion/is-prop-valid@0.8.8", "@emotion/is-prop-valid@^0.8.2", "@emotion/is-prop-valid@^0.8.6":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
   integrity sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==
@@ -2298,47 +2298,42 @@
   resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-common-types/-/6.1.0/fontawesome-common-types-6.1.0.tgz#5a9468da0e5c2a3ccc161882ef5ffafbd3d4882f"
   integrity sha512-lFIJ5opxOKG9q88xOsuJJAdRZ+2WRldsZwUR/7MJoOMUMhF/LkHUjwWACIEPTa5Wo6uTDHvGRIX+XutdN7zYxA==
 
-"@fortawesome/fontawesome-common-types@^0.3.0":
-  version "0.3.0"
-  resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-common-types/-/0.3.0/fontawesome-common-types-0.3.0.tgz#949995a05c0d8801be7e0a594f775f1dbaa0d893"
-  integrity sha512-CA3MAZBTxVsF6SkfkHXDerkhcQs0QPofy43eFdbWJJkZiq3SfiaH1msOkac59rQaqto5EqWnASboY1dBuKen5w==
-
-"@fortawesome/fontawesome-svg-core@^1.3.0":
-  version "1.3.0"
-  resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-svg-core/-/1.3.0/fontawesome-svg-core-1.3.0.tgz#343fac91fa87daa630d26420bfedfba560f85885"
-  integrity sha512-UIL6crBWhjTNQcONt96ExjUnKt1D68foe3xjEensLDclqQ6YagwCRYVQdrp/hW0ALRp/5Fv/VKw+MqTUWYYvPg==
+"@fortawesome/fontawesome-svg-core@^6.1.0":
+  version "6.1.0"
+  resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-svg-core/-/6.1.0/fontawesome-svg-core-6.1.0.tgz#b78a43df315a6b1568d803ee48a9f1edea0714aa"
+  integrity sha512-racj+/EDnMZN0jcuHePOa+9kdHHOCpCAbBvVRnEi4G4DA5SWQiT/uXJ8WcfVEbLN51vPJjhukP4o+zH0cfYplg==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.3.0"
+    "@fortawesome/fontawesome-common-types" "6.1.0"
 
-"@fortawesome/free-brands-svg-icons@^6.0.0":
+"@fortawesome/free-brands-svg-icons@^6.1.0":
   version "6.1.0"
   resolved "https://npm.fontawesome.com/@fortawesome/free-brands-svg-icons/-/6.1.0/free-brands-svg-icons-6.1.0.tgz#5302a202468b4d85025f93a04fb0e0bb020c684b"
   integrity sha512-9utHuoCL12LCpZqTphg+tPLZeK+qcOX6tjky1DWtRXFmRgm67BA692STRJ2CXGlDkXSqfRGId8WkvsKqFAgmAQ==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.1.0"
 
-"@fortawesome/pro-light-svg-icons@^6.0.0":
+"@fortawesome/pro-light-svg-icons@^6.1.0":
   version "6.1.0"
   resolved "https://npm.fontawesome.com/@fortawesome/pro-light-svg-icons/-/6.1.0/pro-light-svg-icons-6.1.0.tgz#a5370f7a4233758e72345912877287df351353da"
   integrity sha512-6mZJqlaXZzTurKLmFyZSBYNcSPS7+P1s8l0FCkYAOgh0T0Un2cG4NMAyLUzLpcaSP4KbvS1PqwE0cs4lcDvSlw==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.1.0"
 
-"@fortawesome/pro-solid-svg-icons@^6.0.0":
+"@fortawesome/pro-solid-svg-icons@^6.1.0":
   version "6.1.0"
   resolved "https://npm.fontawesome.com/@fortawesome/pro-solid-svg-icons/-/6.1.0/pro-solid-svg-icons-6.1.0.tgz#8f1bf87d184a5b0433d56be49bae004a22d4cdbd"
   integrity sha512-19RF+pRt/fv/Dps3SfBF4Y7hGtoWpzbIeYB/MRNhAGJEEgby3oL4SnhLv7JyjDxQkKBF6DIMKU04eUCNSSh5EA==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.1.0"
 
-"@fortawesome/pro-thin-svg-icons@^6.0.0":
+"@fortawesome/pro-thin-svg-icons@^6.1.0":
   version "6.1.0"
   resolved "https://npm.fontawesome.com/@fortawesome/pro-thin-svg-icons/-/6.1.0/pro-thin-svg-icons-6.1.0.tgz#79ccd8e1f492ec6115c0a3cdf6f3f31d704a8886"
   integrity sha512-SXIuhu+42paqyKp/WQx+Dy/NZJqzfZqDS/RhpupkHv2QJGMhc59tqGaam+tGJjiOz0izk/b1RcvIAoVJjNzjlQ==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.1.0"
 
-"@fortawesome/react-fontawesome@^0.1.17":
+"@fortawesome/react-fontawesome@^0.1.18":
   version "0.1.18"
   resolved "https://npm.fontawesome.com/@fortawesome/react-fontawesome/-/0.1.18/react-fontawesome-0.1.18.tgz#dae37f718a24e14d7a99a5496c873d69af3fbd73"
   integrity sha512-RwLIB4TZw0M9gvy5u+TusAA0afbwM4JQIimNH/j3ygd6aIvYPQLqXMhC9ErY26J23rDPyDZldIfPq/HpTTJ/tQ==
@@ -4237,6 +4232,11 @@
     "@types/level-errors" "*"
     "@types/node" "*"
 
+"@types/lodash@*":
+  version "4.14.180"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.180.tgz#4ab7c9ddfc92ec4a887886483bc14c79fb380670"
+  integrity sha512-XOKXa1KIxtNXgASAnwj7cnttJxS4fksBRywK/9LzRV5YxrF80BXZIGeQSuoESQ/VkUj30Ae0+YcuHc15wJCB2g==
+
 "@types/lru-cache@^5.1.0":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-5.1.1.tgz#c48c2e27b65d2a153b19bfc1a317e30872e01eef"
@@ -4371,6 +4371,14 @@
   resolved "https://registry.yarnpkg.com/@types/react-is/-/react-is-17.0.3.tgz#2d855ba575f2fc8d17ef9861f084acc4b90a137a"
   integrity sha512-aBTIWg1emtu95bLTLx0cpkxwGW3ueZv71nE2YFBpL8k/z5czEW8yYpOo8Dp+UUAFAtKwNaOsh/ioSeQnWlZcfw==
   dependencies:
+    "@types/react" "*"
+
+"@types/react-lines-ellipsis@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@types/react-lines-ellipsis/-/react-lines-ellipsis-0.15.1.tgz#7bc47dbe12e7fe16de2ecb33134b270fbb88802a"
+  integrity sha512-j0lZ5UyO1ShIs2Fk2OfvmUBc1s5gUP3/5n6pHnRCVKLvSfensCBJVqXNa1Tzlcgf6BE31wfEfmn22QrSlnSBnw==
+  dependencies:
+    "@types/lodash" "*"
     "@types/react" "*"
 
 "@types/react-syntax-highlighter@11.0.5":
@@ -10362,6 +10370,26 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+framer-motion@^6.2.8:
+  version "6.2.8"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.2.8.tgz#02abb529191af7e2df444185fe27e932215b715d"
+  integrity sha512-4PtBWFJ6NqR350zYVt9AsFDtISTqsdqna79FvSYPfYDXuuqFmiKtZdkTnYPslnsOMedTW0pEvaQ7eqjD+sA+HA==
+  dependencies:
+    framesync "6.0.1"
+    hey-listen "^1.0.8"
+    popmotion "11.0.3"
+    style-value-types "5.0.0"
+    tslib "^2.1.0"
+  optionalDependencies:
+    "@emotion/is-prop-valid" "^0.8.2"
+
+framesync@6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/framesync/-/framesync-6.0.1.tgz#5e32fc01f1c42b39c654c35b16440e07a25d6f20"
+  integrity sha512-fUY88kXvGiIItgNC7wcTOl0SNRCVXMKSWW2Yzfmn7EKNc+MpCzcz9DhdHcdjbrtN3c6R4H5dTY2jiCpPdysEjA==
+  dependencies:
+    tslib "^2.1.0"
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -11185,6 +11213,11 @@ hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
+
+hey-listen@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.8.tgz#8e59561ff724908de1aa924ed6ecc84a56a9aa68"
+  integrity sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==
 
 highlight.js@^10.1.1, highlight.js@~10.7.0:
   version "10.7.3"
@@ -14737,6 +14770,16 @@ polished@^4.0.5:
   dependencies:
     "@babel/runtime" "^7.16.7"
 
+popmotion@11.0.3:
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-11.0.3.tgz#565c5f6590bbcddab7a33a074bb2ba97e24b0cc9"
+  integrity sha512-Y55FLdj3UxkR7Vl3s7Qr4e9m0onSnP8W7d/xQLsoJM40vs6UKHFdygs6SWryasTZYqugMjm3BepCF4CWXDiHgA==
+  dependencies:
+    framesync "6.0.1"
+    hey-listen "^1.0.8"
+    style-value-types "5.0.0"
+    tslib "^2.1.0"
+
 posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
@@ -15334,6 +15377,13 @@ react-colorful@^5.1.2:
   resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.5.1.tgz#29d9c4e496f2ca784dd2bb5053a3a4340cfaf784"
   integrity sha512-M1TJH2X3RXEt12sWkpa6hLc/bbYS0H6F4rIqjQZ+RxNBstpY67d9TrFXtqdZwhpmBXcCwEi7stKqFue3ZRkiOg==
 
+react-device-detect@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-2.1.2.tgz#60abb6fa361ec4cc839469a0c4c3e9b8ea17d6b5"
+  integrity sha512-N42xttwez3ECgu4KpOL2ICesdfoz8NCBfmc1rH9FRYSjH7NmMyANPSrQ3EvAtJyj/6TzJNhrANSO38iXjCB2Ug==
+  dependencies:
+    ua-parser-js "^0.7.30"
+
 react-docgen-typescript@^2.0.0:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/react-docgen-typescript/-/react-docgen-typescript-2.2.2.tgz#4611055e569edc071204aadb20e1c93e1ab1659c"
@@ -15430,6 +15480,11 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
+react-lines-ellipsis@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/react-lines-ellipsis/-/react-lines-ellipsis-0.15.0.tgz#07ecc8095f7d598e676ee662c637bd373f3552f4"
+  integrity sha512-8kWpEmu7ijmB6Gz5t+eSjNux2SpVXZBsmfeFE8LjMS7tU3H8ai475CyNc0dH0RDTwt4Esr7c06Xq4SB7Gpl9yQ==
 
 react-player@^2.10.0:
   version "2.10.0"
@@ -17263,6 +17318,14 @@ style-to-object@0.3.0, style-to-object@^0.3.0:
   integrity sha512-CzFnRRXhzWIdItT3OmF8SQfWyahHhjq3HwcMNCNLn+N7klOOqPjMeG/4JSu77D7ypZdGvSzvkrbyeTMizz2VrA==
   dependencies:
     inline-style-parser "0.1.1"
+
+style-value-types@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-5.0.0.tgz#76c35f0e579843d523187989da866729411fc8ad"
+  integrity sha512-08yq36Ikn4kx4YU6RD7jWEv27v4V+PUsOGa4n/as8Et3CuODMJQ00ENeAVXAeydX4Z2j1XHZF1K2sX4mGl18fA==
+  dependencies:
+    hey-listen "^1.0.8"
+    tslib "^2.1.0"
 
 styled-jsx@5.0.0:
   version "5.0.0"

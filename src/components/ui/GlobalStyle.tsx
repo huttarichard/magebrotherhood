@@ -48,6 +48,24 @@ const GlobalStyle = (theme: Theme) => css`
     --poster-color: transparent;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h5 {
+    .gradient {
+      display: inline-block;
+      background: linear-gradient(#8d11db, #ec12f9);
+      background: -webkit-linear-gradient(#8d11db, #ec12f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding: 0 20px;
+    }
+  }
+
   ${animations}
 `;
 
