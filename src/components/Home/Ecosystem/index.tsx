@@ -2,10 +2,11 @@ import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import useOnScreen from "hooks/useOnScreen";
+import dynamic from "next/dynamic";
 import React, { createRef, useEffect, useState } from "react";
 import { useWindowScroll } from "react-use";
 
-import InfoGraphics from "./InfoGraphics";
+const InfoGraphics = dynamic(() => import("./InfoGraphics"));
 
 // import Sticky from "react-sticky-el";
 

@@ -162,7 +162,7 @@ export default function About() {
             return (
               <StyledSlide item key={i}>
                 <div className="img-wrapper">
-                  <Image src={person.img} layout="fill" objectFit="cover" alt={person.name} />
+                  <Image loading="lazy" src={person.img} layout="fill" objectFit="cover" alt={person.name} />
                 </div>
                 <h3>{person.name}</h3>
                 <span>{person.position}</span>

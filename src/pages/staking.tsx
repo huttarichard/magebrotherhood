@@ -115,7 +115,15 @@ export default function Staking() {
                 <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell component="th" scope="row">
                     <div className="title">
-                      <Image className="image" src={knight.src} alt="ok" width={50} height={50} objectFit="cover" />
+                      <Image
+                        className="image"
+                        src={knight.src}
+                        alt="Knight"
+                        priority
+                        width={50}
+                        height={50}
+                        objectFit="cover"
+                      />
                       <span>{row.title}</span>
                     </div>
                   </TableCell>

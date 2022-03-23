@@ -62,7 +62,7 @@ export default function Polygon() {
   return (
     <Wrapper>
       <Background>
-        <Image src={edge.src} alt="ok" className="imgtag" layout="fill" objectFit="cover" />
+        <Image loading="lazy" src={edge.src} alt="ok" className="imgtag" layout="fill" objectFit="cover" />
       </Background>
       <Main>
         <Typography variant="h5" textAlign="center">

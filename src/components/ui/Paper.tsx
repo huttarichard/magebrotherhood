@@ -2,7 +2,11 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { default as MuiPaper } from "@mui/material/Paper";
 
-const Paper = styled(MuiPaper)<{ magical?: boolean }>`
+const Paper = styled(MuiPaper, {
+  shouldForwardProp: (prop) => {
+    return !["magical"].includes(prop.toString());
+  },
+})<{ magical?: boolean }>`
   border-radius: 5px;
   /* overflow: hidden; */
   position: relative;

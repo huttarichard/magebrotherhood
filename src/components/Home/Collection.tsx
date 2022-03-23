@@ -123,7 +123,7 @@ const StyledSlide = styled.div`
 
 const slides = [
   {
-    title: "Bendy2",
+    title: "Bendy1",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant in cursus proin.",
     img: knight.src,
   },
@@ -138,12 +138,12 @@ const slides = [
     img: knight.src,
   },
   {
-    title: "Bendy",
+    title: "Bendy2",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
     img: knight.src,
   },
   {
-    title: "Bendy",
+    title: "Bendy3",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
     img: knight.src,
   },
@@ -186,6 +186,7 @@ export default function Collection() {
                 <StyledSlide>
                   <div className="img-wrapper">
                     <Image
+                      loading="lazy"
                       src={slide.img}
                       layout="fill"
                       objectFit="contain"

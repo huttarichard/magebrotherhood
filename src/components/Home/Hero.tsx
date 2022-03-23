@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import heroBg2 from "assets/images/heroBg2.png";
+import heroGhost from "assets/images/heroGhost.png";
 import React from "react";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
@@ -28,7 +30,7 @@ const Background = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background: transparent url("/images/heroBg2.png") no-repeat;
+  background: transparent url(${heroBg2.src}) no-repeat;
   background-size: cover;
 
   &::before {
@@ -38,7 +40,7 @@ const Background = styled.div`
     right: 0;
     bottom: 0;
     left: 0;
-    background: transparent url("/images/heroGhost.png") no-repeat;
+    background: transparent url(${heroGhost.src}) no-repeat;
     background-size: contain;
     background-position: center left;
   }

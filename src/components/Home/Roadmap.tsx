@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import roadmapKnight from "assets/images/roadmapKnight.png";
 import { useEffect, useRef, useState } from "react";
 import { useWindowScroll } from "react-use";
 
@@ -22,7 +23,7 @@ const Background = styled.div`
 `;
 
 const Knight = styled(Grid)`
-  background: transparent url("/images/roadmapKnight.png") no-repeat;
+  background: transparent url(${roadmapKnight.src}) no-repeat;
   background-size: contain;
   background-position: left bottom;
   opacity: 0.7;
