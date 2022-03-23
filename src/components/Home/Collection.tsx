@@ -13,9 +13,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  max-width: 1432px;
   margin: 0 auto;
   padding: 6rem 1rem;
+  max-width: 100vw;
+  overflow: hidden;
+
+  ${(props) => props.theme.breakpoints.up("md")} {
+    max-width: 1432px;
+  }
 `;
 
 const Header = styled.div`

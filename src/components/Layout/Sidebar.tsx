@@ -9,9 +9,9 @@ import {
   faHouse,
   faMoneyCheckDollar,
   faRectangleVerticalHistory,
-} from "@fortawesome/pro-light-svg-icons";
+} from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Grid } from "@mui/material";
+import { Badge, Grid } from "@mui/material";
 import Brand from "components/Brand";
 import Button from "components/ui/Button";
 import Link from "next/link";
@@ -41,8 +41,19 @@ const Navbar = styled(Grid)`
   }
 
   li {
-    margin-bottom: 0.6rem;
-    font-weight: 600;
+    font-weight: 700;
+    border-bottom: 1px solid #cfcfcf29;
+    height: 4rem;
+    line-height: 3.6rem;
+    display: flex;
+
+    &:last-of-type {
+      border: 0;
+    }
+
+    .MuiBadge-root svg {
+      padding-top: 5px;
+    }
   }
 
   a {
@@ -69,6 +80,14 @@ const Navbar = styled(Grid)`
       object-fit: contain;
       margin-right: 1rem;
     }
+  }
+
+  .MuiBadge-badge {
+    font-size: 15px;
+    letter-spacing: -0.8px;
+    padding: 11px;
+    top: 7px;
+    background: ${({ theme }) => theme.primary2};
   }
 `;
 
@@ -99,6 +118,19 @@ function Item({ icon, name, link }: ItemProps) {
   );
 }
 
+function ItemSoon({ icon, name, link }: ItemProps) {
+  return (
+    <li>
+      <a>
+        <Badge color="primary" badgeContent="soon">
+          <FontAwesomeIcon icon={icon} />
+          <span>{name}</span>
+        </Badge>
+      </a>
+    </li>
+  );
+}
+
 export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
   const { closeMenu } = useLayout();
 
@@ -114,7 +146,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           <Item icon={faRectangleVerticalHistory} name="Collections" link="/collections" />
           <Item icon={faCoinBlank} name="Staking" link="/staking" />
           <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
-          <Item icon={faCartArrowDown} name="Marketplace" link="/marketplace" />
+          <ItemSoon icon={faCartArrowDown} name="Marketplace" link="/marketplace" />
           <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
           <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </ul>

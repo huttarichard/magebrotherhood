@@ -52,11 +52,11 @@ export default function Swap() {
   return (
     <Layout>
       <Title>
-        <Typography variant="h4">Brotherhood Coin - BHC</Typography>
+        <Typography variant="h4">Brotherhood Coin - BHC/USD</Typography>
         <p>1 DAY CANDLE CHART</p>
         <Button
           className="btn"
-          small={+true}
+          small
           text="Swap coins"
           onClick={(e) => {
             router.push("/swap");
