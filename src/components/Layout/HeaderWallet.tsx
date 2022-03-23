@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
+import { useEthers } from "@usedapp/core";
 import Button from "components/ui/Button";
-import useWallet from "hooks/useWallet";
 
 const Wrapper = styled.div`
   /* display: none;
@@ -11,14 +11,14 @@ const Wrapper = styled.div`
 `;
 
 export default function HeaderWallet() {
-  const wallet = useWallet();
+  const { activateBrowserWallet, account, deactivate } = useEthers();
 
   return (
     <Wrapper>
-      {wallet.data ? (
-        <button onClick={() => wallet.disconnect()}>Disconnect</button>
+      {account ? (
+        <button onClick={deactivate}>Disconnect</button>
       ) : (
-        <Button onClick={() => wallet.connect({})} text="Connect wallet" disabled={wallet.connecting} />
+        <Button onClick={activateBrowserWallet} text="Connect wallet" distorted borders block large />
       )}
     </Wrapper>
   );
