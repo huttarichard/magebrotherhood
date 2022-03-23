@@ -13,9 +13,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Grid } from "@mui/material";
 import Brand from "components/Brand";
-import Button from "components/ui/Button";
 import Link from "next/link";
 
+import HeaderWallet from "./HeaderWallet";
 import { useLayout } from "./store";
 
 const Navbar = styled(Grid)`
@@ -152,7 +152,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
         </ul>
       </Grid>
       <Bottom item>
-        <Button distorted borders block large text="Connect Wallet" />
+        <HeaderWallet />
       </Bottom>
     </Navbar>
   );
