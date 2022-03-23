@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { faDownload } from "@fortawesome/pro-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import Link from "next/link";
@@ -15,6 +17,29 @@ const Main = styled.div`
   margin: 0 auto;
 
   .head {
+    padding: 20px;
+  }
+
+  .download {
+    font-size: 30px;
+    background: #d2d2d2;
+    display: inline-flex;
+    width: auto;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    color: gray;
+    text-decoration: none;
+    font-weight: 600;
+
+    span {
+      padding-right: 10px;
+      font-size: 22px;
+    }
+  }
+
+  .body {
     padding: 20px;
   }
 `;
@@ -40,7 +65,12 @@ export default function FAQ() {
 
           <br />
 
-          <div></div>
+          <div className="body">
+            <a className="download" href="/litepaper.pdf" download>
+              <FontAwesomeIcon icon={faDownload} />
+              <span>PDF LITEPAPER</span>
+            </a>
+          </div>
         </Main>
       </Layout>
     </>

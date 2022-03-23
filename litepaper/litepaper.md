@@ -42,7 +42,10 @@ With new era of web moving on the edge of decentralization Magebrothood tries to
   - Affiliate
   - Dex
   - Coin
+- Augmented Reality
 - Research & Development
+  - Zero knowleadge proofs as hidden state of game
+  - Second Layer scaling solutions
 - Final words
 
 \
