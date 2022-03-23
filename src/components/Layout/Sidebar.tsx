@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
   faArrowsLeftRight,
   faCartArrowDown,
@@ -11,7 +11,8 @@ import {
   faRectangleVerticalHistory,
 } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge, Grid } from "@mui/material";
+import Badge from "@mui/material/Badge";
+import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
 import Button from "components/ui/Button";
 import Link from "next/link";
@@ -102,13 +103,13 @@ export interface LayoutNavbarProps {
 interface ItemProps {
   icon: IconDefinition;
   name: string;
-  link: string;
+  link?: string;
 }
 
 function Item({ icon, name, link }: ItemProps) {
   return (
     <li>
-      <Link href={link}>
+      <Link href={link as string}>
         <a>
           <FontAwesomeIcon icon={icon} />
           <span>{name}</span>
@@ -118,7 +119,7 @@ function Item({ icon, name, link }: ItemProps) {
   );
 }
 
-function ItemSoon({ icon, name, link }: ItemProps) {
+function ItemSoon({ icon, name }: ItemProps) {
   return (
     <li>
       <a>
@@ -146,7 +147,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           <Item icon={faRectangleVerticalHistory} name="Collections" link="/collections" />
           <Item icon={faCoinBlank} name="Staking" link="/staking" />
           <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
-          <ItemSoon icon={faCartArrowDown} name="Marketplace" link="/marketplace" />
+          <ItemSoon icon={faCartArrowDown} name="Marketplace" />
           <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
           <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </ul>

@@ -55,7 +55,7 @@ export default function Swap() {
             }, 100);
           }}
         >
-          {({ values, errors, handleChange, handleSubmit, isSubmitting, isValidating }) =>
+          {() =>
             // <Form onSubmit={handleSubmit}>
             //   <Form.Group controlId="eth">
             //     <Form.Label>ETH</Form.Label>

@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
-import { Accordion as MuiAccordion } from "@mui/material";
+import { default as MuiAccordion } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import Link from "next/link";
 

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { faBars } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
 
 import { useLayout } from "./store";

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import edge from "assets/images/edge.png";
 import Image from "next/image";
 

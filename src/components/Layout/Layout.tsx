@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Drawer, Grid } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
 import { PropsWithChildren } from "react";
 
 import Footer from "./Footer";

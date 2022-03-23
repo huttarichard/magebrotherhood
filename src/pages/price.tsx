@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import dynamic from "next/dynamic";
@@ -54,14 +54,7 @@ export default function Swap() {
       <Title>
         <Typography variant="h4">Brotherhood Coin - BHC/USD</Typography>
         <p>1 DAY CANDLE CHART</p>
-        <Button
-          className="btn"
-          small
-          text="Swap coins"
-          onClick={(e) => {
-            router.push("/swap");
-          }}
-        />
+        <Button className="btn" small text="Swap coins" onClick={() => router.push("/swap")} />
       </Title>
       <CoinPriceChart />
     </Layout>

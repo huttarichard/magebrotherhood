@@ -1,10 +1,9 @@
 import { useState } from "react";
 
 import Layout from "../components/Layout/Layout";
-import MintModal from "../components/modals/MintModal";
 
 export default function Mint() {
-  const [showModal, setShowModal] = useState(true);
+  const [_, setShowModal] = useState(true);
 
   return (
     <>
@@ -12,7 +11,7 @@ export default function Mint() {
         <h1>Mint</h1>
         <button onClick={() => setShowModal(true)}>Mint</button>
       </Layout>
-      <MintModal show={showModal} handleClose={() => setShowModal(false)} />
+      {/* <MintModal show={showModal} handleClose={() => setShowModal(false)} /> */}
     </>
   );
 }

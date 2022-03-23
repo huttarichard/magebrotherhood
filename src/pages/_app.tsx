@@ -1,4 +1,3 @@
-import "@fortawesome/fontawesome-svg-core/styles.css";
 import "swiper/css";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";

@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import ButtonBase from "@mui/material/ButtonBase";
+// import styled from "@emotion/styled";
+import { styled } from "@mui/material/styles";
 import React from "react";
 
 import { distortion, distortionAlternative } from "./animations";
@@ -17,7 +18,11 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, StyleModi
   text: string;
 }
 
-const StyledButton = styled(ButtonBase)<StyleModificationProps>`
+const StyledButton = styled(ButtonBase, {
+  shouldForwardProp: (prop) => {
+    return !["large", "small", "block", "borders", "distorted"].includes(prop.toString());
+  },
+})<StyleModificationProps>`
   position: relative;
   box-sizing: border-box;
   padding: 0 2.5rem;

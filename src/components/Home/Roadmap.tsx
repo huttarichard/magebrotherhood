@@ -1,6 +1,8 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Grid, Typography, useMediaQuery } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect, useRef, useState } from "react";
 import { useWindowScroll } from "react-use";
 

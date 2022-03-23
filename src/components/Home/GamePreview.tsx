@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Grid, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import Paper from "components/ui/Paper";
 import React from "react";
 import ReactPlayer from "react-player/lazy";

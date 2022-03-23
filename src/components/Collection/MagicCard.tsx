@@ -11,7 +11,7 @@ const FullImage = styled.img`
 
 const defaultHeight = "32vh";
 
-const MagicCardElement = styled.div`
+const MagicCardElement = styled.div<{ height?: number | string }>`
   @property --rotate {
     syntax: "<angle>";
     initial-value: 132deg;
@@ -87,9 +87,15 @@ const MagicCardElement = styled.div`
   }
 `;
 
-export default function MagicCard(props) {
+interface Props {
+  height?: number | string;
+  link: string;
+  src: string;
+}
+
+export default function MagicCard(props: React.PropsWithChildren<Props>) {
   return (
-    <Link href={props.link}>
+    <Link href={props.link} passHref>
       <MagicCardElement height={props.height}>
         <FullImage src={props.src} />
         {props.children}

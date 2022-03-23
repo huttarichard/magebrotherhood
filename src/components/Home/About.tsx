@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import team0 from "assets/images/team0.jpg";
 import team1 from "assets/images/team1.jpg";
 import team2 from "assets/images/team2.jpg";

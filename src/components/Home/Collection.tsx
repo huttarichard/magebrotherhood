@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import knight from "assets/images/knight.png";
 import Button from "components/ui/Button";
 import Image from "next/image";

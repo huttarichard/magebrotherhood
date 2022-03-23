@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Accordion as MuiAccordion } from "@mui/material";
+import { default as MuiAccordion } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 

@@ -1,9 +1,19 @@
 import styled from "@emotion/styled";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import Tab from "@mui/material/Tab";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
-import { DataGrid, GridColumns, GridRenderCellParams, GridSelectionModel } from "@mui/x-data-grid";
+import Typography from "@mui/material/Typography";
+import knight from "assets/images/knight.png";
 import Button from "components/ui/Button";
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 import Layout from "../components/Layout/Layout";
@@ -11,15 +21,35 @@ import Layout from "../components/Layout/Layout";
 const Wrapper = styled.div`
   min-height: 100vh;
   display: flex;
+  max-width: 800px;
+  margin: 0 auto;
   flex-direction: column;
-  justify-content: center;
+  padding-top: 30px;
 
-  h1 {
-    margin: 0 0 2rem;
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
-    font-size: 3rem;
-    text-transform: uppercase;
+  .head {
+    border-bottom: 1px solid #303030;
+    padding-bottom: 30px;
+  }
+
+  .tostake {
+    padding: 15px;
+    margin-bottom: 30px;
+  }
+
+  .image {
+    background: white;
+    border-radius: 6px;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+
+    span {
+      padding-left: 10px;
+    }
   }
 `;
 
@@ -41,79 +71,71 @@ const rows: StakingItem[] = [
   { id: 3, title: "Dark wood", type: ItemType.Land, staked: true },
 ];
 
-const columns: GridColumns = [
-  { field: "id", headerName: "ID", sortable: false },
-  { field: "title", headerName: "Name", flex: 1 },
-  {
-    field: "actions",
-    headerName: "Actions",
-    sortable: false,
-    renderCell: (params: GridRenderCellParams<StakingItem>) => {
-      const { staked } = params.row;
-      if (staked) {
-        return <button>Stake</button>;
-      } else {
-        return <button>Unstake</button>;
-      }
-    },
-  },
-];
-
 export default function Staking() {
   enum Filter {
-    All,
+    YourWallet,
     Staked,
-    Available,
   }
 
-  const filterMap = {
-    [Filter.All]: () => true,
-    [Filter.Staked]: (el: StakingItem) => el.staked,
-    [Filter.Available]: (el: StakingItem) => !el.staked,
-  };
-
-  const [filter, setFilter] = useState<Filter>(Filter.All);
-  const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
-
-  console.log(selectionModel);
-
-  const filteredRows = rows.filter(filterMap[filter]);
+  const [filter, setFilter] = useState<Filter>(Filter.YourWallet);
 
   return (
     <Layout>
       <Wrapper>
-        <h1>Staking</h1>
+        <div className="head">
+          <Typography variant="h3">Staking</Typography>
+          <br />
+          <Typography variant="body1">
+            Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long
+            term investors and prevents cheating in game. More about staking in out <Link href="/paper">LitePaper</Link>
+            .
+          </Typography>
+        </div>
+
+        <br />
+
         <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
-          <Tab label="All items" />
-          <Tab label="Staked" />
-          <Tab label="Available" />
+          <Tab label="Your Wallet" />
+          <Tab label="Staking" />
         </Tabs>
-        <DataGrid
-          rows={filteredRows}
-          columns={columns}
-          onSelectionModelChange={(newSelectionModel) => {
-            setSelectionModel(newSelectionModel);
-          }}
-          selectionModel={selectionModel}
-          checkboxSelection
-          disableSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnSelector
-          disableDensitySelector
-          disableExtendRowFullWidth
-          hideFooter
-        />
-        {!!selectionModel.length && (
-          <Grid container justifyContent="space-between" sx={{ mb: 8 }}>
-            <Grid item>
-              <Button text="Stake Selected" />
-            </Grid>
-            <Grid item>
-              <Button text="Unstake Selected" />
-            </Grid>
+
+        <br />
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>NFT Token</TableCell>
+                <TableCell align="right">Amount</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableCell component="th" scope="row">
+                    <div className="title">
+                      <Image className="image" src={knight.src} alt="ok" width={50} height={50} objectFit="cover" />
+                      <span>{row.title}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell align="right">1</TableCell>
+                  <TableCell align="right">
+                    <Button small text="Add For Staking" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <br />
+
+        <Paper className="tostake">
+          <Grid container>
+            <Grid item>Please select character you want to stake.</Grid>
           </Grid>
-        )}
+        </Paper>
       </Wrapper>
     </Layout>
   );

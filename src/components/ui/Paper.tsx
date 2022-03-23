@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Paper as MuiPaper } from "@mui/material";
+import { default as MuiPaper } from "@mui/material/Paper";
 
 const Paper = styled(MuiPaper)<{ magical?: boolean }>`
   border-radius: 5px;

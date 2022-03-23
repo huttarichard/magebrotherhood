@@ -29,7 +29,7 @@ const provider = new JsonRpcProvider({
   timeout: 5000,
 });
 
-const coin = new Contract(COIN_CONTRACT, CoinJSON.abi, provider) as Coin;
+const coin = new Contract(COIN_CONTRACT, CoinJSON.abi, provider) as unknown as Coin;
 
 const database = open({
   path: resolve(__dirname, "storage"),
