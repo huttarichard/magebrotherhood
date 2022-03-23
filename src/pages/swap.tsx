@@ -1,35 +1,119 @@
 import styled from "@emotion/styled";
+import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TextField from "@mui/material/TextField";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
+import Paper from "components/ui/Paper";
 import Card from "components/ui/Paper";
 import useWallet from "hooks/useWallet";
-import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const CoinPriceChart = dynamic(() => import("components/Swap/Chart"), {
-  ssr: false,
-});
-
-const CardWrapper = styled(Card)`
-  max-width: 400px;
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
+const Main = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
+  align-items: center;
+  height: 100%;
+  padding-top: 30px;
+
+  ${(props) => props.theme.breakpoints.up("md")} {
+    margin: 0 auto;
+    padding-top: 0px;
+    max-width: 400px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
-const BackgroundChart = styled.div`
-  /* width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: -1; */
+const CardWrapper = styled(Card)`
+  margin: 0 auto;
+  padding: 17px;
+
+  ${(props) => props.theme.breakpoints.down("md")} {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  ${(props) => props.theme.breakpoints.up("md")} {
+    border: 2px solid #ec12f9;
+  }
+
+  .btn {
+    margin-top: 30px;
+  }
+
+  small {
+    font-size: 15px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+
+    a {
+      padding-left: 5px;
+      color: #ec12f9;
+    }
+  }
+
+  .switch {
+    text-align: right;
+    display: inherit;
+    padding: 8px;
+    padding-bottom: 20px;
+    font-size: 18px;
+    cursor: pointer;
+
+    span {
+      margin-right: 6px;
+    }
+  }
+`;
+
+const Tranding = styled(Paper)`
+  margin: 0 auto;
+  background: linear-gradient(155deg, #008eb5, #9200a5 43%, #ec12f9);
+  border: 0;
+  padding: 17px;
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #5ddcff, #3c67e3 43%, #4e00c2);
+    filter: blur(60px);
+    position: absolute;
+    z-index: -1;
+    top: 41%;
+    left: 0%;
+    background-size: 200% 200%;
+  }
+
+  svg {
+    font-size: 39px;
+  }
+
+  .text svg {
+    font-size: 21px;
+  }
+
+  ${(props) => props.theme.breakpoints.down("md")} {
+    margin: 20px;
+    width: calc(100% - 52px);
+    margin-top: 50px;
+  }
 `;
 
 const CardHeader = styled.div`
@@ -97,7 +181,7 @@ export default function Swap() {
     setIsSubmitting(false);
   };
 
-  const handleModeSwitch = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleModeSwitch = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     if (mode === Mode.EthToBhc) {
@@ -118,9 +202,12 @@ export default function Swap() {
       helperText={"dolar value?"}
       key="eth"
     />,
-    <button key="switch" onClick={handleModeSwitch}>
-      switch
-    </button>,
+
+    <span key="switch" className="switch" onClick={handleModeSwitch}>
+      <span>Switch</span>
+      <FontAwesomeIcon icon={faArrowUpArrowDown} />
+    </span>,
+
     <TextField
       fullWidth
       name="bhc"
@@ -133,23 +220,34 @@ export default function Swap() {
     />,
   ];
 
+  const router = useRouter();
+
   return (
     <Layout>
-      <BackgroundChart>
-        <CoinPriceChart />
-      </BackgroundChart>
+      <Main>
+        <CardWrapper>
+          <CardHeader>
+            <h1>Swap</h1>
+            {wallet.data && <p>Balance: {JSON.stringify(wallet.data.accounts[0].balance)}</p>}
+          </CardHeader>
 
-      <CardWrapper>
-        <CardHeader>
-          <h1>Swap</h1>
-          {wallet.data && <p>Balance: {JSON.stringify(wallet.data.accounts[0].balance)}</p>}
-        </CardHeader>
+          <form onSubmit={handleSubmit}>
+            {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+            <Button text="Swap" disabled={isValidating || isSubmitting} className="btn" distorted block borders large />
+          </form>
+          <small>
+            By clicking &quot;SWAP&quot; you are agreeing to <Link href="/tos">terms of conditions</Link>.
+          </small>
+        </CardWrapper>
 
-        <form onSubmit={handleSubmit}>
-          {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
-          <Button text="Swap" disabled={isValidating || isSubmitting} distorted />
-        </form>
-      </CardWrapper>
+        <Tranding onClick={() => router.push("/price")}>
+          <FontAwesomeIcon icon={faChartCandlestick} />
+
+          <div className="text">
+            Trading view chart <FontAwesomeIcon icon={faArrowRight} />
+          </div>
+        </Tranding>
+      </Main>
     </Layout>
   );
 }

@@ -6,6 +6,9 @@ import React from "react";
 import { distortion, distortionAlternative } from "./animations";
 
 interface StyleModificationProps {
+  large?: boolean;
+  small?: boolean;
+  block?: boolean;
   borders?: boolean;
   distorted?: boolean;
 }
@@ -65,6 +68,31 @@ const StyledButton = styled(ButtonBase)<StyleModificationProps>`
         border-width: 0 0 1.25rem 1.25rem;
         border-color: transparent transparent ${theme.palette.secondary.main} transparent;
       }
+    `}
+
+  ${({ theme, small }) =>
+    small &&
+    css`
+      background: ${theme.palette.secondary.main};
+      height: 36px;
+      letter-spacing: 0.8px;
+      padding: 0 14px;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+    `}
+
+  ${({ block }) =>
+    block &&
+    css`
+      width: 100%;
+    `}
+
+  ${({ large }) =>
+    large &&
+    css`
+      line-height: 3.5rem;
+      clip-path: polygon(1.2rem 0%, 100% 0, 100% 2.3rem, calc(100% - 1.2rem) 100%, 0 100%, 0 1.2rem);
     `}
 
   /* distortion */

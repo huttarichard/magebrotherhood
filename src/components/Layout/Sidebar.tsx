@@ -73,7 +73,7 @@ const Navbar = styled(Grid)`
 `;
 
 const Bottom = styled(Grid)`
-  margin: 0 auto;
+  margin: 0;
 `;
 
 export interface LayoutNavbarProps {
@@ -120,7 +120,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
         </ul>
       </Grid>
       <Bottom item>
-        <Button distorted borders text="Connect Wallet" />
+        <Button distorted borders block large text="Connect Wallet" />
       </Bottom>
     </Navbar>
   );

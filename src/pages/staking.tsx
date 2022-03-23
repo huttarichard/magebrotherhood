@@ -80,7 +80,7 @@ export default function Staking() {
   const filteredRows = rows.filter(filterMap[filter]);
 
   return (
-    <Layout maxContainerSize="md">
+    <Layout>
       <Wrapper>
         <h1>Staking</h1>
         <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
