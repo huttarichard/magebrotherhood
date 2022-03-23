@@ -16,7 +16,7 @@ export default function HeaderWallet() {
   return (
     <Wrapper>
       {account ? (
-        <button onClick={deactivate}>Disconnect</button>
+        <Button onClick={deactivate} text="Disconnect" distorted borders block large />
       ) : (
         <Button onClick={activateBrowserWallet} text="Connect wallet" distorted borders block large />
       )}
