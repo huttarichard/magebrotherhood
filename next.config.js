@@ -6,6 +6,7 @@ module.exports = withBundleAnalyzer({
   poweredByHeader: false,
   images: {
     domains: ["modelviewer.dev"],
+    formats: ['image/avif', 'image/webp'],
   },
 })
 
