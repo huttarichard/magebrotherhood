@@ -6,6 +6,7 @@ import {
   faClose,
   faCoinBlank,
   faCommentsQuestion,
+  faFileContract,
   faHouse,
   faMoneyCheckDollar,
   faRectangleVerticalHistory,
@@ -149,6 +150,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
           <ItemSoon icon={faCartArrowDown} name="Marketplace" />
           <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
+          <Item icon={faFileContract} name="Litepaper" link="/paper" />
           <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </ul>
       </Grid>

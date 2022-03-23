@@ -32,8 +32,8 @@ export default function FAQ() {
             <Typography variant="h3">Lite Paper</Typography>
             <br />
             <Typography variant="body1">
-              Here you can find documents briefly describing our ecosystem bit more in detail than visualizations on
-              site. Please, feel free to visit our <Link href="/">Discord</Link> and post suggestion, they are more than
+              Here you can find documents briefly describing our ecosystem, more in detail than visualizations on site.
+              Please, feel free to visit our <Link href="/">discord</Link> and post suggestion, they are more than
               welcomed.
             </Typography>
           </div>

@@ -11,6 +11,7 @@
     "i18n:compile": "yarn i18n:extract && lingui compile",
     "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
     "storybook": "start-storybook -p 6006",
+    "litepaper": "markdown-pdf --cwd ./litepaper --paper-border 0px --paper-format A4 --css-path ./litepaper/style.css --out ./public/litepaper.pdf ./litepaper/*.md",
     "build-storybook": "build-storybook"
   },
   "resolutions": {
@@ -108,6 +109,7 @@
     "ethers": "^5.5.4",
     "hardhat": "^2.9.0",
     "hardhat-gas-reporter": "^1.0.8",
+    "markdown-pdf": "^10.0.0",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
     "solhint": "^3.3.7",
