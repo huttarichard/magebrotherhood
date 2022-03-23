@@ -5,7 +5,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 
 interface AccordionItem {
   title: string;
-  text: string;
+  text: string | JSX.Element;
 }
 
 interface AccordionProps {

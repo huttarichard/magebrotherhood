@@ -78,6 +78,7 @@ export const mui: ThemeOptions = {
   typography: {
     fontWeightLight: 200,
     fontWeightMedium: 600,
+
     body1: {
       fontSize: "1.5rem",
       fontWeight: 500,

@@ -66,6 +66,10 @@ const GlobalStyle = (theme: Theme) => css`
     }
   }
 
+  a {
+    color: #ec12f9;
+  }
+
   ${animations}
 `;
 
