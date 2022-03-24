@@ -12,6 +12,7 @@ import {
   faRectangleVerticalHistory,
 } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useMediaQuery } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
@@ -40,6 +41,10 @@ const Navbar = styled(Grid)`
     margin-top: 5rem;
     list-style: none;
     padding: 0;
+
+    ${(props) => props.theme.breakpoints.down("md")} {
+      margin-top: 2rem;
+    }
   }
 
   li {
@@ -121,6 +126,9 @@ function Item({ icon, name, link }: ItemProps) {
 }
 
 function ItemSoon({ icon, name }: ItemProps) {
+  const largeEnough = useMediaQuery("screen and (min-height: 735px)");
+  if (!largeEnough) return null;
+
   return (
     <li>
       <a>
