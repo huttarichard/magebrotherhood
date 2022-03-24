@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 /* solhint-disable not-rely-on-time */
 
-pragma solidity 0.8.12;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
@@ -71,7 +71,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     liqudityGuard = _guard;
     liqudityGuardDenominator = _denominator;
   }
-
 
   /**
    * @dev will mint tokens to given address

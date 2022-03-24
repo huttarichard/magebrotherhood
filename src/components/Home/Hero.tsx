@@ -96,7 +96,7 @@ const Main = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  pointer-events: none;
+  /* pointer-events: none; */
   color: ${({ theme }) => theme.text2};
 
   h1 {
@@ -292,6 +292,20 @@ export default function Hero() {
             Play for victory, earn <span>rewards.</span>
           </h1>
           <p>NFT P2E game powered by blockchain enhanced by AR, managed by DAO.</p>
+
+          {/* <a id="ar-link" rel="ar" href="/models/knight.usdz#callToAction=Add%20to%20cart">
+            <Button text="Explore in AR" small />
+          </a> */}
+
+          {/* <a
+            rel="ar"
+            id="CustomBanner"
+            href="/models/knight.usdz#callToAction=Browse%20API&checkoutTitle=Kids%20Slide&checkoutSubtitle=Playground%20in%20your%20backyard&price=145"
+          >
+            ok
+            <img src="solar-panels-thumbnail.png" />
+          </a> */}
+
           <ul>
             <li>
               <span>8K</span>

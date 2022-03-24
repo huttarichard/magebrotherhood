@@ -9,23 +9,15 @@ import { resolve } from "path";
 
 import CoinJSON from "../artifacts/contracts/Coin.sol/Coin.json";
 import { Coin } from "../artifacts/types/Coin";
-import { chains } from "../lib/web3/chains";
+import { ChainId, chains } from "../lib/web3/chains";
 
 const COIN_CONTRACT = process.env.COIN_CONTRACT as string;
 const DAY = 1000 * 60 * 60 * 24;
 
 const app = express();
 
-const chain = chains.find((e) => {
-  return e.id === "0x1";
-});
-
-if (!chain) {
-  throw new Error("missing chain");
-}
-
 const provider = new JsonRpcProvider({
-  url: chain.rpcUrl,
+  url: chains[ChainId.Rinkeby].rpcUrl,
   timeout: 5000,
 });
 

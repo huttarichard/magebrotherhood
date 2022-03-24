@@ -7,9 +7,6 @@
     "start": "next start",
     "lint": "next lint",
     "hardhat": "hardhat --tsconfig ./tsconfig.hardhat.json",
-    "i18n:extract": "lingui extract --locale en-US",
-    "i18n:compile": "yarn i18n:extract && lingui compile",
-    "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
     "storybook": "start-storybook -p 6006",
     "litepaper": "markdown-pdf --cwd ./litepaper --paper-border 0px --paper-format A4 --css-path ./litepaper/style.css --out ./public/litepaper.pdf ./litepaper/*.md",
     "build-storybook": "build-storybook"

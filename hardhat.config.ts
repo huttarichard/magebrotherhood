@@ -13,6 +13,8 @@ import { task } from "hardhat/config";
 
 dotenv.config();
 
+const INFURA_KEY = process.env.INFURA_KEY;
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -23,6 +25,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
+task("deploy:coin", "deploys contracts", async (taskArgs, hre) => {
+  const MelegendCoin = await hre.ethers.getContractFactory("Coin");
+  const coin = await MelegendCoin.deploy(1000000);
+  console.log("coin: ", coin.address, coin.deployTransaction.hash);
+});
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
@@ -31,7 +39,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.12",
+    version: "0.8.13",
     settings: {
       optimizer: {
         enabled: true,
@@ -51,7 +59,7 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:7545",
     },
     rinkeby: {
-      url: process.env.RINKEBY_URL || "",
+      url: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
     },
   },

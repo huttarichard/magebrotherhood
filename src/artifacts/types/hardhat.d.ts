@@ -153,17 +153,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ICoin__factory>;
     getContractFactory(
+      name: "IStakable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IStakable__factory>;
+    getContractFactory(
+      name: "IStaking",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IStaking__factory>;
+    getContractFactory(
       name: "Playables",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Playables__factory>;
     getContractFactory(
-      name: "Stakable",
+      name: "Staking",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Stakable__factory>;
-    getContractFactory(
-      name: "Vault",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Vault__factory>;
+    ): Promise<Contracts.Staking__factory>;
 
     getContractAt(
       name: "AccessControl",
@@ -341,20 +345,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ICoin>;
     getContractAt(
+      name: "IStakable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IStakable>;
+    getContractAt(
+      name: "IStaking",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IStaking>;
+    getContractAt(
       name: "Playables",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Playables>;
     getContractAt(
-      name: "Stakable",
+      name: "Staking",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Stakable>;
-    getContractAt(
-      name: "Vault",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Vault>;
+    ): Promise<Contracts.Staking>;
 
     // default types
     getContractFactory(

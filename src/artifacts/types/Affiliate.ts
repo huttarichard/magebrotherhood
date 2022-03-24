@@ -24,13 +24,14 @@ export interface AffiliateInterface extends utils.Interface {
     "balances(address)": FunctionFragment;
     "coin()": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "payoff(address)": FunctionFragment;
     "register(string)": FunctionFragment;
     "release(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "reward(string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -40,8 +41,8 @@ export interface AffiliateInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(functionFragment: "coin", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(functionFragment: "payoff", values: [string]): string;
   encodeFunctionData(functionFragment: "register", values: [string]): string;
   encodeFunctionData(functionFragment: "release", values: [string]): string;
   encodeFunctionData(
@@ -53,6 +54,7 @@ export interface AffiliateInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "allowRewarding",
@@ -61,8 +63,8 @@ export interface AffiliateInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "coin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "payoff", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(
@@ -74,6 +76,7 @@ export interface AffiliateInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
@@ -142,9 +145,11 @@ export interface Affiliate extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    payoff(cont: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     register(
       code: string,
@@ -169,6 +174,10 @@ export interface Affiliate extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   allowRewarding(
@@ -183,9 +192,11 @@ export interface Affiliate extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  paused(overrides?: CallOverrides): Promise<boolean>;
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  payoff(cont: string, overrides?: CallOverrides): Promise<BigNumber>;
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
   register(
     code: string,
@@ -211,6 +222,10 @@ export interface Affiliate extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     allowRewarding(
       addr: string,
@@ -224,9 +239,9 @@ export interface Affiliate extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    paused(overrides?: CallOverrides): Promise<boolean>;
+    pause(overrides?: CallOverrides): Promise<void>;
 
-    payoff(cont: string, overrides?: CallOverrides): Promise<BigNumber>;
+    paused(overrides?: CallOverrides): Promise<boolean>;
 
     register(code: string, overrides?: CallOverrides): Promise<void>;
 
@@ -240,6 +255,8 @@ export interface Affiliate extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -272,9 +289,11 @@ export interface Affiliate extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    payoff(cont: string, overrides?: CallOverrides): Promise<BigNumber>;
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     register(
       code: string,
@@ -297,6 +316,10 @@ export interface Affiliate extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -317,12 +340,11 @@ export interface Affiliate extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    payoff(
-      cont: string,
-      overrides?: CallOverrides
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     register(
       code: string,
@@ -345,6 +367,10 @@ export interface Affiliate extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

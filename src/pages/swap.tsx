@@ -6,6 +6,7 @@ import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Paper from "components/ui/Paper";
 import Card from "components/ui/Paper";
+import useCoinContract from "hooks/useCoinContract";
 import useWallet from "hooks/useWallet";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -139,6 +140,8 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Swap() {
   const wallet = useWallet();
+  const coin = useCoinContract();
+  console.log(coin);
 
   const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
   const [eth, setEth] = useState<number>(0);

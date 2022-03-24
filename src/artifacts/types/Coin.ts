@@ -38,8 +38,10 @@ export interface CoinInterface extends utils.Interface {
     "DECIMALS()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
+    "FREELOADER()": FunctionFragment;
     "MINTER()": FunctionFragment;
     "NAME()": FunctionFragment;
+    "SPENDER()": FunctionFragment;
     "TICK()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -54,7 +56,6 @@ export interface CoinInterface extends utils.Interface {
     "ethToTokenSwapOutput(uint256,uint256)": FunctionFragment;
     "ethToTokenTransferInput(uint256,uint256,address)": FunctionFragment;
     "ethToTokenTransferOutput(uint256,uint256,address)": FunctionFragment;
-    "excludeFromFee(address)": FunctionFragment;
     "getEthToTokenInputPrice(uint256)": FunctionFragment;
     "getEthToTokenOutputPrice(uint256)": FunctionFragment;
     "getInputPrice(uint256,uint256,uint256)": FunctionFragment;
@@ -70,7 +71,6 @@ export interface CoinInterface extends utils.Interface {
     "increaseAllowance(address,uint256)": FunctionFragment;
     "liqudityGuard()": FunctionFragment;
     "liqudityGuardDenominator()": FunctionFragment;
-    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "numCheckpoints(address)": FunctionFragment;
@@ -84,6 +84,7 @@ export interface CoinInterface extends utils.Interface {
     "taxFee()": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
     "tokenEthBurn(address,uint256)": FunctionFragment;
+    "tokenMint(address,uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthTransferInput(uint256,uint256,uint256,address)": FunctionFragment;
@@ -104,8 +105,13 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "FREELOADER",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "MINTER", values?: undefined): string;
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
+  encodeFunctionData(functionFragment: "SPENDER", values?: undefined): string;
   encodeFunctionData(functionFragment: "TICK", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
@@ -153,10 +159,6 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "ethToTokenTransferOutput",
     values: [BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "excludeFromFee",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getEthToTokenInputPrice",
@@ -215,10 +217,6 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "liqudityGuardDenominator",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [string, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(
@@ -268,6 +266,10 @@ export interface CoinInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "tokenMint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokenToEthSwapInput",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
@@ -307,8 +309,10 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "FREELOADER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MINTER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "SPENDER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "TICK", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -342,10 +346,6 @@ export interface CoinInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ethToTokenTransferOutput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "excludeFromFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -399,7 +399,6 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "liqudityGuardDenominator",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(
@@ -428,6 +427,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "tokenEthBurn",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tokenMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwapInput",
     data: BytesLike
@@ -589,9 +589,13 @@ export interface Coin extends BaseContract {
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
+    FREELOADER(overrides?: CallOverrides): Promise<[string]>;
+
     MINTER(overrides?: CallOverrides): Promise<[string]>;
 
     NAME(overrides?: CallOverrides): Promise<[string]>;
+
+    SPENDER(overrides?: CallOverrides): Promise<[string]>;
 
     TICK(overrides?: CallOverrides): Promise<[string]>;
 
@@ -666,11 +670,6 @@ export interface Coin extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    excludeFromFee(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getEthToTokenInputPrice(
       ethSold: BigNumberish,
       overrides?: CallOverrides
@@ -742,12 +741,6 @@ export interface Coin extends BaseContract {
 
     liqudityGuardDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    mint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
 
     nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -812,6 +805,12 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     tokenToEthSwapInput(
       tokensSold: BigNumberish,
       minEth: BigNumberish,
@@ -868,9 +867,13 @@ export interface Coin extends BaseContract {
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
+  FREELOADER(overrides?: CallOverrides): Promise<string>;
+
   MINTER(overrides?: CallOverrides): Promise<string>;
 
   NAME(overrides?: CallOverrides): Promise<string>;
+
+  SPENDER(overrides?: CallOverrides): Promise<string>;
 
   TICK(overrides?: CallOverrides): Promise<string>;
 
@@ -945,11 +948,6 @@ export interface Coin extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  excludeFromFee(
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getEthToTokenInputPrice(
     ethSold: BigNumberish,
     overrides?: CallOverrides
@@ -1021,12 +1019,6 @@ export interface Coin extends BaseContract {
 
   liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
-  mint(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   name(overrides?: CallOverrides): Promise<string>;
 
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1088,6 +1080,12 @@ export interface Coin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  tokenMint(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   tokenToEthSwapInput(
     tokensSold: BigNumberish,
     minEth: BigNumberish,
@@ -1144,9 +1142,13 @@ export interface Coin extends BaseContract {
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
+    FREELOADER(overrides?: CallOverrides): Promise<string>;
+
     MINTER(overrides?: CallOverrides): Promise<string>;
 
     NAME(overrides?: CallOverrides): Promise<string>;
+
+    SPENDER(overrides?: CallOverrides): Promise<string>;
 
     TICK(overrides?: CallOverrides): Promise<string>;
 
@@ -1217,8 +1219,6 @@ export interface Coin extends BaseContract {
       recipient: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    excludeFromFee(account: string, overrides?: CallOverrides): Promise<void>;
 
     getEthToTokenInputPrice(
       ethSold: BigNumberish,
@@ -1291,12 +1291,6 @@ export interface Coin extends BaseContract {
 
     liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     name(overrides?: CallOverrides): Promise<string>;
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1355,6 +1349,12 @@ export interface Coin extends BaseContract {
     tokenEthBurn(
       burnee: string,
       ethToBeBurned: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1518,9 +1518,13 @@ export interface Coin extends BaseContract {
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
+    FREELOADER(overrides?: CallOverrides): Promise<BigNumber>;
+
     MINTER(overrides?: CallOverrides): Promise<BigNumber>;
 
     NAME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SPENDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     TICK(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1593,11 +1597,6 @@ export interface Coin extends BaseContract {
       deadline: BigNumberish,
       recipient: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    excludeFromFee(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getEthToTokenInputPrice(
@@ -1674,12 +1673,6 @@ export interface Coin extends BaseContract {
 
     liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1744,6 +1737,12 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     tokenToEthSwapInput(
       tokensSold: BigNumberish,
       minEth: BigNumberish,
@@ -1803,9 +1802,13 @@ export interface Coin extends BaseContract {
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    FREELOADER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     MINTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    SPENDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TICK(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1884,11 +1887,6 @@ export interface Coin extends BaseContract {
       deadline: BigNumberish,
       recipient: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    excludeFromFee(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getEthToTokenInputPrice(
@@ -1970,12 +1968,6 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nonces(
@@ -2040,6 +2032,12 @@ export interface Coin extends BaseContract {
     tokenEthBurn(
       burnee: string,
       ethToBeBurned: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

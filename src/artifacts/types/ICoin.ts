@@ -39,6 +39,7 @@ export interface ICoinInterface extends utils.Interface {
     "getVotes(address)": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
     "tokenEthBurn(address,uint256)": FunctionFragment;
+    "tokenMint(address,uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthTransferInput(uint256,uint256,uint256,address)": FunctionFragment;
@@ -113,6 +114,10 @@ export interface ICoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "tokenEthBurn",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenMint",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -195,6 +200,7 @@ export interface ICoinInterface extends utils.Interface {
     functionFragment: "tokenEthBurn",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tokenMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwapInput",
     data: BytesLike
@@ -387,6 +393,12 @@ export interface ICoin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     tokenToEthSwapInput(
       tokensSold: BigNumberish,
       minEth: BigNumberish,
@@ -529,6 +541,12 @@ export interface ICoin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  tokenMint(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   tokenToEthSwapInput(
     tokensSold: BigNumberish,
     minEth: BigNumberish,
@@ -665,6 +683,12 @@ export interface ICoin extends BaseContract {
     tokenEthBurn(
       who: string,
       ethToBeBurned: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -857,6 +881,12 @@ export interface ICoin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     tokenToEthSwapInput(
       tokensSold: BigNumberish,
       minEth: BigNumberish,
@@ -1006,6 +1036,12 @@ export interface ICoin extends BaseContract {
     tokenEthBurn(
       who: string,
       ethToBeBurned: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    tokenMint(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

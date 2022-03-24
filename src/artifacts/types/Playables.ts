@@ -54,6 +54,7 @@ export declare namespace Playables {
 export interface PlayablesInterface extends utils.Interface {
   contractName: "Playables";
   functions: {
+    "affiliate()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "coin()": FunctionFragment;
@@ -66,10 +67,10 @@ export interface PlayablesInterface extends utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "rewarder()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "setAffiliate(address)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setCollection(uint256,(string,uint256,uint256,uint256,uint256,uint128,uint256,address))": FunctionFragment;
     "setContractURI(string)": FunctionFragment;
@@ -81,6 +82,7 @@ export interface PlayablesInterface extends utils.Interface {
     "uri(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "affiliate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -117,7 +119,6 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "rewarder", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
     values: [BigNumberish, BigNumberish]
@@ -129,6 +130,10 @@ export interface PlayablesInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAffiliate",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
@@ -161,6 +166,7 @@ export interface PlayablesInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
+  decodeFunctionResult(functionFragment: "affiliate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -191,7 +197,6 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "rewarder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
@@ -202,6 +207,10 @@ export interface PlayablesInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAffiliate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -338,6 +347,8 @@ export interface Playables extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    affiliate(overrides?: CallOverrides): Promise<[string]>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -417,8 +428,6 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    rewarder(overrides?: CallOverrides): Promise<[string]>;
-
     royaltyInfo(
       _tokenId: BigNumberish,
       _salePrice: BigNumberish,
@@ -440,6 +449,11 @@ export interface Playables extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAffiliate(
+      _affiliate: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -489,6 +503,8 @@ export interface Playables extends BaseContract {
 
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
+
+  affiliate(overrides?: CallOverrides): Promise<string>;
 
   balanceOf(
     account: string,
@@ -569,8 +585,6 @@ export interface Playables extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  rewarder(overrides?: CallOverrides): Promise<string>;
-
   royaltyInfo(
     _tokenId: BigNumberish,
     _salePrice: BigNumberish,
@@ -592,6 +606,11 @@ export interface Playables extends BaseContract {
     id: BigNumberish,
     amount: BigNumberish,
     data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAffiliate(
+    _affiliate: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -642,6 +661,8 @@ export interface Playables extends BaseContract {
   uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    affiliate(overrides?: CallOverrides): Promise<string>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -717,8 +738,6 @@ export interface Playables extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    rewarder(overrides?: CallOverrides): Promise<string>;
-
     royaltyInfo(
       _tokenId: BigNumberish,
       _salePrice: BigNumberish,
@@ -742,6 +761,8 @@ export interface Playables extends BaseContract {
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setAffiliate(_affiliate: string, overrides?: CallOverrides): Promise<void>;
 
     setApprovalForAll(
       operator: string,
@@ -850,6 +871,8 @@ export interface Playables extends BaseContract {
   };
 
   estimateGas: {
+    affiliate(overrides?: CallOverrides): Promise<BigNumber>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -909,8 +932,6 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    rewarder(overrides?: CallOverrides): Promise<BigNumber>;
-
     royaltyInfo(
       _tokenId: BigNumberish,
       _salePrice: BigNumberish,
@@ -932,6 +953,11 @@ export interface Playables extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAffiliate(
+      _affiliate: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -983,6 +1009,8 @@ export interface Playables extends BaseContract {
   };
 
   populateTransaction: {
+    affiliate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -1042,8 +1070,6 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    rewarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     royaltyInfo(
       _tokenId: BigNumberish,
       _salePrice: BigNumberish,
@@ -1065,6 +1091,11 @@ export interface Playables extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAffiliate(
+      _affiliate: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
