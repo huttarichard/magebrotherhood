@@ -32,9 +32,11 @@ const Main = styled.div`
     color: gray;
     text-decoration: none;
     font-weight: 600;
+    padding: 15px 20px;
+    font-weight: bold;
 
     span {
-      padding-right: 10px;
+      padding-left: 10px;
       font-size: 22px;
     }
   }
@@ -68,7 +70,7 @@ export default function FAQ() {
           <div className="body">
             <a className="download" href="/litepaper.pdf" download>
               <FontAwesomeIcon icon={faDownload} />
-              <span>PDF LITEPAPER</span>
+              <span> PDF LITEPAPER</span>
             </a>
           </div>
         </Main>
