@@ -1,25 +1,32 @@
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
+import { StepLabelProps } from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import * as React from "react";
 
 type Step = {
-  title: string;
+  label: string;
+  labelOptional?: string;
+  labelErrorOptional?: string;
   error: boolean;
 };
 
 const steps: Step[] = [
   {
-    title: "Init",
+    label: "Initiating",
+    labelOptional: "GO!",
     error: false,
   },
   {
-    title: "Hash",
+    label: "Waiting for confirmation",
+    labelOptional: "Wait for it...",
     error: false,
   },
   {
-    title: "Finish",
+    label: "Transaction confirmed",
+    labelOptional: "Congrats!",
+    labelErrorOptional: "Failed!",
     error: false,
   },
 ];
@@ -29,9 +36,21 @@ export default function TransactionStepper({ activeStep }: { activeStep: number 
     <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep}>
         {steps.map((step, index) => {
+          const labelProps: StepLabelProps = {
+            error: step.error,
+          };
+
+          if (step.error && step.labelErrorOptional) {
+            labelProps.optional = step.labelErrorOptional;
+          }
+
+          if (activeStep === index) {
+            labelProps.optional = step.labelOptional;
+          }
+
           return (
             <Step key={index}>
-              <StepLabel>{step.title}</StepLabel>
+              <StepLabel {...labelProps}>{step.label}</StepLabel>
             </Step>
           );
         })}
