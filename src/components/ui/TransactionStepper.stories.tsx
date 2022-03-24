@@ -12,5 +12,5 @@ const Template: ComponentStory<typeof TransactionStepper> = (args) => <Transacti
 
 export const Default = Template.bind({});
 Default.args = {
-  activeStep: 1,
+  activeStep: 0,
 };
