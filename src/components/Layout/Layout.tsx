@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
-import { PropsWithChildren } from "react";
+import { useRouter } from "next/router";
+import { PropsWithChildren, useEffect } from "react";
 
 import Footer from "./Footer";
 import Navbar from "./Navbar";
@@ -71,6 +72,17 @@ export interface LayoutProps {
 
 export default function Layout({ footer = false, children }: PropsWithChildren<LayoutProps>) {
   const { menuOpened, closeMenu } = useLayout();
+  const router = useRouter();
+
+  useEffect(() => {
+    router.events.on("routeChangeStart", closeMenu);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off("routeChangeStart", closeMenu);
+    };
+  }, []);
 
   return (
     <MainGrid container>

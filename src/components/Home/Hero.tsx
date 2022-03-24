@@ -280,7 +280,7 @@ export default function Hero() {
         <ModelViewerDynamic
           src="/assets/5.glb"
           ar
-          ios-src={`/api/models/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
+          ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
           ar-modes="webxr scene-viewer quick-look"
           animating
           autoplay
