@@ -12,7 +12,9 @@ class MagebrotherHoodDocument extends Document {
       <Html>
         <Head>
           <meta name="description" content="Mage RPG Battle Royale NFT Game" />
-          <meta name="theme-color" content={primaryPallete.main} />
+          <meta name="theme-color" content="#111111" />
+          <meta name="theme-color" content="#111111" media="(prefers-color-scheme: light)" />
+          <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
           <link rel="icon" href="/favicon.ico" />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />

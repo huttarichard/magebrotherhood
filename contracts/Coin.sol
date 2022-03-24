@@ -10,8 +10,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "hardhat/console.sol";
-
 contract Coin is ERC20, ERC20Votes, AccessControl {
   using SafeMath for uint256;
 

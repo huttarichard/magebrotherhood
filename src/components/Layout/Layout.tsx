@@ -80,7 +80,7 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
         </SidebarContent>
       </SidebarGrid>
 
-      <Drawer anchor="left" open={menuOpened} onClose={closeMenu}>
+      <Drawer PaperProps={{ style: { minWidth: 340 } }} anchor="left" open={menuOpened} onClose={closeMenu}>
         <SidebarContent>
           <Sidebar closeIcon />
         </SidebarContent>

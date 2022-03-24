@@ -1,4 +1,4 @@
-const INFURA_KEY = process.env.INFURA_KEY || process.env.NEXT_PUBLIC_INFURA_KEY;
+const INFURA_KEY = process.env.NEXT_PUBLIC_INFURA_KEY || process.env.INFURA_KEY;
 
 if (typeof INFURA_KEY === "undefined") {
   throw new Error(`NEXT_PUBLIC_INFURA_KEY must be a defined environment variable`);

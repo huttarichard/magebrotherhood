@@ -270,20 +270,24 @@ const Actions = styled.div`
   }
 `;
 
+// const origin = typeof window !== "undefined" ? window?.location?.origin : "";
+
 export default function Hero() {
   return (
     <Wrapper>
       <Background></Background>
       <Model>
         <ModelViewerDynamic
-          animating
           src="/assets/5.glb"
+          ar
+          ios-src={`/api/models/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
+          ar-modes="webxr scene-viewer quick-look"
+          animating
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"
           camera-target="-0.6m 1.5m -1m"
           environment-image="neutral"
           loading="eager"
-          ar
         />
       </Model>
       <Main>
@@ -292,19 +296,6 @@ export default function Hero() {
             Play for victory, earn <span>rewards.</span>
           </h1>
           <p>NFT P2E game powered by blockchain enhanced by AR, managed by DAO.</p>
-
-          {/* <a id="ar-link" rel="ar" href="/models/knight.usdz#callToAction=Add%20to%20cart">
-            <Button text="Explore in AR" small />
-          </a> */}
-
-          {/* <a
-            rel="ar"
-            id="CustomBanner"
-            href="/models/knight.usdz#callToAction=Browse%20API&checkoutTitle=Kids%20Slide&checkoutSubtitle=Playground%20in%20your%20backyard&price=145"
-          >
-            ok
-            <img src="solar-panels-thumbnail.png" />
-          </a> */}
 
           <ul>
             <li>
