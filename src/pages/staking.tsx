@@ -63,12 +63,13 @@ type StakingItem = {
   title: string;
   type: ItemType;
   staked: boolean;
+  queuedForStaking: boolean;
 };
 
-const rows: StakingItem[] = [
-  { id: 1, title: "Knight", type: ItemType.Playable, staked: true },
-  { id: 2, title: "Mage", type: ItemType.Playable, staked: false },
-  { id: 3, title: "Dark wood", type: ItemType.Land, staked: true },
+const initialRows: StakingItem[] = [
+  { id: 1, title: "Knight", type: ItemType.Playable, staked: false, queuedForStaking: false },
+  { id: 2, title: "Mage", type: ItemType.Playable, staked: false, queuedForStaking: false },
+  { id: 3, title: "Dark wood", type: ItemType.Land, staked: false, queuedForStaking: false },
 ];
 
 export default function Staking() {
@@ -77,7 +78,15 @@ export default function Staking() {
     Staked,
   }
 
+  const [rows, setRows] = useState<StakingItem[]>(initialRows);
   const [filter, setFilter] = useState<Filter>(Filter.YourWallet);
+
+  const handleStakingQueueChange = (row: StakingItem) => {
+    const rowIndex = rows.findIndex((el) => el.id === row.id);
+    rows[rowIndex].queuedForStaking = !rows[rowIndex].queuedForStaking;
+
+    setRows([...rows]);
+  };
 
   return (
     <Layout>
@@ -111,7 +120,7 @@ export default function Staking() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {rows.map((row: StakingItem) => (
                 <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell component="th" scope="row">
                     <div className="title">
@@ -129,7 +138,15 @@ export default function Staking() {
                   </TableCell>
                   <TableCell align="right">1</TableCell>
                   <TableCell align="right">
-                    <Button small text="Add For Staking" />
+                    {row.staked ? (
+                      <span>Staked</span>
+                    ) : (
+                      <Button
+                        small
+                        text={row.queuedForStaking ? "Remove selection" : "Select For Staking"}
+                        onClick={() => handleStakingQueueChange(row)}
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -140,8 +157,17 @@ export default function Staking() {
         <br />
 
         <Paper className="tostake">
-          <Grid container>
-            <Grid item>Please select character you want to stake.</Grid>
+          <Grid container justifyContent="space-between">
+            {rows.filter((el) => el.queuedForStaking).length ? (
+              <>
+                <Grid item>You selected {rows.filter((el) => el.queuedForStaking).length} items for staking</Grid>
+                <Grid item>
+                  <Button text="Stake" small />
+                </Grid>
+              </>
+            ) : (
+              <Grid item>Please select character you want to stake.</Grid>
+            )}
           </Grid>
         </Paper>
       </Wrapper>
