@@ -1,46 +1,28 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-function coinAmount(amount) {
-  return BigNumber.from("1000000000000000000").mul(amount);
-}
+import { Coin, Coin__factory as CoinFactory } from "../src/artifacts/types";
 
 describe("Coin contract", function () {
-  let coin;
-  let deadline: number;
+  let coin: Coin;
 
   this.beforeEach(async () => {
-    const Coin = await ethers.getContractFactory("Coin");
-    coin = await Coin.deploy(100);
+    const [owner] = await ethers.getSigners();
+
+    const coinFactory = (await ethers.getContractFactory("Coin", owner)) as CoinFactory;
+    coin = await coinFactory.deploy(1);
     await coin.deployed();
-    deadline = Math.round(Date.now() / 1000 + 60);
   });
 
   it("should mint correct supply at deploy", async function () {
-    await expect(coin.balanceOf(coin.address)).to.be.eq(coinAmount(100));
-    await expect(coin.totalSupply()).to.be.eq(coinAmount(100));
+    expect(await coin.balanceOf(coin.address)).to.be.eq(ethers.utils.parseEther("1"));
+    expect(await coin.balanceOf(coin.address)).to.be.eq(ethers.utils.parseEther("1"));
   });
 
-  it("should swap correcty token for eth", async function () {
+  it("should be able to receive eth", async function () {
     const [owner] = await ethers.getSigners();
-    const value = ethers.utils.parseEther("100");
+    const value = ethers.utils.parseEther("1");
 
     await expect(() => owner.sendTransaction({ to: coin.address, value })).to.changeEtherBalance(coin, value);
-
-    const liqden = await coin.liqudityGuardDenominator();
-    const liqgrd = await coin.liqudityGuard();
-
-    const diff = liqden.sub(liqgrd);
-
-    const price = await coin.getInputPrice(coinAmount(10), coinAmount(90), coinAmount(100));
-    expect(price.div(BigNumber.from("10000000000000000")).toString()).to.be.eq(diff);
-
-    // swap
-    await coin.ethToTokenSwapInput(coinAmount(9), deadline, {
-      value: ethers.utils.parseEther("10"),
-    });
-
-    // todo
   });
 });
