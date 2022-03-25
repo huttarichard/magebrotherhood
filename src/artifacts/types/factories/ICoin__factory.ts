@@ -272,6 +272,30 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "tokensBought",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+    ],
+    name: "ethToTokenSwapOutput",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "minTokens",
         type: "uint256",
       },
@@ -430,12 +454,60 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "tokensSold",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenToEthInputPriceWithTax",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "ethBought",
         type: "uint256",
       },
     ],
     name: "getTokenToEthOutputPrice",
     outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "ethBought",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenToEthOutputPriceWithTax",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "",
@@ -462,6 +534,13 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pause",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -707,6 +786,13 @@ const _abi = [
         type: "bool",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "unpause",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

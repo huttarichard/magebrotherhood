@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
+import { BigNumber } from "@ethersproject/bignumber";
+import { formatEther, parseUnits } from "@ethersproject/units";
 import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TextField from "@mui/material/TextField";
+import { useCoingeckoPrice } from "@usedapp/coingecko";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Paper from "components/ui/Paper";
@@ -10,7 +13,7 @@ import useCoinContract from "hooks/useCoinContract";
 import useWallet from "hooks/useWallet";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Main = styled.div`
   display: flex;
@@ -136,48 +139,17 @@ enum Mode {
   BhcToEth,
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export default function Swap() {
   const wallet = useWallet();
   const coin = useCoinContract();
+  const etherPrice = useCoingeckoPrice("ethereum", "usd");
   console.log(coin);
 
   const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
-  const [eth, setEth] = useState<number>(0);
-  const [bhc, setBhc] = useState<number>(0);
+  const [eth, setEth] = useState<string>("0");
+  const [bhc, setBhc] = useState<string>("0");
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      (async () => {
-        setIsValidating(true);
-
-        await sleep(200);
-
-        setBhc(eth * 2);
-
-        setIsValidating(false);
-      })();
-    }, 200);
-    return () => clearTimeout(timeOutId);
-  }, [eth]);
-
-  useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      (async () => {
-        setIsValidating(true);
-
-        await sleep(200);
-
-        setEth(bhc / 2);
-
-        setIsValidating(false);
-      })();
-    }, 200);
-    return () => clearTimeout(timeOutId);
-  }, [bhc]);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
@@ -198,11 +170,29 @@ export default function Swap() {
     <TextField
       fullWidth
       name="eth"
-      label="ETH"
+      label={mode === Mode.EthToBhc ? "Sell ETH" : "Receive ETH"}
       value={eth}
       type="number"
-      onChange={(event) => setEth(Number(event.target.value))}
-      helperText={"dolar value?"}
+      disabled={isValidating || isSubmitting}
+      onChange={(event) => {
+        if (isValidating || isSubmitting || !coin) {
+          event.preventDefault();
+          return;
+        }
+        setIsValidating(true);
+        setEth(event.target.value);
+
+        const wei = parseUnits(event.target.value, "ether");
+        coin
+          .getEthToTokenInputPrice(wei)
+          .then((result: BigNumber) => {
+            setBhc(formatEther(result));
+          })
+          .finally(() => {
+            setIsValidating(false);
+          });
+      }}
+      helperText={"dolar value? " + etherPrice}
       key="eth"
     />,
 
@@ -214,10 +204,28 @@ export default function Swap() {
     <TextField
       fullWidth
       name="bhc"
-      label="BHC"
+      label={mode === Mode.EthToBhc ? "Receive BHC" : "Sell BHC"}
       value={bhc}
       type="number"
-      onChange={(event) => setBhc(Number(event.target.value))}
+      disabled={isValidating || isSubmitting}
+      onChange={(event) => {
+        if (isValidating || isSubmitting || !coin) {
+          event.preventDefault();
+          return;
+        }
+        setIsValidating(true);
+        setBhc(event.target.value);
+
+        const wei = parseUnits(event.target.value, "ether");
+        coin
+          .getTokenToEthInputPrice(wei)
+          .then((result: BigNumber) => {
+            setEth(formatEther(result));
+          })
+          .finally(() => {
+            setIsValidating(false);
+          });
+      }}
       helperText={"dolar value?"}
       key="bhc"
     />,
@@ -231,12 +239,29 @@ export default function Swap() {
         <CardWrapper>
           <CardHeader>
             <h1>Swap</h1>
-            {wallet.data && <p>Balance: {JSON.stringify(wallet.data.accounts[0].balance)}</p>}
+            {/* <Grid container justifyContent="space-between">
+              <Grid item>
+              </Grid>
+              <Grid item>
+                <ToggleButtonGroup color="primary" value={buysell} exclusive onChange={(e, value) => setBuySell(value)}>
+                  <ToggleButton value="buy">BUY</ToggleButton>
+                  <ToggleButton value="sell">SELL</ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+            </Grid> */}
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
             {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
-            <Button text="Swap" disabled={isValidating || isSubmitting} className="btn" distorted block borders large />
+            <Button
+              text="Swap"
+              disabled={!coin || isValidating || isSubmitting}
+              className="btn"
+              distorted
+              block
+              borders
+              large
+            />
           </form>
           <small>
             By clicking &quot;SWAP&quot; you are agreeing to <Link href="/tos">terms of conditions</Link>.

@@ -28,7 +28,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task("deploy:coin", "deploys contracts", async (taskArgs, hre) => {
   const MelegendCoin = await hre.ethers.getContractFactory("Coin");
   const coin = await MelegendCoin.deploy(1000000);
-  console.log("coin: ", coin.address, coin.deployTransaction.hash);
+  console.info("coin: ", coin.address, coin.deployTransaction.hash);
 });
 
 // You need to export an object to set up your config

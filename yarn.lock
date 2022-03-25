@@ -4661,7 +4661,17 @@
   resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.27.tgz#8b02a979b0b0024cc96f60e694a3f6db6b2ccab2"
   integrity sha512-x5hmIniQ9TGqOBCRqfWcmZi/U5kB0qrHMDQ9igs3nMbK0wwmYLraL4owbIwXFGR/co6/lJYJC4K/Gjn4wZY5mQ==
 
-"@usedapp/core@^0.12.1":
+"@usedapp/coingecko@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@usedapp/coingecko/-/coingecko-0.4.4.tgz#a9eb0f4433be11197d6ef97aa5a57127c5f447e2"
+  integrity sha512-FokmMX2gA/PV70skeQ++9zmAOoOzKsme8JBd+y2ovFdhi66gO7B3PBku6p+WVL3ikqYNK+MsHBxzSmpb0ZE/tA==
+  dependencies:
+    "@ethersproject/contracts" "5.6.0"
+    "@ethersproject/providers" "5.6.0"
+    "@usedapp/core" "^0.12.0"
+    react "^17.0.1"
+
+"@usedapp/core@^0.12.0", "@usedapp/core@^0.12.1":
   version "0.12.1"
   resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-0.12.1.tgz#8728ccb0071480486046e9fd43a2e0550ac40b71"
   integrity sha512-ySdb9OKq5l9J63nVLhTYD9xh/mOkUUpr/E41PaI/Z3y2Ta+jnY1sdE99EJ3iUy0ky0tEyIlwuJ9xupaN6gj/Jw==
@@ -15834,7 +15844,7 @@ react-use@^17.3.2:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react@17.0.2:
+react@17.0.2, react@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==

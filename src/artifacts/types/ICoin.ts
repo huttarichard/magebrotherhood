@@ -28,6 +28,7 @@ export interface ICoinInterface extends utils.Interface {
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
     "ethToTokenSwapInput(uint256,uint256)": FunctionFragment;
+    "ethToTokenSwapOutput(uint256,uint256)": FunctionFragment;
     "ethToTokenTransferInput(uint256,uint256,address)": FunctionFragment;
     "ethToTokenTransferOutput(uint256,uint256,address)": FunctionFragment;
     "getEthToTokenInputPrice(uint256)": FunctionFragment;
@@ -35,8 +36,11 @@ export interface ICoinInterface extends utils.Interface {
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getTokenToEthInputPrice(uint256)": FunctionFragment;
+    "getTokenToEthInputPriceWithTax(uint256)": FunctionFragment;
     "getTokenToEthOutputPrice(uint256)": FunctionFragment;
+    "getTokenToEthOutputPriceWithTax(uint256)": FunctionFragment;
     "getVotes(address)": FunctionFragment;
+    "pause()": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
     "tokenEthBurn(address,uint256)": FunctionFragment;
     "tokenMint(address,uint256)": FunctionFragment;
@@ -47,6 +51,7 @@ export interface ICoinInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -73,6 +78,10 @@ export interface ICoinInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
   encodeFunctionData(
     functionFragment: "ethToTokenSwapInput",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ethToTokenSwapOutput",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -104,10 +113,19 @@ export interface ICoinInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTokenToEthInputPriceWithTax",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTokenToEthOutputPrice",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenToEthOutputPriceWithTax",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getVotes", values: [string]): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenBurn",
     values: [string, BigNumberish]
@@ -148,6 +166,7 @@ export interface ICoinInterface extends utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -160,6 +179,10 @@ export interface ICoinInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ethToTokenSwapInput",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ethToTokenSwapOutput",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -191,10 +214,19 @@ export interface ICoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTokenToEthInputPriceWithTax",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTokenToEthOutputPrice",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenToEthOutputPriceWithTax",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenBurn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenEthBurn",
@@ -226,6 +258,7 @@ export interface ICoinInterface extends utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -334,6 +367,12 @@ export interface ICoin extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    ethToTokenSwapOutput(
+      tokensBought: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     ethToTokenTransferInput(
       minTokens: BigNumberish,
       deadline: BigNumberish,
@@ -374,12 +413,26 @@ export interface ICoin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getTokenToEthOutputPrice(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getTokenToEthOutputPriceWithTax(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getVotes(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     tokenBurn(
       who: string,
@@ -443,6 +496,10 @@ export interface ICoin extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   allowance(
@@ -478,6 +535,12 @@ export interface ICoin extends BaseContract {
 
   ethToTokenSwapInput(
     minTokens: BigNumberish,
+    deadline: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  ethToTokenSwapOutput(
+    tokensBought: BigNumberish,
     deadline: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -522,12 +585,26 @@ export interface ICoin extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getTokenToEthInputPriceWithTax(
+    tokensSold: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
+
   getTokenToEthOutputPrice(
     ethBought: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getTokenToEthOutputPriceWithTax(
+    ethBought: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
+
   getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   tokenBurn(
     who: string,
@@ -592,6 +669,10 @@ export interface ICoin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     allowance(
       owner: string,
@@ -623,6 +704,12 @@ export interface ICoin extends BaseContract {
 
     ethToTokenSwapInput(
       minTokens: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ethToTokenSwapOutput(
+      tokensBought: BigNumberish,
       deadline: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -667,12 +754,24 @@ export interface ICoin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getTokenToEthOutputPrice(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthOutputPriceWithTax(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
 
     tokenBurn(
       who: string,
@@ -736,6 +835,8 @@ export interface ICoin extends BaseContract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -822,6 +923,12 @@ export interface ICoin extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    ethToTokenSwapOutput(
+      tokensBought: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     ethToTokenTransferInput(
       minTokens: BigNumberish,
       deadline: BigNumberish,
@@ -862,12 +969,26 @@ export interface ICoin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTokenToEthOutputPrice(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthOutputPriceWithTax(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     tokenBurn(
       who: string,
@@ -931,6 +1052,10 @@ export interface ICoin extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -977,6 +1102,12 @@ export interface ICoin extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    ethToTokenSwapOutput(
+      tokensBought: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     ethToTokenTransferInput(
       minTokens: BigNumberish,
       deadline: BigNumberish,
@@ -1017,7 +1148,17 @@ export interface ICoin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTokenToEthOutputPrice(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenToEthOutputPriceWithTax(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1025,6 +1166,10 @@ export interface ICoin extends BaseContract {
     getVotes(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     tokenBurn(
@@ -1087,6 +1232,10 @@ export interface ICoin extends BaseContract {
       from: string,
       to: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

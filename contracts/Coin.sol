@@ -3,6 +3,7 @@
 
 pragma solidity ^0.8.13;
 
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -10,7 +11,9 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-contract Coin is ERC20, ERC20Votes, AccessControl {
+import "./interfaces/ICoin.sol";
+
+contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   using SafeMath for uint256;
 
   event Bought(address indexed buyer, uint256 indexed bought);
@@ -21,6 +24,10 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
 
   uint256 public taxFee = 5;
 
+  uint256 public taxFeeDenominator = 100;
+
+  uint256 public taxFeeVestingTimeframe = 300 days;
+
   uint256 public liqudityGuard = 3;
 
   uint256 public liqudityGuardDenominator = 1000;
@@ -30,6 +37,13 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   string public constant NAME = "Brotherhood Coin";
 
   string public constant TICK = "BHC";
+
+  struct TimeLock {
+    uint256 startAt;
+    uint256 amount;
+  }
+
+  mapping(address => TimeLock) public timelocks;
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
@@ -56,9 +70,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   /**
    * @notice Set tax fee.
    */
-  function setTaxFee(uint256 _feePercent) public onlyRole(ADMIN) {
+  function setTaxFee(
+    uint256 _feePercent,
+    uint256 _taxFeeDenominator,
+    uint256 _taxFeeVestingTimeframe
+  ) public onlyRole(ADMIN) {
     require(_feePercent < 15, "maximum tax fee is 15%");
     taxFee = _feePercent;
+    taxFeeDenominator = _taxFeeDenominator;
+    taxFeeVestingTimeframe = _taxFeeVestingTimeframe;
   }
 
   /**
@@ -68,6 +88,20 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   function setLiqudityGuard(uint256 _guard, uint256 _denominator) public onlyRole(ADMIN) {
     liqudityGuard = _guard;
     liqudityGuardDenominator = _denominator;
+  }
+
+  /**
+   * @dev Will pause the contract.
+   */
+  function pause() external onlyRole(ADMIN) {
+    _pause();
+  }
+
+  /**
+   * @dev Will unpause the contract.
+   */
+  function unpause() external onlyRole(ADMIN) {
+    _unpause();
   }
 
   /**
@@ -94,50 +128,13 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   }
 
   /**
-   * @dev Pricing function for converting between ETH && Tokens.
-   * @param inputAmount Amount of ETH or Tokens being sold.
-   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
-   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
-   * @return Amount of ETH or Tokens bought.
-   */
-  function getInputPrice(
-    uint256 inputAmount, // eth sold
-    uint256 inputReserve, // balance - eth sold
-    uint256 outputReserve // token balance of this
-  ) public view returns (uint256) {
-    require(inputReserve > 0 && outputReserve > 0, "INVALID_VALUE");
-    uint256 inputAmountWithFee = inputAmount.mul(liqudityGuardDenominator - liqudityGuard);
-    uint256 numerator = inputAmountWithFee.mul(outputReserve);
-    uint256 denominator = inputReserve.mul(liqudityGuardDenominator).add(inputAmountWithFee);
-    return numerator / denominator;
-  }
-
-  /**
-   * @dev Pricing function for converting between ETH && Tokens.
-   * @param outputAmount Amount of ETH or Tokens being bought.
-   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
-   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
-   * @return Amount of ETH or Tokens sold.
-   */
-  function getOutputPrice(
-    uint256 outputAmount,
-    uint256 inputReserve,
-    uint256 outputReserve
-  ) public view returns (uint256) {
-    require(inputReserve > 0 && outputReserve > 0, "invalid input");
-    uint256 numerator = inputReserve.mul(outputAmount).mul(liqudityGuardDenominator);
-    uint256 denominator = (outputReserve.sub(outputAmount)).mul(liqudityGuardDenominator - liqudityGuard);
-    return (numerator / denominator).add(1);
-  }
-
-  /**
    * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value) && minimum output.
    * @param minTokens Minimum Tokens bought.
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of Tokens bought.
    */
-  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable returns (uint256) {
+  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable whenNotPaused returns (uint256) {
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, msg.sender);
   }
 
@@ -153,7 +150,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 minTokens,
     uint256 deadline,
     address recipient
-  ) external payable returns (uint256) {
+  ) external payable whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
   }
@@ -165,7 +162,12 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of ETH sold.
    */
-  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline) external payable returns (uint256) {
+  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline)
+    external
+    payable
+    whenNotPaused
+    returns (uint256)
+  {
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
   }
 
@@ -181,7 +183,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 tokensBought,
     uint256 deadline,
     address recipient
-  ) external payable returns (uint256) {
+  ) external payable whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), recipient);
   }
@@ -198,7 +200,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 tokensSold,
     uint256 minEth,
     uint256 deadline
-  ) external returns (uint256) {
+  ) external whenNotPaused returns (uint256) {
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -216,7 +218,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 minEth,
     uint256 deadline,
     address payable recipient
-  ) external returns (uint256) {
+  ) external whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
   }
@@ -233,7 +235,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 ethBought,
     uint256 maxTokens,
     uint256 deadline
-  ) external returns (uint256) {
+  ) external whenNotPaused returns (uint256) {
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -251,7 +253,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 maxTokens,
     uint256 deadline,
     address payable recipient
-  ) external returns (uint256) {
+  ) external whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, recipient);
   }
@@ -292,6 +294,17 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   }
 
   /**
+   * @notice Public price function for Token to ETH trades with an exact input with fees.
+   * @param tokensSold Amount of Tokens sold.
+   * @return Amount of ETH that can be bought with input Tokens.
+   */
+  function getTokenToEthInputPriceWithTax(uint256 tokensSold) external view returns (uint256, uint256) {
+    require(tokensSold > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    return getInputPriceWithTax(_msgSender(), tokensSold, tokenReserve, address(this).balance);
+  }
+
+  /**
    * @notice Public price function for Token to ETH trades with an exact output.
    * @param ethBought Amount of output ETH.
    * @return Amount of Tokens needed to buy output ETH.
@@ -300,6 +313,127 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     require(ethBought > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
     return getOutputPrice(ethBought, tokenReserve, address(this).balance);
+  }
+
+  /**
+   * @notice Public price function for Token to ETH trades with an exact output and fees.
+   * @param ethBought Amount of output ETH.
+   * @return Amount of Tokens needed to buy output ETH.
+   */
+  function getTokenToEthOutputPriceWithTax(uint256 ethBought) external view returns (uint256, uint256) {
+    require(ethBought > 0, "invalid input");
+    uint256 tokenReserve = balanceOf(address(this));
+    return getOutputPriceWithTax(_msgSender(), ethBought, tokenReserve, address(this).balance);
+  }
+
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies exact input (msg.value).
+   * @dev User cannot specify minimum output or deadline.
+   */
+  receive() external payable {
+    emit Deposit(_msgSender(), msg.value);
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens.
+   * @param inputAmount Amount of ETH or Tokens being sold.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens bought.
+   */
+  function getInputPrice(
+    uint256 inputAmount, // eth sold
+    uint256 inputReserve, // balance - eth sold
+    uint256 outputReserve // token balance of this
+  ) internal view returns (uint256) {
+    require(inputReserve > 0 && outputReserve > 0, "INVALID_VALUE");
+    uint256 inputAmountWithFee = inputAmount.mul(liqudityGuardDenominator - liqudityGuard);
+    uint256 numerator = inputAmountWithFee.mul(outputReserve);
+    uint256 denominator = inputReserve.mul(liqudityGuardDenominator).add(inputAmountWithFee);
+    return numerator / denominator;
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens with fees.
+   * @param inputAmount Amount of ETH or Tokens being sold.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens bought.
+   */
+  function getInputPriceWithTax(
+    uint256 inputAmount, // eth sold
+    uint256 inputReserve, // balance - eth sold
+    uint256 outputReserve // token balance of this
+  ) internal view returns (uint256, uint256) {
+    return calculateFee(getInputPrice(inputAmount, inputReserve, outputReserve));
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens with fees and recipient.
+   * @param recipient person who receives tokens or ETH.
+   * @param inputAmount Amount of ETH or Tokens being sold.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens bought.
+   */
+  function getInputPriceWithTax(
+    address recipient,
+    uint256 inputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) internal view returns (uint256, uint256) {
+    return calculateFee(recipient, getInputPrice(inputAmount, inputReserve, outputReserve));
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens.
+   * @param outputAmount Amount of ETH or Tokens being bought.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens sold.
+   */
+  function getOutputPrice(
+    uint256 outputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) internal view returns (uint256) {
+    require(inputReserve > 0 && outputReserve > 0, "invalid input");
+    uint256 numerator = inputReserve.mul(outputAmount).mul(liqudityGuardDenominator);
+    uint256 denominator = (outputReserve.sub(outputAmount)).mul(liqudityGuardDenominator - liqudityGuard);
+    return (numerator / denominator).add(1);
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens With fee.
+   * @param outputAmount Amount of ETH or Tokens being bought.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens sold.
+   */
+  function getOutputPriceWithTax(
+    uint256 outputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) internal view returns (uint256, uint256) {
+    return calculateFee(getOutputPrice(outputAmount, inputReserve, outputReserve));
+  }
+
+  /**
+   * @dev Pricing function for converting between ETH && Tokens with fee for recipient.
+   * @param recipient person who receives tokens or ETH.
+   * @param outputAmount Amount of ETH or Tokens being bought.
+   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
+   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
+   * @return Amount of ETH or Tokens sold.
+   */
+  function getOutputPriceWithTax(
+    address recipient,
+    uint256 outputAmount,
+    uint256 inputReserve,
+    uint256 outputReserve
+  ) internal view returns (uint256, uint256) {
+    return calculateFee(recipient, getOutputPrice(outputAmount, inputReserve, outputReserve));
   }
 
   function ethToTokenInput(
@@ -313,7 +447,13 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
     uint256 tokenReserve = balanceOf(address(this));
     uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
     require(tokensBought >= minTokens, "buy amount not satisfied");
-    _deposit(buyer, recipient, tokensBought);
+    // Add tokens to timelock
+    TimeLock storage tl = timelocks[recipient];
+    tl.startAt = tl.startAt.mul(tokensBought.div(tl.amount));
+    tl.amount = tl.amount.add(tokensBought);
+    // Transfer tokens to recipient
+    _transfer(address(this), recipient, tokensBought);
+    emit Bought(buyer, tokensBought);
     return tokensBought;
   }
 
@@ -326,13 +466,20 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   ) private returns (uint256) {
     require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
+    // no tax as eth -> tokens is liquidity providing
     uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
     // Throws if ethSold > maxEth
     uint256 ethRefund = maxEth.sub(ethSold);
     if (ethRefund > 0) {
       Address.sendValue(payable(buyer), ethRefund);
     }
-    _deposit(buyer, recipient, tokensBought);
+    // Add tokens to timelock
+    TimeLock storage tl = timelocks[recipient];
+    tl.startAt = tl.startAt.mul(tokensBought.div(tl.amount));
+    tl.amount = tl.amount.add(tokensBought);
+    // Transfer tokens to recipient
+    _transfer(address(this), recipient, tokensBought);
+    emit Bought(buyer, tokensBought);
     return ethSold;
   }
 
@@ -345,9 +492,16 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   ) private returns (uint256) {
     require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
-    uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
+    (uint256 ethBought, uint256 tax) = getInputPriceWithTax(recipient, tokensSold, tokenReserve, address(this).balance);
     require(ethBought >= minEth, "invalid input");
-    _withdraw(buyer, recipient, tokensSold, ethBought);
+
+    TimeLock storage tl = timelocks[recipient];
+    tl.amount = tl.amount.sub(tokensSold);
+
+    Address.sendValue(recipient, ethBought.sub(tax));
+    _transfer(buyer, address(this), tokensSold);
+    emit Sold(buyer, tokensSold);
+
     return ethBought;
   }
 
@@ -360,11 +514,51 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   ) private returns (uint256) {
     require(deadline >= block.timestamp && ethBought > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
-    uint256 tokensSold = getOutputPrice(ethBought, tokenReserve, address(this).balance);
-    // tokens sold is always > 0
+    (uint256 tokensSold, uint256 tax) = getOutputPriceWithTax(
+      recipient,
+      ethBought,
+      tokenReserve,
+      address(this).balance
+    );
     require(maxTokens >= tokensSold, "invalid input");
-    _withdraw(buyer, recipient, tokensSold, ethBought);
+
+    TimeLock storage tl = timelocks[recipient];
+    tl.amount = tl.amount.sub(tokensSold);
+
+    Address.sendValue(recipient, ethBought);
+    _transfer(buyer, address(this), tokensSold.add(tax));
+    emit Sold(buyer, tokensSold);
+
     return tokensSold;
+  }
+
+  /**
+   * @dev Will simply calulate amount and fee, based on current tax fee
+   */
+  function calculateFee(uint256 amount) internal view returns (uint256, uint256) {
+    uint256 fee = amount.div(taxFeeDenominator).mul(taxFee);
+    return (amount.sub(fee), fee);
+  }
+
+  /**
+   * @dev Similary to `calculateFee` this function calculates fee as well
+   * @dev with difference
+   */
+  function calculateFee(address recipient, uint256 amount) internal view returns (uint256, uint256 fee) {
+    if (!hasRole(FREELOADER, recipient)) {
+      return (amount, 0);
+    }
+    if (taxFeeVestingTimeframe == 0) {
+      return calculateFee(amount);
+    }
+    TimeLock memory tl = timelocks[recipient];
+    uint256 diff = (block.timestamp - tl.startAt);
+    if (diff >= taxFeeVestingTimeframe) {
+      return (amount, 0);
+    }
+    fee = amount.div(taxFeeDenominator).mul(taxFee);
+    fee = fee.div(taxFeeVestingTimeframe).mul(taxFeeVestingTimeframe - diff);
+    return (amount.sub(fee), fee);
   }
 
   /**
@@ -399,37 +593,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
   }
 
   /**
-   * @dev Deposit function used to deposit from current balance to recipient.
-   */
-  function _deposit(
-    address buyer,
-    address recipient,
-    uint256 tokensBought
-  ) internal {
-    _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, tokensBought);
-  }
-
-  /**
-   * @dev Only function allowing to withdraw the eth out of contract.
-   */
-  function _withdraw(
-    address buyer,
-    address payable recipient,
-    uint256 tokensSold,
-    uint256 ethBought
-  ) internal {
-    if (!hasRole(FREELOADER, buyer)) {
-      // We subtract taxFee. Intention is here to balance
-      // out the inflation given to MINTER role.
-      ethBought = ethBought.sub(ethBought.div(100).mul(taxFee));
-    }
-    Address.sendValue(recipient, ethBought);
-    _transfer(buyer, address(this), tokensSold);
-    emit Sold(buyer, tokensSold);
-  }
-
-  /**
    * @dev Snapshots the totalSupply after it has been increased.
    */
   function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
@@ -441,14 +604,5 @@ contract Coin is ERC20, ERC20Votes, AccessControl {
    */
   function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) {
     super._burn(account, amount);
-  }
-
-  /**
-   * @notice Convert ETH to Tokens.
-   * @dev User specifies exact input (msg.value).
-   * @dev User cannot specify minimum output or deadline.
-   */
-  receive() external payable {
-    emit Deposit(_msgSender(), msg.value);
   }
 }

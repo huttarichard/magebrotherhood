@@ -383,11 +383,6 @@ export default function Roadmap() {
     setUpcommingVisible(sh - kh - 1 <= ot + 100);
   }, [y, down]);
 
-  // const { x: x2, y: y2 } = useScroll(scrollRef);
-
-  // console.log("a", x, y);
-  // console.log("b", x2, y2);
-
   return (
     <Wrapper ref={scrollRef}>
       <Typography sx={{ color: theme.text1 }} variant="h4" textAlign="center">

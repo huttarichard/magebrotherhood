@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader("Content-Length", info.size);
     fs.createReadStream(file)
       .on("error", (error) => {
-        console.log(error);
+        console.error(error);
         res.end("Something went to wrong!");
       })
       .pipe(res);

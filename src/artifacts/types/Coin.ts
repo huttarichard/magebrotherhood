@@ -58,13 +58,13 @@ export interface CoinInterface extends utils.Interface {
     "ethToTokenTransferOutput(uint256,uint256,address)": FunctionFragment;
     "getEthToTokenInputPrice(uint256)": FunctionFragment;
     "getEthToTokenOutputPrice(uint256)": FunctionFragment;
-    "getInputPrice(uint256,uint256,uint256)": FunctionFragment;
-    "getOutputPrice(uint256,uint256,uint256)": FunctionFragment;
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getTokenToEthInputPrice(uint256)": FunctionFragment;
+    "getTokenToEthInputPriceWithTax(uint256)": FunctionFragment;
     "getTokenToEthOutputPrice(uint256)": FunctionFragment;
+    "getTokenToEthOutputPriceWithTax(uint256)": FunctionFragment;
     "getVotes(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -74,14 +74,19 @@ export interface CoinInterface extends utils.Interface {
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "numCheckpoints(address)": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setLiqudityGuard(uint256,uint256)": FunctionFragment;
-    "setTaxFee(uint256)": FunctionFragment;
+    "setTaxFee(uint256,uint256,uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "taxFee()": FunctionFragment;
+    "taxFeeDenominator()": FunctionFragment;
+    "taxFeeVestingTimeframe()": FunctionFragment;
+    "timelocks(address)": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
     "tokenEthBurn(address,uint256)": FunctionFragment;
     "tokenMint(address,uint256)": FunctionFragment;
@@ -92,6 +97,7 @@ export interface CoinInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
@@ -169,14 +175,6 @@ export interface CoinInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInputPrice",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOutputPrice",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getPastTotalSupply",
     values: [BigNumberish]
   ): string;
@@ -193,7 +191,15 @@ export interface CoinInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTokenToEthInputPriceWithTax",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTokenToEthOutputPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenToEthOutputPriceWithTax",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getVotes", values: [string]): string;
@@ -223,6 +229,8 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "numCheckpoints",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permit",
     values: [
@@ -249,7 +257,7 @@ export interface CoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setTaxFee",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -257,6 +265,15 @@ export interface CoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(functionFragment: "taxFee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "taxFeeDenominator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "taxFeeVestingTimeframe",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "timelocks", values: [string]): string;
   encodeFunctionData(
     functionFragment: "tokenBurn",
     values: [string, BigNumberish]
@@ -297,6 +314,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "BURNER", data: BytesLike): Result;
@@ -357,14 +375,6 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInputPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOutputPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getPastTotalSupply",
     data: BytesLike
   ): Result;
@@ -381,7 +391,15 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTokenToEthInputPriceWithTax",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTokenToEthOutputPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenToEthOutputPriceWithTax",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
@@ -405,6 +423,8 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "numCheckpoints",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -422,6 +442,15 @@ export interface CoinInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "taxFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "taxFeeDenominator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "taxFeeVestingTimeframe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "timelocks", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenBurn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenEthBurn",
@@ -453,6 +482,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -460,11 +490,13 @@ export interface CoinInterface extends utils.Interface {
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
     "Deposit(address,uint256)": EventFragment;
+    "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Sold(address,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
@@ -472,11 +504,13 @@ export interface CoinInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Sold"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export type ApprovalEvent = TypedEvent<
@@ -515,6 +549,10 @@ export type DepositEvent = TypedEvent<
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
+export type PausedEvent = TypedEvent<[string], { account: string }>;
+
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
 export type RoleAdminChangedEvent = TypedEvent<
   [string, string, string],
   { role: string; previousAdminRole: string; newAdminRole: string }
@@ -550,6 +588,10 @@ export type TransferEvent = TypedEvent<
 >;
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+
+export type UnpausedEvent = TypedEvent<[string], { account: string }>;
+
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface Coin extends BaseContract {
   contractName: "Coin";
@@ -680,20 +722,6 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getInputPrice(
-      inputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getOutputPrice(
-      outputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getPastTotalSupply(
       blockNumber: BigNumberish,
       overrides?: CallOverrides
@@ -712,10 +740,20 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getTokenToEthOutputPrice(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getTokenToEthOutputPriceWithTax(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
 
     getVotes(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -750,6 +788,12 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
     permit(
       owner: string,
       spender: string,
@@ -781,6 +825,8 @@ export interface Coin extends BaseContract {
 
     setTaxFee(
       _feePercent: BigNumberish,
+      _taxFeeDenominator: BigNumberish,
+      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -792,6 +838,17 @@ export interface Coin extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     taxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    taxFeeDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    timelocks(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
+    >;
 
     tokenBurn(
       burnee: string,
@@ -853,6 +910,10 @@ export interface Coin extends BaseContract {
       from: string,
       to: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -958,20 +1019,6 @@ export interface Coin extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getInputPrice(
-    inputAmount: BigNumberish,
-    inputReserve: BigNumberish,
-    outputReserve: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getOutputPrice(
-    outputAmount: BigNumberish,
-    inputReserve: BigNumberish,
-    outputReserve: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getPastTotalSupply(
     blockNumber: BigNumberish,
     overrides?: CallOverrides
@@ -990,10 +1037,20 @@ export interface Coin extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getTokenToEthInputPriceWithTax(
+    tokensSold: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
+
   getTokenToEthOutputPrice(
     ethBought: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getTokenToEthOutputPriceWithTax(
+    ethBought: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
 
   getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1024,6 +1081,12 @@ export interface Coin extends BaseContract {
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   numCheckpoints(account: string, overrides?: CallOverrides): Promise<number>;
+
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
   permit(
     owner: string,
@@ -1056,6 +1119,8 @@ export interface Coin extends BaseContract {
 
   setTaxFee(
     _feePercent: BigNumberish,
+    _taxFeeDenominator: BigNumberish,
+    _taxFeeVestingTimeframe: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1067,6 +1132,17 @@ export interface Coin extends BaseContract {
   symbol(overrides?: CallOverrides): Promise<string>;
 
   taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+  taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
+
+  timelocks(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
+  >;
 
   tokenBurn(
     burnee: string,
@@ -1128,6 +1204,10 @@ export interface Coin extends BaseContract {
     from: string,
     to: string,
     amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unpause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1230,20 +1310,6 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getInputPrice(
-      inputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getOutputPrice(
-      outputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getPastTotalSupply(
       blockNumber: BigNumberish,
       overrides?: CallOverrides
@@ -1262,10 +1328,20 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getTokenToEthOutputPrice(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTokenToEthOutputPriceWithTax(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
 
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1296,6 +1372,10 @@ export interface Coin extends BaseContract {
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     numCheckpoints(account: string, overrides?: CallOverrides): Promise<number>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
 
     permit(
       owner: string,
@@ -1328,6 +1408,8 @@ export interface Coin extends BaseContract {
 
     setTaxFee(
       _feePercent: BigNumberish,
+      _taxFeeDenominator: BigNumberish,
+      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1339,6 +1421,17 @@ export interface Coin extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<string>;
 
     taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
+
+    timelocks(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
+    >;
 
     tokenBurn(
       burnee: string,
@@ -1402,6 +1495,8 @@ export interface Coin extends BaseContract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -1456,6 +1551,9 @@ export interface Coin extends BaseContract {
       added?: BigNumberish | null
     ): DepositEventFilter;
 
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
+
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
       previousAdminRole?: BytesLike | null,
@@ -1505,6 +1603,9 @@ export interface Coin extends BaseContract {
       to?: string | null,
       value?: null
     ): TransferEventFilter;
+
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
@@ -1609,20 +1710,6 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getInputPrice(
-      inputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getOutputPrice(
-      outputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getPastTotalSupply(
       blockNumber: BigNumberish,
       overrides?: CallOverrides
@@ -1644,7 +1731,17 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTokenToEthOutputPrice(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenToEthOutputPriceWithTax(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1682,6 +1779,12 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
     permit(
       owner: string,
       spender: string,
@@ -1713,6 +1816,8 @@ export interface Coin extends BaseContract {
 
     setTaxFee(
       _feePercent: BigNumberish,
+      _taxFeeDenominator: BigNumberish,
+      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1724,6 +1829,12 @@ export interface Coin extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
+
+    timelocks(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenBurn(
       burnee: string,
@@ -1785,6 +1896,10 @@ export interface Coin extends BaseContract {
       from: string,
       to: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -1899,20 +2014,6 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getInputPrice(
-      inputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getOutputPrice(
-      outputAmount: BigNumberish,
-      inputReserve: BigNumberish,
-      outputReserve: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getPastTotalSupply(
       blockNumber: BigNumberish,
       overrides?: CallOverrides
@@ -1934,7 +2035,17 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTokenToEthInputPriceWithTax(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTokenToEthOutputPrice(
+      ethBought: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenToEthOutputPriceWithTax(
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1980,6 +2091,12 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     permit(
       owner: string,
       spender: string,
@@ -2011,6 +2128,8 @@ export interface Coin extends BaseContract {
 
     setTaxFee(
       _feePercent: BigNumberish,
+      _taxFeeDenominator: BigNumberish,
+      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2022,6 +2141,17 @@ export interface Coin extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     taxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    taxFeeDenominator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    taxFeeVestingTimeframe(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    timelocks(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     tokenBurn(
       burnee: string,
@@ -2083,6 +2213,10 @@ export interface Coin extends BaseContract {
       from: string,
       to: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

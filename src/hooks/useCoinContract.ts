@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 export default function useCoinContract() {
   const [contract, setContract] = useState<ICoin | null>(null);
   const { active, library, chainId } = useEthers();
-
   useEffect(() => {
     if (!active) return;
 
