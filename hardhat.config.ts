@@ -26,8 +26,8 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 });
 
 task("deploy:coin", "deploys contracts", async (taskArgs, hre) => {
-  const MelegendCoin = await hre.ethers.getContractFactory("Coin");
-  const coin = await MelegendCoin.deploy(1000000);
+  const Coin = await hre.ethers.getContractFactory("Coin");
+  const coin = await Coin.deploy(1000000);
   console.info("coin: ", coin.address, coin.deployTransaction.hash);
 });
 
