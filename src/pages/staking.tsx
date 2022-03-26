@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import Layout from "../components/Layout/Layout";
+import StakingModal from "../components/Staking/StakingModal";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -58,7 +59,7 @@ enum ItemType {
   Land,
 }
 
-type StakingItem = {
+export type StakingItem = {
   id: number;
   title: string;
   type: ItemType;
@@ -80,6 +81,7 @@ export default function Staking() {
 
   const [rows, setRows] = useState<StakingItem[]>(initialRows);
   const [filter, setFilter] = useState<Filter>(Filter.YourWallet);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleStakingQueueChange = (row: StakingItem) => {
     const rowIndex = rows.findIndex((el) => el.id === row.id);
@@ -162,7 +164,7 @@ export default function Staking() {
               <>
                 <Grid item>You selected {rows.filter((el) => el.queuedForStaking).length} items for staking</Grid>
                 <Grid item>
-                  <Button text="Stake" small />
+                  <Button text="Stake" small onClick={() => setModalOpen(true)} />
                 </Grid>
               </>
             ) : (
@@ -171,6 +173,11 @@ export default function Staking() {
           </Grid>
         </Paper>
       </Wrapper>
+      <StakingModal
+        open={modalOpen}
+        handleOpenState={setModalOpen}
+        stakeQueue={rows.filter((el) => el.queuedForStaking)}
+      />
     </Layout>
   );
 }
