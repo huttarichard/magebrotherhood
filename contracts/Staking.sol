@@ -26,7 +26,7 @@ import "./SafeTransfer.sol";
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Staking is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC721Receiver, IStaking {
+contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
@@ -155,6 +155,17 @@ contract Staking is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC72
   }
 
   /**
+   * Starts the first cycle of staking, enabling users to stake NFTs.
+   * @dev Reverts if not called by the owner.
+   * @dev Reverts if the staking has already started.
+   * @dev Emits a Started event.
+   */
+  function start() external onlyOwner hasNotStarted {
+    startTimestamp = block.timestamp;
+    emit Started();
+  }
+
+  /**
    * Adds `rewardsPerCycle` reward amount for the period range from `startPeriod` to `endPeriod`, inclusive, to the rewards schedule.
    * The necessary amount of reward tokens is transferred to the contract. Cannot be used for past periods.
    * Can only be used to add rewards and not to remove them.
@@ -193,17 +204,6 @@ contract Staking is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC72
   }
 
   /**
-   * Starts the first cycle of staking, enabling users to stake NFTs.
-   * @dev Reverts if not called by the owner.
-   * @dev Reverts if the staking has already started.
-   * @dev Emits a Started event.
-   */
-  function start() external onlyOwner hasNotStarted {
-    startTimestamp = block.timestamp;
-    emit Started();
-  }
-
-  /**
    * Will enable contract and staking for give contract
    */
   function addContract(address nft) external onlyOwner {
@@ -212,7 +212,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IERC1155Receiver, IERC72
   }
 
   /**
-   * Will remove contract from staking
+   * Will enable contract and staking for give contract
    */
   function removeContract(address nft) external onlyOwner {
     staking[nft].enabled = false;
