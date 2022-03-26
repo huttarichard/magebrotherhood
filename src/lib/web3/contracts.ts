@@ -62,7 +62,6 @@ const Staking = {
 export const contracts: Contracts = { Coin, Staking };
 
 export async function getContract(c: ContractName, chain: ChainId, signer: Signer | Provider) {
-  console.log(c, chain, contracts);
   if (!contracts[c][chain].address) {
     return null;
   }
