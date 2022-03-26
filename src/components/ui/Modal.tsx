@@ -1,10 +1,13 @@
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
-import { default as MuiModal, ModalProps } from "@mui/material/Modal";
+import { default as MuiModal } from "@mui/material/Modal";
 
 interface StyledModalProps {
-  children: JSX.Element[];
-  modalProps: ModalProps;
+  children: React.ReactNode;
+  modalProps: {
+    open: boolean;
+    onClose?: (state: boolean) => void;
+  };
 }
 
 const Wrapper = styled(Box)`
@@ -20,8 +23,8 @@ const Wrapper = styled(Box)`
   border-radius: 5px;
   background-color: #000;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    max-width: 500px;
+  ${({ theme }) => theme.breakpoints.up("lg")} {
+    max-width: 800px;
   }
 `;
 

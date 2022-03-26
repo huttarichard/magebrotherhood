@@ -38,15 +38,26 @@ const StepContentText = styled(Box)`
   text-align: center;
   max-width: 400px;
   margin: 0 auto;
+  font-size: 1rem;
+
+  p {
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
 `;
 
 const Hash = styled.div`
+  margin-bottom: 4rem;
+
   h3 {
+    margin: 0;
     color: #fff;
   }
 
   a {
     color: ${({ theme }) => theme.palette.primary.main};
+    font-size: 1rem;
   }
 `;
 

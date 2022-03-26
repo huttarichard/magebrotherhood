@@ -27,6 +27,5 @@ export const Default = Template.bind({});
 Default.args = {
   modalProps: {
     open: true,
-    children: <></>,
   },
 };
