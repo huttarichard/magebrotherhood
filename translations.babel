@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<babeledit_project be_version="2.8.0" version="1.2">
+    <!--
+
+    BabelEdit project file
+    https://www.codeandweb.com/babeledit
+
+    This file contains meta data for all translations, but not the translation texts itself.
+    They are stored in framework-specific message files (.json / .vue / .yaml / .properties)
+
+    -->
+    <preset_collections/>
+    <framework>react-formatjs-extract</framework>
+    <filename>translations.babel</filename>
+    <source_root_dir/>
+    <folder_node>
+        <name/>
+        <children>
+            <concept_node>
+                <name>owdz74</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>true</approved>
+                    </translation>
+                    <translation>
+                        <language>cs-CZ</language>
+                        <approved>true</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+        </children>
+    </folder_node>
+    <isTemplateProject>false</isTemplateProject>
+    <languages>
+        <language>
+            <code>cs-CZ</code>
+            <source_id/>
+            <source_file>lang/cs.json</source_file>
+        </language>
+        <language>
+            <code>en-US</code>
+            <source_id/>
+            <source_file>lang/en.json</source_file>
+        </language>
+    </languages>
+    <translation_files>
+        <translation_file>
+            <file>lang/en.json</file>
+        </translation_file>
+        <translation_file>
+            <file>lang/cs.json</file>
+        </translation_file>
+    </translation_files>
+    <editor_configuration>
+        <save_empty_translations>true</save_empty_translations>
+        <copy_templates>
+            <copy_template/>
+            <copy_template/>
+            <copy_template/>
+        </copy_templates>
+    </editor_configuration>
+    <primary_language>en-US</primary_language>
+    <configuration>
+        <indent>space2</indent>
+        <format>default-tree</format>
+    </configuration>
+</babeledit_project>

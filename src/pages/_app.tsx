@@ -6,6 +6,9 @@ import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import * as React from "react";
+import { IntlProvider } from "react-intl";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -37,6 +40,9 @@ const config: Config = {
 function MageBrotherHoodApp(props: Props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
+  const { locale } = useRouter();
+  const [shortLocale] = locale ? locale.split("-") : ["en"];
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -45,8 +51,10 @@ function MageBrotherHoodApp(props: Props) {
       </Head>
       <ThemeProvider>
         <DAppProvider config={config}>
-          <GlobalStyle />
-          <Component {...pageProps} />
+          <IntlProvider messages={{}} locale={shortLocale} defaultLocale="en">
+            <GlobalStyle />
+            <Component {...pageProps} />
+          </IntlProvider>
         </DAppProvider>
       </ThemeProvider>
       {/* <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" /> */}

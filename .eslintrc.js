@@ -27,9 +27,16 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
   ],
 
-  plugins: ["simple-import-sort", "unused-imports"],
+  plugins: ["simple-import-sort", "unused-imports", "formatjs"],
 
   rules: {
+    "formatjs/enforce-id": [
+      "error",
+      {
+        idInterpolationPattern: "[sha512:contenthash:base64:6]",
+      },
+    ],
+
     // This is documented as the default, but apparently now needs to be
     // set explicitly
     "prettier/prettier": [

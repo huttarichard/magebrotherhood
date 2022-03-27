@@ -9,7 +9,9 @@
     "hardhat": "hardhat --tsconfig ./tsconfig.hardhat.json",
     "storybook": "start-storybook -p 6006",
     "litepaper": "markdown-pdf --cwd ./litepaper --paper-border 0px --paper-format A4 --css-path ./litepaper/style.css --out ./public/litepaper.pdf ./litepaper/*.md",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "formatjs:extract": "formatjs extract 'src/**/*.ts*' --ignore='**/*.d.ts' --out-file lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]'",
+    "formatjs:compile": "formatjs compile-folder lang/ src/translations/"
   },
   "resolutions": {
     "@walletconnect/ethereum-provider": "1.7.1"
@@ -58,10 +60,11 @@
     "lightweight-charts": "^3.8.0",
     "lmdb": "^2.2.5",
     "next": "12.0.10",
-    "react": "17.0.2",
+    "react": "^17.0.2",
     "react-device-detect": "^2.1.2",
     "react-dom": "17.0.2",
     "react-ga": "^3.3.0",
+    "react-intl": "^5.24.8",
     "react-lines-ellipsis": "^0.15.0",
     "react-number-format": "^4.9.1",
     "react-player": "^2.10.0",
@@ -72,6 +75,7 @@
     "zustand": "^3.7.1"
   },
   "devDependencies": {
+    "@formatjs/cli": "^4.8.3",
     "@next/bundle-analyzer": "^12.1.0",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
@@ -98,6 +102,7 @@
     "eslint-config-next": "12.0.10",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-formatjs": "^3.1.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",

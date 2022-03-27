@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import heroBg2 from "assets/images/heroBg2.png";
 import heroGhost from "assets/images/heroGhost.png";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
@@ -304,7 +305,9 @@ export default function Hero() {
             </li>
             <li>
               <span>$.0001</span>
-              <span>BROTHERHOOD COIN</span>
+              <span>
+                <FormattedMessage defaultMessage="BROTHERHOOD COIN" id="owdz74" />
+              </span>
             </li>
           </ul>
         </div>
