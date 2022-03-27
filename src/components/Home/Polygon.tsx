@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
 import edge from "assets/images/edge.png";
 import Image from "next/image";
+import { FormattedMessage } from "react-intl";
 
 const Wrapper = styled.div`
   position: relative;
@@ -66,15 +67,20 @@ export default function Polygon() {
       </Background>
       <Main>
         <Typography variant="h5" textAlign="center">
-          COMMING SOON
+          <FormattedMessage defaultMessage="COMMING SOON" id="home_polygon_scaling_comming_soon" />
         </Typography>
         <Typography variant="h3" textAlign="center">
-          <span className="gradient">POLYGON POS L2 SCALING</span>
+          <span className="gradient">
+            <FormattedMessage defaultMessage="POLYGON POS L2 SCALING" id="home_polygon_scaling_title" />
+          </span>
         </Typography>
-        <p>
-          With Polygon Edge custom blockchain, in-game microtransactions will fly with incredible speed and will cost
-          just a fraction of network fees.
-        </p>
+
+        <FormattedMessage
+          defaultMessage="With Polygon Edge custom blockchain, in-game microtransactions will fly with incredible speed and will cost
+          just a fraction of network fees."
+          id="home_polygon_scaling_text"
+          tagName="p"
+        />
       </Main>
     </Wrapper>
   );

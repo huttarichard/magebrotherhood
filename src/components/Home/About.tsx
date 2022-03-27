@@ -5,6 +5,7 @@ import team1 from "assets/images/team1.jpg";
 import team2 from "assets/images/team2.jpg";
 import team3 from "assets/images/team3.jpg";
 import Image from "next/image";
+import { FormattedMessage } from "react-intl";
 
 const Wrapper = styled.div`
   position: relative;
@@ -148,12 +149,14 @@ export default function About() {
       <Main>
         <Header>
           <div className="text">
-            <h2>About Brotherhood</h2>
+            <h2>
+              <FormattedMessage defaultMessage="About Bortherhood" id="IH+ANq" />
+            </h2>
             <p>
-              brotherhood is a collection of 10,000 unique brotherhood NFTs— unique digital collectibles living on the
-              Ethereum blockchain. Your brotherhood as your Yacht Club membership card, and grants access to
-              members-only benefits, the first of which is access to brotherhood, a collaborative graffiti board. Future
-              areas and perks can be unlocked by the community through roadmap activation.
+              <FormattedMessage
+                id="IKmvQj"
+                defaultMessage={`Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things.`}
+              />
             </p>
           </div>
         </Header>

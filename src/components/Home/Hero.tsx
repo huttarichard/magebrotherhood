@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import heroBg2 from "assets/images/heroBg2.png";
 import heroGhost from "assets/images/heroGhost.png";
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, FormattedNumber } from "react-intl";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
@@ -294,9 +294,19 @@ export default function Hero() {
       <Main>
         <div>
           <h1>
-            Play for victory, earn <span>rewards.</span>
+            <FormattedMessage
+              defaultMessage="Play for victory, earn <span>rewards.</span>"
+              values={{
+                span: (chunks: any) => <span>{chunks}</span>,
+              }}
+              id="home_hero_title"
+            />
           </h1>
-          <p>NFT P2E game powered by blockchain enhanced by AR, managed by DAO.</p>
+          <FormattedMessage
+            defaultMessage="NFT P2E game powered by blockchain enhanced by AR, managed by DAO."
+            tagName="p"
+            id="home_hero_subtitle"
+          />
 
           <ul>
             <li>
@@ -304,9 +314,19 @@ export default function Hero() {
               <span>NFT LEFT</span>
             </li>
             <li>
-              <span>$.0001</span>
               <span>
-                <FormattedMessage defaultMessage="BROTHERHOOD COIN" id="owdz74" />
+                <FormattedNumber
+                  style="currency"
+                  currency="USD"
+                  currencyDisplay="narrowSymbol"
+                  unitDisplay="narrow"
+                  value={0.001}
+                  maximumFractionDigits={6}
+                  minimumFractionDigits={2}
+                />
+              </span>
+              <span>
+                <FormattedMessage defaultMessage="BROTHERHOOD COIN" id="home_brotherhood_coin" />
               </span>
             </li>
           </ul>

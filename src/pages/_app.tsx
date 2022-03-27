@@ -4,20 +4,18 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import { Config, DAppProvider, Mainnet } from "@usedapp/core";
 import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
-import type { AppProps } from "next/app";
+import type { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import * as React from "react";
-import { IntlProvider } from "react-intl";
-import language_cs from "translations/cs.json";
-// Languages translations
-import language_en from "translations/en.json";
+import { useEffect } from "react";
+import { IntlProvider, MessageFormatElement } from "react-intl";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
 interface Props extends AppProps {
   emotionCache?: EmotionCache;
+  messages: Record<string, string> | Record<string, MessageFormatElement[]>;
 }
 
 const config: Config = {
@@ -41,22 +39,13 @@ const config: Config = {
 // }
 
 function MageBrotherHoodApp(props: Props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, messages } = props;
   const { locale } = useRouter();
   const [shortLocale] = locale ? locale.split("-") : ["en"];
-  let messages = {};
 
-  switch (shortLocale) {
-    case "en":
-      messages = language_en;
-      break;
-    case "cs":
-      messages = language_cs;
-      break;
-  }
-
-  console.log(messages);
+  useEffect(() => {
+    setTimeout(() => document.getElementById("loader")?.remove(), 50);
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -76,5 +65,13 @@ function MageBrotherHoodApp(props: Props) {
     </CacheProvider>
   );
 }
+
+MageBrotherHoodApp.getInitialProps = async ({ router }: AppContext) => {
+  const { locale } = router;
+  const [shortLocale] = locale ? locale.split("-") : ["en"];
+  const { default: messages } = await import(`translations/${shortLocale}`);
+
+  return { messages };
+};
 
 export default MageBrotherHoodApp;
