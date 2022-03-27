@@ -9,6 +9,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { IntlProvider } from "react-intl";
+import language_cs from "translations/cs.json";
+// Languages translations
+import language_en from "translations/en.json";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -42,6 +45,18 @@ function MageBrotherHoodApp(props: Props) {
 
   const { locale } = useRouter();
   const [shortLocale] = locale ? locale.split("-") : ["en"];
+  let messages = {};
+
+  switch (shortLocale) {
+    case "en":
+      messages = language_en;
+      break;
+    case "cs":
+      messages = language_cs;
+      break;
+  }
+
+  console.log(messages);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -51,7 +66,7 @@ function MageBrotherHoodApp(props: Props) {
       </Head>
       <ThemeProvider>
         <DAppProvider config={config}>
-          <IntlProvider messages={{}} locale={shortLocale} defaultLocale="en">
+          <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">
             <GlobalStyle />
             <Component {...pageProps} />
           </IntlProvider>
