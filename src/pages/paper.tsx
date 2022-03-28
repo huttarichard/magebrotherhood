@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import Link from "next/link";
+import { FormattedMessage } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 
@@ -50,13 +51,15 @@ export default function FAQ() {
   return (
     <>
       <Head>
-        <title>Mage Brotherhood - Homepage</title>
+        <title>Mage Brotherhood - Lite Paper</title>
       </Head>
 
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">Lite Paper</Typography>
+            <Typography variant="h3">
+              <FormattedMessage defaultMessage="Lite Paper" id="NBPZxQ" />
+            </Typography>
             <br />
             <Typography variant="body1">
               Here you can find documents briefly describing our ecosystem, more in detail than visualizations on site.
@@ -70,7 +73,9 @@ export default function FAQ() {
           <div className="body">
             <a className="download" href="/litepaper.pdf" download>
               <FontAwesomeIcon icon={faDownload} />
-              <span> PDF LITEPAPER</span>
+              <span>
+                <FormattedMessage defaultMessage="PDF LITEPAPER" id="jXdcLd" />
+              </span>
             </a>
           </div>
         </Main>

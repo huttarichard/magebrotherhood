@@ -4,6 +4,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { StepLabelProps } from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
+import { FormattedMessage } from "react-intl";
 
 type TransactionStepperProps = {
   steps: IStep[];
@@ -90,7 +91,12 @@ export default function TransactionStepper({ steps, activeStep, hash }: Transact
         <StepContentText>{steps.find((_, i) => i === activeStep)?.content}</StepContentText>
         {hash && (
           <Hash>
-            <h3>Transaction hash</h3>
+            <h3>
+              <FormattedMessage
+                defaultMessage="Transaction hash"
+                id="transaction_stepper_hash_title"
+              />
+            </h3>
             <a href="#">{hash}</a>
           </Hash>
         )}
