@@ -18,6 +18,7 @@ import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FormattedMessage } from "react-intl";
 
 import HeaderWallet from "./HeaderWallet";
 import { useLayout } from "./store";
@@ -115,7 +116,7 @@ export interface LayoutNavbarProps {
 
 interface ItemProps {
   icon: IconDefinition;
-  name: string;
+  name: string | JSX.Element;
   link?: string;
 }
 
@@ -161,14 +162,26 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
       </Grid>
       <Grid item flexGrow="1">
         <ul>
-          <Item icon={faHouse} name="Home" link="/" />
-          <Item icon={faRectangleVerticalHistory} name="Collections" link="/collections" />
-          <Item icon={faCoinBlank} name="Staking" link="/staking" />
-          <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
-          <ItemSoon icon={faCartArrowDown} name="Marketplace" />
-          <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
-          <Item icon={faFileContract} name="Litepaper" link="/paper" />
-          <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
+          <Item icon={faHouse} name={<FormattedMessage defaultMessage="Home" id="ejEGdx" />} link="/" />
+          <Item
+            icon={faRectangleVerticalHistory}
+            name={<FormattedMessage defaultMessage="Collections" id="ulh3kf" />}
+            link="/collections"
+          />
+          <Item icon={faCoinBlank} name={<FormattedMessage defaultMessage="Staking" id="+14VoL" />} link="/staking" />
+          <Item
+            icon={faMoneyCheckDollar}
+            name={<FormattedMessage defaultMessage="Affiliate" id="tfQoB8" />}
+            link="/affiliate"
+          />
+          <ItemSoon icon={faCartArrowDown} name={<FormattedMessage defaultMessage="Marketplace" id="+lWQIJ" />} />
+          <Item icon={faArrowsLeftRight} name={<FormattedMessage defaultMessage="Swap" id="s8BnAC" />} link="/swap" />
+          <Item
+            icon={faFileContract}
+            name={<FormattedMessage defaultMessage="Litepaper" id="9fPQ1/" />}
+            link="/paper"
+          />
+          <Item icon={faCommentsQuestion} name={<FormattedMessage defaultMessage="FAQ" id="W8nHSd" />} link="/faq" />
         </ul>
       </Grid>
       <Bottom item>
