@@ -7,11 +7,25 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "strict": true,
-    "rootDirs": ["./src", "./scripts", "./test"],
+    "rootDirs": [
+      "./src",
+      "./scripts",
+      "./test"
+    ],
     "esModuleInterop": true,
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "resolveJsonModule": true
   },
-  "exclude": ["dist", "node_modules"],
-  "include": ["./scripts", "./test", "./src"],
-  "files": ["./hardhat.config.ts"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "include": [
+    "./scripts",
+    "./test",
+    "./src"
+  ],
+  "files": [
+    "./hardhat.config.ts"
+  ]
 }
