@@ -47,8 +47,15 @@ const Title = styled.div`
   }
 `;
 
+const Chart = styled.div`
+  height: 100%;
+  max-height: 100vh;
+  overflow: hidden;
+`;
+
 export default function Swap() {
   const router = useRouter();
+
   return (
     <Layout>
       <Title>
@@ -56,7 +63,9 @@ export default function Swap() {
         <p>1 DAY CANDLE CHART</p>
         <Button className="btn" small text="Swap coins" onClick={() => router.push("/swap")} />
       </Title>
-      <CoinPriceChart />
+      <Chart>
+        <CoinPriceChart />
+      </Chart>
     </Layout>
   );
 }

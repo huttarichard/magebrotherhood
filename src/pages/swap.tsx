@@ -3,17 +3,17 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseUnits } from "@ethersproject/units";
 import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TextField from "@mui/material/TextField";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
+import CurrencyFieldText from "components/ui/CurrencyFieldText";
 import Paper from "components/ui/Paper";
 import Card from "components/ui/Paper";
 import useCoinContract from "hooks/useCoinContract";
-import useWallet from "hooks/useWallet";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 const Main = styled.div`
   display: flex;
@@ -139,17 +139,21 @@ enum Mode {
   BhcToEth,
 }
 
+enum Currency {
+  ETH,
+  BHC,
+  USD,
+}
 export default function Swap() {
-  const wallet = useWallet();
   const coin = useCoinContract();
   const etherPrice = useCoingeckoPrice("ethereum", "usd");
-  console.log(coin);
 
   const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
-  const [eth, setEth] = useState<string>("0");
-  const [bhc, setBhc] = useState<string>("0");
-  const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [tax, setTax] = useState<number | null>(null);
+  const [eth, setEth] = useState<number | null>(null);
+  const [bhc, setBhc] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [converting, setConverting] = useState<Currency | null>();
 
   const handleSubmit = () => {
     setIsSubmitting(true);
@@ -166,31 +170,75 @@ export default function Swap() {
     }
   };
 
+  const convertToBN = (v = 0): BigNumber => {
+    if (isSubmitting || !coin) {
+      return BigNumber.from("0");
+    }
+    return parseUnits(v.toFixed(10), 18);
+  };
+
+  const ethDebounce = useDebouncedCallback((val: number) => {
+    if (!val || !coin || isSubmitting) return;
+    console.log("eth");
+
+    coin
+      .getEthToTokenInputPrice(convertToBN(val))
+      .then((result: BigNumber) => {
+        setBhc(parseFloat(formatEther(result)));
+      })
+      .finally(() => {
+        setConverting(null);
+      });
+  }, 1000);
+
+  const bhcDebounce = useDebouncedCallback((val: number) => {
+    if (!val || !coin || isSubmitting) return;
+    console.log("bhc");
+
+    coin
+      .getTokenToEthInputPriceWithTax(convertToBN(val))
+      .then(([res, tax]: BigNumber[]) => {
+        setTax(parseFloat(formatEther(tax)));
+        setEth(parseFloat(formatEther(res)));
+      })
+      .finally(() => {
+        setConverting(null);
+      });
+  }, 500);
+
+  const compareNumbers = (a: number | null, b?: number | null, decs = 8): boolean => {
+    const x = parseInt((a || 0) * Math.pow(10, decs) + "");
+    const y = parseInt((b || 0) * Math.pow(10, decs) + "");
+    return x === y;
+  };
+
   const formElements = [
-    <TextField
-      fullWidth
+    <CurrencyFieldText
+      InputProps={{
+        name: "eth",
+        disabled: isSubmitting || converting === Currency.BHC,
+      }}
       name="eth"
       label={mode === Mode.EthToBhc ? "Sell ETH" : "Receive ETH"}
-      value={eth}
-      type="number"
-      disabled={isValidating || isSubmitting}
-      onChange={(event) => {
-        if (isValidating || isSubmitting || !coin) {
-          event.preventDefault();
+      value={eth?.toString() || ""}
+      allowNegative={false}
+      placeholder="0 ETH"
+      autoComplete="off"
+      onValueChange={(values) => {
+        if (isSubmitting || !coin) {
           return;
         }
-        setIsValidating(true);
-        setEth(event.target.value);
-
-        const wei = parseUnits(event.target.value, "ether");
-        coin
-          .getEthToTokenInputPrice(wei)
-          .then((result: BigNumber) => {
-            setBhc(formatEther(result));
-          })
-          .finally(() => {
-            setIsValidating(false);
-          });
+        if (!values.floatValue) {
+          setEth(0);
+          setBhc(0);
+          return;
+        }
+        if (compareNumbers(eth, values.floatValue, 8)) {
+          return;
+        }
+        setConverting(Currency.ETH);
+        setEth(values.floatValue as number);
+        ethDebounce(values.floatValue as number);
       }}
       helperText={"dolar value? " + etherPrice}
       key="eth"
@@ -201,30 +249,31 @@ export default function Swap() {
       <FontAwesomeIcon icon={faArrowUpArrowDown} />
     </span>,
 
-    <TextField
-      fullWidth
-      name="bhc"
+    <CurrencyFieldText
+      InputProps={{
+        name: "bhc",
+        disabled: isSubmitting || converting === Currency.ETH,
+      }}
       label={mode === Mode.EthToBhc ? "Receive BHC" : "Sell BHC"}
-      value={bhc}
-      type="number"
-      disabled={isValidating || isSubmitting}
-      onChange={(event) => {
-        if (isValidating || isSubmitting || !coin) {
-          event.preventDefault();
+      value={bhc?.toString() || ""}
+      autoComplete="off"
+      placeholder="0 BHC"
+      onValueChange={(values) => {
+        if (isSubmitting || !coin) {
           return;
         }
-        setIsValidating(true);
-        setBhc(event.target.value);
-
-        const wei = parseUnits(event.target.value, "ether");
-        coin
-          .getTokenToEthInputPrice(wei)
-          .then((result: BigNumber) => {
-            setEth(formatEther(result));
-          })
-          .finally(() => {
-            setIsValidating(false);
-          });
+        if (!values.floatValue) {
+          setEth(0);
+          setBhc(0);
+          return;
+        }
+        if (compareNumbers(bhc, values.floatValue, 2)) {
+          return;
+        }
+        console.log("bhc change", bhc, values.floatValue);
+        setConverting(Currency.BHC);
+        setBhc(values.floatValue as number);
+        bhcDebounce(values.floatValue as number);
       }}
       helperText={"dolar value?"}
       key="bhc"
@@ -255,7 +304,7 @@ export default function Swap() {
             {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
             <Button
               text="Swap"
-              disabled={!coin || isValidating || isSubmitting}
+              disabled={!coin || isSubmitting || converting !== null}
               className="btn"
               distorted
               block
@@ -266,6 +315,13 @@ export default function Swap() {
           <small>
             By clicking &quot;SWAP&quot; you are agreeing to <Link href="/tos">terms of conditions</Link>.
           </small>
+
+          {/* {tax && (
+            <>
+              <br />
+              <div>Tax: {tax}</div>
+            </>
+          )} */}
         </CardWrapper>
 
         <Tranding onClick={() => router.push("/price")}>

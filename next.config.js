@@ -4,6 +4,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   poweredByHeader: false,
+  i18n: {
+    locales: ['en', 'cs'],
+    defaultLocale: 'en',
+  },
   images: {
     domains: ["modelviewer.dev"],
     formats: ['image/avif', 'image/webp'],
