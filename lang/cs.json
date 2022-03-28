@@ -1,5 +1,38 @@
 {
-  "owdz74": {
-    "defaultMessage": "BROTHERHOOD Mince"
+  "IH+ANq": {
+    "defaultMessage": "O Bortherhood"
+  },
+  "IKmvQj": {
+    "defaultMessage": "Mage Brotherhood si klade za cíl vytvořit vůbec první decentralizovanou ekonomiku pro hru plnou magických věcí."
+  },
+  "home_brotherhood_coin": {
+    "defaultMessage": "BROTHERHOOD MINCE"
+  },
+  "home_collection_subtitle": {
+    "defaultMessage": "Kolekce temných rytířů ERC1155 vyjde koncem tohoto měsíce."
+  },
+  "home_collection_title": {
+    "defaultMessage": "Nadcházející kolekce"
+  },
+  "home_game_preview_subtitle": {
+    "defaultMessage": "Naše herní oddělení bylo zaneprázdněno! Pro naše fanoušky jsme udělali krátkou in-game ukázku."
+  },
+  "home_game_preview_title": {
+    "defaultMessage": "Krátký film ve hře"
+  },
+  "home_hero_subtitle": {
+    "defaultMessage": "NFT P2E hra poháněná blockchainem s rozšířením o AR, pod střechou DAO."
+  },
+  "home_hero_title": {
+    "defaultMessage": "Vítězství, sláva a <span>coiny.</span>"
+  },
+  "home_polygon_scaling_comming_soon": {
+    "defaultMessage": "JIŽ BRZY"
+  },
+  "home_polygon_scaling_text": {
+    "defaultMessage": "S vlastním blockchainem díky Polygonu Edge budou mikrotransakce ve hře létat neuvěřitelnou rychlostí a stát jen zlomek poplatků."
+  },
+  "home_polygon_scaling_title": {
+    "defaultMessage": "POLYGON POS L2 SCALING"
   }
 }

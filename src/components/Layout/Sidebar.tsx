@@ -17,6 +17,7 @@ import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import HeaderWallet from "./HeaderWallet";
 import { useLayout } from "./store";
@@ -100,6 +101,12 @@ const Navbar = styled(Grid)`
 
 const Bottom = styled(Grid)`
   margin: 0;
+  text-align: center;
+
+  small {
+    cursor: pointer;
+    font-size: 1rem;
+  }
 `;
 
 export interface LayoutNavbarProps {
@@ -143,6 +150,8 @@ function ItemSoon({ icon, name }: ItemProps) {
 
 export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
   const { closeMenu } = useLayout();
+  const router = useRouter();
+  console.log(router);
 
   return (
     <Navbar container direction="column">
@@ -164,6 +173,11 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
       </Grid>
       <Bottom item>
         <HeaderWallet />
+        {router.locale !== router.defaultLocale && (
+          <Link href={router.pathname} locale={router.defaultLocale} passHref>
+            <small>Switch to english version</small>
+          </Link>
+        )}
       </Bottom>
     </Navbar>
   );
