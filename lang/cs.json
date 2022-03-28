@@ -1,9 +1,27 @@
 {
+  "+14VoL": {
+    "defaultMessage": "Staking"
+  },
+  "+lWQIJ": {
+    "defaultMessage": "Tržiště"
+  },
+  "9fPQ1/": {
+    "defaultMessage": "Litepaper"
+  },
   "IH+ANq": {
-    "defaultMessage": "O Bortherhood"
+    "defaultMessage": "O Bortherhoodu"
   },
   "IKmvQj": {
     "defaultMessage": "Mage Brotherhood si klade za cíl vytvořit vůbec první decentralizovanou ekonomiku pro hru plnou magických věcí."
+  },
+  "W8nHSd": {
+    "defaultMessage": "FAQ"
+  },
+  "cg1VJ2": {
+    "defaultMessage": "Připojte peněženku"
+  },
+  "ejEGdx": {
+    "defaultMessage": "Domů"
   },
   "home_brotherhood_coin": {
     "defaultMessage": "BROTHERHOOD MINCE"
@@ -34,5 +52,17 @@
   },
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
+  },
+  "qj1uhz": {
+    "defaultMessage": "Odpojit"
+  },
+  "s8BnAC": {
+    "defaultMessage": "Směnárna"
+  },
+  "tfQoB8": {
+    "defaultMessage": "Affiliate"
+  },
+  "ulh3kf": {
+    "defaultMessage": "Sbírky"
   }
 }

@@ -1,9 +1,27 @@
 {
+  "+14VoL": {
+    "defaultMessage": "Staking"
+  },
+  "+lWQIJ": {
+    "defaultMessage": "Marketplace"
+  },
+  "9fPQ1/": {
+    "defaultMessage": "Litepaper"
+  },
   "IH+ANq": {
     "defaultMessage": "About Bortherhood"
   },
   "IKmvQj": {
     "defaultMessage": "Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things."
+  },
+  "W8nHSd": {
+    "defaultMessage": "FAQ"
+  },
+  "cg1VJ2": {
+    "defaultMessage": "Connect Wallet"
+  },
+  "ejEGdx": {
+    "defaultMessage": "Home"
   },
   "home_brotherhood_coin": {
     "defaultMessage": "BROTHERHOOD COIN"
@@ -34,5 +52,17 @@
   },
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
+  },
+  "qj1uhz": {
+    "defaultMessage": "Disconnect"
+  },
+  "s8BnAC": {
+    "defaultMessage": "Swap"
+  },
+  "tfQoB8": {
+    "defaultMessage": "Affiliate"
+  },
+  "ulh3kf": {
+    "defaultMessage": "Collections"
   }
 }

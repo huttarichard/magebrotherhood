@@ -152,7 +152,6 @@ function ItemSoon({ icon, name }: ItemProps) {
 export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
   const { closeMenu } = useLayout();
   const router = useRouter();
-  console.log(router);
 
   return (
     <Navbar container direction="column">

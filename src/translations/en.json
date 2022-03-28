@@ -1,6 +1,12 @@
 {
+  "+14VoL": "Staking",
+  "+lWQIJ": "Marketplace",
+  "9fPQ1/": "Litepaper",
   "IH+ANq": "About Bortherhood",
   "IKmvQj": "Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things.",
+  "W8nHSd": "FAQ",
+  "cg1VJ2": "Connect Wallet",
+  "ejEGdx": "Home",
   "home_brotherhood_coin": "BROTHERHOOD COIN",
   "home_collection_subtitle": "Collection of dark night ERC1155 comming later this month.",
   "home_collection_title": "Upcomming Collection",
@@ -10,5 +16,9 @@
   "home_hero_title": "Play for victory, earn <span>rewards.</span>",
   "home_polygon_scaling_comming_soon": "COMMING SOON",
   "home_polygon_scaling_text": "With Polygon Edge custom blockchain, in-game microtransactions will fly with incredible speed and will cost just a fraction of network fees.",
-  "home_polygon_scaling_title": "POLYGON POS L2 SCALING"
+  "home_polygon_scaling_title": "POLYGON POS L2 SCALING",
+  "qj1uhz": "Disconnect",
+  "s8BnAC": "Swap",
+  "tfQoB8": "Affiliate",
+  "ulh3kf": "Collections"
 }
