@@ -24,3 +24,20 @@ export default function useCoinContract() {
 
   return contract;
 }
+
+export function useCoinInputPrice(coin: ICoin) {
+  const [price, setPrice] = useState<number>(0);
+  useEffect(() => {
+    if (!coin) return;
+    coin
+      .getEthToTokenInputPrice(convertToBN(val))
+      .then((result: BigNumber) => {
+        setBhc(parseFloat(formatEther(result)));
+      })
+      .finally(() => {
+        setConverting(null);
+      });
+  }, [coin]);
+
+  return price;
+}

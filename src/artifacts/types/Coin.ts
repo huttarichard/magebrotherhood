@@ -492,15 +492,15 @@ export interface CoinInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "Bought(address,address,uint256,uint256)": EventFragment;
+    "Bought(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
-    "Deposit(address,uint256)": EventFragment;
+    "Deposit(address,uint256,uint256,uint256,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "Sold(address,address,uint256,uint256)": EventFragment;
+    "Sold(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
@@ -527,12 +527,15 @@ export type ApprovalEvent = TypedEvent<
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
 export type BoughtEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
   {
     buyer: string;
     recipient: string;
+    timestamp: BigNumber;
     tokensBought: BigNumber;
     ethSold: BigNumber;
+    tokenReserve: BigNumber;
+    ethReserve: BigNumber;
   }
 >;
 
@@ -554,8 +557,14 @@ export type DelegateVotesChangedEventFilter =
   TypedEventFilter<DelegateVotesChangedEvent>;
 
 export type DepositEvent = TypedEvent<
-  [string, BigNumber],
-  { depositer: string; ethAdded: BigNumber }
+  [string, BigNumber, BigNumber, BigNumber, BigNumber],
+  {
+    depositer: string;
+    timestamp: BigNumber;
+    ethAdded: BigNumber;
+    tokenReserve: BigNumber;
+    ethReserve: BigNumber;
+  }
 >;
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
@@ -587,12 +596,15 @@ export type RoleRevokedEvent = TypedEvent<
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export type SoldEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
   {
     seller: string;
     recipient: string;
+    timestamp: BigNumber;
     tokensSold: BigNumber;
     ethBought: BigNumber;
+    tokenReserve: BigNumber;
+    ethReserve: BigNumber;
   }
 >;
 
@@ -1522,17 +1534,23 @@ export interface Coin extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
-    "Bought(address,address,uint256,uint256)"(
+    "Bought(address,address,uint256,uint256,uint256,uint256,uint256)"(
       buyer?: string | null,
       recipient?: string | null,
+      timestamp?: BigNumberish | null,
       tokensBought?: null,
-      ethSold?: null
+      ethSold?: null,
+      tokenReserve?: null,
+      ethReserve?: null
     ): BoughtEventFilter;
     Bought(
       buyer?: string | null,
       recipient?: string | null,
+      timestamp?: BigNumberish | null,
       tokensBought?: null,
-      ethSold?: null
+      ethSold?: null,
+      tokenReserve?: null,
+      ethReserve?: null
     ): BoughtEventFilter;
 
     "DelegateChanged(address,address,address)"(
@@ -1557,11 +1575,20 @@ export interface Coin extends BaseContract {
       newBalance?: null
     ): DelegateVotesChangedEventFilter;
 
-    "Deposit(address,uint256)"(
+    "Deposit(address,uint256,uint256,uint256,uint256)"(
       depositer?: string | null,
-      ethAdded?: null
+      timestamp?: BigNumberish | null,
+      ethAdded?: null,
+      tokenReserve?: null,
+      ethReserve?: null
     ): DepositEventFilter;
-    Deposit(depositer?: string | null, ethAdded?: null): DepositEventFilter;
+    Deposit(
+      depositer?: string | null,
+      timestamp?: BigNumberish | null,
+      ethAdded?: null,
+      tokenReserve?: null,
+      ethReserve?: null
+    ): DepositEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
@@ -1599,17 +1626,23 @@ export interface Coin extends BaseContract {
       sender?: string | null
     ): RoleRevokedEventFilter;
 
-    "Sold(address,address,uint256,uint256)"(
+    "Sold(address,address,uint256,uint256,uint256,uint256,uint256)"(
       seller?: string | null,
       recipient?: string | null,
+      timestamp?: BigNumberish | null,
       tokensSold?: null,
-      ethBought?: null
+      ethBought?: null,
+      tokenReserve?: null,
+      ethReserve?: null
     ): SoldEventFilter;
     Sold(
       seller?: string | null,
       recipient?: string | null,
+      timestamp?: BigNumberish | null,
       tokensSold?: null,
-      ethBought?: null
+      ethBought?: null,
+      tokenReserve?: null,
+      ethReserve?: null
     ): SoldEventFilter;
 
     "Transfer(address,address,uint256)"(

@@ -26,7 +26,7 @@ describe("Coin contract", function () {
 
   it("should mint correct supply at deploy", async function () {
     expect(await coin.balanceOf(coin.address)).to.be.eq(ethers.utils.parseEther("100"));
-    expect(await coin.provider.getBalance(coin.address)).to.be.eq(ethers.utils.parseEther("1"));
+    expect(await coin.provider.getBalance(coin.address)).to.be.eq(ethers.utils.parseEther("100"));
   });
 
   it("should be able to do simple swap coins", async function () {

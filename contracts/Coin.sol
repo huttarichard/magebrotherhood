@@ -16,11 +16,33 @@ import "./interfaces/ICoin.sol";
 contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   using SafeMath for uint256;
 
-  event Bought(address indexed buyer, address indexed recipient, uint256 tokensBought, uint256 ethSold);
+  event Bought(
+    address indexed buyer,
+    address indexed recipient,
+    uint256 indexed timestamp,
+    uint256 tokensBought,
+    uint256 ethSold,
+    uint256 tokenReserve,
+    uint256 ethReserve
+  );
 
-  event Sold(address indexed seller, address indexed recipient, uint256 tokensSold, uint256 ethBought);
+  event Sold(
+    address indexed seller,
+    address indexed recipient,
+    uint256 indexed timestamp,
+    uint256 tokensSold,
+    uint256 ethBought,
+    uint256 tokenReserve,
+    uint256 ethReserve
+  );
 
-  event Deposit(address indexed depositer, uint256 ethAdded);
+  event Deposit(
+    address indexed depositer,
+    uint256 indexed timestamp,
+    uint256 ethAdded,
+    uint256 tokenReserve,
+    uint256 ethReserve
+  );
 
   uint256 public taxFee = 5;
 
@@ -343,7 +365,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @dev User cannot specify minimum output or deadline.
    */
   receive() external payable {
-    emit Deposit(_msgSender(), msg.value);
+    emit Deposit(_msgSender(), block.timestamp, msg.value, balanceOf(address(this)), address(this).balance);
   }
 
   /**
@@ -432,7 +454,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     require(tokensBought >= minTokens, "buy amount not satisfied");
 
     _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, recipient, tokensBought, ethSold);
+    emit Bought(
+      buyer,
+      recipient,
+      block.timestamp,
+      tokensBought,
+      ethSold,
+      balanceOf(address(this)),
+      address(this).balance
+    );
     return tokensBought;
   }
 
@@ -455,7 +485,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     }
 
     _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, recipient, tokensBought, ethSold);
+    emit Bought(
+      buyer,
+      recipient,
+      block.timestamp,
+      tokensBought,
+      ethSold,
+      balanceOf(address(this)),
+      address(this).balance
+    );
     return ethSold;
   }
 
@@ -475,7 +513,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
     Address.sendValue(recipient, ethBought.sub(tax));
     _transfer(buyer, address(this), tokensSold);
-    emit Sold(buyer, recipient, tokensSold, ethBought);
+    emit Sold(
+      buyer,
+      recipient,
+      block.timestamp,
+      tokensSold,
+      ethBought,
+      balanceOf(address(this)),
+      address(this).balance
+    );
     return ethBought;
   }
 
@@ -496,7 +542,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
     Address.sendValue(recipient, ethBought);
     _transfer(buyer, address(this), tokensSold.add(tax));
-    emit Sold(buyer, recipient, tokensSold, ethBought);
+    emit Sold(
+      buyer,
+      recipient,
+      block.timestamp,
+      tokensSold,
+      ethBought,
+      balanceOf(address(this)),
+      address(this).balance
+    );
     return tokensSold;
   }
 
