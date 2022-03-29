@@ -16,17 +16,15 @@ import "./interfaces/ICoin.sol";
 contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   using SafeMath for uint256;
 
-  event Bought(address indexed buyer, uint256 indexed bought);
+  event Bought(address indexed buyer, address indexed recipient, uint256 tokensBought, uint256 ethSold);
 
-  event Deposit(address indexed depositer, uint256 indexed added);
+  event Sold(address indexed seller, address indexed recipient, uint256 tokensSold, uint256 ethBought);
 
-  event Sold(address indexed buyer, uint256 indexed sold);
+  event Deposit(address indexed depositer, uint256 ethAdded);
 
   uint256 public taxFee = 5;
 
   uint256 public taxFeeDenominator = 100;
-
-  uint256 public taxFeeVestingTimeframe = 300 days;
 
   uint256 public liqudityGuard = 3;
 
@@ -37,13 +35,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   string public constant NAME = "Brotherhood Coin";
 
   string public constant TICK = "BHC";
-
-  struct TimeLock {
-    uint256 startAt;
-    uint256 amount;
-  }
-
-  mapping(address => TimeLock) public timelocks;
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
@@ -70,15 +61,12 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   /**
    * @notice Set tax fee.
    */
-  function setTaxFee(
-    uint256 _feePercent,
-    uint256 _taxFeeDenominator,
-    uint256 _taxFeeVestingTimeframe
-  ) public onlyRole(ADMIN) {
+  function setTaxFee(uint256 _feePercent, uint256 _taxFeeDenominator) public onlyRole(ADMIN) {
     require(_feePercent < 15, "maximum tax fee is 15%");
+    require(_taxFeeDenominator > 0, "denominator must be > 0");
+
     taxFee = _feePercent;
     taxFeeDenominator = _taxFeeDenominator;
-    taxFeeVestingTimeframe = _taxFeeVestingTimeframe;
   }
 
   /**
@@ -86,6 +74,8 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @dev this is the percantage making the slippage possible.
    */
   function setLiqudityGuard(uint256 _guard, uint256 _denominator) public onlyRole(ADMIN) {
+    require(_denominator > 0, "denominator must be > 0");
+
     liqudityGuard = _guard;
     liqudityGuardDenominator = _denominator;
   }
@@ -129,6 +119,16 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
   /**
    * @notice Convert ETH to Tokens.
+   * @dev This will simply allow the user to convert ETH to tokens without any inputs
+   * @dev simply by sending ETH.
+   * @return Amount of Tokens bought.
+   */
+  function ethToTokenSwap() external payable whenNotPaused returns (uint256) {
+    return ethToTokenInput(msg.value, 0, block.timestamp, msg.sender, msg.sender);
+  }
+
+  /**
+   * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value) && minimum output.
    * @param minTokens Minimum Tokens bought.
    * @param deadline Time after which this transaction can no longer be executed.
@@ -136,6 +136,22 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    */
   function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable whenNotPaused returns (uint256) {
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, msg.sender);
+  }
+
+  /**
+   * @notice Convert ETH to Tokens.
+   * @dev User specifies maximum input (msg.value) && exact output.
+   * @param tokensBought Amount of tokens bought.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of ETH sold.
+   */
+  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline)
+    external
+    payable
+    whenNotPaused
+    returns (uint256)
+  {
+    return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
   }
 
   /**
@@ -153,22 +169,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   ) external payable whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
-  }
-
-  /**
-   * @notice Convert ETH to Tokens.
-   * @dev User specifies maximum input (msg.value) && exact output.
-   * @param tokensBought Amount of tokens bought.
-   * @param deadline Time after which this transaction can no longer be executed.
-   * @return Amount of ETH sold.
-   */
-  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline)
-    external
-    payable
-    whenNotPaused
-    returns (uint256)
-  {
-    return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
   }
 
   /**
@@ -190,6 +190,17 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
   /**
    * @notice Convert Tokens to ETH.
+   * @dev This will simply allow the user to convert ETH to tokens without any inputs
+   * @dev simply by sending ETH.
+   * @return Amount of Tokens bought.
+   */
+  function tokenToEthSwap(uint256 tokensSold) external payable whenNotPaused returns (uint256) {
+    (uint256 ethBought, ) = getInputPriceWithTax(tokensSold, balanceOf(address(this)), address(this).balance);
+    return tokenToEthInput(tokensSold, ethBought, block.timestamp, msg.sender, payable(msg.sender));
+  }
+
+  /**
+   * @notice Convert Tokens to ETH.
    * @dev User specifies exact input && minimum output.
    * @param tokensSold Amount of Tokens sold.
    * @param minEth Minimum ETH purchased.
@@ -202,6 +213,22 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     uint256 deadline
   ) external whenNotPaused returns (uint256) {
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, payable(msg.sender));
+  }
+
+  /**
+   * @notice Convert Tokens to ETH.
+   * @dev User specifies maximum input && exact output.
+   * @param ethBought Amount of ETH purchased.
+   * @param maxTokens Maximum Tokens sold.
+   * @param deadline Time after which this transaction can no longer be executed.
+   * @return Amount of Tokens sold.
+   */
+  function tokenToEthSwapOutput(
+    uint256 ethBought,
+    uint256 maxTokens,
+    uint256 deadline
+  ) external whenNotPaused returns (uint256) {
+    return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
   }
 
   /**
@@ -221,22 +248,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   ) external whenNotPaused returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
-  }
-
-  /**
-   * @notice Convert Tokens to ETH.
-   * @dev User specifies maximum input && exact output.
-   * @param ethBought Amount of ETH purchased.
-   * @param maxTokens Maximum Tokens sold.
-   * @param deadline Time after which this transaction can no longer be executed.
-   * @return Amount of Tokens sold.
-   */
-  function tokenToEthSwapOutput(
-    uint256 ethBought,
-    uint256 maxTokens,
-    uint256 deadline
-  ) external whenNotPaused returns (uint256) {
-    return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
   }
 
   /**
@@ -301,7 +312,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   function getTokenToEthInputPriceWithTax(uint256 tokensSold) external view returns (uint256, uint256) {
     require(tokensSold > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
-    return getInputPriceWithTax(_msgSender(), tokensSold, tokenReserve, address(this).balance);
+    return getInputPriceWithTax(tokensSold, tokenReserve, address(this).balance);
   }
 
   /**
@@ -323,7 +334,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
   function getTokenToEthOutputPriceWithTax(uint256 ethBought) external view returns (uint256, uint256) {
     require(ethBought > 0, "invalid input");
     uint256 tokenReserve = balanceOf(address(this));
-    return getOutputPriceWithTax(_msgSender(), ethBought, tokenReserve, address(this).balance);
+    return getOutputPriceWithTax(ethBought, tokenReserve, address(this).balance);
   }
 
   /**
@@ -366,24 +377,9 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     uint256 inputReserve, // balance - eth sold
     uint256 outputReserve // token balance of this
   ) internal view returns (uint256, uint256) {
-    return calculateFee(getInputPrice(inputAmount, inputReserve, outputReserve));
-  }
-
-  /**
-   * @dev Pricing function for converting between ETH && Tokens with fees and recipient.
-   * @param recipient person who receives tokens or ETH.
-   * @param inputAmount Amount of ETH or Tokens being sold.
-   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
-   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
-   * @return Amount of ETH or Tokens bought.
-   */
-  function getInputPriceWithTax(
-    address recipient,
-    uint256 inputAmount,
-    uint256 inputReserve,
-    uint256 outputReserve
-  ) internal view returns (uint256, uint256) {
-    return calculateFee(recipient, getInputPrice(inputAmount, inputReserve, outputReserve));
+    uint256 p = getInputPrice(inputAmount, inputReserve, outputReserve);
+    uint256 fee = calculateFee(p);
+    return (p.sub(fee), fee);
   }
 
   /**
@@ -416,24 +412,9 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     uint256 inputReserve,
     uint256 outputReserve
   ) internal view returns (uint256, uint256) {
-    return calculateFee(getOutputPrice(outputAmount, inputReserve, outputReserve));
-  }
-
-  /**
-   * @dev Pricing function for converting between ETH && Tokens with fee for recipient.
-   * @param recipient person who receives tokens or ETH.
-   * @param outputAmount Amount of ETH or Tokens being bought.
-   * @param inputReserve Amount of ETH or Tokens (input type) in exchange reserves.
-   * @param outputReserve Amount of ETH or Tokens (output type) in exchange reserves.
-   * @return Amount of ETH or Tokens sold.
-   */
-  function getOutputPriceWithTax(
-    address recipient,
-    uint256 outputAmount,
-    uint256 inputReserve,
-    uint256 outputReserve
-  ) internal view returns (uint256, uint256) {
-    return calculateFee(recipient, getOutputPrice(outputAmount, inputReserve, outputReserve));
+    uint256 p = getOutputPrice(outputAmount, inputReserve, outputReserve);
+    uint256 fee = calculateFee(p);
+    return (p.sub(fee), fee);
   }
 
   function ethToTokenInput(
@@ -443,17 +424,15 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     address buyer,
     address recipient
   ) private returns (uint256) {
-    require(deadline >= block.timestamp && ethSold > 0 && minTokens > 0, "invalid input");
+    require(deadline >= block.timestamp, "deadline crossed");
+    require(ethSold > 0, "sold eth must be > 0");
+
     uint256 tokenReserve = balanceOf(address(this));
     uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
     require(tokensBought >= minTokens, "buy amount not satisfied");
-    // Add tokens to timelock
-    TimeLock storage tl = timelocks[recipient];
-    tl.startAt = tl.startAt.mul(tokensBought.div(tl.amount));
-    tl.amount = tl.amount.add(tokensBought);
-    // Transfer tokens to recipient
+
     _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, tokensBought);
+    emit Bought(buyer, recipient, tokensBought, ethSold);
     return tokensBought;
   }
 
@@ -464,22 +443,19 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     address buyer,
     address recipient
   ) private returns (uint256) {
-    require(deadline >= block.timestamp && tokensBought > 0 && maxEth > 0, "invalid input");
+    require(deadline >= block.timestamp, "deadline crossed");
+    require(tokensBought > 0, "tokens bought must be > 0");
+    require(maxEth > 0, "max of eth must be > 0");
+
     uint256 tokenReserve = balanceOf(address(this));
-    // no tax as eth -> tokens is liquidity providing
     uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
-    // Throws if ethSold > maxEth
     uint256 ethRefund = maxEth.sub(ethSold);
     if (ethRefund > 0) {
       Address.sendValue(payable(buyer), ethRefund);
     }
-    // Add tokens to timelock
-    TimeLock storage tl = timelocks[recipient];
-    tl.startAt = tl.startAt.mul(tokensBought.div(tl.amount));
-    tl.amount = tl.amount.add(tokensBought);
-    // Transfer tokens to recipient
+
     _transfer(address(this), recipient, tokensBought);
-    emit Bought(buyer, tokensBought);
+    emit Bought(buyer, recipient, tokensBought, ethSold);
     return ethSold;
   }
 
@@ -490,18 +466,16 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     address buyer,
     address payable recipient
   ) private returns (uint256) {
-    require(deadline >= block.timestamp && tokensSold > 0 && minEth > 0, "invalid input");
-    uint256 tokenReserve = balanceOf(address(this));
-    (uint256 ethBought, uint256 tax) = getInputPriceWithTax(recipient, tokensSold, tokenReserve, address(this).balance);
-    require(ethBought >= minEth, "invalid input");
+    require(deadline >= block.timestamp, "deadline crossed");
+    require(tokensSold > 0, "sold tokens must be > 0");
 
-    TimeLock storage tl = timelocks[recipient];
-    tl.amount = tl.amount.sub(tokensSold);
+    uint256 tokenReserve = balanceOf(address(this));
+    (uint256 ethBought, uint256 tax) = getInputPriceWithTax(tokensSold, tokenReserve, address(this).balance);
+    require(ethBought >= minEth, "invalid input");
 
     Address.sendValue(recipient, ethBought.sub(tax));
     _transfer(buyer, address(this), tokensSold);
-    emit Sold(buyer, tokensSold);
-
+    emit Sold(buyer, recipient, tokensSold, ethBought);
     return ethBought;
   }
 
@@ -512,53 +486,28 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     address buyer,
     address payable recipient
   ) private returns (uint256) {
-    require(deadline >= block.timestamp && ethBought > 0, "invalid input");
-    uint256 tokenReserve = balanceOf(address(this));
-    (uint256 tokensSold, uint256 tax) = getOutputPriceWithTax(
-      recipient,
-      ethBought,
-      tokenReserve,
-      address(this).balance
-    );
-    require(maxTokens >= tokensSold, "invalid input");
+    require(deadline >= block.timestamp, "deadline crossed");
+    require(ethBought > 0, "bought eth must be > 0");
+    require(maxTokens > 0, "max bought tokens must be > 0");
 
-    TimeLock storage tl = timelocks[recipient];
-    tl.amount = tl.amount.sub(tokensSold);
+    uint256 tokenReserve = balanceOf(address(this));
+    (uint256 tokensSold, uint256 tax) = getOutputPriceWithTax(ethBought, tokenReserve, address(this).balance);
+    require(maxTokens >= tokensSold, "invalid input");
 
     Address.sendValue(recipient, ethBought);
     _transfer(buyer, address(this), tokensSold.add(tax));
-    emit Sold(buyer, tokensSold);
-
+    emit Sold(buyer, recipient, tokensSold, ethBought);
     return tokensSold;
   }
 
   /**
    * @dev Will simply calulate amount and fee, based on current tax fee
    */
-  function calculateFee(uint256 amount) internal view returns (uint256, uint256) {
-    uint256 fee = amount.div(taxFeeDenominator).mul(taxFee);
-    return (amount.sub(fee), fee);
-  }
-
-  /**
-   * @dev Similary to `calculateFee` this function calculates fee as well
-   * @dev with difference
-   */
-  function calculateFee(address recipient, uint256 amount) internal view returns (uint256, uint256 fee) {
-    if (!hasRole(FREELOADER, recipient)) {
-      return (amount, 0);
-    }
-    if (taxFeeVestingTimeframe == 0) {
-      return calculateFee(amount);
-    }
-    TimeLock memory tl = timelocks[recipient];
-    uint256 diff = (block.timestamp - tl.startAt);
-    if (diff >= taxFeeVestingTimeframe) {
-      return (amount, 0);
+  function calculateFee(uint256 amount) internal view returns (uint256 fee) {
+    if (amount == 0) {
+      return 0;
     }
     fee = amount.div(taxFeeDenominator).mul(taxFee);
-    fee = fee.div(taxFeeVestingTimeframe).mul(taxFeeVestingTimeframe - diff);
-    return (amount.sub(fee), fee);
   }
 
   /**

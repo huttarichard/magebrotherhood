@@ -52,6 +52,7 @@ export interface CoinInterface extends utils.Interface {
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
+    "ethToTokenSwap()": FunctionFragment;
     "ethToTokenSwapInput(uint256,uint256)": FunctionFragment;
     "ethToTokenSwapOutput(uint256,uint256)": FunctionFragment;
     "ethToTokenTransferInput(uint256,uint256,address)": FunctionFragment;
@@ -80,16 +81,15 @@ export interface CoinInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setLiqudityGuard(uint256,uint256)": FunctionFragment;
-    "setTaxFee(uint256,uint256,uint256)": FunctionFragment;
+    "setTaxFee(uint256,uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "taxFee()": FunctionFragment;
     "taxFeeDenominator()": FunctionFragment;
-    "taxFeeVestingTimeframe()": FunctionFragment;
-    "timelocks(address)": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
     "tokenEthBurn(address,uint256)": FunctionFragment;
     "tokenMint(address,uint256)": FunctionFragment;
+    "tokenToEthSwap(uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthTransferInput(uint256,uint256,uint256,address)": FunctionFragment;
@@ -150,6 +150,10 @@ export interface CoinInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "ethToTokenSwap",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "ethToTokenSwapInput",
     values: [BigNumberish, BigNumberish]
@@ -257,7 +261,7 @@ export interface CoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setTaxFee",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -270,11 +274,6 @@ export interface CoinInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "taxFeeVestingTimeframe",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "timelocks", values: [string]): string;
-  encodeFunctionData(
     functionFragment: "tokenBurn",
     values: [string, BigNumberish]
   ): string;
@@ -285,6 +284,10 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "tokenMint",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenToEthSwap",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenToEthSwapInput",
@@ -350,6 +353,10 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ethToTokenSwap",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "ethToTokenSwapInput",
     data: BytesLike
@@ -446,17 +453,16 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "taxFeeDenominator",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "taxFeeVestingTimeframe",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "timelocks", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenBurn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenEthBurn",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenMint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenToEthSwap",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwapInput",
     data: BytesLike
@@ -486,7 +492,7 @@ export interface CoinInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "Bought(address,uint256)": EventFragment;
+    "Bought(address,address,uint256,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
     "Deposit(address,uint256)": EventFragment;
@@ -494,7 +500,7 @@ export interface CoinInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "Sold(address,uint256)": EventFragment;
+    "Sold(address,address,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
@@ -521,8 +527,13 @@ export type ApprovalEvent = TypedEvent<
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
 export type BoughtEvent = TypedEvent<
-  [string, BigNumber],
-  { buyer: string; bought: BigNumber }
+  [string, string, BigNumber, BigNumber],
+  {
+    buyer: string;
+    recipient: string;
+    tokensBought: BigNumber;
+    ethSold: BigNumber;
+  }
 >;
 
 export type BoughtEventFilter = TypedEventFilter<BoughtEvent>;
@@ -544,7 +555,7 @@ export type DelegateVotesChangedEventFilter =
 
 export type DepositEvent = TypedEvent<
   [string, BigNumber],
-  { depositer: string; added: BigNumber }
+  { depositer: string; ethAdded: BigNumber }
 >;
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
@@ -576,8 +587,13 @@ export type RoleRevokedEvent = TypedEvent<
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export type SoldEvent = TypedEvent<
-  [string, BigNumber],
-  { buyer: string; sold: BigNumber }
+  [string, string, BigNumber, BigNumber],
+  {
+    seller: string;
+    recipient: string;
+    tokensSold: BigNumber;
+    ethBought: BigNumber;
+  }
 >;
 
 export type SoldEventFilter = TypedEventFilter<SoldEvent>;
@@ -685,6 +701,10 @@ export interface Coin extends BaseContract {
     ): Promise<ContractTransaction>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
+
+    ethToTokenSwap(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     ethToTokenSwapInput(
       minTokens: BigNumberish,
@@ -826,7 +846,6 @@ export interface Coin extends BaseContract {
     setTaxFee(
       _feePercent: BigNumberish,
       _taxFeeDenominator: BigNumberish,
-      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -840,15 +859,6 @@ export interface Coin extends BaseContract {
     taxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     taxFeeDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    timelocks(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
-    >;
 
     tokenBurn(
       burnee: string,
@@ -866,6 +876,11 @@ export interface Coin extends BaseContract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    tokenToEthSwap(
+      tokensSold: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     tokenToEthSwapInput(
@@ -982,6 +997,10 @@ export interface Coin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
+
+  ethToTokenSwap(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   ethToTokenSwapInput(
     minTokens: BigNumberish,
@@ -1120,7 +1139,6 @@ export interface Coin extends BaseContract {
   setTaxFee(
     _feePercent: BigNumberish,
     _taxFeeDenominator: BigNumberish,
-    _taxFeeVestingTimeframe: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1134,15 +1152,6 @@ export interface Coin extends BaseContract {
   taxFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-  taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
-
-  timelocks(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
-  >;
 
   tokenBurn(
     burnee: string,
@@ -1160,6 +1169,11 @@ export interface Coin extends BaseContract {
     recipient: string,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  tokenToEthSwap(
+    tokensSold: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   tokenToEthSwapInput(
@@ -1273,6 +1287,8 @@ export interface Coin extends BaseContract {
     ): Promise<void>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
+
+    ethToTokenSwap(overrides?: CallOverrides): Promise<BigNumber>;
 
     ethToTokenSwapInput(
       minTokens: BigNumberish,
@@ -1409,7 +1425,6 @@ export interface Coin extends BaseContract {
     setTaxFee(
       _feePercent: BigNumberish,
       _taxFeeDenominator: BigNumberish,
-      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1423,15 +1438,6 @@ export interface Coin extends BaseContract {
     taxFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
-
-    timelocks(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { startAt: BigNumber; amount: BigNumber }
-    >;
 
     tokenBurn(
       burnee: string,
@@ -1450,6 +1456,11 @@ export interface Coin extends BaseContract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    tokenToEthSwap(
+      tokensSold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     tokenToEthSwapInput(
       tokensSold: BigNumberish,
@@ -1511,13 +1522,17 @@ export interface Coin extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
-    "Bought(address,uint256)"(
+    "Bought(address,address,uint256,uint256)"(
       buyer?: string | null,
-      bought?: BigNumberish | null
+      recipient?: string | null,
+      tokensBought?: null,
+      ethSold?: null
     ): BoughtEventFilter;
     Bought(
       buyer?: string | null,
-      bought?: BigNumberish | null
+      recipient?: string | null,
+      tokensBought?: null,
+      ethSold?: null
     ): BoughtEventFilter;
 
     "DelegateChanged(address,address,address)"(
@@ -1544,12 +1559,9 @@ export interface Coin extends BaseContract {
 
     "Deposit(address,uint256)"(
       depositer?: string | null,
-      added?: BigNumberish | null
+      ethAdded?: null
     ): DepositEventFilter;
-    Deposit(
-      depositer?: string | null,
-      added?: BigNumberish | null
-    ): DepositEventFilter;
+    Deposit(depositer?: string | null, ethAdded?: null): DepositEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
@@ -1587,11 +1599,18 @@ export interface Coin extends BaseContract {
       sender?: string | null
     ): RoleRevokedEventFilter;
 
-    "Sold(address,uint256)"(
-      buyer?: string | null,
-      sold?: BigNumberish | null
+    "Sold(address,address,uint256,uint256)"(
+      seller?: string | null,
+      recipient?: string | null,
+      tokensSold?: null,
+      ethBought?: null
     ): SoldEventFilter;
-    Sold(buyer?: string | null, sold?: BigNumberish | null): SoldEventFilter;
+    Sold(
+      seller?: string | null,
+      recipient?: string | null,
+      tokensSold?: null,
+      ethBought?: null
+    ): SoldEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: string | null,
@@ -1673,6 +1692,10 @@ export interface Coin extends BaseContract {
     ): Promise<BigNumber>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    ethToTokenSwap(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     ethToTokenSwapInput(
       minTokens: BigNumberish,
@@ -1817,7 +1840,6 @@ export interface Coin extends BaseContract {
     setTaxFee(
       _feePercent: BigNumberish,
       _taxFeeDenominator: BigNumberish,
-      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1831,10 +1853,6 @@ export interface Coin extends BaseContract {
     taxFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    taxFeeVestingTimeframe(overrides?: CallOverrides): Promise<BigNumber>;
-
-    timelocks(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenBurn(
       burnee: string,
@@ -1852,6 +1870,11 @@ export interface Coin extends BaseContract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    tokenToEthSwap(
+      tokensSold: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     tokenToEthSwapInput(
@@ -1976,6 +1999,10 @@ export interface Coin extends BaseContract {
     delegates(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ethToTokenSwap(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     ethToTokenSwapInput(
@@ -2129,7 +2156,6 @@ export interface Coin extends BaseContract {
     setTaxFee(
       _feePercent: BigNumberish,
       _taxFeeDenominator: BigNumberish,
-      _taxFeeVestingTimeframe: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2143,15 +2169,6 @@ export interface Coin extends BaseContract {
     taxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     taxFeeDenominator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    taxFeeVestingTimeframe(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    timelocks(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     tokenBurn(
       burnee: string,
@@ -2169,6 +2186,11 @@ export interface Coin extends BaseContract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    tokenToEthSwap(
+      tokensSold: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     tokenToEthSwapInput(

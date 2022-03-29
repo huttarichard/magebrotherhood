@@ -22,8 +22,9 @@
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "typeRoots": [
-      "./node_moduels/@types",
-      "./src/@types"
+      "./node_modules/@types",
+      "./node_modules/@nomiclabs",
+      "./src/@types",
     ],
     "jsx": "preserve",
     "noEmit": true,

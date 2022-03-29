@@ -1,6 +1,9 @@
+import "@nomiclabs/hardhat-waffle";
+
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
+import { Coin__factory as CoinFactory } from "../src/artifacts/types";
 import { calculateChangeInCoins, coin, currentPrice, initBurner } from "../src/server/burner";
 
 function generatePriceSeries(period: number, s0: number, mu: number, sigma: number) {
@@ -46,7 +49,7 @@ async function printStats(label) {
 
 describe("Coin Burner", function () {
   this.beforeEach(async () => {
-    const Coin = await ethers.getContractFactory("Coin");
+    const Coin = (await ethers.getContractFactory("Coin")) as CoinFactory;
     initBurner(await Coin.deploy(1_000));
     // coin = await Coin.deploy(10);
     await coin.deployed();

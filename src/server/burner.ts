@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
 import { ethers } from "hardhat";
 
 import { Coin } from "../artifacts/types/Coin";
