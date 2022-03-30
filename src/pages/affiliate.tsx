@@ -7,6 +7,7 @@ import Card from "components/ui/Paper";
 import { Form, Formik } from "formik";
 import Head from "next/head";
 import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Main = styled.div`
@@ -88,6 +89,8 @@ interface SwapForm {
 }
 
 export default function Swap() {
+  const intl = useIntl();
+
   const initialValues: SwapForm = { eth: 0 };
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -95,6 +98,22 @@ export default function Swap() {
     setIsSubmitting(true);
     setIsSubmitting(false);
   };
+
+  // i18n
+  const formLabel = intl.formatMessage({
+    defaultMessage: "CODE",
+    id: "affiliate_page_form_label",
+  });
+
+  const formHelperText = intl.formatMessage({
+    defaultMessage: "For example ADAM123",
+    id: "affiliate_page_form_helper_text",
+  });
+
+  const formSubmitButtonText = intl.formatMessage({
+    defaultMessage: "Register Code",
+    id: "affiliate_page_form_submit_button_text",
+  });
 
   return (
     <>
@@ -105,17 +124,22 @@ export default function Swap() {
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">Affiliate</Typography>
-            <br />
-            <Typography variant="body1">
-              Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing
-              allows to reward you for influencing and your community by discounting our services.
+            <Typography variant="h3">
+              <FormattedMessage defaultMessage="Affiliate" id="affiliate_page_title" />
             </Typography>
             <br />
             <Typography variant="body1">
-              Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward
-              varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and
-              start earning.
+              <FormattedMessage
+                defaultMessage="Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing allows to reward you for influencing and your community by discounting our services."
+                id="affiliate_page_description_p1"
+              />
+            </Typography>
+            <br />
+            <Typography variant="body1">
+              <FormattedMessage
+                defaultMessage="Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and start earning."
+                id="affiliate_page_description_p2"
+              />
             </Typography>
           </div>
 
@@ -123,14 +147,16 @@ export default function Swap() {
 
           <CardWrapper>
             <CardHeader>
-              <Typography variant="h5">Register</Typography>
+              <Typography variant="h5">
+                <FormattedMessage defaultMessage="Register" id="affiliate_page_form_title" />
+              </Typography>
             </CardHeader>
 
             <br />
 
             <Formik
               initialValues={initialValues}
-              validate={async (values) => {
+              validate={async () => {
                 const errors: { eth?: string } = {};
 
                 return errors;
@@ -143,11 +169,8 @@ export default function Swap() {
             >
               {() => (
                 <Form onSubmit={handleSubmit}>
-                  {/* onChange={(event) => setEth(Number(event.target.value))} */}
-                  {/* value={eth} */}
-                  <TextField fullWidth name="code" label="CODE" helperText={"For example ADAM123"} key="code" />
-
-                  <Button text="Register Code" disabled={isSubmitting} className="btn" distorted borders large />
+                  <TextField fullWidth name="code" label={formLabel} helperText={formHelperText} />
+                  <Button text={formSubmitButtonText} disabled={isSubmitting} className="btn" distorted borders large />
                 </Form>
               )}
             </Formik>

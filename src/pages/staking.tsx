@@ -15,6 +15,7 @@ import Button from "components/ui/Button";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 import StakingModal from "../components/Staking/StakingModal";
@@ -79,6 +80,8 @@ export default function Staking() {
     Staked,
   }
 
+  const intl = useIntl();
+
   const [rows, setRows] = useState<StakingItem[]>(initialRows);
   const [filter, setFilter] = useState<Filter>(Filter.YourWallet);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -90,15 +93,46 @@ export default function Staking() {
     setRows([...rows]);
   };
 
+  // i18n
+  const tabLabelYourWallet = intl.formatMessage({
+    defaultMessage: "Your Wallet",
+    id: "staking_page_tab_label_your_wallet",
+  });
+
+  const tabLabelYourStaking = intl.formatMessage({
+    defaultMessage: "Staking",
+    id: "staking_page_tab_label_staking",
+  });
+
+  const tokenStakeButtonTextSelect = intl.formatMessage({
+    defaultMessage: "Select For Staking",
+    id: "staking_page_token_stake_button_text_select",
+  });
+
+  const tokenStakeButtonTextUnselect = intl.formatMessage({
+    defaultMessage: "Remove selection",
+    id: "staking_page_token_stake_button_text_unselect",
+  });
+
   return (
     <Layout>
       <Wrapper>
         <div className="head">
-          <Typography variant="h3">Staking</Typography>
+          <Typography variant="h3">
+            <FormattedMessage defaultMessage="Staking" id="staking_page_title" />
+          </Typography>
           <br />
           <Typography variant="body1">
-            Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long
-            term investors and prevents cheating in game. More about staking in out <Link href="/paper">LitePaper</Link>
+            <FormattedMessage
+              defaultMessage="Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long term investors and prevents cheating in game. More about staking in out"
+              id="staking_page_description"
+            />
+            &nbsp;
+            <Link href="/paper">
+              <a>
+                <FormattedMessage defaultMessage="LitePaper" id="staking_page_description_link_text" />
+              </a>
+            </Link>
             .
           </Typography>
         </div>
@@ -106,19 +140,25 @@ export default function Staking() {
         <br />
 
         <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
-          <Tab label="Your Wallet" />
-          <Tab label="Staking" />
+          <Tab label={tabLabelYourWallet} />
+          <Tab label={tabLabelYourStaking} />
         </Tabs>
 
         <br />
 
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }} aria-label="Staking table">
             <TableHead>
               <TableRow>
-                <TableCell>NFT Token</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>
+                  <FormattedMessage defaultMessage="NFT Token" id="staking_page_table_header_nft_token" />
+                </TableCell>
+                <TableCell align="right">
+                  <FormattedMessage defaultMessage="Amount" id="staking_page_table_header_amount" />
+                </TableCell>
+                <TableCell align="right">
+                  <FormattedMessage defaultMessage="Actions" id="staking_page_table_header_actions" />
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -145,7 +185,7 @@ export default function Staking() {
                     ) : (
                       <Button
                         small
-                        text={row.queuedForStaking ? "Remove selection" : "Select For Staking"}
+                        text={row.queuedForStaking ? tokenStakeButtonTextUnselect : tokenStakeButtonTextSelect}
                         onClick={() => handleStakingQueueChange(row)}
                       />
                     )}
@@ -168,7 +208,12 @@ export default function Staking() {
                 </Grid>
               </>
             ) : (
-              <Grid item>Please select character you want to stake.</Grid>
+              <Grid item>
+                <FormattedMessage
+                  defaultMessage="Please select character you want to stake."
+                  id="staking_page_staking_instruction"
+                />
+              </Grid>
             )}
           </Grid>
         </Paper>

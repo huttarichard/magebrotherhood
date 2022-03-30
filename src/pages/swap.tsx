@@ -14,6 +14,7 @@ import useWeb3 from "hooks/useWeb3";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useDebouncedCallback } from "use-debounce";
 
 const Main = styled.div`
@@ -150,6 +151,8 @@ export default function Swap() {
   const ethers = useWeb3();
   const coin = useCoinContract(ethers);
   const etherPrice = useCoingeckoPrice("ethereum", "usd");
+  const intl = useIntl();
+  const router = useRouter();
 
   const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
   const [tax, setTax] = useState<number | null>(null);
@@ -215,6 +218,22 @@ export default function Swap() {
     return x === y;
   };
 
+  // i18n
+  const labelSell = intl.formatMessage({
+    defaultMessage: "Sell",
+    id: "swap_page_label_sell",
+  });
+
+  const labelReceive = intl.formatMessage({
+    defaultMessage: "Receive",
+    id: "swap_page_label_receive",
+  });
+
+  const swapButtonText = intl.formatMessage({
+    defaultMessage: "Swap",
+    id: "swap_page_swap_button_text",
+  });
+
   const formElements = [
     <CurrencyFieldText
       InputProps={{
@@ -222,12 +241,12 @@ export default function Swap() {
         disabled: isSubmitting || converting === Currency.BHC,
       }}
       name="eth"
-      label={mode === Mode.EthToBhc ? "Sell ETH" : "Receive ETH"}
+      label={mode === Mode.EthToBhc ? `${labelSell} ETH` : `${labelReceive} ETH`}
       value={eth?.toString() || ""}
       allowNegative={false}
       placeholder="0 ETH"
       autoComplete="off"
-      onValueChange={(values) => {
+      onValueChange={(values: any) => {
         if (isSubmitting || !coin) {
           return;
         }
@@ -243,12 +262,14 @@ export default function Swap() {
         setEth(values.floatValue as number);
         ethDebounce(values.floatValue as number);
       }}
-      helperText={"dolar value? " + etherPrice}
+      helperText={etherPrice ? `${etherPrice}$` : ""}
       key="eth"
     />,
 
     <span key="switch" className="switch" onClick={handleModeSwitch}>
-      <span>Switch</span>
+      <span>
+        <FormattedMessage defaultMessage="Switch" id="swap_page_switch_button_text" />
+      </span>
       <FontAwesomeIcon icon={faArrowUpArrowDown} />
     </span>,
 
@@ -257,11 +278,11 @@ export default function Swap() {
         name: "bhc",
         disabled: isSubmitting || converting === Currency.ETH,
       }}
-      label={mode === Mode.EthToBhc ? "Receive BHC" : "Sell BHC"}
+      label={mode === Mode.EthToBhc ? `${labelReceive} BHC` : `${labelSell} BHC`}
       value={bhc?.toString() || ""}
       autoComplete="off"
       placeholder="0 BHC"
-      onValueChange={(values) => {
+      onValueChange={(values: any) => {
         if (isSubmitting || !coin) {
           return;
         }
@@ -278,19 +299,18 @@ export default function Swap() {
         setBhc(values.floatValue as number);
         bhcDebounce(values.floatValue as number);
       }}
-      helperText={"dolar value?"}
       key="bhc"
     />,
   ];
-
-  const router = useRouter();
 
   return (
     <Layout>
       <Main>
         <CardWrapper>
           <CardHeader>
-            <h1>Swap</h1>
+            <h1>
+              <FormattedMessage defaultMessage="Swap" id="swap_page_title" />
+            </h1>
             {/* <Grid container justifyContent="space-between">
               <Grid item>
               </Grid>
@@ -306,7 +326,7 @@ export default function Swap() {
           <form onSubmit={handleSubmit}>
             {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
             <Button
-              text="Swap"
+              text={swapButtonText}
               disabled={!coin || isSubmitting || converting !== null}
               className="btn"
               distorted
@@ -316,7 +336,16 @@ export default function Swap() {
             />
           </form>
           <small>
-            By clicking &quot;SWAP&quot; you are agreeing to <Link href="/tos">terms of conditions</Link>.
+            <FormattedMessage
+              defaultMessage='By clicking "SWAP" you are agreeing to'
+              id="swap_page_terms_acceptance_text"
+            />
+            <Link href="/tos">
+              <a>
+                <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
+              </a>
+            </Link>
+            .
           </small>
 
           {/* {tax && (
@@ -331,7 +360,8 @@ export default function Swap() {
           <FontAwesomeIcon icon={faChartCandlestick} />
 
           <div className="text">
-            Trading view chart <FontAwesomeIcon icon={faArrowRight} />
+            <FormattedMessage defaultMessage="Trading view chart" id="swap_page_chart_button_text" />
+            <FontAwesomeIcon icon={faArrowRight} />
           </div>
         </Tranding>
       </Main>
