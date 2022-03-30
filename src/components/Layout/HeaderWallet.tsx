@@ -13,6 +13,7 @@ const Wrapper = styled.div`
 
 export default function HeaderWallet() {
   const { activateBrowserWallet, account, deactivate } = useEthers();
+  // const config = useConfig();
 
   const intl = useIntl();
 

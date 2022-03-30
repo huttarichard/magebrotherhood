@@ -1,14 +1,7 @@
-const INFURA_KEY = process.env.NEXT_PUBLIC_INFURA_KEY || process.env.INFURA_KEY;
-
-if (typeof INFURA_KEY === "undefined") {
-  throw new Error(`NEXT_PUBLIC_INFURA_KEY must be a defined environment variable`);
-}
-
 export interface Chain {
   id: string;
   token: string;
   label: string;
-  rpcUrl: string;
 }
 
 export enum ChainId {
@@ -48,33 +41,29 @@ export enum ChainId {
   ArbitrumRinkeby = 421611,
 }
 
-export interface Chains {
-  [key: number]: Chain;
-}
+export type Chains = Partial<{
+  [key in ChainId]: Chain;
+}>;
 
 export const chains: Chains = {
   [ChainId.Mainnet]: {
     id: "0x1",
     token: "ETH",
     label: "Ethereum Mainnet",
-    rpcUrl: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
   },
   [ChainId.Ropsten]: {
     id: "0x3",
     token: "tROP",
     label: "Ethereum Ropsten Testnet",
-    rpcUrl: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
   },
   [ChainId.Rinkeby]: {
     id: "0x4",
     token: "rETH",
     label: "Ethereum Rinkeby Testnet",
-    rpcUrl: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
   },
   [ChainId.Kovan]: {
     id: "0x42",
     token: "kETH",
     label: "Ethereum Kovan Testnet",
-    rpcUrl: `https://kovan.infura.io/v3/${INFURA_KEY}`,
   },
 };

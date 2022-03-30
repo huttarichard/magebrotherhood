@@ -1,43 +1,33 @@
-import { Provider } from "@ethersproject/providers";
-import { useEthers } from "@usedapp/core";
+import { formatUnits } from "@ethersproject/units";
+import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { ICoin } from "artifacts/types";
-import { ChainId } from "lib/web3/chains";
-import { getContract } from "lib/web3/contracts";
+import { Name } from "lib/web3/contracts";
 import { useEffect, useState } from "react";
 
-export default function useCoinContract() {
-  const [contract, setContract] = useState<ICoin | null>(null);
-  const { active, library, chainId } = useEthers();
-  useEffect(() => {
-    if (!active) return;
+import useContract from "./useContract";
+import { Web3 } from "./useWeb3";
 
-    const fetch = async () => {
-      const instance = await getContract("Coin", chainId as ChainId, library as Provider);
-      setContract(instance as ICoin | null);
-    };
-    fetch();
-    return () => {
-      if (!contract) return;
-      contract.removeAllListeners();
-    };
-  }, [active, chainId]);
-
-  return contract;
+export default function useCoinContract(ethers: Web3) {
+  return useContract<ICoin>(Name.Coin, ethers);
 }
 
-export function useCoinInputPrice(coin: ICoin) {
+export function useCoinETHPrice(coin: ICoin | null) {
   const [price, setPrice] = useState<number>(0);
   useEffect(() => {
     if (!coin) return;
-    coin
-      .getEthToTokenInputPrice(convertToBN(val))
-      .then((result: BigNumber) => {
-        setBhc(parseFloat(formatEther(result)));
-      })
-      .finally(() => {
-        setConverting(null);
-      });
+    Promise.all([coin.balanceOf(coin.address), coin.provider.getBalance(coin.address)]).then(([cv, eb]) => {
+      const bhc = parseFloat(formatUnits(cv, "ether"));
+      const eth = parseFloat(formatUnits(eb, "ether"));
+      setPrice(eth / bhc);
+    });
   }, [coin]);
 
   return price;
+}
+
+export function useCoinUSDPrice(coin: ICoin | null) {
+  const price = useCoinETHPrice(coin);
+  const etherPrice = useCoingeckoPrice("ethereum", "usd");
+  const ethbn = parseFloat(etherPrice || "0");
+  return ethbn * price;
 }

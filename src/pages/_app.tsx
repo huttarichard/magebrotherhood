@@ -1,9 +1,11 @@
 import "swiper/css";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { Config, DAppProvider, Mainnet } from "@usedapp/core";
+import { ChainId, Config, DAppProvider, Mainnet, Rinkeby } from "@usedapp/core";
 import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
+import env from "lib/env";
+import { chains } from "lib/web3/providers/infura";
 import type { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -20,23 +22,10 @@ interface Props extends AppProps {
 
 const config: Config = {
   autoConnect: true,
-  readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Mainnet.chainId]: "https://mainnet.infura.io/v3/5c0736f0b07f4a24a3f0ffc5656b14ad",
-  },
+  readOnlyChainId: env.DEFAULT_NETWORK as ChainId,
+  networks: [Mainnet, Rinkeby],
+  readOnlyUrls: chains,
 };
-
-// function Test() {
-//   const { activateBrowserWallet, account } = useEthers();
-//   const etherBalance = useEtherBalance(account);
-//   return (
-//     <div>
-//       {!account && <button onClick={() => activateBrowserWallet()}>Connect</button>}
-//       {account && <p>Account: {account}</p>}
-//       {etherBalance && <p>Balance: {formatEther(etherBalance)}</p>}
-//     </div>
-//   );
-// }
 
 function MageBrotherHoodApp(props: Props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps, messages } = props;
@@ -61,7 +50,6 @@ function MageBrotherHoodApp(props: Props) {
           </IntlProvider>
         </DAppProvider>
       </ThemeProvider>
-      {/* <Script type="module" src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" /> */}
     </CacheProvider>
   );
 }

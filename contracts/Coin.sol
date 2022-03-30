@@ -216,7 +216,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @dev simply by sending ETH.
    * @return Amount of Tokens bought.
    */
-  function tokenToEthSwap(uint256 tokensSold) external payable whenNotPaused returns (uint256) {
+  function tokenToEthSwap(uint256 tokensSold) external whenNotPaused returns (uint256) {
     (uint256 ethBought, ) = getInputPriceWithTax(tokensSold, balanceOf(address(this)), address(this).balance);
     return tokenToEthInput(tokensSold, ethBought, block.timestamp, msg.sender, payable(msg.sender));
   }

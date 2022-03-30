@@ -3,6 +3,8 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import heroBg2 from "assets/images/heroBg2.png";
 import heroGhost from "assets/images/heroGhost.png";
+import useCoinContract, { useCoinUSDPrice } from "hooks/useCoinContract";
+import useWeb3 from "hooks/useWeb3";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
@@ -274,6 +276,10 @@ const Actions = styled.div`
 // const origin = typeof window !== "undefined" ? window?.location?.origin : "";
 
 export default function Hero() {
+  const ethers = useWeb3();
+  const { contract, ready } = useCoinContract(ethers);
+  const price = useCoinUSDPrice(contract);
+
   return (
     <Wrapper>
       <Background></Background>
@@ -315,15 +321,19 @@ export default function Hero() {
             </li>
             <li>
               <span>
-                <FormattedNumber
-                  style="currency"
-                  currency="USD"
-                  currencyDisplay="narrowSymbol"
-                  unitDisplay="narrow"
-                  value={0.001}
-                  maximumFractionDigits={6}
-                  minimumFractionDigits={2}
-                />
+                {!ready ? (
+                  "..."
+                ) : (
+                  <FormattedNumber
+                    style="currency"
+                    currency="USD"
+                    currencyDisplay="narrowSymbol"
+                    unitDisplay="narrow"
+                    value={price}
+                    maximumFractionDigits={6}
+                    minimumFractionDigits={2}
+                  />
+                )}
               </span>
               <span>
                 <FormattedMessage defaultMessage="BROTHERHOOD COIN" id="home_brotherhood_coin" />

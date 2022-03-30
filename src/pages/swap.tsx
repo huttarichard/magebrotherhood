@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
-import { formatEther, parseUnits } from "@ethersproject/units";
+import { parseUnits } from "@ethersproject/units";
 import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
@@ -10,6 +10,7 @@ import CurrencyFieldText from "components/ui/CurrencyFieldText";
 import Paper from "components/ui/Paper";
 import Card from "components/ui/Paper";
 import useCoinContract from "hooks/useCoinContract";
+import useWeb3 from "hooks/useWeb3";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -144,8 +145,10 @@ enum Currency {
   BHC,
   USD,
 }
+
 export default function Swap() {
-  const coin = useCoinContract();
+  const ethers = useWeb3();
+  const coin = useCoinContract(ethers);
   const etherPrice = useCoingeckoPrice("ethereum", "usd");
 
   const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
@@ -181,29 +184,29 @@ export default function Swap() {
     if (!val || !coin || isSubmitting) return;
     console.log("eth");
 
-    coin
-      .getEthToTokenInputPrice(convertToBN(val))
-      .then((result: BigNumber) => {
-        setBhc(parseFloat(formatEther(result)));
-      })
-      .finally(() => {
-        setConverting(null);
-      });
+    // coin
+    //   .getEthToTokenInputPrice(convertToBN(val))
+    //   .then((result: BigNumber) => {
+    //     setBhc(parseFloat(formatEther(result)));
+    //   })
+    //   .finally(() => {
+    //     setConverting(null);
+    //   });
   }, 1000);
 
   const bhcDebounce = useDebouncedCallback((val: number) => {
     if (!val || !coin || isSubmitting) return;
     console.log("bhc");
 
-    coin
-      .getTokenToEthInputPriceWithTax(convertToBN(val))
-      .then(([res, tax]: BigNumber[]) => {
-        setTax(parseFloat(formatEther(tax)));
-        setEth(parseFloat(formatEther(res)));
-      })
-      .finally(() => {
-        setConverting(null);
-      });
+    // coin
+    //   .getTokenToEthInputPriceWithTax(convertToBN(val))
+    //   .then(([res, tax]: BigNumber[]) => {
+    //     setTax(parseFloat(formatEther(tax)));
+    //     setEth(parseFloat(formatEther(res)));
+    //   })
+    //   .finally(() => {
+    //     setConverting(null);
+    //   });
   }, 500);
 
   const compareNumbers = (a: number | null, b?: number | null, decs = 8): boolean => {
