@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import roadmapKnight from "assets/images/roadmapKnight.png";
 import Timeline from "components/ui/Timeline";
 import { useEffect, useRef, useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { useWindowScroll } from "react-use";
 
 const Wrapper = styled.div`
@@ -108,7 +109,7 @@ export default function Roadmap() {
   return (
     <Wrapper ref={scrollRef}>
       <Typography sx={{ color: theme.text1 }} variant="h4" textAlign="center">
-        Roadmap
+        <FormattedMessage defaultMessage="Roadmap" id="home_roadmap_title" />
       </Typography>
 
       <Background />
@@ -119,7 +120,7 @@ export default function Roadmap() {
         <Grid item container xs={6} sx={{ display: { xs: "none", sm: upcommingVisible ? "block" : "none" } }}>
           <Grid item container alignContent="center" sx={{ height: "100%" }}>
             <Typography sx={{ color: theme.text1 }} variant="h4">
-              Upcomming Events
+              <FormattedMessage defaultMessage="Upcoming Events" id="home_roadmap_upcoming_events" />
             </Typography>
           </Grid>
         </Grid>

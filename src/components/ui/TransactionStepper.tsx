@@ -92,10 +92,7 @@ export default function TransactionStepper({ steps, activeStep, hash }: Transact
         {hash && (
           <Hash>
             <h3>
-              <FormattedMessage
-                defaultMessage="Transaction hash"
-                id="transaction_stepper_hash_title"
-              />
+              <FormattedMessage defaultMessage="Transaction hash" id="FCXIlK" />
             </h3>
             <a href="#">{hash}</a>
           </Hash>
