@@ -131,7 +131,6 @@ const Timeline = styled.div`
   .flag-wrapper {
     position: relative;
     display: inline-block;
-
     text-align: center;
   }
 
