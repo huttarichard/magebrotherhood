@@ -14,14 +14,50 @@
   "IKmvQj": {
     "defaultMessage": "Mage Brotherhood si klade za cíl vytvořit vůbec první decentralizovanou ekonomiku pro hru plnou magických věcí."
   },
+  "NBPZxQ": {
+    "defaultMessage": "LitePaper"
+  },
   "W8nHSd": {
     "defaultMessage": "FAQ"
+  },
+  "account_page_title": {
+    "defaultMessage": "Účet"
+  },
+  "affiliate_page_description_p1": {
+    "defaultMessage": "Chcete si vydělat stejné peníze navíc? Možná pro tebe něco máme! Náš první decentralizovaný marketing umožňuje odměnit vás za propagaci a pro tovjí komunitu zlevněním mint."
+  },
+  "affiliate_page_description_p2": {
+    "defaultMessage": "Pokaždé, když někdo vyrazí váš kód, budete odměněni bratrskou mincí! Výše odměny se liší v závislosti na ceně etherea plynu, ale můžete očekávat pěkné zisky! Zaregistrujte si kód níže a začněte vydělávat."
+  },
+  "affiliate_page_form_helper_text": {
+    "defaultMessage": "Například ADAM123"
+  },
+  "affiliate_page_form_label": {
+    "defaultMessage": "Kód"
+  },
+  "affiliate_page_form_submit_button_text": {
+    "defaultMessage": "Registrační kód"
+  },
+  "affiliate_page_form_title": {
+    "defaultMessage": "Registrovat"
+  },
+  "affiliate_page_title": {
+    "defaultMessage": "Přidružený"
   },
   "cg1VJ2": {
     "defaultMessage": "Připojte peněženku"
   },
   "ejEGdx": {
     "defaultMessage": "Domů"
+  },
+  "faq_page_description": {
+    "defaultMessage": "Zde jsou zodpovězeny některé z nejčastěji kladených otázek. Chápeme, že ne každá zvědavá mysl bude s tímto seznamem prostě spokojená, takže pro takové bytosti existuje"
+  },
+  "faq_page_description_link_text": {
+    "defaultMessage": "Svar"
+  },
+  "faq_page_title": {
+    "defaultMessage": "Faq"
   },
   "home_brotherhood_coin": {
     "defaultMessage": "BROTHERHOOD MINCE"
@@ -53,14 +89,77 @@
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
   },
+  "jXdcLd": {
+    "defaultMessage": "PDF LITEPAPER"
+  },
   "qj1uhz": {
     "defaultMessage": "Odpojit"
   },
   "s8BnAC": {
     "defaultMessage": "Směnárna"
   },
+  "staking_page_description": {
+    "defaultMessage": "Je zásadní a klíčovou součástí našeho ekosystému. Umožňuje rovnoměrné rozdělení tokenů, odměňuje dlouhodobé investory a zabraňuje podvádění ve hře. Více o staking out"
+  },
+  "staking_page_description_link_text": {
+    "defaultMessage": "Litepaper"
+  },
+  "staking_page_staking_instruction": {
+    "defaultMessage": "Vyberte prosím postavu, kterou chcete vsadit."
+  },
+  "staking_page_tab_label_staking": {
+    "defaultMessage": "Vytyčování"
+  },
+  "staking_page_tab_label_your_wallet": {
+    "defaultMessage": "Tvoje peněženka"
+  },
+  "staking_page_table_header_actions": {
+    "defaultMessage": "Akce"
+  },
+  "staking_page_table_header_amount": {
+    "defaultMessage": "Množství"
+  },
+  "staking_page_table_header_nft_token": {
+    "defaultMessage": "Token NFT"
+  },
+  "staking_page_title": {
+    "defaultMessage": "Vytyčování"
+  },
+  "staking_page_token_stake_button_text_select": {
+    "defaultMessage": "Vyberte Pro vytyčování"
+  },
+  "staking_page_token_stake_button_text_unselect": {
+    "defaultMessage": "Odebrat výběr"
+  },
+  "swap_page_chart_button_text": {
+    "defaultMessage": "Graf zobrazení obchodování"
+  },
+  "swap_page_label_receive": {
+    "defaultMessage": "Dostávat"
+  },
+  "swap_page_label_sell": {
+    "defaultMessage": "Prodat"
+  },
+  "swap_page_swap_button_text": {
+    "defaultMessage": "Vyměňte"
+  },
+  "swap_page_switch_button_text": {
+    "defaultMessage": "Přepínač"
+  },
+  "swap_page_terms_acceptance_link_text": {
+    "defaultMessage": "podmínky"
+  },
+  "swap_page_terms_acceptance_text": {
+    "defaultMessage": "Kliknutím na \"SWAP\" souhlasíte"
+  },
+  "swap_page_title": {
+    "defaultMessage": "Vyměňte"
+  },
   "tfQoB8": {
     "defaultMessage": "Affiliate"
+  },
+  "transaction_stepper_hash_title": {
+    "defaultMessage": "Hash transakce"
   },
   "ulh3kf": {
     "defaultMessage": "Sbírky"

@@ -14,14 +14,50 @@
   "IKmvQj": {
     "defaultMessage": "Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things."
   },
+  "NBPZxQ": {
+    "defaultMessage": "Lite Paper"
+  },
   "W8nHSd": {
     "defaultMessage": "FAQ"
+  },
+  "account_page_title": {
+    "defaultMessage": "Account"
+  },
+  "affiliate_page_description_p1": {
+    "defaultMessage": "Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing allows to reward you for influencing and your community by discounting our services."
+  },
+  "affiliate_page_description_p2": {
+    "defaultMessage": "Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and start earning."
+  },
+  "affiliate_page_form_helper_text": {
+    "defaultMessage": "For example ADAM123"
+  },
+  "affiliate_page_form_label": {
+    "defaultMessage": "CODE"
+  },
+  "affiliate_page_form_submit_button_text": {
+    "defaultMessage": "Register Code"
+  },
+  "affiliate_page_form_title": {
+    "defaultMessage": "Register"
+  },
+  "affiliate_page_title": {
+    "defaultMessage": "Affiliate"
   },
   "cg1VJ2": {
     "defaultMessage": "Connect Wallet"
   },
   "ejEGdx": {
     "defaultMessage": "Home"
+  },
+  "faq_page_description": {
+    "defaultMessage": "Some of the most frequented questions asked are answered here. We understand that not every curious mind will simply be happy with this list, so for such a beings there is"
+  },
+  "faq_page_description_link_text": {
+    "defaultMessage": "Discord"
+  },
+  "faq_page_title": {
+    "defaultMessage": "FAQ"
   },
   "home_brotherhood_coin": {
     "defaultMessage": "BROTHERHOOD COIN"
@@ -53,14 +89,77 @@
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
   },
+  "jXdcLd": {
+    "defaultMessage": "PDF LITEPAPER"
+  },
   "qj1uhz": {
     "defaultMessage": "Disconnect"
   },
   "s8BnAC": {
     "defaultMessage": "Swap"
   },
+  "staking_page_description": {
+    "defaultMessage": "Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long term investors and prevents cheating in game. More about staking in out"
+  },
+  "staking_page_description_link_text": {
+    "defaultMessage": "LitePaper"
+  },
+  "staking_page_staking_instruction": {
+    "defaultMessage": "Please select character you want to stake."
+  },
+  "staking_page_tab_label_staking": {
+    "defaultMessage": "Staking"
+  },
+  "staking_page_tab_label_your_wallet": {
+    "defaultMessage": "Your Wallet"
+  },
+  "staking_page_table_header_actions": {
+    "defaultMessage": "Actions"
+  },
+  "staking_page_table_header_amount": {
+    "defaultMessage": "Amount"
+  },
+  "staking_page_table_header_nft_token": {
+    "defaultMessage": "NFT Token"
+  },
+  "staking_page_title": {
+    "defaultMessage": "Staking"
+  },
+  "staking_page_token_stake_button_text_select": {
+    "defaultMessage": "Select For Staking"
+  },
+  "staking_page_token_stake_button_text_unselect": {
+    "defaultMessage": "Remove selection"
+  },
+  "swap_page_chart_button_text": {
+    "defaultMessage": "Trading view chart"
+  },
+  "swap_page_label_receive": {
+    "defaultMessage": "Receive"
+  },
+  "swap_page_label_sell": {
+    "defaultMessage": "Sell"
+  },
+  "swap_page_swap_button_text": {
+    "defaultMessage": "Swap"
+  },
+  "swap_page_switch_button_text": {
+    "defaultMessage": "Switch"
+  },
+  "swap_page_terms_acceptance_link_text": {
+    "defaultMessage": "terms of conditions"
+  },
+  "swap_page_terms_acceptance_text": {
+    "defaultMessage": "By clicking \"SWAP\" you are agreeing to"
+  },
+  "swap_page_title": {
+    "defaultMessage": "Swap"
+  },
   "tfQoB8": {
     "defaultMessage": "Affiliate"
+  },
+  "transaction_stepper_hash_title": {
+    "defaultMessage": "Transaction hash"
   },
   "ulh3kf": {
     "defaultMessage": "Collections"
