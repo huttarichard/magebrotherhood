@@ -25,11 +25,42 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task("deploy:coin", "deploys contracts", async (taskArgs, hre) => {
+task("deploy:coin", "deploys coin contract", async (taskArgs, hre) => {
   const Coin = await hre.ethers.getContractFactory("Coin");
   const coin = await Coin.deploy(1000000);
   console.info("coin: ", coin.address, coin.deployTransaction.hash);
 });
+
+task("deploy:affiliate", "deploys affiliate contract", async (taskArgs: { coin: string }, hre) => {
+  const Affiliate = await hre.ethers.getContractFactory("Affiliate");
+  const affiliate = await Affiliate.deploy(taskArgs.coin);
+  console.info("affiliate: ", affiliate.address, affiliate.deployTransaction.hash);
+}).addParam("coin", "the coin contract");
+
+task("deploy:playables", "deploys playables contract", async (taskArgs: { coin: string; affiliate: string }, hre) => {
+  const Playables = await hre.ethers.getContractFactory("Playables");
+  const playables = await Playables.deploy(taskArgs.coin, taskArgs.affiliate, "");
+  console.info("playables: ", playables.address, playables.deployTransaction.hash);
+})
+  .addParam("coin", "the coin contract")
+  .addParam("affiliate", "the affiliate contract");
+
+task(
+  "deploy:staking",
+  "deploys staking contract",
+  async (taskArgs: { coin: string; cycleLengthInSeconds: string; periodLengthInCycles: string }, hre) => {
+    const Playables = await hre.ethers.getContractFactory("Playables");
+    const playables = await Playables.deploy(
+      parseInt(taskArgs.periodLengthInCycles),
+      parseInt(taskArgs.cycleLengthInSeconds),
+      taskArgs.coin
+    );
+    console.info("staking: ", playables.address, playables.deployTransaction.hash);
+  }
+)
+  .addParam("coin", "the coin contract")
+  .addParam("cycleLengthInSeconds", "cycle length in seconds")
+  .addParam("periodLengthInCycles", "period length in cycles");
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -51,6 +82,10 @@ const config: HardhatUserConfig = {
     artifacts: "src/artifacts",
   },
   networks: {
+    hardhat: {
+      gasPrice: 875000000,
+      loggingEnabled: false,
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts: [`0x${process.env.PRIVATE_KEY}`],

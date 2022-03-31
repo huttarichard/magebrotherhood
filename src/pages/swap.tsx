@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
-import { parseUnits } from "@ethersproject/units";
+import { formatEther, parseUnits } from "@ethersproject/units";
 import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
@@ -9,6 +9,7 @@ import Button from "components/ui/Button";
 import CurrencyFieldText from "components/ui/CurrencyFieldText";
 import Paper from "components/ui/Paper";
 import Card from "components/ui/Paper";
+import Spinner from "components/ui/Spinner";
 import useCoinContract from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
 import Link from "next/link";
@@ -38,6 +39,7 @@ const Main = styled.div`
 const CardWrapper = styled(Card)`
   margin: 0 auto;
   padding: 17px;
+  min-width: 350px;
 
   ${(props) => props.theme.breakpoints.down("md")} {
     margin: 0;
@@ -149,7 +151,7 @@ enum Currency {
 
 export default function Swap() {
   const ethers = useWeb3();
-  const coin = useCoinContract(ethers);
+  const { contract: coin, error, ready } = useCoinContract(ethers);
   const etherPrice = useCoingeckoPrice("ethereum", "usd");
   const intl = useIntl();
   const router = useRouter();
@@ -187,29 +189,29 @@ export default function Swap() {
     if (!val || !coin || isSubmitting) return;
     console.log("eth");
 
-    // coin
-    //   .getEthToTokenInputPrice(convertToBN(val))
-    //   .then((result: BigNumber) => {
-    //     setBhc(parseFloat(formatEther(result)));
-    //   })
-    //   .finally(() => {
-    //     setConverting(null);
-    //   });
+    coin
+      .getEthToTokenInputPrice(convertToBN(val))
+      .then((result: BigNumber) => {
+        setBhc(parseFloat(formatEther(result)));
+      })
+      .finally(() => {
+        setConverting(null);
+      });
   }, 1000);
 
   const bhcDebounce = useDebouncedCallback((val: number) => {
     if (!val || !coin || isSubmitting) return;
     console.log("bhc");
 
-    // coin
-    //   .getTokenToEthInputPriceWithTax(convertToBN(val))
-    //   .then(([res, tax]: BigNumber[]) => {
-    //     setTax(parseFloat(formatEther(tax)));
-    //     setEth(parseFloat(formatEther(res)));
-    //   })
-    //   .finally(() => {
-    //     setConverting(null);
-    //   });
+    coin
+      .getTokenToEthInputPriceWithTax(convertToBN(val))
+      .then(([res, tax]: BigNumber[]) => {
+        setTax(parseFloat(formatEther(tax)));
+        setEth(parseFloat(formatEther(res)));
+      })
+      .finally(() => {
+        setConverting(null);
+      });
   }, 500);
 
   const compareNumbers = (a: number | null, b?: number | null, decs = 8): boolean => {
@@ -294,7 +296,7 @@ export default function Swap() {
         if (compareNumbers(bhc, values.floatValue, 2)) {
           return;
         }
-        console.log("bhc change", bhc, values.floatValue);
+
         setConverting(Currency.BHC);
         setBhc(values.floatValue as number);
         bhcDebounce(values.floatValue as number);
@@ -302,6 +304,41 @@ export default function Swap() {
       key="bhc"
     />,
   ];
+
+  const form = (
+    <>
+      <form onSubmit={handleSubmit}>
+        {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+        <Button
+          text={swapButtonText}
+          disabled={!coin || isSubmitting || converting !== null}
+          className="btn"
+          distorted
+          block
+          borders
+          large
+        />
+      </form>
+      <small>
+        <FormattedMessage
+          defaultMessage='By clicking "SWAP" you are agreeing to'
+          id="swap_page_terms_acceptance_text"
+        />
+        <Link href="/tos">
+          <a>
+            <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
+          </a>
+        </Link>
+        .
+      </small>
+
+      {/* {tax && (
+            <>
+              <br />
+              <div>Tax: {tax}</div>
+            </>)} */}
+    </>
+  );
 
   return (
     <Layout>
@@ -323,37 +360,9 @@ export default function Swap() {
             </Grid> */}
           </CardHeader>
 
-          <form onSubmit={handleSubmit}>
-            {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
-            <Button
-              text={swapButtonText}
-              disabled={!coin || isSubmitting || converting !== null}
-              className="btn"
-              distorted
-              block
-              borders
-              large
-            />
-          </form>
-          <small>
-            <FormattedMessage
-              defaultMessage='By clicking "SWAP" you are agreeing to'
-              id="swap_page_terms_acceptance_text"
-            />
-            <Link href="/tos">
-              <a>
-                <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
-              </a>
-            </Link>
-            .
-          </small>
+          {ready && ethers.resolved ? form : <Spinner />}
 
-          {/* {tax && (
-            <>
-              <br />
-              <div>Tax: {tax}</div>
-            </>
-          )} */}
+          {error && <p>{error.message}</p>}
         </CardWrapper>
 
         <Tranding onClick={() => router.push("/price")}>
