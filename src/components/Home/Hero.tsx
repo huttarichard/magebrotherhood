@@ -311,10 +311,10 @@ export default function Hero() {
           />
 
           <ul>
-            <li>
+            {/* <li>
               <span>8K</span>
               <span>NFT LEFT</span>
-            </li>
+            </li> */}
             <li>
               <span>
                 {!ready ? (
