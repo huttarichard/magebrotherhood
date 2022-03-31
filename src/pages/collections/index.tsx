@@ -32,7 +32,7 @@ const PriceWrapper = styled.div`
   border-radius: 4px;
 `;
 
-const stylesCard = (theme) => ({
+const stylesCard = (theme: any) => ({
   display: "flex",
   boxShadow: "0",
   flexDirection: "row",
@@ -45,7 +45,7 @@ const stylesCard = (theme) => ({
   },
 });
 
-const stylesContent = (theme) => ({
+const stylesContent = (theme: any) => ({
   height: "100%",
   display: "flex",
   flexDirection: "column",
