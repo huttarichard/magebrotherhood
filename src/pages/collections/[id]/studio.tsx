@@ -1,8 +1,10 @@
 // import { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
 import styled from "@emotion/styled";
+import MintModal from "components/Collection/MintModal";
 import Button from "components/ui/Button";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 
 import Layout from "../../../components/Layout/Layout";
 import ModelViewerDynamic from "../../../components/ui/ModelViewerDynamic";
@@ -23,7 +25,37 @@ const Actions = styled.div`
   }
 `;
 
-export default function ID() {
+const PriceWrapper = styled.div`
+  background: #e4e4e4;
+  height: 50px;
+  width: 230px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 4px;
+`;
+
+const Card = styled.div`
+  background: white;
+  width: 400px;
+  color: black;
+  padding: 5px 20px;
+  padding-bottom: 15px;
+  font-size: 18px;
+
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  border-radius: 5px;
+
+  @media (min-width: 992px) {
+    bottom: 2rem;
+    right: 3rem;
+  }
+`;
+
+export default function Studio() {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   return (
     <>
       <Head>
@@ -108,7 +140,38 @@ export default function ID() {
               <Button text="Close" />
             </Link>
           </Actions>
+          <Card>
+            <p>
+              Knight is a powerful warrior. He is a master of sword fighting and is able to use his sword to deal damage
+              to his enemies. He is also a master of defending himself and his allies. Damage dealt by Knight is
+              increased by his level significantly.
+            </p>
+            <div>
+              <PriceWrapper>
+                <span
+                  style={{
+                    fontSize: "1.2rem",
+                    padding: "0 12px",
+                    height: "49px",
+                    lineHeight: "45px",
+                    fontFamily: "monospace",
+                  }}
+                >
+                  0.1 ETH
+                </span>
+                <Button
+                  small
+                  style={{ height: "50px", width: "115px", borderRadius: "4px" }}
+                  text="Mint"
+                  onClick={() => {
+                    setModalOpen(true);
+                  }}
+                />
+              </PriceWrapper>
+            </div>
+          </Card>
         </Wrapper>
+        <MintModal open={modalOpen} handleOpenState={setModalOpen} stakeQueue={[]} />
       </Layout>
     </>
   );
