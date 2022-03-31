@@ -5,8 +5,17 @@
   "+lWQIJ": {
     "defaultMessage": "Marketplace"
   },
+  "3yk8fB": {
+    "defaultMessage": "Wallet"
+  },
   "9fPQ1/": {
     "defaultMessage": "Litepaper"
+  },
+  "EBDrtq": {
+    "defaultMessage": "Terms of use"
+  },
+  "FCXIlK": {
+    "defaultMessage": "Transaction hash"
   },
   "IH+ANq": {
     "defaultMessage": "About Bortherhood"
@@ -89,6 +98,15 @@
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
   },
+  "home_roadmap_title": {
+    "defaultMessage": "Roadmap"
+  },
+  "home_roadmap_upcoming_events": {
+    "defaultMessage": "Upcoming Events"
+  },
+  "iSM+et": {
+    "defaultMessage": "All rights reserved"
+  },
   "jXdcLd": {
     "defaultMessage": "PDF LITEPAPER"
   },
@@ -158,10 +176,13 @@
   "tfQoB8": {
     "defaultMessage": "Affiliate"
   },
-  "transaction_stepper_hash_title": {
-    "defaultMessage": "Transaction hash"
-  },
   "ulh3kf": {
     "defaultMessage": "Collections"
+  },
+  "vx0nkZ": {
+    "defaultMessage": "Privacy Policy"
+  },
+  "zFegDD": {
+    "defaultMessage": "Contact"
   }
 }

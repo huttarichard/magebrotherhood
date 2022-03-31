@@ -27,11 +27,6 @@ interface ICoin is IVotes, IERC20 {
   function tokenBurn(address who, uint256 tokensToBeBurned) external;
 
   /**
-   * @notice will burn amount of token in amount of eth.
-   */
-  function tokenEthBurn(address who, uint256 ethToBeBurned) external;
-
-  /**
    * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value) && minimum output.
    * @param minTokens Minimum Tokens bought.

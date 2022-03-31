@@ -565,24 +565,6 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "who",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "ethToBeBurned",
-        type: "uint256",
-      },
-    ],
-    name: "tokenEthBurn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "recipient",
         type: "address",
       },

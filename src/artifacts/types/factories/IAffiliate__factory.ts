@@ -10,12 +10,17 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "code",
+        type: "string",
+      },
+      {
         internalType: "address",
-        name: "addr",
+        name: "user",
         type: "address",
       },
     ],
-    name: "payoff",
+    name: "reward",
     outputs: [
       {
         internalType: "uint256",
@@ -26,6 +31,11 @@ const _abi = [
         internalType: "uint256",
         name: "bhc",
         type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "eligible",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -38,12 +48,22 @@ const _abi = [
         name: "code",
         type: "string",
       },
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
     ],
-    name: "reward",
+    name: "use",
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "eth",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "bhc",
         type: "uint256",
       },
     ],

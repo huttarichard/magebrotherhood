@@ -22,8 +22,7 @@ export interface AffiliateInterface extends utils.Interface {
   functions: {
     "ADMIN()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "REWARDER()": FunctionFragment;
-    "allowRewarding(address,uint256)": FunctionFragment;
+    "allowContractToReward(address,uint256)": FunctionFragment;
     "balances(address)": FunctionFragment;
     "coin()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -31,16 +30,16 @@ export interface AffiliateInterface extends utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "payoff(address)": FunctionFragment;
     "register(string)": FunctionFragment;
     "release(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "reward(string)": FunctionFragment;
+    "reward(string,address)": FunctionFragment;
     "setBalance(address,uint256)": FunctionFragment;
     "setCoin(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "use(string,address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
@@ -48,9 +47,8 @@ export interface AffiliateInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "REWARDER", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "allowRewarding",
+    functionFragment: "allowContractToReward",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
@@ -69,7 +67,6 @@ export interface AffiliateInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(functionFragment: "payoff", values: [string]): string;
   encodeFunctionData(functionFragment: "register", values: [string]): string;
   encodeFunctionData(functionFragment: "release", values: [string]): string;
   encodeFunctionData(
@@ -80,7 +77,10 @@ export interface AffiliateInterface extends utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(functionFragment: "reward", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "reward",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "setBalance",
     values: [string, BigNumberish]
@@ -91,15 +91,15 @@ export interface AffiliateInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "use", values: [string, string]): string;
 
   decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "REWARDER", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "allowRewarding",
+    functionFragment: "allowContractToReward",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
@@ -112,7 +112,6 @@ export interface AffiliateInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "payoff", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(
@@ -128,6 +127,7 @@ export interface AffiliateInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "use", data: BytesLike): Result;
 
   events: {
     "Paused(address)": EventFragment;
@@ -206,10 +206,8 @@ export interface Affiliate extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    REWARDER(overrides?: CallOverrides): Promise<[string]>;
-
-    allowRewarding(
-      addr: string,
+    allowContractToReward(
+      kontrakt: string,
       gas: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -238,11 +236,6 @@ export interface Affiliate extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-    payoff(
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
     register(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -267,8 +260,15 @@ export interface Affiliate extends BaseContract {
 
     reward(
       code: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, boolean] & {
+        eth: BigNumber;
+        bhc: BigNumber;
+        eligible: boolean;
+      }
+    >;
 
     setBalance(
       _affiliate: string,
@@ -289,16 +289,20 @@ export interface Affiliate extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    use(
+      code: string,
+      user: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   ADMIN(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  REWARDER(overrides?: CallOverrides): Promise<string>;
-
-  allowRewarding(
-    addr: string,
+  allowContractToReward(
+    kontrakt: string,
     gas: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -327,11 +331,6 @@ export interface Affiliate extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
-  payoff(
-    addr: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
   register(
     code: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -356,8 +355,15 @@ export interface Affiliate extends BaseContract {
 
   reward(
     code: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, boolean] & {
+      eth: BigNumber;
+      bhc: BigNumber;
+      eligible: boolean;
+    }
+  >;
 
   setBalance(
     _affiliate: string,
@@ -379,15 +385,19 @@ export interface Affiliate extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  use(
+    code: string,
+    user: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     ADMIN(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    REWARDER(overrides?: CallOverrides): Promise<string>;
-
-    allowRewarding(
-      addr: string,
+    allowContractToReward(
+      kontrakt: string,
       gas: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -414,11 +424,6 @@ export interface Affiliate extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
-    payoff(
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
     register(code: string, overrides?: CallOverrides): Promise<void>;
 
     release(affiliater: string, overrides?: CallOverrides): Promise<void>;
@@ -435,7 +440,17 @@ export interface Affiliate extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    reward(code: string, overrides?: CallOverrides): Promise<BigNumber>;
+    reward(
+      code: string,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, boolean] & {
+        eth: BigNumber;
+        bhc: BigNumber;
+        eligible: boolean;
+      }
+    >;
 
     setBalance(
       _affiliate: string,
@@ -451,6 +466,12 @@ export interface Affiliate extends BaseContract {
     ): Promise<boolean>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
+
+    use(
+      code: string,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
   };
 
   filters: {
@@ -499,10 +520,8 @@ export interface Affiliate extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    REWARDER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    allowRewarding(
-      addr: string,
+    allowContractToReward(
+      kontrakt: string,
       gas: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -534,8 +553,6 @@ export interface Affiliate extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
-    payoff(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     register(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -560,7 +577,8 @@ export interface Affiliate extends BaseContract {
 
     reward(
       code: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      user: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setBalance(
@@ -582,6 +600,12 @@ export interface Affiliate extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    use(
+      code: string,
+      user: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -591,10 +615,8 @@ export interface Affiliate extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    REWARDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    allowRewarding(
-      addr: string,
+    allowContractToReward(
+      kontrakt: string,
       gas: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -629,11 +651,6 @@ export interface Affiliate extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    payoff(
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     register(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -658,7 +675,8 @@ export interface Affiliate extends BaseContract {
 
     reward(
       code: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      user: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setBalance(
@@ -678,6 +696,12 @@ export interface Affiliate extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    use(
+      code: string,
+      user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -373,6 +373,7 @@ export interface StakingInterface extends utils.Interface {
     "NftUnstaked(address,uint256,address,uint256,uint256)": EventFragment;
     "NftsBatchStaked(address,uint256,address,uint256[],uint256[])": EventFragment;
     "NftsBatchUnstaked(address,uint256,address,uint256[],uint256[])": EventFragment;
+    "OwnershipChanged(address,address,address,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RewardsAdded(uint256,uint256,uint256)": EventFragment;
     "RewardsClaimed(address,uint256,uint256,uint256,uint256)": EventFragment;
@@ -389,6 +390,7 @@ export interface StakingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NftUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NftsBatchStaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NftsBatchUnstaked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
@@ -468,6 +470,14 @@ export type NftsBatchUnstakedEvent = TypedEvent<
 
 export type NftsBatchUnstakedEventFilter =
   TypedEventFilter<NftsBatchUnstakedEvent>;
+
+export type OwnershipChangedEvent = TypedEvent<
+  [string, string, string, BigNumber],
+  { from: string; to: string; nft: string; tokenId: BigNumber }
+>;
+
+export type OwnershipChangedEventFilter =
+  TypedEventFilter<OwnershipChangedEvent>;
 
 export type PausedEvent = TypedEvent<[string], { account: string }>;
 
@@ -1266,6 +1276,19 @@ export interface Staking extends BaseContract {
       tokenIds?: null,
       weights?: null
     ): NftsBatchUnstakedEventFilter;
+
+    "OwnershipChanged(address,address,address,uint256)"(
+      from?: null,
+      to?: null,
+      nft?: null,
+      tokenId?: null
+    ): OwnershipChangedEventFilter;
+    OwnershipChanged(
+      from?: null,
+      to?: null,
+      nft?: null,
+      tokenId?: null
+    ): OwnershipChangedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;

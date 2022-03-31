@@ -7,12 +7,25 @@ pragma solidity ^0.8.13;
  */
 interface IAffiliate {
   /**
+   * Calculate affiliate reward.
+   *
    * @param code affiliaters marketing code.
+   * @param user end user address.
    */
-  function reward(string memory code) external returns (uint256);
+  function reward(string memory code, address user)
+    external
+    view
+    returns (
+      uint256 eth,
+      uint256 bhc,
+      bool eligible
+    );
 
   /**
-   * Will return rewards in form of bhc and eth.
+   * Will use the discount for the first time.
+   *
+   * @param code affiliaters marketing code.
+   * @param user end user address.
    */
-  function payoff(address addr) external view returns (uint256 eth, uint256 bhc);
+  function use(string memory code, address user) external returns (uint256 eth, uint256 bhc);
 }

@@ -35,6 +35,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
 
   event Started();
   event Disabled();
+  event OwnershipChanged(address from, address to, address nft, uint256 tokenId);
   event RewardsAdded(uint256 startPeriod, uint256 endPeriod, uint256 rewardsPerCycle);
   event RewardsClaimed(address staker, uint256 cycle, uint256 startPeriod, uint256 periods, uint256 amount);
   event NftStaked(address staker, uint256 cycle, address nft, uint256 tokenId, uint256 weight);
@@ -247,6 +248,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     ContractStaking storage staker = stakingContracts[nft];
     TokenInfo storage tokenInfo = staker.tokens[tokenId];
     require(tokenInfo.owner == address(0), "do not own this token");
+    emit OwnershipChanged(tokenInfo.owner, _owner, nft, tokenId);
     tokenInfo.owner = _owner;
   }
 
@@ -345,8 +347,6 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
 
     emit NftStaked(owner, currentCycle, address(staker.nft), tokenId, weight);
   }
-
-  // todo add slashing
 
   /**
    * ERC1155Receiver hook for batch transfer.

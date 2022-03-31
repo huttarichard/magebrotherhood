@@ -1,7 +1,10 @@
 {
   "+14VoL": "Staking",
   "+lWQIJ": "Marketplace",
+  "3yk8fB": "Wallet",
   "9fPQ1/": "Litepaper",
+  "EBDrtq": "Terms of use",
+  "FCXIlK": "Transaction hash",
   "IH+ANq": "About Bortherhood",
   "IKmvQj": "Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things.",
   "NBPZxQ": "Lite Paper",
@@ -29,6 +32,9 @@
   "home_polygon_scaling_comming_soon": "COMMING SOON",
   "home_polygon_scaling_text": "With Polygon Edge custom blockchain, in-game microtransactions will fly with incredible speed and will cost just a fraction of network fees.",
   "home_polygon_scaling_title": "POLYGON POS L2 SCALING",
+  "home_roadmap_title": "Roadmap",
+  "home_roadmap_upcoming_events": "Upcoming Events",
+  "iSM+et": "All rights reserved",
   "jXdcLd": "PDF LITEPAPER",
   "qj1uhz": "Disconnect",
   "s8BnAC": "Swap",
@@ -52,6 +58,7 @@
   "swap_page_terms_acceptance_text": "By clicking \"SWAP\" you are agreeing to",
   "swap_page_title": "Swap",
   "tfQoB8": "Affiliate",
-  "transaction_stepper_hash_title": "Transaction hash",
-  "ulh3kf": "Collections"
+  "ulh3kf": "Collections",
+  "vx0nkZ": "Privacy Policy",
+  "zFegDD": "Contact"
 }
