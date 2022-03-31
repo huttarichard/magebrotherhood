@@ -104,7 +104,7 @@ export default function ID() {
             </div>
           </ModelViewerDynamic>
           <Actions>
-            <Link href="/collections/1" passHref>
+            <Link href="/collections" passHref>
               <Button text="Close" />
             </Link>
           </Actions>

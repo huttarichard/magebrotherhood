@@ -113,9 +113,7 @@ const Main = styled.div`
       padding-right: 5px;
       display: inline-block;
       background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
-      background: -webkit-linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
       background-clip: text;
-      -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
   }
@@ -145,9 +143,7 @@ const Main = styled.div`
         &:first-of-type {
           font-size: 42px;
           background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
-          background: -webkit-linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
           background-clip: text;
-          -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
 

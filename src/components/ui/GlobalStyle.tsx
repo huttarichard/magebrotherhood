@@ -57,10 +57,7 @@ const GlobalStyle = (theme: Theme) => css`
     .gradient {
       display: inline-block;
       background: linear-gradient(#8d11db, #ec12f9);
-      background: -webkit-linear-gradient(#8d11db, #ec12f9);
-      -webkit-background-clip: text;
       background-clip: text;
-      -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       padding: 0 20px;
     }
