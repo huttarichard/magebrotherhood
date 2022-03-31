@@ -341,12 +341,17 @@ export default function Hero() {
       <Actions>
         <ul>
           <li>
-            <a href="https://discord.com/" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <a href="https://discord.gg/HgPQAHzp3Z" target="_blank" rel="noopener noreferrer" aria-label="Discord">
               <FontAwesomeIcon icon={faDiscord} size={"2x"} />
             </a>
           </li>
           <li>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            <a
+              href="https://twitter.com/MageBrotherhood"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+            >
               <FontAwesomeIcon icon={faTwitter} size={"2x"} />
             </a>
           </li>

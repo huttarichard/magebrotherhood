@@ -9,7 +9,7 @@ import Button from "components/ui/Button";
 import CurrencyFieldText from "components/ui/CurrencyFieldText";
 // import CurrencyFieldText from "components/ui/";
 import EthereumLogo from "components/ui/EthereumLogo";
-import MustConnect from "components/ui/MustConnect";
+import MustConnect from "components/ui/MustConnectWallet";
 import Paper from "components/ui/Paper";
 import useCoinContract from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
