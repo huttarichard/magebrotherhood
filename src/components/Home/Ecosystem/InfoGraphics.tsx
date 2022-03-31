@@ -5,30 +5,72 @@ import React from "react";
 import { isSafari } from "react-device-detect";
 
 const StyledSVG = styled.svg`
-  -webkit-transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
-  -webkit-transform: translate3d(0, 0, 0);
-  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  transform-style: preserve-3d;
   transition: 1s ease-in-out;
+  will-change: transform;
+  backface-visibility: hidden;
 
   &.nft {
-    transform-origin: 30% 80%;
-    transform: scale(2.2);
+    transform: scale(2);
+    transform-origin: 30vw 80%;
   }
 
   &.coin {
-    transform-origin: 60% 100%;
-    transform: scale(2.2);
+    transform: scale(2);
+    transform-origin: 80vw 100%;
   }
 
   &.staking {
-    transform-origin: 60% 50%;
-    transform: scale(2.2);
+    transform: scale(2);
+    transform-origin: 60vw 35%;
   }
 
   &.game {
-    transform-origin: 30% 0%;
-    transform: scale(2.2);
+    transform: scale(2);
+    transform-origin: 10vw -10%;
+  }
+
+  @media (min-width: 426px) {
+    &.game {
+      transform-origin: 20vw -10%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    &.nft {
+      transform-origin: 30% 80%;
+    }
+
+    &.coin {
+      transform-origin: 80% 70%;
+    }
+
+    &.staking {
+      transform-origin: 60% 45%;
+    }
+
+    &.game {
+      transform-origin: 10% 30%;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    &.nft {
+      transform-origin: 30% 80%;
+    }
+
+    &.coin {
+      transform-origin: 80% 100%;
+    }
+
+    &.staking {
+      transform-origin: 60% 35%;
+    }
+
+    &.game {
+      transform-origin: 20% 0;
+    }
   }
 
   #burn,

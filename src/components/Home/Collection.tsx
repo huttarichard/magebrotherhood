@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 
   ${(props) => props.theme.breakpoints.up("md")} {
-    max-width: 1432px;
+    /* max-width: 1432px; */
   }
 `;
 
