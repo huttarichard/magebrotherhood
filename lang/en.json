@@ -5,11 +5,17 @@
   "+lWQIJ": {
     "defaultMessage": "Marketplace"
   },
+  "1v/O7j": {
+    "defaultMessage": "Please connect your wallet."
+  },
   "3yk8fB": {
     "defaultMessage": "Wallet"
   },
   "9fPQ1/": {
     "defaultMessage": "Litepaper"
+  },
+  "DtYelJ": {
+    "defaultMessage": "Transfer"
   },
   "EBDrtq": {
     "defaultMessage": "Terms of use"
@@ -55,6 +61,9 @@
   },
   "cg1VJ2": {
     "defaultMessage": "Connect Wallet"
+  },
+  "d1uESJ": {
+    "defaultMessage": "Assets"
   },
   "ejEGdx": {
     "defaultMessage": "Home"
