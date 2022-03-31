@@ -10,6 +10,30 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "payoff",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "eth",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "bhc",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string",
         name: "code",
         type: "string",

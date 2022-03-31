@@ -44,43 +44,59 @@ export declare namespace IStaking {
 export interface StakingInterface extends utils.Interface {
   contractName: "Staking";
   functions: {
+    "ADMIN()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "REWARDER()": FunctionFragment;
+    "SLUSHER()": FunctionFragment;
     "addContract(address)": FunctionFragment;
     "addRewardsForPeriods(uint16,uint16,uint256)": FunctionFragment;
     "batchUnstake(address,uint256[])": FunctionFragment;
     "claimRewards(uint16)": FunctionFragment;
     "coin()": FunctionFragment;
     "cycleLengthInSeconds()": FunctionFragment;
-    "enabled()": FunctionFragment;
     "estimateRewards(uint16)": FunctionFragment;
     "getCurrentCycle()": FunctionFragment;
     "getCurrentPeriod()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getTokenInfo(address,uint256)": FunctionFragment;
     "globalHistory(uint256)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "lastGlobalSnapshotIndex()": FunctionFragment;
     "lastStakerSnapshotIndex(address)": FunctionFragment;
     "nextClaims(address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "periodLengthInCycles()": FunctionFragment;
     "removeContract(address)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "rewardsSchedule(uint256)": FunctionFragment;
+    "setCoin(address)": FunctionFragment;
+    "slush(address,uint256)": FunctionFragment;
     "stakerHistories(address,uint256)": FunctionFragment;
-    "staking(address)": FunctionFragment;
+    "stakingContracts(address)": FunctionFragment;
     "start()": FunctionFragment;
     "startTimestamp()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalRewardsPool()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
+    "transferToken(address,uint256,address)": FunctionFragment;
+    "transferTokenOwnership(address,uint256,address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "unstake(address,uint256)": FunctionFragment;
     "withdrawnLostCycles(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "REWARDER", values?: undefined): string;
+  encodeFunctionData(functionFragment: "SLUSHER", values?: undefined): string;
   encodeFunctionData(functionFragment: "addContract", values: [string]): string;
   encodeFunctionData(
     functionFragment: "addRewardsForPeriods",
@@ -99,7 +115,6 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "cycleLengthInSeconds",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "enabled", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "estimateRewards",
     values: [BigNumberish]
@@ -113,12 +128,24 @@ export interface StakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTokenInfo",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "globalHistory",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "lastGlobalSnapshotIndex",
@@ -141,7 +168,6 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "onERC721Received",
     values: [string, string, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -153,18 +179,30 @@ export interface StakingInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "rewardsSchedule",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "setCoin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "slush",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "stakerHistories",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "staking", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "stakingContracts",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "start", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "startTimestamp",
@@ -179,8 +217,12 @@ export interface StakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
+    functionFragment: "transferToken",
+    values: [string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferTokenOwnership",
+    values: [string, BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
@@ -192,6 +234,13 @@ export interface StakingInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "REWARDER", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "SLUSHER", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addContract",
     data: BytesLike
@@ -213,7 +262,6 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "cycleLengthInSeconds",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "enabled", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "estimateRewards",
     data: BytesLike
@@ -227,6 +275,10 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTokenInfo",
     data: BytesLike
   ): Result;
@@ -234,6 +286,8 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "globalHistory",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastGlobalSnapshotIndex",
     data: BytesLike
@@ -255,7 +309,6 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -267,18 +320,24 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardsSchedule",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setCoin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "slush", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakerHistories",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "staking", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "stakingContracts",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "start", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startTimestamp",
@@ -293,7 +352,11 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "transferToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferTokenOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -310,10 +373,12 @@ export interface StakingInterface extends utils.Interface {
     "NftUnstaked(address,uint256,address,uint256,uint256)": EventFragment;
     "NftsBatchStaked(address,uint256,address,uint256[],uint256[])": EventFragment;
     "NftsBatchUnstaked(address,uint256,address,uint256[],uint256[])": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "RewardsAdded(uint256,uint256,uint256)": EventFragment;
     "RewardsClaimed(address,uint256,uint256,uint256,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "Started()": EventFragment;
     "Unpaused(address)": EventFragment;
   };
@@ -324,10 +389,12 @@ export interface StakingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NftUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NftsBatchStaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NftsBatchUnstaked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Started"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
@@ -402,14 +469,6 @@ export type NftsBatchUnstakedEvent = TypedEvent<
 export type NftsBatchUnstakedEventFilter =
   TypedEventFilter<NftsBatchUnstakedEvent>;
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
 export type PausedEvent = TypedEvent<[string], { account: string }>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
@@ -433,6 +492,28 @@ export type RewardsClaimedEvent = TypedEvent<
 >;
 
 export type RewardsClaimedEventFilter = TypedEventFilter<RewardsClaimedEvent>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; previousAdminRole: string; newAdminRole: string }
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; account: string; sender: string }
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export type StartedEvent = TypedEvent<[], {}>;
 
@@ -470,6 +551,14 @@ export interface Staking extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    REWARDER(overrides?: CallOverrides): Promise<[string]>;
+
+    SLUSHER(overrides?: CallOverrides): Promise<[string]>;
+
     addContract(
       nft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -497,8 +586,6 @@ export interface Staking extends BaseContract {
 
     cycleLengthInSeconds(overrides?: CallOverrides): Promise<[number]>;
 
-    enabled(overrides?: CallOverrides): Promise<[boolean]>;
-
     estimateRewards(
       maxPeriods: BigNumberish,
       overrides?: CallOverrides
@@ -514,6 +601,8 @@ export interface Staking extends BaseContract {
 
     getCurrentPeriod(overrides?: CallOverrides): Promise<[number]>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
     getTokenInfo(
       nft: string,
       id: BigNumberish,
@@ -526,6 +615,18 @@ export interface Staking extends BaseContract {
     ): Promise<
       [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
     >;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     lastGlobalSnapshotIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -571,8 +672,6 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -586,7 +685,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    renounceOwnership(
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -594,6 +701,17 @@ export interface Staking extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    slush(
+      nft: string,
+      tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     stakerHistories(
       arg0: string,
@@ -603,7 +721,7 @@ export interface Staking extends BaseContract {
       [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
     >;
 
-    staking(
+    stakingContracts(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { nft: string; enabled: boolean }>;
@@ -621,8 +739,17 @@ export interface Staking extends BaseContract {
 
     totalRewardsPool(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    transferOwnership(
-      newOwner: string,
+    transferToken(
+      nft: string,
+      tokenId: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferTokenOwnership(
+      nft: string,
+      tokenId: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -641,6 +768,14 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  ADMIN(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  REWARDER(overrides?: CallOverrides): Promise<string>;
+
+  SLUSHER(overrides?: CallOverrides): Promise<string>;
 
   addContract(
     nft: string,
@@ -669,8 +804,6 @@ export interface Staking extends BaseContract {
 
   cycleLengthInSeconds(overrides?: CallOverrides): Promise<number>;
 
-  enabled(overrides?: CallOverrides): Promise<boolean>;
-
   estimateRewards(
     maxPeriods: BigNumberish,
     overrides?: CallOverrides
@@ -686,6 +819,8 @@ export interface Staking extends BaseContract {
 
   getCurrentPeriod(overrides?: CallOverrides): Promise<number>;
 
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
   getTokenInfo(
     nft: string,
     id: BigNumberish,
@@ -698,6 +833,18 @@ export interface Staking extends BaseContract {
   ): Promise<
     [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
   >;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   lastGlobalSnapshotIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -743,8 +890,6 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -758,7 +903,15 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  renounceOwnership(
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -766,6 +919,17 @@ export interface Staking extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  setCoin(
+    _coin: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  slush(
+    nft: string,
+    tokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   stakerHistories(
     arg0: string,
@@ -775,7 +939,7 @@ export interface Staking extends BaseContract {
     [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
   >;
 
-  staking(
+  stakingContracts(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<[string, boolean] & { nft: string; enabled: boolean }>;
@@ -793,8 +957,17 @@ export interface Staking extends BaseContract {
 
   totalRewardsPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-  transferOwnership(
-    newOwner: string,
+  transferToken(
+    nft: string,
+    tokenId: BigNumberish,
+    recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferTokenOwnership(
+    nft: string,
+    tokenId: BigNumberish,
+    _owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -814,6 +987,14 @@ export interface Staking extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    ADMIN(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    REWARDER(overrides?: CallOverrides): Promise<string>;
+
+    SLUSHER(overrides?: CallOverrides): Promise<string>;
+
     addContract(nft: string, overrides?: CallOverrides): Promise<void>;
 
     addRewardsForPeriods(
@@ -838,8 +1019,6 @@ export interface Staking extends BaseContract {
 
     cycleLengthInSeconds(overrides?: CallOverrides): Promise<number>;
 
-    enabled(overrides?: CallOverrides): Promise<boolean>;
-
     estimateRewards(
       maxPeriods: BigNumberish,
       overrides?: CallOverrides
@@ -855,6 +1034,8 @@ export interface Staking extends BaseContract {
 
     getCurrentPeriod(overrides?: CallOverrides): Promise<number>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
     getTokenInfo(
       nft: string,
       id: BigNumberish,
@@ -867,6 +1048,18 @@ export interface Staking extends BaseContract {
     ): Promise<
       [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
     >;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     lastGlobalSnapshotIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -912,8 +1105,6 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
@@ -922,12 +1113,30 @@ export interface Staking extends BaseContract {
 
     removeContract(nft: string, overrides?: CallOverrides): Promise<void>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     rewardsSchedule(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    setCoin(_coin: string, overrides?: CallOverrides): Promise<void>;
+
+    slush(
+      nft: string,
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stakerHistories(
       arg0: string,
@@ -937,7 +1146,7 @@ export interface Staking extends BaseContract {
       [BigNumber, BigNumber] & { stake: BigNumber; startCycle: BigNumber }
     >;
 
-    staking(
+    stakingContracts(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { nft: string; enabled: boolean }>;
@@ -953,8 +1162,17 @@ export interface Staking extends BaseContract {
 
     totalRewardsPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
+    transferToken(
+      nft: string,
+      tokenId: BigNumberish,
+      recipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferTokenOwnership(
+      nft: string,
+      tokenId: BigNumberish,
+      _owner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1049,15 +1267,6 @@ export interface Staking extends BaseContract {
       weights?: null
     ): NftsBatchUnstakedEventFilter;
 
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
@@ -1087,6 +1296,39 @@ export interface Staking extends BaseContract {
       amount?: null
     ): RewardsClaimedEventFilter;
 
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+
     "Started()"(): StartedEventFilter;
     Started(): StartedEventFilter;
 
@@ -1095,6 +1337,14 @@ export interface Staking extends BaseContract {
   };
 
   estimateGas: {
+    ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REWARDER(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SLUSHER(overrides?: CallOverrides): Promise<BigNumber>;
+
     addContract(
       nft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1122,8 +1372,6 @@ export interface Staking extends BaseContract {
 
     cycleLengthInSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
-    enabled(overrides?: CallOverrides): Promise<BigNumber>;
-
     estimateRewards(
       maxPeriods: BigNumberish,
       overrides?: CallOverrides
@@ -1133,6 +1381,11 @@ export interface Staking extends BaseContract {
 
     getCurrentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTokenInfo(
       nft: string,
       id: BigNumberish,
@@ -1141,6 +1394,18 @@ export interface Staking extends BaseContract {
 
     globalHistory(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1179,8 +1444,6 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1194,7 +1457,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    renounceOwnership(
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1203,13 +1474,27 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    slush(
+      nft: string,
+      tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     stakerHistories(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    staking(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    stakingContracts(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     start(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1224,8 +1509,17 @@ export interface Staking extends BaseContract {
 
     totalRewardsPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
+    transferToken(
+      nft: string,
+      tokenId: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transferTokenOwnership(
+      nft: string,
+      tokenId: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1246,6 +1540,16 @@ export interface Staking extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    REWARDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    SLUSHER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addContract(
       nft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1275,8 +1579,6 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    enabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     estimateRewards(
       maxPeriods: BigNumberish,
       overrides?: CallOverrides
@@ -1286,6 +1588,11 @@ export interface Staking extends BaseContract {
 
     getCurrentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTokenInfo(
       nft: string,
       id: BigNumberish,
@@ -1294,6 +1601,18 @@ export interface Staking extends BaseContract {
 
     globalHistory(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1337,8 +1656,6 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1354,7 +1671,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1363,13 +1688,24 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    slush(
+      nft: string,
+      tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     stakerHistories(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    staking(
+    stakingContracts(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1387,8 +1723,17 @@ export interface Staking extends BaseContract {
 
     totalRewardsPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    transferOwnership(
-      newOwner: string,
+    transferToken(
+      nft: string,
+      tokenId: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferTokenOwnership(
+      nft: string,
+      tokenId: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

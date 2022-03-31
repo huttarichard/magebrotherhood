@@ -15,6 +15,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/IStakable.sol";
 import "./interfaces/ICoin.sol";
@@ -26,7 +27,7 @@ import "./SafeTransfer.sol";
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
+contract Staking is ERC165, Pausable, AccessControl, IStaking {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
@@ -80,13 +81,11 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     bool enabled;
   }
 
-  bool public enabled = true;
-
   uint256 public totalRewardsPool;
 
   uint256 public startTimestamp;
 
-  ICoin public immutable coin;
+  ICoin public coin;
 
   uint32 public immutable cycleLengthInSeconds;
   uint16 public immutable periodLengthInCycles;
@@ -106,7 +105,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
   mapping(uint256 => bool) public withdrawnLostCycles;
 
   /* staking => hold info on staking */
-  mapping(address => ContractStaking) public staking;
+  mapping(address => ContractStaking) public stakingContracts;
 
   modifier hasStarted() {
     require(startTimestamp != 0, "staking not started");
@@ -118,40 +117,59 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     _;
   }
 
+  bytes32 public constant ADMIN = keccak256("ADMIN");
+
+  bytes32 public constant REWARDER = keccak256("REWARDER");
+
+  bytes32 public constant SLUSHER = keccak256("SLUSHER");
+
   /**
    * Constructor.
    * @dev Reverts if the period length value is zero.
    * @dev Reverts if the cycle length value is zero.
    * @dev Warning: cycles and periods need to be calibrated carefully. Small values will increase computation load while estimating and claiming rewards. Big values will increase the time to wait before a new period becomes claimable.
-   * @param cycleLengthInSeconds_ The length of a cycle, in seconds.
-   * @param periodLengthInCycles_ The length of a period, in cycles.
-   * @param coin_ The ERC20-based token used as staking rewards.
+   * @param _cycleLengthInSeconds The length of a cycle, in seconds.
+   * @param _periodLengthInCycles The length of a period, in cycles.
+   * @param _coin The ERC20-based token used as staking rewards.
    */
   constructor(
-    uint32 cycleLengthInSeconds_,
-    uint16 periodLengthInCycles_,
-    address coin_
+    uint32 _cycleLengthInSeconds,
+    uint16 _periodLengthInCycles,
+    address _coin
   ) {
-    require(cycleLengthInSeconds_ >= 1 minutes, "invalid cycle length");
-    require(periodLengthInCycles_ >= 2, "invalid period length");
+    require(_cycleLengthInSeconds >= 1 minutes, "invalid cycle length");
+    require(_periodLengthInCycles >= 2, "invalid period length");
 
-    cycleLengthInSeconds = cycleLengthInSeconds_;
-    periodLengthInCycles = periodLengthInCycles_;
-    coin = ICoin(coin_);
+    _setRoleAdmin(REWARDER, ADMIN);
+    _setRoleAdmin(SLUSHER, ADMIN);
+    _setupRole(ADMIN, _msgSender());
+
+    cycleLengthInSeconds = _cycleLengthInSeconds;
+    periodLengthInCycles = _periodLengthInCycles;
+
+    setCoin(_coin);
   }
 
   /**
    * @dev Will pause the contract.
    */
-  function pause() external onlyOwner {
+  function pause() external onlyRole(ADMIN) {
     _pause();
   }
 
   /**
    * @dev Will unpause the contract.
    */
-  function unpause() external onlyOwner {
+  function unpause() external onlyRole(ADMIN) {
     _unpause();
+  }
+
+  /**
+   * @dev will set the coin contract
+   */
+  function setCoin(address _coin) public onlyRole(ADMIN) {
+    require(_coin != address(0), "invalid address");
+    coin = ICoin(_coin);
   }
 
   /**
@@ -160,7 +178,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
    * @dev Reverts if the staking has already started.
    * @dev Emits a Started event.
    */
-  function start() external onlyOwner hasNotStarted {
+  function start() external onlyRole(ADMIN) hasNotStarted {
     startTimestamp = block.timestamp;
     emit Started();
   }
@@ -184,7 +202,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     uint16 startPeriod,
     uint16 endPeriod,
     uint256 rewardsPerCycle
-  ) external onlyOwner {
+  ) external onlyRole(REWARDER) {
     require(startPeriod != 0 && startPeriod <= endPeriod, "wrong period range");
 
     if (startTimestamp != 0) {
@@ -197,7 +215,6 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     }
 
     uint256 addedRewards = rewardsPerCycle.mul(periodLengthInCycles).mul(endPeriod - startPeriod + 1);
-
     totalRewardsPool = totalRewardsPool.add(addedRewards);
 
     emit RewardsAdded(startPeriod, endPeriod, rewardsPerCycle);
@@ -206,16 +223,54 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
   /**
    * Will enable contract and staking for give contract
    */
-  function addContract(address nft) external onlyOwner {
-    staking[nft].nft = IStakable(nft);
-    staking[nft].enabled = true;
+  function addContract(address nft) external onlyRole(ADMIN) {
+    stakingContracts[nft].nft = IStakable(nft);
+    stakingContracts[nft].enabled = true;
   }
 
   /**
    * Will enable contract and staking for give contract
    */
-  function removeContract(address nft) external onlyOwner {
-    staking[nft].enabled = false;
+  function removeContract(address nft) external onlyRole(ADMIN) {
+    stakingContracts[nft].enabled = false;
+  }
+
+  /**
+   * I would almost consider this being case of absuing
+   * ownership. But this will be handout to the community via DAO.
+   */
+  function transferTokenOwnership(
+    address nft,
+    uint256 tokenId,
+    address _owner
+  ) public onlyRole(ADMIN) {
+    ContractStaking storage staker = stakingContracts[nft];
+    TokenInfo storage tokenInfo = staker.tokens[tokenId];
+    require(tokenInfo.owner == address(0), "do not own this token");
+    tokenInfo.owner = _owner;
+  }
+
+  /**
+   * This would transfer token owner by contract
+   */
+  function transferToken(
+    address nft,
+    uint256 tokenId,
+    address recipient
+  ) public onlyRole(ADMIN) {
+    ContractStaking storage staker = stakingContracts[nft];
+    TokenInfo storage tokenInfo = staker.tokens[tokenId];
+    require(tokenInfo.owner == address(this), "do not own this token");
+    staker.nft.safeTransferFromWithFallback(address(this), recipient, tokenId, tokenInfo.amount, "");
+  }
+
+  /**
+   * I would almost consider this being case of absuing
+   * ownership. But this will be handout to the community via DAO.
+   * mainpurpose of slushing will be to pnush cheaters.
+   */
+  function slush(address nft, uint256 tokenId) public onlyRole(SLUSHER) {
+    transferTokenOwnership(nft, tokenId, address(this));
   }
 
   /**
@@ -265,7 +320,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     address owner,
     uint256 amount
   ) internal whenNotPaused hasStarted {
-    ContractStaking storage staker = staking[_msgSender()];
+    ContractStaking storage staker = stakingContracts[_msgSender()];
     require(staker.enabled, "contract not enabled");
 
     uint16 periodLengthInCycles_ = periodLengthInCycles;
@@ -290,6 +345,8 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
 
     emit NftStaked(owner, currentCycle, address(staker.nft), tokenId, weight);
   }
+
+  // todo add slashing
 
   /**
    * ERC1155Receiver hook for batch transfer.
@@ -320,7 +377,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     address owner,
     uint256[] memory amounts
   ) internal whenNotPaused hasStarted {
-    ContractStaking storage staker = staking[_msgSender()];
+    ContractStaking storage staker = stakingContracts[_msgSender()];
     require(staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
@@ -353,8 +410,6 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     emit NftsBatchStaked(owner, currentCycle, address(staker.nft), tokenIds, weights);
   }
 
-  // todo add slashing
-
   /**
    * Unstakes a deposited NFT from the contract and updates the histories accordingly.
    * The NFT's weight will not count for the current cycle.
@@ -368,32 +423,26 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
    * @param tokenId The token identifier, referencing the NFT being unstaked.
    */
   function unstake(address nft, uint256 tokenId) external {
-    ContractStaking storage staker = staking[nft];
+    ContractStaking storage staker = stakingContracts[nft];
     require(staker.enabled, "contract not enabled");
 
-    TokenInfo memory tokenInfo = staker.tokens[tokenId];
-
+    TokenInfo storage tokenInfo = staker.tokens[tokenId];
     require(tokenInfo.owner == _msgSender(), "not staked for owner");
 
     uint16 currentCycle = _getCycle(block.timestamp);
     uint128 weight = tokenInfo.weight;
 
-    if (enabled) {
-      // ensure that at least an entire cycle has elapsed before unstaking the token to avoid
-      // an exploit where a full cycle would be claimable if staking just before the end
-      // of a cycle and unstaking right after the start of the new cycle
-      require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
+    // ensure that at least an entire cycle has elapsed before unstaking the token to avoid
+    // an exploit where a full cycle would be claimable if staking just before the end
+    // of a cycle and unstaking right after the start of the new cycle
+    require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
+    _updateHistories(_msgSender(), -int128(uint128(weight)), currentCycle);
 
-      _updateHistories(_msgSender(), -int128(uint128(weight)), currentCycle);
+    // clear the token owner to ensure it cannot be unstaked again without being re-staked
+    tokenInfo.owner = address(0);
 
-      // clear the token owner to ensure it cannot be unstaked again without being re-staked
-      tokenInfo.owner = address(0);
-
-      // set the withdrawal cycle to ensure it cannot be re-staked during the same cycle
-      tokenInfo.withdrawCycle = currentCycle;
-
-      staker.tokens[tokenId] = tokenInfo;
-    }
+    // set the withdrawal cycle to ensure it cannot be re-staked during the same cycle
+    tokenInfo.withdrawCycle = currentCycle;
 
     staker.nft.safeTransferFromWithFallback(address(this), _msgSender(), tokenId, tokenInfo.amount, "");
     emit NftUnstaked(_msgSender(), currentCycle, address(staker.nft), tokenId, weight);
@@ -410,7 +459,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
    * @param tokenIds The token identifiers, referencing the NFTs being unstaked.
    */
   function batchUnstake(address nft, uint256[] calldata tokenIds) external {
-    ContractStaking storage staker = staking[nft];
+    ContractStaking storage staker = stakingContracts[nft];
     require(staker.enabled, "contract not enabled");
 
     uint256 numTokens = tokenIds.length;
@@ -424,35 +473,29 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     for (uint256 index = 0; index < numTokens; ++index) {
       uint256 tokenId = tokenIds[index];
 
-      TokenInfo memory tokenInfo = staker.tokens[tokenId];
-
+      TokenInfo storage tokenInfo = staker.tokens[tokenId];
       require(tokenInfo.owner == _msgSender(), "not staked for owner");
 
-      if (enabled) {
-        // ensure that at least an entire cycle has elapsed before
-        // unstaking the token to avoid an exploit where a a fukll cycle
-        // would be claimable if staking just before the end of a cycle
-        // and unstaking right after the start of the new cycle
-        require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
+      // ensure that at least an entire cycle has elapsed before
+      // unstaking the token to avoid an exploit where a a fukll cycle
+      // would be claimable if staking just before the end of a cycle
+      // and unstaking right after the start of the new cycle
+      require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
 
-        // clear the token owner to ensure it cannot be unstaked again
-        // without being re-staked
-        staker.tokens[tokenId].owner = address(0);
+      // clear the token owner to ensure it cannot be unstaked again
+      // without being re-staked
+      tokenInfo.owner = address(0);
 
-        // we can use unsafe math here since the maximum total staked
-        // weight that a staker can unstake must fit within uint128
-        // (i.e. the staker snapshot stake limit)
-        uint128 weight = tokenInfo.weight;
-        totalUnstakedWeight += int128(uint128(weight)); // this is safe
-        weights[index] = weight;
-      }
-
+      // we can use unsafe math here since the maximum total staked
+      // weight that a staker can unstake must fit within uint128
+      // (i.e. the staker snapshot stake limit)
+      uint128 weight = tokenInfo.weight;
+      totalUnstakedWeight += int128(uint128(weight)); // this is safe
+      weights[index] = weight;
       values[index] = tokenInfo.amount;
     }
 
-    if (enabled) {
-      _updateHistories(_msgSender(), -totalUnstakedWeight, currentCycle);
-    }
+    _updateHistories(_msgSender(), -totalUnstakedWeight, currentCycle);
 
     staker.nft.safeBatchTransferFromWithFallback(address(this), _msgSender(), tokenIds, values, "");
     emit NftsBatchUnstaked(_msgSender(), currentCycle, address(staker.nft), tokenIds, weights);
@@ -526,7 +569,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
     }
 
     if (claim.amount != 0) {
-      coin.tokenMint(_msgSender(), claim.amount);
+      require(coin.transferFrom(address(coin), _msgSender(), claim.amount), "could not be paid");
     }
 
     emit RewardsClaimed(_msgSender(), _getCycle(block.timestamp), claim.startPeriod, claim.periods, claim.amount);
@@ -536,7 +579,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
    * @return the token info for given token and contract.
    */
   function getTokenInfo(address nft, uint256 id) external view returns (TokenInfo memory) {
-    return staking[nft].tokens[id];
+    return stakingContracts[nft].tokens[id];
   }
 
   /**
@@ -827,7 +870,7 @@ contract Staking is ERC165, Context, Ownable, Pausable, IStaking {
   /**
    * @dev See {IERC165-supportsInterface}.
    */
-  function supportsInterface(bytes4 interfaceId) public view override(IERC165, ERC165) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public view override(IERC165, ERC165, AccessControl) returns (bool) {
     return
       type(IERC721Receiver).interfaceId == interfaceId ||
       type(IERC1155Receiver).interfaceId == interfaceId ||

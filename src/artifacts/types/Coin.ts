@@ -892,7 +892,7 @@ export interface Coin extends BaseContract {
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     tokenToEthSwapInput(
@@ -1185,7 +1185,7 @@ export interface Coin extends BaseContract {
 
   tokenToEthSwap(
     tokensSold: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   tokenToEthSwapInput(
@@ -1907,7 +1907,7 @@ export interface Coin extends BaseContract {
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     tokenToEthSwapInput(
@@ -2223,7 +2223,7 @@ export interface Coin extends BaseContract {
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     tokenToEthSwapInput(

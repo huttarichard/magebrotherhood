@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/ICoin.sol";
 import "./interfaces/IAffiliate.sol";
@@ -17,7 +18,7 @@ import "./interfaces/IAffiliate.sol";
 /**
  * Playables contract.
  */
-contract Playables is ERC1155, ERC2981, Ownable, Pausable {
+contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   /**
    * @dev collection represents nft collection.
    */
@@ -32,8 +33,14 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
     address artist;
   }
 
-  ICoin public immutable coin;
+  /**
+   * @dev Coin address;
+   */
+  ICoin public coin;
 
+  /**
+   * @dev contains all collections.
+   */
   mapping(uint256 => Collection) public collections;
 
   /**
@@ -52,6 +59,8 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
     _;
   }
 
+  bytes32 public constant ADMIN = keccak256("ADMIN");
+
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
    */
@@ -60,15 +69,17 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
     address _affiliate,
     string memory _uri
   ) ERC1155(_uri) {
-    coin = ICoin(_coin);
-    affiliate = IAffiliate(_affiliate);
+    _setupRole(ADMIN, _msgSender());
+
+    setCoin(_coin);
+    setAffiliate(_affiliate);
     _setDefaultRoyalty(_coin, 500);
   }
 
   /**
    * @dev Will add collection metadata to given token id
    */
-  function setCollection(uint256 tokenId, Collection memory collection) public onlyOwner {
+  function setCollection(uint256 tokenId, Collection memory collection) public onlyRole(ADMIN) {
     collections[tokenId] = collection;
     collection.createdAt = block.timestamp;
   }
@@ -76,36 +87,44 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
   /**
    * @dev will set contract uri. See https://docs.opensea.io/docs/contract-level-metadata.
    */
-  function setContractURI(string calldata _uri) public onlyOwner {
+  function setContractURI(string calldata _uri) public onlyRole(ADMIN) {
     contractURI = _uri;
   }
 
   /**
    * @dev Will pause the contract.
    */
-  function pause() external onlyOwner {
+  function pause() external onlyRole(ADMIN) {
     _pause();
   }
 
   /**
    * @dev Will unpause the contract.
    */
-  function unpause() external onlyOwner {
+  function unpause() external onlyRole(ADMIN) {
     _unpause();
   }
 
   /**
-   * @dev will set default royalty info.
+   * @dev will set the coin contract
    */
-  function setDefaultRoyalty(address _receiver, uint96 feeNumerator) public onlyOwner {
-    _setDefaultRoyalty(_receiver, feeNumerator);
+  function setCoin(address _coin) public onlyRole(ADMIN) {
+    require(_coin != address(0), "invalid address");
+    coin = ICoin(_coin);
   }
 
   /**
    * @dev will set the rewarder
    */
-  function setAffiliate(address _affiliate) public onlyOwner {
+  function setAffiliate(address _affiliate) public onlyRole(ADMIN) {
     affiliate = IAffiliate(_affiliate);
+  }
+
+  /**
+   * @dev will set default royalty info.
+   */
+  function setDefaultRoyalty(address _receiver, uint96 feeNumerator) public onlyRole(ADMIN) {
+    _setDefaultRoyalty(_receiver, feeNumerator);
   }
 
   /**
@@ -115,7 +134,7 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
     uint256 tokenId,
     address _receiver,
     uint96 feeNumerator
-  ) public onlyOwner {
+  ) public onlyRole(ADMIN) {
     _setTokenRoyalty(tokenId, _receiver, feeNumerator);
   }
 
@@ -144,54 +163,62 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
   }
 
   /**
-   * @dev mint function, use this to min tokenId
+   * @dev MintParams containing parameters for minting a token.
    */
-  function mint(
-    uint256 tokenId,
-    uint64 amount,
-    bool payWithCoin
-  ) public payable whenNotPaused whenLaunched(tokenId) {
-    require(_exists(tokenId), "nonexistent token");
-    Collection storage collection = collections[tokenId];
-    require(collection.minted + amount <= collection.supply, "supply exceeded");
-    uint256 price = collection.price * amount;
-
-    _payment(price, payWithCoin);
-    _mint(_msgSender(), tokenId, amount, "");
-    collection.minted += amount;
+  struct MintParams {
+    uint256 tokenId;
+    uint256 amount;
+    string discount;
+    bool payWithCoin;
   }
 
   /**
    * @dev mint function which is using discount
    */
-  function mint(
-    uint256 tokenId,
-    uint64 amount,
-    bool payWithCoin,
-    string memory discount
-  ) public payable whenNotPaused whenLaunched(tokenId) {
-    require(_exists(tokenId), "nonexistent token");
-    Collection storage collection = collections[tokenId];
+  function mint(MintParams memory p) public payable whenNotPaused whenLaunched(p.tokenId) {
+    require(_exists(p.tokenId), "nonexistent token");
+    Collection storage collection = collections[p.tokenId];
 
-    require(collection.minted + amount <= collection.supply, "supply exceeded");
-    uint256 rw = affiliate.reward(discount);
-    uint256 price = collection.price * amount - rw;
+    require(p.amount > 0, "amount must be greater than 0");
+    require(collection.minted + p.amount <= collection.supply, "supply exceeded");
+    uint256 mintPrice = collection.price * p.amount;
 
-    _payment(price, payWithCoin);
-    _mint(_msgSender(), tokenId, amount, "");
-    collection.minted += amount;
+    if (bytes(p.discount).length > 0) {
+      uint256 rw = affiliate.reward(p.discount);
+      mintPrice -= rw;
+    }
+
+    if (p.payWithCoin) {
+      coin.tokenEthBurn(_msgSender(), mintPrice);
+    } else {
+      require(msg.value >= mintPrice, "not enough eth given");
+      Address.sendValue(payable(address(coin)), msg.value);
+    }
+
+    _mint(_msgSender(), p.tokenId, p.amount, "");
+    collection.minted += p.amount;
   }
 
   /**
-   * @dev will perform payment in form of coin burn or eth transfer
+   * @dev will perform analysis of tokenId and will return its price and mintability
    */
-  function _payment(uint256 eth, bool payWithCoin) internal {
-    if (payWithCoin) {
-      coin.tokenEthBurn(_msgSender(), eth);
-      return;
+  function price(MintParams memory p) public view returns (bool, uint256) {
+    if (!_exists(p.tokenId)) {
+      return (false, 0);
     }
-    require(msg.value >= eth, "not enough eth given");
-    Address.sendValue(payable(address(coin)), msg.value);
+    Collection memory collection = collections[p.tokenId];
+    if (collection.minted + p.amount > collection.supply) {
+      return (false, 0);
+    }
+
+    uint256 mintPrice = collection.price * p.amount;
+
+    if (bytes(p.discount).length > 0) {
+      (uint256 rw, ) = affiliate.payoff(address(this));
+      mintPrice -= rw;
+    }
+
+    return (true, mintPrice);
   }
 
   /**
@@ -204,7 +231,13 @@ contract Playables is ERC1155, ERC2981, Ownable, Pausable {
   /**
    * @dev See {IERC165-supportsInterface}.
    */
-  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(ERC1155, ERC2981, AccessControl)
+    returns (bool)
+  {
     return super.supportsInterface(interfaceId);
   }
 }

@@ -19,11 +19,14 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface IAffiliateInterface extends utils.Interface {
   contractName: "IAffiliate";
   functions: {
+    "payoff(address)": FunctionFragment;
     "reward(string)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "payoff", values: [string]): string;
   encodeFunctionData(functionFragment: "reward", values: [string]): string;
 
+  decodeFunctionResult(functionFragment: "payoff", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "reward", data: BytesLike): Result;
 
   events: {};
@@ -57,11 +60,21 @@ export interface IAffiliate extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    payoff(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
+
     reward(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  payoff(
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
 
   reward(
     code: string,
@@ -69,12 +82,19 @@ export interface IAffiliate extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    payoff(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
+
     reward(code: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
+    payoff(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     reward(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -82,6 +102,11 @@ export interface IAffiliate extends BaseContract {
   };
 
   populateTransaction: {
+    payoff(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     reward(
       code: string,
       overrides?: Overrides & { from?: string | Promise<string> }

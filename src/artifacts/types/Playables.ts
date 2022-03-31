@@ -19,6 +19,25 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export declare namespace Playables {
+  export type MintParamsStruct = {
+    tokenId: BigNumberish;
+    amount: BigNumberish;
+    discount: string;
+    payWithCoin: boolean;
+  };
+
+  export type MintParamsStructOutput = [
+    BigNumber,
+    BigNumber,
+    string,
+    boolean
+  ] & {
+    tokenId: BigNumber;
+    amount: BigNumber;
+    discount: string;
+    payWithCoin: boolean;
+  };
+
   export type CollectionStruct = {
     uri: string;
     createdAt: BigNumberish;
@@ -54,34 +73,45 @@ export declare namespace Playables {
 export interface PlayablesInterface extends utils.Interface {
   contractName: "Playables";
   functions: {
+    "ADMIN()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "affiliate()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "coin()": FunctionFragment;
     "collections(uint256)": FunctionFragment;
     "contractURI()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getStakingWeight(uint256)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(uint256,uint64,bool,string)": FunctionFragment;
-    "owner()": FunctionFragment;
+    "mint((uint256,uint256,string,bool))": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "price((uint256,uint256,string,bool))": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setAffiliate(address)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setCoin(address)": FunctionFragment;
     "setCollection(uint256,(string,uint256,uint256,uint256,uint256,uint128,uint256,address))": FunctionFragment;
     "setContractURI(string)": FunctionFragment;
     "setDefaultRoyalty(address,uint96)": FunctionFragment;
     "setTokenRoyalty(uint256,address,uint96)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "affiliate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -101,8 +131,20 @@ export interface PlayablesInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getStakingWeight",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -110,14 +152,21 @@ export interface PlayablesInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, BigNumberish, boolean, string]
+    values: [Playables.MintParamsStruct]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "price",
+    values: [Playables.MintParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -139,6 +188,7 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "setCoin", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setCollection",
     values: [BigNumberish, Playables.CollectionStruct]
@@ -159,13 +209,14 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "affiliate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -182,21 +233,28 @@ export interface PlayablesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getStakingWeight",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
@@ -217,6 +275,7 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setCoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCollection",
     data: BytesLike
@@ -237,17 +296,15 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -255,8 +312,10 @@ export interface PlayablesInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -270,17 +329,31 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
 export type PausedEvent = TypedEvent<[string], { account: string }>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; previousAdminRole: string; newAdminRole: string }
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; account: string; sender: string }
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export type TransferBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -347,6 +420,10 @@ export interface Playables extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     affiliate(overrides?: CallOverrides): Promise<[string]>;
 
     balanceOf(
@@ -390,10 +467,24 @@ export interface Playables extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<[string]>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
     getStakingWeight(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isApprovedForAll(
       account: string,
@@ -401,22 +492,10 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "mint(uint256,uint64,bool,string)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      discount: string,
+    mint(
+      p: Playables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    "mint(uint256,uint64,bool)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -424,7 +503,20 @@ export interface Playables extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-    renounceOwnership(
+    price(
+      p: Playables.MintParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -463,6 +555,11 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setCollection(
       tokenId: BigNumberish,
       collection: Playables.CollectionStruct,
@@ -492,17 +589,16 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
+
+  ADMIN(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   affiliate(overrides?: CallOverrides): Promise<string>;
 
@@ -547,10 +643,24 @@ export interface Playables extends BaseContract {
 
   contractURI(overrides?: CallOverrides): Promise<string>;
 
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
   getStakingWeight(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isApprovedForAll(
     account: string,
@@ -558,22 +668,10 @@ export interface Playables extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "mint(uint256,uint64,bool,string)"(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    payWithCoin: boolean,
-    discount: string,
+  mint(
+    p: Playables.MintParamsStruct,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  "mint(uint256,uint64,bool)"(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    payWithCoin: boolean,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -581,7 +679,20 @@ export interface Playables extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
-  renounceOwnership(
+  price(
+    p: Playables.MintParamsStruct,
+    overrides?: CallOverrides
+  ): Promise<[boolean, BigNumber]>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -620,6 +731,11 @@ export interface Playables extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setCoin(
+    _coin: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setCollection(
     tokenId: BigNumberish,
     collection: Playables.CollectionStruct,
@@ -649,11 +765,6 @@ export interface Playables extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   unpause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -661,6 +772,10 @@ export interface Playables extends BaseContract {
   uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    ADMIN(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
     affiliate(overrides?: CallOverrides): Promise<string>;
 
     balanceOf(
@@ -704,10 +819,24 @@ export interface Playables extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<string>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
     getStakingWeight(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isApprovedForAll(
       account: string,
@@ -715,28 +844,31 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "mint(uint256,uint64,bool,string)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      discount: string,
+    mint(
+      p: Playables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    "mint(uint256,uint64,bool)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    price(
+      p: Playables.MintParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     royaltyInfo(
       _tokenId: BigNumberish,
@@ -770,6 +902,8 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setCoin(_coin: string, overrides?: CallOverrides): Promise<void>;
+
     setCollection(
       tokenId: BigNumberish,
       collection: Playables.CollectionStruct,
@@ -796,11 +930,6 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     unpause(overrides?: CallOverrides): Promise<void>;
 
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -818,17 +947,41 @@ export interface Playables extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,
@@ -871,6 +1024,10 @@ export interface Playables extends BaseContract {
   };
 
   estimateGas: {
+    ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     affiliate(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
@@ -894,8 +1051,25 @@ export interface Playables extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getStakingWeight(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -905,22 +1079,10 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "mint(uint256,uint64,bool,string)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      discount: string,
+    mint(
+      p: Playables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    "mint(uint256,uint64,bool)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -928,7 +1090,20 @@ export interface Playables extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceOwnership(
+    price(
+      p: Playables.MintParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -967,6 +1142,11 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setCollection(
       tokenId: BigNumberish,
       collection: Playables.CollectionStruct,
@@ -996,11 +1176,6 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1009,6 +1184,12 @@ export interface Playables extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     affiliate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1032,8 +1213,25 @@ export interface Playables extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getStakingWeight(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1043,22 +1241,10 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "mint(uint256,uint64,bool,string)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      discount: string,
+    mint(
+      p: Playables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    "mint(uint256,uint64,bool)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      payWithCoin: boolean,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1066,7 +1252,20 @@ export interface Playables extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
+    price(
+      p: Playables.MintParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1105,6 +1304,11 @@ export interface Playables extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setCoin(
+      _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setCollection(
       tokenId: BigNumberish,
       collection: Playables.CollectionStruct,
@@ -1132,11 +1336,6 @@ export interface Playables extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     unpause(
