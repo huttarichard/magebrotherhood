@@ -114,12 +114,10 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
 
     return (
       <Modal
-        modalProps={{
-          open,
-          onClose: () => {
-            handleOpenState(false);
-            setActiveStep(0);
-          },
+        open={open}
+        onClose={() => {
+          handleOpenState(false);
+          setActiveStep(0);
         }}
       >
         {content}

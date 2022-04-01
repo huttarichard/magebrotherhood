@@ -1,4 +1,4 @@
-import { Drawer } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
 import { PropsWithChildren } from "react";
 import { useWindowSize } from "react-use";
 

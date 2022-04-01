@@ -122,7 +122,13 @@ export default function Swap() {
   return (
     <Layout>
       <Main>
-        <SwapForm coin={coin} onTransactionSubmit={(t) => setOpenModal(true)}>
+        <SwapForm
+          coin={coin}
+          onTransactionSubmit={(t) => {
+            console.info(t);
+            setOpenModal(true);
+          }}
+        >
           <small>
             <FormattedMessage
               defaultMessage='By clicking "SWAP" you are agreeing to'

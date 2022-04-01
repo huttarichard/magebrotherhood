@@ -20,7 +20,7 @@ export default function Spinner(props: CircularProgressProps) {
         variant="indeterminate"
         disableShrink
         sx={{
-          color: (theme) => "#ec12f9",
+          color: () => "#ec12f9",
           animationDuration: "550ms",
           position: "absolute",
           left: 0,

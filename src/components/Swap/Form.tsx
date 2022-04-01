@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
 import { faArrowUpArrowDown } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { ICoin } from "artifacts/types";
 import Button from "components/ui/Button";
 import { CurrencyField, CurrencyFieldRef } from "components/ui/CurrencyField";

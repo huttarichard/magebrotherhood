@@ -12,9 +12,9 @@ import {
   faRectangleVerticalHistory,
 } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useMediaQuery } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Brand from "components/Brand";
 import Link from "next/link";
 import { useRouter } from "next/router";

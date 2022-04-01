@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import { default as MuiModal, ModalProps } from "@mui/material/Modal";
 import React from "react";
 
+export type { ModalProps };
+
 const Wrapper = styled(Box)`
   box-sizing: border-box;
   position: absolute;

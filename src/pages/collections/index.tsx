@@ -88,7 +88,6 @@ export default function CollectionsIndex() {
     },
   ];
 
-  const placeholderImage = "/images/nftcharacter.png";
   return (
     <>
       <Head>
