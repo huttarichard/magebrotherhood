@@ -6,17 +6,14 @@ import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
 import useCoinContract, { useCoinUSDPrice } from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
-import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  /* background-color: #eee; */
-  height: 100%;
-  max-height: calc(100vh - 60px);
-  height: calc(100vh - 60px);
+  height: 100vh;
+  min-height: 550px;
 
   @supports (-webkit-touch-callout: none) {
     height: calc(100vh - 120px);
@@ -101,7 +98,6 @@ const Main = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* pointer-events: none; */
   color: ${({ theme }) => theme.text2};
 
   h1 {
@@ -110,6 +106,7 @@ const Main = styled.div`
     max-width: 230px;
     font-size: 47px;
     margin: 0 0 2rem;
+    line-height: 1;
 
     span {
       padding-right: 5px;
