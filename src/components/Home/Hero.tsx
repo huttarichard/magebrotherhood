@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import heroGhost from "assets/images/heroGhost.png";
+import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
-import heroGhost from "assets/images/heroGhost.png";
 import useCoinContract, { useCoinUSDPrice } from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
 import React from "react";
@@ -12,7 +13,7 @@ import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  background-color: #eee;
+  /* background-color: #eee; */
   height: 100%;
   max-height: calc(100vh - 60px);
   height: calc(100vh - 60px);
@@ -36,7 +37,7 @@ const Background = styled.div`
   background: transparent url(${heroBg2.src}) no-repeat;
   background-size: cover;
 
-  &::before {
+  &::after {
     content: "";
     position: absolute;
     top: 0;
@@ -44,8 +45,9 @@ const Background = styled.div`
     bottom: 0;
     left: 0;
     background: transparent url(${heroGhost.src}) no-repeat;
-    background-size: contain;
+    background-size: cover;
     background-position: center left;
+    z-index: -1;
   }
 
   @media (min-width: 1200px) {
