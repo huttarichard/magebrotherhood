@@ -48,7 +48,6 @@ const Wrapper = styled.div`
 
 const StickyContainer = styled(Grid)`
   position: sticky;
-  /* background: yellow; */
   top: 60px;
   height: calc(100vh - 60px);
 
@@ -59,13 +58,12 @@ const StickyContainer = styled(Grid)`
 `;
 
 const ContainerGrid = styled(Grid)`
-  /* background: blue; */
   height: 100%;
+  justify-content: center;
 `;
 
 const SVGGridItem = styled(Grid)`
   overflow: hidden;
-  max-height: 100vw;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     margin-right: 10px;
@@ -247,11 +245,11 @@ export default function Scheme() {
         </div>
 
         <StickyContainer ref={sticky}>
-          <ContainerGrid container direction={{ xs: "column", lg: "row" }}>
+          <ContainerGrid container direction={{ xs: "column", lg: "row" }} wrap="nowrap">
             <SVGGridItem item flexGrow="1" ref={infographics}>
               <InfoGraphics active={active === -1 ? "all" : items[active]?.focus} />
             </SVGGridItem>
-            <DescriptionGridItem item container lg={3} direction="column" justifyContent="center">
+            <DescriptionGridItem item container lg={3} direction="column" justifyContent="center" wrap="nowrap">
               {items.map((e, i) => {
                 return (
                   <Card item key={i} className={`card ${active == i ? "active" : ""}`}>
