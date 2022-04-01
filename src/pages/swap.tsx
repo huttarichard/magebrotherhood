@@ -7,6 +7,7 @@ import Paper from "components/ui/Paper";
 import TransactionWindow from "components/ui/TransactionWindow";
 import useCoinContract from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
@@ -112,7 +113,7 @@ const steps = [
 
 export default function Swap() {
   const ethers = useWeb3();
-  const { contract: coin, error, ready } = useCoinContract(ethers);
+  const { contract: coin, error } = useCoinContract(ethers);
   const router = useRouter();
   // const [tax, setTax] = useState<number | null>(null);
 
@@ -121,7 +122,20 @@ export default function Swap() {
   return (
     <Layout>
       <Main>
-        <SwapForm coin={coin} onTransactionSubmit={(t) => setOpenModal(true)}></SwapForm>
+        <SwapForm coin={coin} onTransactionSubmit={(t) => setOpenModal(true)}>
+          <small>
+            <FormattedMessage
+              defaultMessage='By clicking "SWAP" you are agreeing to'
+              id="swap_page_terms_acceptance_text"
+            />
+            <Link href="/tos">
+              <a>
+                <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
+              </a>
+            </Link>
+            .
+          </small>
+        </SwapForm>
         {error && <p>{error.message}</p>}
 
         <Tranding onClick={() => router.push("/price")}>

@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
 import { faArrowUpArrowDown } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Typography } from "@mui/material";
 import { ICoin } from "artifacts/types";
 import Button from "components/ui/Button";
 import { CurrencyField, CurrencyFieldRef } from "components/ui/CurrencyField";
@@ -61,7 +62,6 @@ const CardWrapper = styled(Card)`
 const CardHeader = styled.div`
   h1 {
     margin: 0 0 2rem;
-    font-weight: 400;
     font-size: 3rem;
     text-transform: uppercase;
   }
@@ -206,9 +206,9 @@ export default function SwapForm({ children, onTransactionSubmit, coin }: PropsW
   return (
     <CardWrapper>
       <CardHeader>
-        <h1>
+        <Typography variant="h1">
           <FormattedMessage defaultMessage="Swap" id="swap_page_title" />
-        </h1>
+        </Typography>
       </CardHeader>
 
       {coin ? (
