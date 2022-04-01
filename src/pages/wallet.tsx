@@ -6,7 +6,7 @@ import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import BrotherhoodCoinLogo from "components/ui/BrotherhoodCoinLogo";
 import Button from "components/ui/Button";
-import CurrencyFieldText from "components/ui/CurrencyFieldText";
+import CurrencyFieldText from "components/ui/CurrencyField";
 // import CurrencyFieldText from "components/ui/";
 import EthereumLogo from "components/ui/EthereumLogo";
 import MustConnect from "components/ui/MustConnectWallet";
