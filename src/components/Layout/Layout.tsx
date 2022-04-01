@@ -19,12 +19,11 @@ const MainGrid = styled(Grid)`
 `;
 
 const SidebarGrid = styled(Grid)`
-  border-right: 1px solid #2c2c2c;
-  height: 100%;
-  width: 340px;
-  min-width: 340px;
-  position: relative;
   display: none;
+  position: relative;
+  height: 100%;
+  max-width: 340px;
+  border-right: 1px solid #2c2c2c;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     display: block;
@@ -32,14 +31,12 @@ const SidebarGrid = styled(Grid)`
 `;
 
 const NavbarGrid = styled(Grid)`
+  position: fixed;
   height: 60px;
-  width: 100%;
-  position: relative;
+  z-index: 10;
   display: block;
   border-bottom: 1px solid #2c2c2c;
-  position: fixed;
   background: ${(props) => props.theme.bg1};
-  z-index: 10;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     display: none;
@@ -47,18 +44,18 @@ const NavbarGrid = styled(Grid)`
 `;
 
 const SidebarContent = styled.div`
-  height: 100%;
-  width: 340px;
   position: fixed;
-  background: ${(props) => props.theme.bg1};
+  height: 100%;
+  width: 100%;
+  max-width: 340px;
   border-right: 1px solid #2c2c2c;
+  background: ${(props) => props.theme.bg1};
 `;
 
 const ContentGrid = styled(Grid)`
-  padding-top: 60px;
-  z-index: 9;
   position: relative;
-  /* overflow: auto; */
+  z-index: 9;
+  padding-top: 60px;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     width: calc(100% - 340px);
@@ -92,7 +89,7 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
         </SidebarContent>
       </SidebarGrid>
 
-      <Drawer PaperProps={{ style: { minWidth: 340 } }} anchor="left" open={menuOpened} onClose={closeMenu}>
+      <Drawer PaperProps={{ style: { minWidth: 320 } }} anchor="left" open={menuOpened} onClose={closeMenu}>
         <SidebarContent>
           <Sidebar closeIcon />
         </SidebarContent>
