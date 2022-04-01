@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/ICoin.sol";
-import "hardhat/console.sol";
 
 /**
  * @notice Affiliate marketing is contract distibuting rewards for marketing.
