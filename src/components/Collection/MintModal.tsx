@@ -1,5 +1,5 @@
-import { Grid } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
 import { StakingItem } from "pages/staking";

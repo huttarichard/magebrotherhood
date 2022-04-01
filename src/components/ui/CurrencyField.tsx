@@ -75,7 +75,7 @@ export const CurrencyField = forwardRef<CurrencyFieldRef, CurrencyFieldProps>((p
     (x: BigNumber | null) => {
       onChange(x).then(() => setChanging(false));
     },
-    debounce ?? 1000,
+    debounce ?? 400,
     {
       leading: false,
       maxWait: 1000000,

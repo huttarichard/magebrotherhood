@@ -6,13 +6,13 @@ import { StepLabelProps } from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { FormattedMessage } from "react-intl";
 
-type TransactionStepperProps = {
+export type TransactionStepperProps = {
   steps: IStep[];
   activeStep: number;
   hash?: string;
 };
 
-type IStep = {
+export type IStep = {
   error: boolean;
   label: string;
   labelOptional?: string;
