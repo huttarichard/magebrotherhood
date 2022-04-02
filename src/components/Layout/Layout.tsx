@@ -1,6 +1,8 @@
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect } from "react";
 
@@ -10,46 +12,23 @@ import Sidebar from "./Sidebar";
 import { useLayout } from "./store";
 
 const MainGrid = styled(Grid)`
-  height: 100%;
   flex-direction: column;
 
-  ${(props) => props.theme.breakpoints.up("lg")} {
+  ${({ theme }) => theme.breakpoints.up("lg")} {
     flex-direction: row;
+    justify-content: flex-end;
+    min-height: 100vh;
   }
 `;
 
 const SidebarGrid = styled(Grid)`
-  display: none;
-  position: relative;
-  height: 100%;
-  max-width: 340px;
-  border-right: 1px solid #2c2c2c;
-
-  ${(props) => props.theme.breakpoints.up("lg")} {
-    display: block;
-  }
-`;
-
-const NavbarGrid = styled(Grid)`
   position: fixed;
-  height: 60px;
-  z-index: 10;
-  display: block;
-  border-bottom: 1px solid #2c2c2c;
-  background: ${(props) => props.theme.bg1};
-
-  ${(props) => props.theme.breakpoints.up("lg")} {
-    display: none;
-  }
-`;
-
-const SidebarContent = styled.div`
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  max-width: 340px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 340px;
   border-right: 1px solid #2c2c2c;
-  background: ${(props) => props.theme.bg1};
+  background: ${({ theme }) => theme.bg1};
 `;
 
 const ContentGrid = styled(Grid)`
@@ -57,9 +36,9 @@ const ContentGrid = styled(Grid)`
   z-index: 9;
   padding-top: 60px;
 
-  ${(props) => props.theme.breakpoints.up("lg")} {
+  ${({ theme }) => theme.breakpoints.up("lg")} {
     width: calc(100% - 340px);
-    padding: 0;
+    padding-top: 0;
   }
 `;
 
@@ -70,6 +49,9 @@ export interface LayoutProps {
 export default function Layout({ footer = false, children }: PropsWithChildren<LayoutProps>) {
   const { menuOpened, closeMenu } = useLayout();
   const router = useRouter();
+
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("lg"));
 
   useEffect(() => {
     router.events.on("routeChangeStart", closeMenu);
@@ -83,23 +65,21 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
 
   return (
     <MainGrid container>
-      <SidebarGrid item>
-        <SidebarContent>
+      {!isSmall && (
+        <SidebarGrid item>
           <Sidebar />
-        </SidebarContent>
-      </SidebarGrid>
+        </SidebarGrid>
+      )}
 
-      <Drawer PaperProps={{ style: { minWidth: 320 } }} anchor="left" open={menuOpened} onClose={closeMenu}>
-        <SidebarContent>
+      {isSmall && (
+        <Drawer anchor="left" open={menuOpened} onClose={closeMenu}>
           <Sidebar closeIcon />
-        </SidebarContent>
-      </Drawer>
+        </Drawer>
+      )}
 
-      <NavbarGrid item>
-        <Navbar />
-      </NavbarGrid>
+      {isSmall && <Navbar />}
 
-      <ContentGrid item flexGrow="1">
+      <ContentGrid item>
         {children}
 
         {footer && <Footer />}

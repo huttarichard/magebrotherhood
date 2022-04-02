@@ -23,13 +23,10 @@ import { FormattedMessage } from "react-intl";
 import HeaderWallet from "./HeaderWallet";
 import { useLayout } from "./store";
 
-const Navbar = styled(Grid)`
+const SidebarWrapper = styled(Grid)`
   padding: 2rem;
   transition: transform 0.3s;
   background-color: #111;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
   height: 100%;
 `;
 
@@ -40,13 +37,17 @@ const CloseIcon = styled.div`
 `;
 
 const List = styled.ul`
-  margin: 0;
-  margin-top: 5rem;
   list-style: none;
+  margin: 1rem 0;
   padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-  ${({ theme }) => theme.breakpoints.down("md")} {
-    margin-top: 2rem;
+  ${({ theme }) => theme.breakpoints.up("lg")} {
+    margin: -2rem 0 0 0;
+    height: 100%;
   }
 `;
 
@@ -122,7 +123,7 @@ const ListItem = styled.li`
     }
   }
 
-  ${(props) => props.theme.breakpoints.up("lg")} {
+  ${({ theme }) => theme.breakpoints.up("lg")} {
     a {
       > span {
         font-size: 1.4rem;
@@ -180,16 +181,16 @@ function Item({ icon, name, link, soon = false }: ItemProps) {
   }
 }
 
-export interface LayoutNavbarProps {
+export interface SidebarProps {
   closeIcon?: boolean;
 }
 
-export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
+export default function Sidebar({ closeIcon = false }: SidebarProps) {
   const { closeMenu } = useLayout();
   const router = useRouter();
 
   return (
-    <Navbar container direction="column" wrap="nowrap">
+    <SidebarWrapper container direction="column" wrap="nowrap">
       {closeIcon && (
         <CloseIcon>
           <FontAwesomeIcon className="close-icon" icon={faClose} onClick={closeMenu} />
@@ -198,7 +199,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
       <Grid item xs="auto">
         <Brand block />
       </Grid>
-      <Grid item flexGrow="1" sx={{ mb: 2 }}>
+      <Grid item flexGrow="1">
         <List>
           <Item icon={faHouse} name={<FormattedMessage defaultMessage="Home" id="ejEGdx" />} link="/" />
           <Item
@@ -230,6 +231,6 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           </Link>
         )}
       </Bottom>
-    </Navbar>
+    </SidebarWrapper>
   );
 }

@@ -12,7 +12,7 @@ import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100vh;
+  height: calc(100vh - 60px);
   min-height: 550px;
 
   @supports (-webkit-touch-callout: none) {
