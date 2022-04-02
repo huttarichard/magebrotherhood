@@ -8,7 +8,6 @@ import { Form, Formik } from "formik";
 import Head from "next/head";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Main = styled.div`
   display: flex;

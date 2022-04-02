@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { TextField } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import BrotherhoodCoinLogo from "components/ui/BrotherhoodCoinLogo";
 import Button from "components/ui/Button";
@@ -56,9 +56,9 @@ enum Filter {
 export default function FAQ() {
   const eths = useWeb3();
   const [filter, setFilter] = useState<Filter>(Filter.Assets);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitting] = useState<boolean>(false);
 
-  const { contract, ready, error } = useCoinContract(eths);
+  const { ready } = useCoinContract(eths);
 
   useEffect(() => {
     if (!ready) return;

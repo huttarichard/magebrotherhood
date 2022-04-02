@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 
 import Spinner from "./Spinner";
 
-export default function MustConnectWallet({ children }: React.PropsWithChildren<unknown>) {
+export default function MustConnect({ children }: React.PropsWithChildren<unknown>) {
   const { resolved, error, account } = useWeb3();
   const intl = useIntl();
 

@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
 import { StakingItem } from "pages/staking";
@@ -82,20 +82,20 @@ export default function StakingModal({ open, handleOpenState }: StakingModalProp
 
   return (
     <Modal
-      modalProps={{
-        open,
-        onClose: () => {
-          handleOpenState(false);
-          setActiveStep(0);
-        },
+      open={open}
+      onClose={() => {
+        handleOpenState(false);
+        setActiveStep(0);
       }}
     >
-      <TransactionStepper steps={steps} activeStep={activeStep} hash={hash} />
-      <Grid container flexDirection="column" alignItems="center">
-        <Button onClick={() => mockTransaction()} text="Mock transaction" borders distorted />
-        <br />
-        <button onClick={() => resetTransaction()}>Reset transaction</button>
-      </Grid>
+      <>
+        <TransactionStepper steps={steps} activeStep={activeStep} hash={hash} />
+        <Grid container flexDirection="column" alignItems="center">
+          <Button onClick={() => mockTransaction()} text="Mock transaction" borders distorted />
+          <br />
+          <button onClick={() => resetTransaction()}>Reset transaction</button>
+        </Grid>
+      </>
     </Modal>
   );
 }
