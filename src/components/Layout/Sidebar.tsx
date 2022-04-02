@@ -27,7 +27,7 @@ const SidebarWrapper = styled(Grid)`
   padding: 2rem;
   transition: transform 0.3s;
   background-color: #111;
-  height: 100vh;
+  height: 100%;
 `;
 
 const CloseIcon = styled.div`
@@ -38,7 +38,7 @@ const CloseIcon = styled.div`
 
 const List = styled.ul`
   list-style: none;
-  margin: 2rem 0;
+  margin: 1rem 0;
   padding: 0;
   width: 100%;
   display: flex;
@@ -46,7 +46,7 @@ const List = styled.ul`
   justify-content: center;
 
   ${({ theme }) => theme.breakpoints.up("lg")} {
-    margin-top: 0;
+    margin: -2rem 0 0 0;
     height: 100%;
   }
 `;

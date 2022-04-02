@@ -16,32 +16,19 @@ const MainGrid = styled(Grid)`
 
   ${({ theme }) => theme.breakpoints.up("lg")} {
     flex-direction: row;
+    justify-content: flex-end;
     min-height: 100vh;
   }
 `;
 
 const SidebarGrid = styled(Grid)`
-  display: none;
-
-  ${({ theme }) => theme.breakpoints.up("lg")} {
-    display: block;
-    position: relative;
-    height: 100%;
-    width: 340px;
-    border-right: 1px solid #2c2c2c;
-  }
-`;
-
-const SidebarContent = styled.div`
   position: fixed;
-  height: 100%;
-  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 340px;
   border-right: 1px solid #2c2c2c;
   background: ${({ theme }) => theme.bg1};
-
-  ${({ theme }) => theme.breakpoints.up("lg")} {
-    max-width: 340px;
-  }
 `;
 
 const ContentGrid = styled(Grid)`
@@ -78,21 +65,21 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
 
   return (
     <MainGrid container>
-      <SidebarGrid item>
-        <SidebarContent>
+      {!isSmall && (
+        <SidebarGrid item>
           <Sidebar />
-        </SidebarContent>
-      </SidebarGrid>
+        </SidebarGrid>
+      )}
 
       {isSmall && (
-        <Drawer PaperProps={{ style: { minWidth: 320 } }} anchor="left" open={menuOpened} onClose={closeMenu}>
+        <Drawer anchor="left" open={menuOpened} onClose={closeMenu}>
           <Sidebar closeIcon />
         </Drawer>
       )}
 
       {isSmall && <Navbar />}
 
-      <ContentGrid item flexGrow="1">
+      <ContentGrid item>
         {children}
 
         {footer && <Footer />}
