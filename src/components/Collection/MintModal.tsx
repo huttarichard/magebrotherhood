@@ -114,6 +114,7 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
 
     return (
       <Modal
+        wsx={{ minWidth: "calc(100% - 30px)" }}
         open={open}
         onClose={() => {
           handleOpenState(false);

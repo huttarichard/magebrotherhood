@@ -9,8 +9,6 @@ import { resolve } from "path";
 
 import CoinJSON from "../artifacts/contracts/Coin.sol/Coin.json";
 import { Coin } from "../artifacts/types/Coin";
-import { ChainId } from "../lib/web3/chains";
-import { chains } from "../lib/web3/providers/infura";
 
 const COIN_CONTRACT = process.env.COIN_CONTRACT as string;
 const DAY = 1000 * 60 * 60 * 24;
@@ -18,7 +16,7 @@ const DAY = 1000 * 60 * 60 * 24;
 const app = express();
 
 const provider = new JsonRpcProvider({
-  url: chains[ChainId.Rinkeby],
+  url: "https://rinkeby.infura.io/v3/" + process.env.INFURA_KEY,
   timeout: 5000,
 });
 

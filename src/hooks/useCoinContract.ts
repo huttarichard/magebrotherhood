@@ -1,14 +1,12 @@
 import { formatUnits } from "@ethersproject/units";
-import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { ICoin } from "artifacts/types";
-import { Name } from "lib/web3/contracts";
+import { Contract } from "lib/web3/contracts";
 import { useEffect, useState } from "react";
 
 import useContract from "./useContract";
-import { Web3 } from "./useWeb3";
 
-export default function useCoinContract(ethers: Web3) {
-  return useContract<ICoin>(Name.Coin, ethers);
+export default function useCoinContract() {
+  return useContract<ICoin>(Contract.Coin);
 }
 
 export function useCoinETHPrice(coin: ICoin | null) {
@@ -23,11 +21,4 @@ export function useCoinETHPrice(coin: ICoin | null) {
   }, [coin]);
 
   return price;
-}
-
-export function useCoinUSDPrice(coin: ICoin | null) {
-  const price = useCoinETHPrice(coin);
-  const etherPrice = useCoingeckoPrice("ethereum", "usd");
-  const ethbn = parseFloat(etherPrice || "0");
-  return ethbn * price;
 }

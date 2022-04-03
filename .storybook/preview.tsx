@@ -2,8 +2,6 @@ import * as NextImage from "next/image";
 import { addDecorator } from "@storybook/react";
 import ThemeProvider from '../src/components/ui/ThemeProvider'
 import { css, Global } from "@emotion/react";
-import { ChainId, Config, DAppProvider, Mainnet, Rinkeby } from "@usedapp/core";
-import { chains } from "../src/lib/web3/providers/infura";
 import { IntlProvider } from "react-intl";
 import messages from "../src/translations/en.json"
 
@@ -58,15 +56,6 @@ addDecorator((story) => (
 ));
 
 addDecorator((storyFn) => <ThemeProvider>{storyFn()}</ThemeProvider>);
-
-const config: Config = {
-  autoConnect: false,
-  readOnlyChainId: ChainId.Rinkeby,
-  networks: [Mainnet, Rinkeby],
-  readOnlyUrls: chains,
-};
-
-addDecorator((storyFn) => <DAppProvider config={config}>{storyFn()}</DAppProvider>);
 
 addDecorator((storyFn) => {
   return (<IntlProvider messages={messages} locale="en" defaultLocale="en">{storyFn()}</IntlProvider>)

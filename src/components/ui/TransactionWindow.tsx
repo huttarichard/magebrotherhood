@@ -36,7 +36,7 @@ export default function TransactionWindow({
   }
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} wsx={{ minWidth: "calc(100% - 30px)" }}>
       {content}
     </Modal>
   );

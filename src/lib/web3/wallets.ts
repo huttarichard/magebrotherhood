@@ -1,34 +1,40 @@
-import AuthereumLogo from "assets/logos/authereum.svg";
-import BinanceChainWalletLogo from "assets/logos/binancechainwallet.svg";
-import BitpieLogo from "assets/logos/bitpie.svg";
-import BitskiLogo from "assets/logos/bitski.svg";
-import BurnerWalletLogo from "assets/logos/burnerwallet.svg";
-import CeloExtensionWalletLogo from "assets/logos/celoExtensionWallet.svg";
-import CipherLogo from "assets/logos/cipher.svg";
-import CoinbaseLogo from "assets/logos/coinbase.svg";
-import DapperLogo from "assets/logos/dapper.svg";
-import DcentWalletLogo from "assets/logos/dcentwallet.svg";
-import FortmaticLogo from "assets/logos/fortmatic.svg";
-import FrameLogo from "assets/logos/frame.svg";
-import imTokenLogo from "assets/logos/imtoken.svg";
-import LiqualityLogo from "assets/logos/liquality.svg";
-import MathWalletLogo from "assets/logos/mathwallet.svg";
-import MetaMaskLogo from "assets/logos/metamask.svg";
-import MEWwallet from "assets/logos/mewwallet.svg";
-import NiftyWalletLogo from "assets/logos/niftyWallet.svg";
-import OperaLogo from "assets/logos/opera.svg";
-import PortisLogo from "assets/logos/portis.svg";
-import RWalletLogo from "assets/logos/rwallet.svg";
-import SafeLogo from "assets/logos/safe.svg";
-import StatusLogo from "assets/logos/status.svg";
-import TokenaryLogo from "assets/logos/tokenary.svg";
-import TorusLogo from "assets/logos/torus.svg";
-import TrustLogo from "assets/logos/trust.svg";
-import VenlyLogo from "assets/logos/venly.svg";
-import WalletConnectLogo from "assets/logos/walletconnect-circle.svg";
-import WalletLinkLogo from "assets/logos/walletlink.svg";
-import Web3DefaultLogo from "assets/logos/web3-default.svg";
-import XDEFILogo from "assets/logos/xdefi.svg";
+import { ExternalProvider, Provider, Web3Provider } from "@ethersproject/providers";
+import { Actions } from "@web3-react/types";
+import { Connector } from "@web3-react/types";
+import AuthereumLogo from "assets/wallets/authereum.svg";
+import BinanceChainWalletLogo from "assets/wallets/binancechainwallet.svg";
+import BitpieLogo from "assets/wallets/bitpie.svg";
+import BitskiLogo from "assets/wallets/bitski.svg";
+import BurnerWalletLogo from "assets/wallets/burnerwallet.svg";
+import CeloExtensionWalletLogo from "assets/wallets/celoExtensionWallet.svg";
+import CipherLogo from "assets/wallets/cipher.svg";
+import CoinbaseLogo from "assets/wallets/coinbase.svg";
+import DapperLogo from "assets/wallets/dapper.svg";
+import DcentWalletLogo from "assets/wallets/dcentwallet.svg";
+import FortmaticLogo from "assets/wallets/fortmatic.svg";
+import FrameLogo from "assets/wallets/frame.svg";
+import imTokenLogo from "assets/wallets/imtoken.svg";
+import LiqualityLogo from "assets/wallets/liquality.svg";
+import MathWalletLogo from "assets/wallets/mathwallet.svg";
+import MetaMaskLogo from "assets/wallets/metamask.svg";
+import MEWwallet from "assets/wallets/mewwallet.svg";
+import NiftyWalletLogo from "assets/wallets/niftyWallet.svg";
+import OperaLogo from "assets/wallets/opera.svg";
+import PortisLogo from "assets/wallets/portis.svg";
+import RWalletLogo from "assets/wallets/rwallet.svg";
+import SafeLogo from "assets/wallets/safe.svg";
+import StatusLogo from "assets/wallets/status.svg";
+import TokenaryLogo from "assets/wallets/tokenary.svg";
+import TorusLogo from "assets/wallets/torus.svg";
+import TrustLogo from "assets/wallets/trust.svg";
+import VenlyLogo from "assets/wallets/venly.svg";
+import WalletConnectLogo from "assets/wallets/walletconnect-circle.svg";
+import WalletLinkLogo from "assets/wallets/walletlink.svg";
+import Web3DefaultLogo from "assets/wallets/web3-default.svg";
+import XDEFILogo from "assets/wallets/xdefi.svg";
+import env from "lib/env";
+
+export type ConnectorFactory = (a: Actions) => Promise<[Connector, Provider]>;
 
 export interface IProviderInfo {
   id: string;
@@ -37,14 +43,24 @@ export interface IProviderInfo {
   description?: string;
   type: string;
   check: string;
-  package?: IProviderPackageOptions;
+  connector?: ConnectorFactory;
 }
 
-export type RequiredOption = string | string[];
+export const METAMASK: IProviderInfo = {
+  id: "injected",
+  name: "MetaMask",
+  logo: MetaMaskLogo,
+  type: "injected",
+  check: "isMetaMask",
 
-export interface IProviderPackageOptions {
-  required?: RequiredOption[];
-}
+  async connector(actions: Actions) {
+    const { MetaMask } = await import("@web3-react/metamask");
+    const instance = new MetaMask(actions);
+    await instance.activate(env.NETWORK);
+    const web3 = new Web3Provider(instance.provider as ExternalProvider);
+    return [instance, web3];
+  },
+};
 
 export const WALLETCONNECT: IProviderInfo = {
   id: "walletconnect",
@@ -52,9 +68,6 @@ export const WALLETCONNECT: IProviderInfo = {
   logo: WalletConnectLogo,
   type: "qrcode",
   check: "isWalletConnect",
-  package: {
-    required: [["infuraId", "rpc"]],
-  },
 };
 
 export const PORTIS: IProviderInfo = {
@@ -63,9 +76,6 @@ export const PORTIS: IProviderInfo = {
   logo: PortisLogo,
   type: "web",
   check: "isPortis",
-  package: {
-    required: ["id"],
-  },
 };
 
 export const FORTMATIC: IProviderInfo = {
@@ -74,9 +84,6 @@ export const FORTMATIC: IProviderInfo = {
   logo: FortmaticLogo,
   type: "web",
   check: "isFortmatic",
-  package: {
-    required: ["key"],
-  },
 };
 
 export const TORUS: IProviderInfo = {
@@ -93,9 +100,6 @@ export const VENLY: IProviderInfo = {
   logo: VenlyLogo,
   type: "web",
   check: "isVenly",
-  package: {
-    required: ["clientId"],
-  },
 };
 
 export const AUTHEREUM: IProviderInfo = {
@@ -120,9 +124,6 @@ export const MEWCONNECT: IProviderInfo = {
   logo: MEWwallet,
   type: "qrcode",
   check: "isMEWconnect",
-  package: {
-    required: [["infuraId", "rpc"]],
-  },
 };
 
 export const DCENT: IProviderInfo = {
@@ -131,9 +132,6 @@ export const DCENT: IProviderInfo = {
   logo: DcentWalletLogo,
   type: "hardware",
   check: "isDcentWallet",
-  package: {
-    required: ["rpcUrl"],
-  },
 };
 
 export const BITSKI: IProviderInfo = {
@@ -142,9 +140,6 @@ export const BITSKI: IProviderInfo = {
   logo: BitskiLogo,
   type: "web",
   check: "isBitski",
-  package: {
-    required: ["clientId", "callbackUrl"],
-  },
 };
 
 export const FRAME: IProviderInfo = {
@@ -169,17 +164,6 @@ export const WALLETLINK: IProviderInfo = {
   logo: WalletLinkLogo,
   type: "qrcode",
   check: "isWalletLink",
-  package: {
-    required: [["appName", "infuraId", "rpc"]],
-  },
-};
-
-export const METAMASK: IProviderInfo = {
-  id: "injected",
-  name: "MetaMask",
-  logo: MetaMaskLogo,
-  type: "injected",
-  check: "isMetaMask",
 };
 
 export const SAFE: IProviderInfo = {
