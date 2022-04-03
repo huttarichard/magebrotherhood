@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import heroGhost from "assets/images/heroGhost.png";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
-import useCoinContract, { useCoinUSDPrice } from "hooks/useCoinContract";
-import useWeb3 from "hooks/useWeb3";
+import { useCoinUSDPrice } from "hooks/useContract";
+import { useWeb3Remote } from "hooks/useWeb3";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
@@ -274,9 +273,8 @@ const Actions = styled.div`
 // const origin = typeof window !== "undefined" ? window?.location?.origin : "";
 
 export default function Hero() {
-  const ethers = useWeb3();
-  const { contract, ready } = useCoinContract(ethers);
-  const price = useCoinUSDPrice(contract);
+  const web3 = useWeb3Remote();
+  const price = useCoinUSDPrice(web3);
 
   return (
     <Wrapper>
@@ -319,9 +317,7 @@ export default function Hero() {
             </li> */}
             <li>
               <span>
-                {!ready ? (
-                  "..."
-                ) : (
+                {price ? (
                   <FormattedNumber
                     style="currency"
                     currency="USD"
@@ -331,6 +327,8 @@ export default function Hero() {
                     maximumFractionDigits={6}
                     minimumFractionDigits={2}
                   />
+                ) : (
+                  "..."
                 )}
               </span>
               <span>

@@ -11,7 +11,6 @@ const roClient = twitterClient.readOnly;
 async function main() {
   // Search for a user
   //   const user = await roClient.v2.tweets();
-  //   console.log(user);
 }
 
 main().catch((e) => console.error(e));

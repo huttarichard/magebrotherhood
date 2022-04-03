@@ -10,10 +10,9 @@ import CurrencyFieldText from "components/ui/CurrencyField";
 // import CurrencyFieldText from "components/ui/";
 import EthereumLogo from "components/ui/EthereumLogo";
 import Paper from "components/ui/Paper";
-import useCoinContract from "hooks/useCoinContract";
-import useWeb3 from "hooks/useWeb3";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormattedMessage, FormattedNumber, useIntl } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
@@ -52,16 +51,12 @@ enum Filter {
   Transfer,
 }
 
-export default function FAQ() {
-  const eths = useWeb3();
+export default function Wallet() {
+  const { activating, connected, error, provider } = useWeb3Wallet();
   const [filter, setFilter] = useState<Filter>(Filter.Assets);
   const [isSubmitting] = useState<boolean>(false);
 
-  const { ready } = useCoinContract(eths);
-
-  useEffect(() => {
-    if (!ready) return;
-  }, [ready]);
+  // const { resolved, contract, error } = useCoinContract();
 
   const intl = useIntl();
 
@@ -80,6 +75,18 @@ export default function FAQ() {
     id: "DtYelJ",
   });
 
+  if (!activating) {
+    return "Loading";
+  }
+
+  if (error) {
+    return error.message;
+  }
+
+  if (!connected) {
+    return "Not connected";
+  }
+
   return (
     <>
       <Head>
@@ -92,7 +99,7 @@ export default function FAQ() {
             <Typography variant="h3">
               <FormattedMessage defaultMessage="Wallet" id="3yk8fB" />
             </Typography>
-            <Typography variant="body2">{eths.account}</Typography>
+            {/* <Typography variant="body2">{eths.account}</Typography> */}
           </div>
 
           <br />
@@ -187,7 +194,7 @@ export default function FAQ() {
               )}
             </Assets>
 
-            <Button onClick={eths.deactivate} text={disconnect} distorted borders block large />
+            {/* <Button onClick={eths.deactivate} text={disconnect} distorted borders block large /> */}
           </div>
         </Main>
       </Layout>

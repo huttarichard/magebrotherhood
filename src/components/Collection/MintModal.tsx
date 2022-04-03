@@ -96,7 +96,6 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
 
   // debugger;
   if (width ?? 0 <= 600) {
-    console.log("mint drawer");
     return (
       <Drawer
         anchor="bottom"
@@ -110,8 +109,6 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
       </Drawer>
     );
   } else {
-    console.log("mint modal");
-
     return (
       <Modal
         wsx={{ minWidth: "calc(100% - 30px)" }}

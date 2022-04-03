@@ -13,13 +13,5 @@ export function Default() {
 }
 
 export function Null() {
-  return (
-    <CurrencyField
-      value={null}
-      onBNChange={(e) => console.log(e)}
-      onBNChangeStart={() => {
-        console.log("start");
-      }}
-    />
-  );
+  return <CurrencyField value={null} />;
 }

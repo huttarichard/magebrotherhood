@@ -40,6 +40,5 @@ describe("Affiliate contract", function () {
 
     // const result = await affiliate.payoff(owner.address);
     // const result = await affiliate.payoff(owner.address);
-    // console.log(result);
   });
 });
