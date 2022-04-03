@@ -24,7 +24,7 @@ const FullImage = styled.img`
 `;
 
 const PriceWrapper = styled.div`
-  background: gray;
+  background: #5a5a5a;
   height: 50px;
   width: 230px;
   display: flex;
@@ -108,7 +108,7 @@ export default function CollectionsIndex() {
                       style={{
                         position: "absolute",
                         width: "200px",
-                        bottom: "20px",
+                        bottom: "25px",
                         left: "0",
                         right: "0",
                         margin: "0 auto",

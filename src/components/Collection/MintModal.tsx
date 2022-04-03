@@ -95,7 +95,7 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   );
 
   // debugger;
-  if (width ?? 0 <= 600) {
+  if ((width ?? 0) <= 600) {
     return (
       <Drawer
         anchor="bottom"

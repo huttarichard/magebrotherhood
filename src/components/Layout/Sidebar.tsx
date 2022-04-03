@@ -23,80 +23,112 @@ import { FormattedMessage } from "react-intl";
 import HeaderWallet from "./HeaderWallet";
 import { useLayout } from "./store";
 
-const Navbar = styled(Grid)`
+const SidebarWrapper = styled(Grid)`
   padding: 2rem;
   transition: transform 0.3s;
   background-color: #111;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
   height: 100%;
+`;
 
-  .close-icon {
-    position: absolute;
-    top: 1.2rem;
-    right: 1.5rem;
+const CloseIcon = styled.div`
+  position: absolute;
+  top: 1.2rem;
+  right: 1.5rem;
+`;
+
+const List = styled.ul`
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  ${({ theme }) => theme.breakpoints.up("lg")} {
+    margin: -2rem 0 0 0;
+    height: 100%;
   }
+`;
 
-  ul {
-    margin: 0;
-    margin-top: 5rem;
-    list-style: none;
-    padding: 0;
-
-    ${(props) => props.theme.breakpoints.down("md")} {
-      margin-top: 2rem;
-    }
-  }
-
-  li {
-    font-weight: 700;
-    border-bottom: 1px solid #cfcfcf29;
-    height: 4rem;
-    line-height: 3.6rem;
-    display: flex;
-
-    &:last-of-type {
-      border: 0;
-    }
-
-    .MuiBadge-root svg {
-      padding-top: 5px;
-    }
-  }
+const ListItem = styled.li`
+  display: flex;
+  border-bottom: 1px solid #cfcfcf29;
 
   a {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 1.2rem;
-    line-height: 2rem;
-
-    ${(props) => props.theme.breakpoints.up("lg")} {
-      font-size: 1.4rem;
-      line-height: 2.7rem;
-    }
 
     svg {
       display: inline-block;
-      width: 50px;
-      height: 30px;
-      font-size: 20px;
-      object-fit: contain;
+      width: 20px;
+      height: 20px;
       margin-right: 1rem;
+      object-fit: contain;
+      color: #fff;
     }
+
+    > span {
+      display: inline-block;
+      letter-spacing: 1px;
+      font-size: 1.1rem;
+      line-height: 2.7rem;
+      color: #fff;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+  }
+
+  .MuiBadge-root svg {
+    padding-top: 5px;
   }
 
   .MuiBadge-badge {
     font-size: 15px;
     letter-spacing: -0.8px;
     padding: 11px;
-    top: 7px;
+    top: 30%;
     background: ${({ theme }) => theme.primary2};
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 375px) {
+    a {
+      svg {
+        width: 30px;
+        height: 30px;
+      }
+
+      > span {
+        font-size: 1.2rem;
+        line-height: 3.5rem;
+      }
+    }
+  }
+
+  @media (min-width: 425px) {
+    a {
+      svg {
+        width: 50px;
+        height: 30px;
+      }
+
+      > span {
+        line-height: 4rem;
+      }
+    }
+  }
+
+  ${({ theme }) => theme.breakpoints.up("lg")} {
+    a {
+      > span {
+        font-size: 1.4rem;
+      }
+    }
   }
 `;
 
@@ -110,57 +142,65 @@ const Bottom = styled(Grid)`
   }
 `;
 
-export interface LayoutNavbarProps {
-  closeIcon?: boolean;
-}
-
 interface ItemProps {
   icon: IconDefinition;
   name: string | JSX.Element;
   link?: string;
+  soon?: boolean;
 }
 
-function Item({ icon, name, link }: ItemProps) {
-  return (
-    <li>
-      <Link href={link as string}>
-        <a>
-          <FontAwesomeIcon icon={icon} />
-          <span>{name}</span>
-        </a>
-      </Link>
-    </li>
-  );
-}
-
-function ItemSoon({ icon, name }: ItemProps) {
+function Item({ icon, name, link, soon = false }: ItemProps) {
   const largeEnough = useMediaQuery("screen and (min-height: 735px)");
-  if (!largeEnough) return null;
 
-  return (
-    <li>
-      <a>
-        <Badge color="primary" badgeContent="soon">
-          <FontAwesomeIcon icon={icon} />
-          <span>{name}</span>
-        </Badge>
-      </a>
-    </li>
-  );
+  if (soon) {
+    if (largeEnough) {
+      return (
+        <ListItem>
+          <a>
+            <Badge color="primary" badgeContent="soon">
+              <FontAwesomeIcon icon={icon} />
+              <span>{name}</span>
+            </Badge>
+          </a>
+        </ListItem>
+      );
+    } else {
+      return <></>;
+    }
+  } else {
+    return (
+      <ListItem>
+        <Link href={link as string}>
+          <a>
+            <FontAwesomeIcon icon={icon} />
+            <span>{name}</span>
+          </a>
+        </Link>
+      </ListItem>
+    );
+  }
 }
 
-export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
+export interface SidebarProps {
+  closeIcon?: boolean;
+}
+
+export default function Sidebar({ closeIcon = false }: SidebarProps) {
   const { closeMenu } = useLayout();
   const router = useRouter();
 
   return (
-    <Navbar container direction="column">
-      {closeIcon && <FontAwesomeIcon className="close-icon" icon={faClose} onClick={closeMenu} />}
+    <SidebarWrapper container direction="column" wrap="nowrap">
+      {closeIcon && (
+        <CloseIcon>
+          <FontAwesomeIcon className="close-icon" icon={faClose} onClick={closeMenu} />
+        </CloseIcon>
+      )}
       <Grid item xs="auto">
         <Brand block />
       </Grid>
       <Grid item flexGrow="1">
-        <ul>
+        <List>
           <Item icon={faHouse} name={<FormattedMessage defaultMessage="Home" id="ejEGdx" />} link="/" />
           <Item
             icon={faRectangleVerticalHistory}
@@ -173,7 +213,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
             name={<FormattedMessage defaultMessage="Affiliate" id="tfQoB8" />}
             link="/affiliate"
           />
-          <ItemSoon icon={faCartArrowDown} name={<FormattedMessage defaultMessage="Marketplace" id="+lWQIJ" />} />
+          <Item icon={faCartArrowDown} name={<FormattedMessage defaultMessage="Marketplace" id="+lWQIJ" />} soon />
           <Item icon={faArrowsLeftRight} name={<FormattedMessage defaultMessage="Swap" id="s8BnAC" />} link="/swap" />
           <Item
             icon={faFileContract}
@@ -181,7 +221,7 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
             link="/paper"
           />
           <Item icon={faCommentsQuestion} name={<FormattedMessage defaultMessage="FAQ" id="W8nHSd" />} link="/faq" />
-        </ul>
+        </List>
       </Grid>
       <Bottom item>
         <HeaderWallet />
@@ -191,6 +231,6 @@ export default function LayoutNavbar({ closeIcon = false }: LayoutNavbarProps) {
           </Link>
         )}
       </Bottom>
-    </Navbar>
+    </SidebarWrapper>
   );
 }
