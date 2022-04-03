@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import SuccessCheckmark from "components/ui/SuccessCheckmark";
-import { useWeb3WalletStore } from "hooks/useWeb3";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -37,7 +37,7 @@ const Success = styled(Grid)`
 const Error = styled(Grid)``;
 
 export default function WalletConnector({ children, onWalletConnected }: WalletConnectorProps) {
-  const { wallets, activating, connect, error } = useWeb3WalletStore();
+  const { wallets, activating, connect, error } = useWeb3Wallet();
   const [tryagain, setTryAgain] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
 
