@@ -20,9 +20,9 @@ import "./interfaces/IAffiliate.sol";
  */
 contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   /**
-   * @dev collection represents nft collection.
+   * @dev token represents nft playable.
    */
-  struct Collection {
+  struct Token {
     string uri;
     uint256 createdAt;
     uint256 launchedAt;
@@ -30,7 +30,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     uint256 minted;
     uint128 weight;
     uint256 price;
-    address artist;
+    address royalty;
   }
 
   /**
@@ -39,9 +39,9 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   ICoin public coin;
 
   /**
-   * @dev contains all collections.
+   * @dev contains all tokens.
    */
-  mapping(uint256 => Collection) public collections;
+  mapping(uint256 => Token) public tokens;
 
   /**
    * @dev Rewarder address;
@@ -53,13 +53,9 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    */
   string public contractURI;
 
-  modifier whenLaunched(uint256 tokenId) {
-    require(_exists(tokenId), "query for nonexistent token");
-    require(block.timestamp < collections[tokenId].launchedAt, "not launched yet");
-    _;
-  }
-
   bytes32 public constant ADMIN = keccak256("ADMIN");
+
+  bytes32 public constant TOKENIZER = keccak256("TOKENIZER");
 
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
@@ -67,21 +63,30 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   constructor(
     address _coin,
     address _affiliate,
-    string memory _uri
-  ) ERC1155(_uri) {
+    string memory _preURI
+  ) ERC1155(_preURI) {
+    _setRoleAdmin(TOKENIZER, ADMIN);
     _setupRole(ADMIN, _msgSender());
+    _setDefaultRoyalty(_coin, 500);
 
     setCoin(_coin);
     setAffiliate(_affiliate);
-    _setDefaultRoyalty(_coin, 500);
   }
 
   /**
-   * @dev Will add collection metadata to given token id
+   * @dev Will add token metadata to given token id
    */
-  function setCollection(uint256 tokenId, Collection memory collection) public onlyRole(ADMIN) {
-    collections[tokenId] = collection;
-    collection.createdAt = block.timestamp;
+  function setToken(uint256 tokenId, Token memory token) public onlyRole(TOKENIZER) {
+    tokens[tokenId] = token;
+    tokens[tokenId].createdAt = block.timestamp;
+    _setTokenRoyalty(tokenId, token.royalty, 500);
+  }
+
+  /**
+   * @dev Will add token metadata to given token id
+   */
+  function deleteToken(uint256 tokenId) public onlyRole(ADMIN) {
+    tokens[tokenId] = Token("", 0, 0, 0, 0, 0, 0, address(0));
   }
 
   /**
@@ -143,14 +148,14 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    */
   function getStakingWeight(uint256 tokenId) public view virtual returns (uint128) {
     require(_exists(tokenId), "query for nonexistent token");
-    return collections[tokenId].weight;
+    return tokens[tokenId].weight;
   }
 
   /**
    * @dev Returns whether `tokenId` exists.
    */
   function _exists(uint256 tokenId) internal view virtual returns (bool) {
-    return collections[tokenId].createdAt != 0;
+    return tokens[tokenId].createdAt != 0;
   }
 
   /**
@@ -158,7 +163,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    */
   function uri(uint256 tokenId) public view virtual override returns (string memory) {
     require(_exists(tokenId), "URI query for nonexistent token");
-    string memory link = collections[tokenId].uri;
+    string memory link = tokens[tokenId].uri;
     return bytes(link).length > 0 ? link : super.uri(tokenId);
   }
 
@@ -167,58 +172,59 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    */
   struct MintParams {
     uint256 tokenId;
-    uint256 amount;
+    uint64 amount;
     string discount;
-    bool payWithCoin;
+  }
+
+  modifier onlyMintable(uint256 tokenId, uint256 amount) {
+    Token memory cl = tokens[tokenId];
+    require(_exists(tokenId), "nonexistent token");
+    require(block.timestamp >= cl.launchedAt, "not launched yet");
+    require(amount > 0, "amount must be greater than 0");
+    require(cl.minted + amount <= cl.supply, "maximum supply exceeded");
+    _;
   }
 
   /**
    * @dev mint function which is using discount
    */
-  function mint(MintParams memory p) public payable whenNotPaused whenLaunched(p.tokenId) {
-    require(_exists(p.tokenId), "nonexistent token");
-    Collection storage collection = collections[p.tokenId];
+  function mint(MintParams memory p) public payable whenNotPaused onlyMintable(p.tokenId, p.amount) {
+    Token storage token = tokens[p.tokenId];
 
-    require(p.amount > 0, "amount must be greater than 0");
-    require(collection.minted + p.amount <= collection.supply, "supply exceeded");
-    uint256 mintPrice = collection.price * p.amount;
+    uint256 price = token.price * p.amount;
 
     if (bytes(p.discount).length > 0) {
-      uint256 rw = affiliate.reward(p.discount);
-      mintPrice -= rw;
+      (uint256 eth, ) = affiliate.use(p.discount, _msgSender());
+      price -= eth;
     }
 
-    if (p.payWithCoin) {
-      coin.tokenEthBurn(_msgSender(), mintPrice);
-    } else {
-      require(msg.value >= mintPrice, "not enough eth given");
-      Address.sendValue(payable(address(coin)), msg.value);
-    }
+    require(msg.value >= price, "not enough eth given");
+    Address.sendValue(payable(address(coin)), msg.value);
 
     _mint(_msgSender(), p.tokenId, p.amount, "");
-    collection.minted += p.amount;
+    token.minted += p.amount;
   }
 
   /**
    * @dev will perform analysis of tokenId and will return its price and mintability
    */
-  function price(MintParams memory p) public view returns (bool, uint256) {
-    if (!_exists(p.tokenId)) {
-      return (false, 0);
-    }
-    Collection memory collection = collections[p.tokenId];
-    if (collection.minted + p.amount > collection.supply) {
-      return (false, 0);
-    }
+  function mintPrice(MintParams memory p)
+    public
+    view
+    whenNotPaused
+    onlyMintable(p.tokenId, p.amount)
+    returns (uint256 price)
+  {
+    Token memory token = tokens[p.tokenId];
+    price = token.price * p.amount;
 
-    uint256 mintPrice = collection.price * p.amount;
-
-    if (bytes(p.discount).length > 0) {
-      (uint256 rw, ) = affiliate.payoff(address(this));
-      mintPrice -= rw;
+    if (bytes(p.discount).length == 0) {
+      return price;
     }
 
-    return (true, mintPrice);
+    (uint256 eth, , bool eligible) = affiliate.reward(p.discount, address(this));
+    require(eligible, "not eligible for discount");
+    price -= eth;
   }
 
   /**

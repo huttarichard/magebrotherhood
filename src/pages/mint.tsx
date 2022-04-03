@@ -3,7 +3,7 @@ import { useState } from "react";
 import Layout from "../components/Layout/Layout";
 
 export default function Mint() {
-  const [_, setShowModal] = useState(true);
+  const [, setShowModal] = useState(true);
 
   return (
     <>

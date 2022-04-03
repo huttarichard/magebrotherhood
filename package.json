@@ -9,6 +9,7 @@
     "hardhat": "hardhat --tsconfig ./tsconfig.hardhat.json",
     "storybook": "start-storybook -p 6006",
     "litepaper": "markdown-pdf --cwd ./litepaper --paper-border 0px --paper-format A4 --css-path ./litepaper/style.css --out ./public/litepaper.pdf ./litepaper/*.md",
+    "airdrop": "ts-node --project ./tsconfig.hardhat.json ./src/server/airdrop.ts",
     "build-storybook": "build-storybook",
     "formatjs:extract": "formatjs extract 'src/**/*.ts*' --ignore='**/*.d.ts' --out-file lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]'",
     "formatjs:compile": "formatjs compile-folder lang/ src/translations/"
@@ -70,6 +71,7 @@
     "react-player": "^2.10.0",
     "react-use": "^17.3.2",
     "swiper": "^8.0.7",
+    "twitter-api-v2": "^1.11.2",
     "ua-parser-js": "^1.0.2",
     "use-debounce": "^7.0.1",
     "zustand": "^3.7.1"

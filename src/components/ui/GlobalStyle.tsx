@@ -20,7 +20,7 @@ const GlobalStyle = (theme: Theme) => css`
     background-color: ${theme.bg1} !important;
     font-size: 100%;
     height: 100%;
-    min-width: 375px;
+    /* min-width: 375px; */
 
     @media screen and (max-width: 900px) {
       font-size: 90%;
@@ -65,6 +65,10 @@ const GlobalStyle = (theme: Theme) => css`
 
   a {
     color: #ec12f9;
+  }
+
+  hr {
+    border: 1px solid #2a2a2a;
   }
 
   ${animations}

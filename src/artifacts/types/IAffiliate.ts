@@ -19,15 +19,18 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface IAffiliateInterface extends utils.Interface {
   contractName: "IAffiliate";
   functions: {
-    "payoff(address)": FunctionFragment;
-    "reward(string)": FunctionFragment;
+    "reward(string,address)": FunctionFragment;
+    "use(string,address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "payoff", values: [string]): string;
-  encodeFunctionData(functionFragment: "reward", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "reward",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(functionFragment: "use", values: [string, string]): string;
 
-  decodeFunctionResult(functionFragment: "payoff", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "reward", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "use", data: BytesLike): Result;
 
   events: {};
 }
@@ -60,55 +63,89 @@ export interface IAffiliate extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    payoff(
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
     reward(
       code: string,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, boolean] & {
+        eth: BigNumber;
+        bhc: BigNumber;
+        eligible: boolean;
+      }
+    >;
+
+    use(
+      code: string,
+      user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  payoff(
-    addr: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
   reward(
     code: string,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, boolean] & {
+      eth: BigNumber;
+      bhc: BigNumber;
+      eligible: boolean;
+    }
+  >;
+
+  use(
+    code: string,
+    user: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    payoff(
-      addr: string,
+    reward(
+      code: string,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, boolean] & {
+        eth: BigNumber;
+        bhc: BigNumber;
+        eligible: boolean;
+      }
+    >;
+
+    use(
+      code: string,
+      user: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber] & { eth: BigNumber; bhc: BigNumber }>;
-
-    reward(code: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    payoff(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     reward(
       code: string,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    use(
+      code: string,
+      user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    payoff(
-      addr: string,
+    reward(
+      code: string,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    reward(
+    use(
       code: string,
+      user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

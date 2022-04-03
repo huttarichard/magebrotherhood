@@ -1,10 +1,10 @@
-import { Grid } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
-import useWindowDimensions from "hooks/useWindowDimensions";
 import { StakingItem } from "pages/staking";
 import { useState } from "react";
+import { useWindowSize } from "react-use";
 
 import Modal from "../ui/Modal";
 
@@ -17,7 +17,7 @@ interface MintModalProps {
 export default function MintModal({ open, handleOpenState }: MintModalProps) {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [hash, setHash] = useState<string | undefined>(undefined);
-  const { width } = useWindowDimensions();
+  const { width } = useWindowSize();
 
   const mockTransaction = async () => {
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -111,12 +111,10 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   } else {
     return (
       <Modal
-        modalProps={{
-          open,
-          onClose: () => {
-            handleOpenState(false);
-            setActiveStep(0);
-          },
+        open={open}
+        onClose={() => {
+          handleOpenState(false);
+          setActiveStep(0);
         }}
       >
         {content}

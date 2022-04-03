@@ -51,8 +51,8 @@ task(
   async (taskArgs: { coin: string; cycleLengthInSeconds: string; periodLengthInCycles: string }, hre) => {
     const Playables = await hre.ethers.getContractFactory("Playables");
     const playables = await Playables.deploy(
-      parseInt(taskArgs.periodLengthInCycles),
-      parseInt(taskArgs.cycleLengthInSeconds),
+      taskArgs.periodLengthInCycles,
+      taskArgs.cycleLengthInSeconds,
       taskArgs.coin
     );
     console.info("staking: ", playables.address, playables.deployTransaction.hash);

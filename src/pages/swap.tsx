@@ -1,22 +1,16 @@
 import styled from "@emotion/styled";
-import { BigNumber } from "@ethersproject/bignumber";
-import { formatEther, parseUnits } from "@ethersproject/units";
-import { faArrowRight, faArrowUpArrowDown, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
+import { faArrowRight, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useCoingeckoPrice } from "@usedapp/coingecko";
 import Layout from "components/Layout/Layout";
-import Button from "components/ui/Button";
-import CurrencyFieldText from "components/ui/CurrencyFieldText";
+import SwapForm from "components/Swap/Form";
 import Paper from "components/ui/Paper";
-import Card from "components/ui/Paper";
-import Spinner from "components/ui/Spinner";
+import TransactionWindow from "components/ui/TransactionWindow";
 import useCoinContract from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import { useDebouncedCallback } from "use-debounce";
+import { FormattedMessage } from "react-intl";
 
 const Main = styled.div`
   display: flex;
@@ -36,54 +30,6 @@ const Main = styled.div`
   }
 `;
 
-const CardWrapper = styled(Card)`
-  margin: 0 auto;
-  padding: 17px;
-  min-width: 350px;
-
-  ${(props) => props.theme.breakpoints.down("md")} {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    border: 2px solid #ec12f9;
-  }
-
-  .btn {
-    margin-top: 30px;
-  }
-
-  small {
-    font-size: 15px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    padding-top: 10px;
-
-    a {
-      padding-left: 5px;
-      color: #ec12f9;
-    }
-  }
-
-  .switch {
-    text-align: right;
-    display: inherit;
-    padding: 8px;
-    padding-bottom: 20px;
-    font-size: 18px;
-    cursor: pointer;
-
-    span {
-      margin-right: 6px;
-    }
-  }
-`;
-
 const Tranding = styled(Paper)`
   margin: 0 auto;
   background: linear-gradient(155deg, #008eb5, #9200a5 43%, #ec12f9);
@@ -94,6 +40,7 @@ const Tranding = styled(Paper)`
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  max-width: 390px;
 
   &:before {
     content: "";
@@ -124,246 +71,78 @@ const Tranding = styled(Paper)`
   }
 `;
 
-const CardHeader = styled.div`
-  h1 {
-    margin: 0 0 2rem;
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
-    font-size: 3rem;
-    text-transform: uppercase;
-  }
-
-  p {
-    margin: 0;
-  }
-`;
-
-enum Mode {
-  EthToBhc,
-  BhcToEth,
-}
-
-enum Currency {
-  ETH,
-  BHC,
-  USD,
-}
+const steps = [
+  {
+    error: false,
+    label: "Initiating",
+    labelOptional: "GO!",
+    content: (
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis veritatis quia eligendi ipsum ex tempore
+        sapiente ea consequatur quisquam fugiat corrupti minima, aut omnis. Reprehenderit non facilis repellendus
+        praesentium architecto.
+      </p>
+    ),
+  },
+  {
+    error: false,
+    label: "Waiting for confirmation",
+    labelOptional: "Wait for it...",
+    content: (
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati autem quisquam similique magni architecto
+        voluptatibus qui eius sit iure eveniet libero eum, quia, sapiente minima molestias eaque modi ducimus
+        voluptatum?
+      </p>
+    ),
+  },
+  {
+    error: false,
+    label: "Finalizing",
+    labelOptional: "Almost there!",
+    labelErrorOptional: "Failed!",
+    content: (
+      <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum, aut officia et possimus ratione, in provident
+        magnam minus qui hic odit quis enim praesentium numquam deleniti adipisci aperiam optio quasi? Ipsam inventore
+        consequatur accusantium ex? Magni animi, adipisci doloremque temporibus distinctio commodi consequuntur tenetur?
+      </p>
+    ),
+  },
+];
 
 export default function Swap() {
   const ethers = useWeb3();
-  const { contract: coin, error, ready } = useCoinContract(ethers);
-  const etherPrice = useCoingeckoPrice("ethereum", "usd");
-  const intl = useIntl();
+  const { contract: coin, error } = useCoinContract(ethers);
   const router = useRouter();
+  // const [tax, setTax] = useState<number | null>(null);
 
-  const [mode, setMode] = useState<Mode>(Mode.EthToBhc);
-  const [tax, setTax] = useState<number | null>(null);
-  const [eth, setEth] = useState<number | null>(null);
-  const [bhc, setBhc] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [converting, setConverting] = useState<Currency | null>();
-
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-    setIsSubmitting(false);
-  };
-
-  const handleModeSwitch = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (mode === Mode.EthToBhc) {
-      setMode(Mode.BhcToEth);
-    } else {
-      setMode(Mode.EthToBhc);
-    }
-  };
-
-  const convertToBN = (v = 0): BigNumber => {
-    if (isSubmitting || !coin) {
-      return BigNumber.from("0");
-    }
-    return parseUnits(v.toFixed(10), 18);
-  };
-
-  const ethDebounce = useDebouncedCallback((val: number) => {
-    if (!val || !coin || isSubmitting) return;
-    console.log("eth");
-
-    coin
-      .getEthToTokenInputPrice(convertToBN(val))
-      .then((result: BigNumber) => {
-        setBhc(parseFloat(formatEther(result)));
-      })
-      .finally(() => {
-        setConverting(null);
-      });
-  }, 1000);
-
-  const bhcDebounce = useDebouncedCallback((val: number) => {
-    if (!val || !coin || isSubmitting) return;
-    console.log("bhc");
-
-    coin
-      .getTokenToEthInputPriceWithTax(convertToBN(val))
-      .then(([res, tax]: BigNumber[]) => {
-        setTax(parseFloat(formatEther(tax)));
-        setEth(parseFloat(formatEther(res)));
-      })
-      .finally(() => {
-        setConverting(null);
-      });
-  }, 500);
-
-  const compareNumbers = (a: number | null, b?: number | null, decs = 8): boolean => {
-    const x = parseInt((a || 0) * Math.pow(10, decs) + "");
-    const y = parseInt((b || 0) * Math.pow(10, decs) + "");
-    return x === y;
-  };
-
-  // i18n
-  const labelSell = intl.formatMessage({
-    defaultMessage: "Sell",
-    id: "swap_page_label_sell",
-  });
-
-  const labelReceive = intl.formatMessage({
-    defaultMessage: "Receive",
-    id: "swap_page_label_receive",
-  });
-
-  const swapButtonText = intl.formatMessage({
-    defaultMessage: "Swap",
-    id: "swap_page_swap_button_text",
-  });
-
-  const formElements = [
-    <CurrencyFieldText
-      InputProps={{
-        name: "eth",
-        disabled: isSubmitting || converting === Currency.BHC,
-      }}
-      name="eth"
-      label={mode === Mode.EthToBhc ? `${labelSell} ETH` : `${labelReceive} ETH`}
-      value={eth?.toString() || ""}
-      allowNegative={false}
-      placeholder="0 ETH"
-      autoComplete="off"
-      onValueChange={(values: any) => {
-        if (isSubmitting || !coin) {
-          return;
-        }
-        if (!values.floatValue) {
-          setEth(0);
-          setBhc(0);
-          return;
-        }
-        if (compareNumbers(eth, values.floatValue, 8)) {
-          return;
-        }
-        setConverting(Currency.ETH);
-        setEth(values.floatValue as number);
-        ethDebounce(values.floatValue as number);
-      }}
-      helperText={etherPrice ? `${etherPrice}$` : ""}
-      key="eth"
-    />,
-
-    <span key="switch" className="switch" onClick={handleModeSwitch}>
-      <span>
-        <FormattedMessage defaultMessage="Switch" id="swap_page_switch_button_text" />
-      </span>
-      <FontAwesomeIcon icon={faArrowUpArrowDown} />
-    </span>,
-
-    <CurrencyFieldText
-      InputProps={{
-        name: "bhc",
-        disabled: isSubmitting || converting === Currency.ETH,
-      }}
-      label={mode === Mode.EthToBhc ? `${labelReceive} BHC` : `${labelSell} BHC`}
-      value={bhc?.toString() || ""}
-      autoComplete="off"
-      placeholder="0 BHC"
-      onValueChange={(values: any) => {
-        if (isSubmitting || !coin) {
-          return;
-        }
-        if (!values.floatValue) {
-          setEth(0);
-          setBhc(0);
-          return;
-        }
-        if (compareNumbers(bhc, values.floatValue, 2)) {
-          return;
-        }
-
-        setConverting(Currency.BHC);
-        setBhc(values.floatValue as number);
-        bhcDebounce(values.floatValue as number);
-      }}
-      key="bhc"
-    />,
-  ];
-
-  const form = (
-    <>
-      <form onSubmit={handleSubmit}>
-        {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
-        <Button
-          text={swapButtonText}
-          disabled={!coin || isSubmitting || converting !== null}
-          className="btn"
-          distorted
-          block
-          borders
-          large
-        />
-      </form>
-      <small>
-        <FormattedMessage
-          defaultMessage='By clicking "SWAP" you are agreeing to'
-          id="swap_page_terms_acceptance_text"
-        />
-        <Link href="/tos">
-          <a>
-            <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
-          </a>
-        </Link>
-        .
-      </small>
-
-      {/* {tax && (
-            <>
-              <br />
-              <div>Tax: {tax}</div>
-            </>)} */}
-    </>
-  );
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   return (
     <Layout>
       <Main>
-        <CardWrapper>
-          <CardHeader>
-            <h1>
-              <FormattedMessage defaultMessage="Swap" id="swap_page_title" />
-            </h1>
-            {/* <Grid container justifyContent="space-between">
-              <Grid item>
-              </Grid>
-              <Grid item>
-                <ToggleButtonGroup color="primary" value={buysell} exclusive onChange={(e, value) => setBuySell(value)}>
-                  <ToggleButton value="buy">BUY</ToggleButton>
-                  <ToggleButton value="sell">SELL</ToggleButton>
-                </ToggleButtonGroup>
-              </Grid>
-            </Grid> */}
-          </CardHeader>
-
-          {ready && ethers.resolved ? form : <Spinner />}
-
-          {error && <p>{error.message}</p>}
-        </CardWrapper>
+        <SwapForm
+          coin={coin}
+          onTransactionSubmit={(t) => {
+            console.info(t);
+            setOpenModal(true);
+          }}
+        >
+          <small>
+            <FormattedMessage
+              defaultMessage='By clicking "SWAP" you are agreeing to'
+              id="swap_page_terms_acceptance_text"
+            />
+            <Link href="/tos">
+              <a>
+                <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
+              </a>
+            </Link>
+            .
+          </small>
+        </SwapForm>
+        {error && <p>{error.message}</p>}
 
         <Tranding onClick={() => router.push("/price")}>
           <FontAwesomeIcon icon={faChartCandlestick} />
@@ -373,6 +152,8 @@ export default function Swap() {
             <FontAwesomeIcon icon={faArrowRight} />
           </div>
         </Tranding>
+
+        <TransactionWindow activeStep={0} open={openModal} steps={steps}></TransactionWindow>
       </Main>
     </Layout>
   );

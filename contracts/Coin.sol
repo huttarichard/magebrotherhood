@@ -77,7 +77,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
     _setupRole(ADMIN, _msgSender());
 
     _mint(address(this), liquidity * DECIMALS);
-    _delegate(address(this), _msgSender());
   }
 
   /**
@@ -128,15 +127,6 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    */
   function tokenBurn(address burnee, uint256 tokensToBeBurned) external onlyRole(BURNER) {
     _burn(burnee, tokensToBeBurned);
-  }
-
-  /**
-   * @dev will burn tokens in amount of eth
-   */
-  function tokenEthBurn(address burnee, uint256 ethToBeBurned) external onlyRole(BURNER) {
-    uint256 tokenReserve = balanceOf(address(this));
-    uint256 coins = getOutputPrice(ethToBeBurned, tokenReserve, address(this).balance);
-    _burn(burnee, coins);
   }
 
   /**

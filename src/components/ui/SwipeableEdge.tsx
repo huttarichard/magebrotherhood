@@ -2,7 +2,6 @@ import { Global } from "@emotion/react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { grey } from "@mui/material/colors";
-import CssBaseline from "@mui/material/CssBaseline";
 import Skeleton from "@mui/material/Skeleton";
 import { styled } from "@mui/material/styles";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -51,7 +50,6 @@ export default function SwipeableEdgeDrawer(props: Props) {
 
   return (
     <Root>
-      <CssBaseline />
       <Global
         styles={{
           ".MuiDrawer-root > .MuiPaper-root": {

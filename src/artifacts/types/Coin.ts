@@ -87,7 +87,6 @@ export interface CoinInterface extends utils.Interface {
     "taxFee()": FunctionFragment;
     "taxFeeDenominator()": FunctionFragment;
     "tokenBurn(address,uint256)": FunctionFragment;
-    "tokenEthBurn(address,uint256)": FunctionFragment;
     "tokenMint(address,uint256)": FunctionFragment;
     "tokenToEthSwap(uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
@@ -278,10 +277,6 @@ export interface CoinInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "tokenEthBurn",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "tokenMint",
     values: [string, BigNumberish]
   ): string;
@@ -454,10 +449,6 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenBurn", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenEthBurn",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "tokenMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwap",
@@ -878,12 +869,6 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    tokenEthBurn(
-      burnee: string,
-      ethToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     tokenMint(
       recipient: string,
       amount: BigNumberish,
@@ -1171,12 +1156,6 @@ export interface Coin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  tokenEthBurn(
-    burnee: string,
-    ethToBeBurned: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   tokenMint(
     recipient: string,
     amount: BigNumberish,
@@ -1454,12 +1433,6 @@ export interface Coin extends BaseContract {
     tokenBurn(
       burnee: string,
       tokensToBeBurned: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    tokenEthBurn(
-      burnee: string,
-      ethToBeBurned: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1893,12 +1866,6 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    tokenEthBurn(
-      burnee: string,
-      ethToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     tokenMint(
       recipient: string,
       amount: BigNumberish,
@@ -2206,12 +2173,6 @@ export interface Coin extends BaseContract {
     tokenBurn(
       burnee: string,
       tokensToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenEthBurn(
-      burnee: string,
-      ethToBeBurned: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

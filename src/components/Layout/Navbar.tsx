@@ -6,40 +6,47 @@ import Brand from "components/Brand";
 
 import { useLayout } from "./store";
 
-const ActionArea = styled(Grid)`
-  display: block;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 15px;
-  height: 100%;
-`;
-
-const BrandWrapper = styled(Grid)`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
+const NavbarContainer = styled(Grid)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 60px;
+  z-index: 10;
+  border-bottom: 1px solid #2c2c2c;
+  background: ${({ theme }) => theme.bg1};
 `;
 
 const GridWrapper = styled(Grid)`
   height: 100%;
+  padding: 0 1rem;
+`;
+
+const BrandWrapper = styled(Grid)`
+  display: flex;
+  align-items: center;
+`;
+
+const ActionArea = styled(Grid)`
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 export default function Navbar() {
   const { openMenu } = useLayout();
 
   return (
-    <GridWrapper container justifyContent="space-between" alignContent="center">
-      <BrandWrapper item>
-        <Brand />
-      </BrandWrapper>
-      <ActionArea item xs>
-        <div>
+    <NavbarContainer item>
+      <GridWrapper container justifyContent="space-between" alignContent="center">
+        <BrandWrapper item>
+          <Brand />
+        </BrandWrapper>
+        <ActionArea item xs>
           <FontAwesomeIcon icon={faBars} onClick={openMenu} />
-        </div>
-      </ActionArea>
-    </GridWrapper>
+        </ActionArea>
+      </GridWrapper>
+    </NavbarContainer>
   );
 }

@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/ICoin.sol";
-import "hardhat/console.sol";
 
 /**
  * @notice Affiliate marketing is contract distibuting rewards for marketing.
@@ -27,12 +26,17 @@ contract Affiliate is Context, AccessControl, Pausable {
   /**
    * @notice mapping of affiliate codes and addresses.
    */
-  mapping(string => address) private _codes;
+  mapping(string => address) private codes;
+
+  /**
+   * @notice mapping of affiliate to codes.
+   */
+  mapping(address => string) private affiliaters;
 
   /**
    * @notice addresses of contracts and rewards (gas) their are distributing.
    */
-  mapping(address => uint256) private _rewarders;
+  mapping(address => uint256) private _kontracts;
 
   /**
    * @notice wallets which already used discount
@@ -41,13 +45,10 @@ contract Affiliate is Context, AccessControl, Pausable {
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
-  bytes32 public constant REWARDER = keccak256("REWARDER");
-
   /**
    * @param _coin is ERC20 coin with spend allowed.
    */
   constructor(address _coin) {
-    _setRoleAdmin(REWARDER, ADMIN);
     _setupRole(ADMIN, _msgSender());
 
     setCoin(_coin);
@@ -89,55 +90,70 @@ contract Affiliate is Context, AccessControl, Pausable {
    */
   function register(string memory code) public whenNotPaused {
     require(bytes(code).length > 0 && bytes(code).length <= 20, "invalid code length");
-    require(_codes[code] == address(0), "code already used");
-    _codes[code] = _msgSender();
+    require(codes[code] == address(0), "code already used");
+    codes[code] = _msgSender();
+    affiliaters[_msgSender()] = code;
   }
 
   /**
    * Will allow contract to distribute reward.
-   * @param addr address of the contract
+   * @param kontrakt address of the contract
    * @param gas maximum gas needed
    */
-  function allowRewarding(address addr, uint256 gas) public onlyRole(REWARDER) {
-    require(addr != address(0), "invalid address");
+  function allowContractToReward(address kontrakt, uint256 gas) public onlyRole(ADMIN) {
+    require(kontrakt != address(0), "invalid address");
     require(gas != 0, "invalid reward");
-    _rewarders[addr] = gas;
+    _kontracts[kontrakt] = gas;
   }
 
   /**
-   * Will return rewards in form of bhc and eth.
+   * Will return rewards in form of bhc and eth for given contract.
    */
-  function _payoff(address addr) internal view returns (uint256 eth, uint256 bhc) {
-    require(addr != address(0), "invalid address");
-    require(_rewarders[addr] != 0, "invalid address");
+  function _payoff(address kontrakt) internal view returns (uint256 eth, uint256 bhc) {
+    require(kontrakt != address(0), "invalid address");
+    require(_kontracts[kontrakt] != 0, "invalid address");
 
-    eth = _rewarders[addr].mul(tx.gasprice > 0 ? tx.gasprice : 1);
+    eth = _kontracts[kontrakt].mul(tx.gasprice > 0 ? tx.gasprice : 1);
     bhc = coin.getEthToTokenInputPrice(eth);
   }
 
   /**
    * Will return rewards in form of bhc and eth.
+   * @return eth - amount of eth given to affiliater
+   * @return bhc - amount of eth given to affiliater converted to bhc
+   * @return eligible - whether can be given
    */
-  function payoff(address addr) external view returns (uint256 eth, uint256 bhc) {
-    return _payoff(addr);
+  function reward(string memory code, address user)
+    external
+    view
+    returns (
+      uint256 eth,
+      uint256 bhc,
+      bool eligible
+    )
+  {
+    address affiliater = codes[code];
+    if (affiliater == address(0)) {
+      return (0, 0, false);
+    }
+    (eth, bhc) = _payoff(_msgSender());
+    eligible = !_used[user];
   }
 
   /**
    * Reward will distribte reward according to register.
    * @param code marketing code
    */
-  function reward(string memory code) external returns (uint256) {
-    address addr = _codes[code];
+  function use(string memory code, address user) external returns (uint256 eth, uint256 bhc) {
+    address addr = codes[code];
     require(addr != address(0), "invalid affiliate code");
 
     // Make sure address uses discount only once
-    require(!_used[addr], "already used discount");
-    _used[addr] = true;
+    require(!_used[user], "already used discount");
+    _used[user] = true;
 
-    (uint256 eth, uint256 bhc) = _payoff(_msgSender());
+    (eth, bhc) = _payoff(_msgSender());
     balances[addr] += bhc;
-
-    return eth;
   }
 
   /**

@@ -5,8 +5,17 @@
   "+lWQIJ": {
     "defaultMessage": "Tržiště"
   },
+  "3yk8fB": {
+    "defaultMessage": "Peněženka"
+  },
   "9fPQ1/": {
     "defaultMessage": "Litepaper"
+  },
+  "EBDrtq": {
+    "defaultMessage": "Podmínky použití"
+  },
+  "FCXIlK": {
+    "defaultMessage": "Hash transakce"
   },
   "IH+ANq": {
     "defaultMessage": "O Bortherhoodu"
@@ -89,6 +98,15 @@
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
   },
+  "home_roadmap_title": {
+    "defaultMessage": "Cestovní mapa"
+  },
+  "home_roadmap_upcoming_events": {
+    "defaultMessage": "Připravované akce"
+  },
+  "iSM+et": {
+    "defaultMessage": "Všechna práva vyhrazena"
+  },
   "jXdcLd": {
     "defaultMessage": "PDF LITEPAPER"
   },
@@ -163,5 +181,11 @@
   },
   "ulh3kf": {
     "defaultMessage": "Sbírky"
+  },
+  "vx0nkZ": {
+    "defaultMessage": "Zásady ochrany osobních údajů"
+  },
+  "zFegDD": {
+    "defaultMessage": "Kontakt"
   }
 }

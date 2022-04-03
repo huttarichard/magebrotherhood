@@ -21,7 +21,7 @@ interface Props extends AppProps {
 }
 
 const config: Config = {
-  autoConnect: true,
+  autoConnect: false,
   readOnlyChainId: env.DEFAULT_NETWORK as ChainId,
   networks: [Mainnet, Rinkeby],
   readOnlyUrls: chains,

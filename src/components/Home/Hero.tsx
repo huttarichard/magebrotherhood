@@ -1,21 +1,19 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import heroGhost from "assets/images/heroGhost.png";
+import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
-import heroGhost from "assets/images/heroGhost.png";
 import useCoinContract, { useCoinUSDPrice } from "hooks/useCoinContract";
 import useWeb3 from "hooks/useWeb3";
-import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 
 const Wrapper = styled.div`
   position: relative;
-  background-color: #eee;
-  height: 100%;
-  max-height: calc(100vh - 60px);
   height: calc(100vh - 60px);
+  min-height: 550px;
 
   @supports (-webkit-touch-callout: none) {
     height: calc(100vh - 120px);
@@ -36,7 +34,7 @@ const Background = styled.div`
   background: transparent url(${heroBg2.src}) no-repeat;
   background-size: cover;
 
-  &::before {
+  &::after {
     content: "";
     position: absolute;
     top: 0;
@@ -44,8 +42,9 @@ const Background = styled.div`
     bottom: 0;
     left: 0;
     background: transparent url(${heroGhost.src}) no-repeat;
-    background-size: contain;
+    background-size: cover;
     background-position: center left;
+    z-index: -1;
   }
 
   @media (min-width: 1200px) {
@@ -99,7 +98,6 @@ const Main = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* pointer-events: none; */
   color: ${({ theme }) => theme.text2};
 
   h1 {
@@ -108,6 +106,7 @@ const Main = styled.div`
     max-width: 230px;
     font-size: 47px;
     margin: 0 0 2rem;
+    line-height: 1;
 
     span {
       padding-right: 5px;
@@ -311,10 +310,10 @@ export default function Hero() {
           />
 
           <ul>
-            <li>
+            {/* <li>
               <span>8K</span>
               <span>NFT LEFT</span>
-            </li>
+            </li> */}
             <li>
               <span>
                 {!ready ? (
@@ -341,12 +340,17 @@ export default function Hero() {
       <Actions>
         <ul>
           <li>
-            <a href="https://discord.com/" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <a href="https://discord.gg/HgPQAHzp3Z" target="_blank" rel="noopener noreferrer" aria-label="Discord">
               <FontAwesomeIcon icon={faDiscord} size={"2x"} />
             </a>
           </li>
           <li>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            <a
+              href="https://twitter.com/MageBrotherhood"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+            >
               <FontAwesomeIcon icon={faTwitter} size={"2x"} />
             </a>
           </li>

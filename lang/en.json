@@ -5,8 +5,23 @@
   "+lWQIJ": {
     "defaultMessage": "Marketplace"
   },
+  "1v/O7j": {
+    "defaultMessage": "Please connect your wallet."
+  },
+  "3yk8fB": {
+    "defaultMessage": "Wallet"
+  },
   "9fPQ1/": {
     "defaultMessage": "Litepaper"
+  },
+  "DtYelJ": {
+    "defaultMessage": "Transfer"
+  },
+  "EBDrtq": {
+    "defaultMessage": "Terms of use"
+  },
+  "FCXIlK": {
+    "defaultMessage": "Transaction hash"
   },
   "IH+ANq": {
     "defaultMessage": "About Bortherhood"
@@ -46,6 +61,9 @@
   },
   "cg1VJ2": {
     "defaultMessage": "Connect Wallet"
+  },
+  "d1uESJ": {
+    "defaultMessage": "Assets"
   },
   "ejEGdx": {
     "defaultMessage": "Home"
@@ -88,6 +106,15 @@
   },
   "home_polygon_scaling_title": {
     "defaultMessage": "POLYGON POS L2 SCALING"
+  },
+  "home_roadmap_title": {
+    "defaultMessage": "Roadmap"
+  },
+  "home_roadmap_upcoming_events": {
+    "defaultMessage": "Upcoming Events"
+  },
+  "iSM+et": {
+    "defaultMessage": "All rights reserved"
   },
   "jXdcLd": {
     "defaultMessage": "PDF LITEPAPER"
@@ -158,10 +185,13 @@
   "tfQoB8": {
     "defaultMessage": "Affiliate"
   },
-  "transaction_stepper_hash_title": {
-    "defaultMessage": "Transaction hash"
-  },
   "ulh3kf": {
     "defaultMessage": "Collections"
+  },
+  "vx0nkZ": {
+    "defaultMessage": "Privacy Policy"
+  },
+  "zFegDD": {
+    "defaultMessage": "Contact"
   }
 }
