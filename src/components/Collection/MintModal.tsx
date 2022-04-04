@@ -1,9 +1,13 @@
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
+import { Playables } from "artifacts/types";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
+import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
+import { usePlayableContract } from "hooks/useContract";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import { StakingItem } from "pages/staking";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
 
 import Modal from "../ui/Modal";
@@ -19,22 +23,64 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   const [hash, setHash] = useState<string | undefined>(undefined);
   const { width } = useWindowSize();
 
-  const mockTransaction = async () => {
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  // const { activateBrowserWallet, account, activate } = useEthers();
 
-    await sleep(1000);
+  const wallet = useWeb3Wallet();
+  const window = useWeb3ConnectWindow();
 
+  const { contract, error } = usePlayableContract(wallet);
+  let provider;
+  let signer;
+
+  useEffect(async () => {
+    if (!wallet.connected) return;
+    console.log("playable contract ready");
+
+    // provider = new ethers.providers.Web3Provider(window.ethereum);
+    // console.log("Prov", provider);
+    // signer = provider.getSigner();
+  }, [wallet.connected]);
+
+  console.log(wallet);
+  console.log(contract, error);
+
+  if (wallet.connected && activeStep == 0) {
     setActiveStep(1);
+  }
 
-    setHash("0x62cddbf99211253d6fb9db04e2e2a5d1931a0b01db1c65ecf237bd7216a8518d");
+  const mint = () => {
+    if (!contract) return;
+    if (!wallet.connected) return;
 
-    await sleep(1000);
+    // export declare namespace Playables {
+    //   export type MintParamsStruct = {
+    //     tokenId: BigNumberish;
+    //     amount: BigNumberish;
+    //     discount: string;
+    //   };
+    //   ...
 
-    setActiveStep(2);
+    console.log(wallet);
 
-    await sleep(1000);
+    const params: Playables.MintParamsStruct = {
+      tokenId: "1",
+      amount: "1",
+      discount: "",
+    };
 
-    setActiveStep(3);
+    contract
+      .connect(wallet.provider)
+      .mint(params, {
+        gasLimit: 1000000,
+      })
+      .then((tx) => {
+        console.log(tx);
+        setHash(tx.hash);
+        setActiveStep(2);
+      });
+
+    //TODO: watch for tx to complete
+    //setActiveStep(3)
   };
 
   const resetTransaction = () => {
@@ -45,33 +91,32 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   const steps = [
     {
       error: false,
-      label: "Initiating",
-      labelOptional: "GO!",
+      label: "Connect Wallet",
       content: (
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis veritatis quia eligendi ipsum ex tempore
-          sapiente ea consequatur quisquam fugiat corrupti minima, aut omnis. Reprehenderit non facilis repellendus
-          praesentium architecto.
-        </p>
+        <>
+          <p>Connect your wallet before minting.</p>
+          <Grid container flexDirection="column" alignItems="center">
+            <Button onClick={window.connect} text="Connect" borders distorted />
+          </Grid>
+        </>
+      ),
+    },
+    {
+      error: false,
+      label: "Mint",
+      // labelOptional: "",
+      content: (
+        <>
+          <p>Mighty Knight for 0.1 ETH</p>
+          <Grid container flexDirection="column" alignItems="center">
+            <Button onClick={mint} text="Mint" borders distorted />
+          </Grid>
+        </>
       ),
     },
     {
       error: false,
       label: "Waiting for confirmation",
-      labelOptional: "Wait for it...",
-      content: (
-        <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati autem quisquam similique magni architecto
-          voluptatibus qui eius sit iure eveniet libero eum, quia, sapiente minima molestias eaque modi ducimus
-          voluptatum?
-        </p>
-      ),
-    },
-    {
-      error: false,
-      label: "Finalizing",
-      labelOptional: "Almost there!",
-      labelErrorOptional: "Failed!",
       content: (
         <p>
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum, aut officia et possimus ratione, in provident
@@ -81,14 +126,19 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
         </p>
       ),
     },
+    {
+      error: false,
+      label: "Done",
+      content: <p>Enjoy</p>,
+    },
   ];
 
   const content = (
     <div style={{ padding: "20px" }}>
       <TransactionStepper steps={steps} activeStep={activeStep} hash={hash} />
       <Grid container flexDirection="column" alignItems="center">
-        <Button onClick={() => mockTransaction()} text="Mock transaction" borders distorted />
-        <br />
+        {/* <Button onClick={() => mockTransaction()} text="Mock transaction" borders distorted /> */}
+        {/* <br /> */}
         <button onClick={() => resetTransaction()}>Reset transaction</button>
       </Grid>
     </div>

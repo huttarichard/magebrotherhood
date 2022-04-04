@@ -1,15 +1,16 @@
 import { Signer } from "@ethersproject/abstract-signer";
 import { Provider } from "@ethersproject/providers";
-import type { ICoin, IStaking } from "artifacts/types";
+import type { ICoin, IStaking, Playables } from "artifacts/types";
 import env from "lib/env";
 
-export type IContract = ICoin | IStaking;
+export type IContract = ICoin | IStaking | Playables;
 export type Factory<T extends IContract> = (signer: Signer | Provider) => Promise<T>;
 export type { ICoin, IStaking };
 
 export enum Contract {
   Coin = "coin",
   Staking = "staking",
+  Playables = "playables",
 }
 
 export interface ContractDefinition<T extends IContract> {
@@ -49,6 +50,13 @@ export const contracts: Contracts = {
       return IStaking__factory.connect(env.STAKING_ADDRESS, signer);
     },
     address: env.STAKING_ADDRESS,
+  },
+  [Contract.Playables]: {
+    connect: async (signer: Signer | Provider) => {
+      const { Playables__factory } = await import("artifacts/types/factories/Playables__factory");
+      return Playables__factory.connect(env.PLAYABLES_ADDRESS, signer);
+    },
+    address: process.env.STAKING_ADDRESS,
   },
 };
 

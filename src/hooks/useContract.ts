@@ -1,5 +1,6 @@
 import { Provider } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
+import { Playables } from "artifacts/types";
 import { getCoinUSDPrice } from "lib/cmc";
 import { Contract, ICoin, IContract, IStaking, LoadedContracts, loadMany } from "lib/web3/contracts";
 import { useEffect, useState } from "react";
@@ -93,6 +94,10 @@ export function useCoinContract(web3: Web3) {
 
 export function useStakingContract(web3: Web3) {
   return useContract<IStaking>(web3, Contract.Staking);
+}
+
+export function usePlayableContract(web3: Web3) {
+  return useContract<Playables>(web3, Contract.Playables);
 }
 
 export function useCoinETHPrice(web3: Web3) {
