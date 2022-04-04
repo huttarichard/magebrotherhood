@@ -75,16 +75,23 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
                 alignItems="center"
                 key={i}
                 onClick={() => {
-                  connect(w).then(() => {
-                    setTryAgain(false);
-                    setSuccess(true);
-                    if (onWalletConnected) setTimeout(onWalletConnected, 1500);
-                  });
+                  connect(w)
+                    .then(() => {
+                      setSuccess(true);
+                      if (onWalletConnected) setTimeout(onWalletConnected, 1500);
+                    })
+                    .catch((e) => {
+                      console.log(error);
+                      // setErr(e);
+                    })
+                    .finally(() => {
+                      setTryAgain(false);
+                    });
                 }}
               >
                 <Grid item sx={{ width: 60 }} container alignContent="center" alignItems="center">
                   <Grid item sx={{ height: 40 }}>
-                    <Image src={w.logo} height={40} width={40} />
+                    <Image src={w.logo} height={40} width={40} alt={w.name} />
                   </Grid>
                 </Grid>
                 <Grid item>
@@ -105,6 +112,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
       </Grid>
       <Grid item>
         <Typography variant="body1">{error.message}</Typography>
+        <br />
         <Button text="Try Again" onClick={() => setTryAgain(true)} />
       </Grid>
     </Error>

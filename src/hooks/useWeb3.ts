@@ -35,6 +35,11 @@ export const useWeb3Wallet = create<Web3Wallet>((set) => {
   const connect = async (p: IProviderInfo) => {
     const connector = p.connector as ConnectorFactory;
     const [instance, provider] = await connector(actions);
+    const state = store.getState();
+    if (state.error) {
+      set({ error: state.error, connected: false });
+      throw state.error;
+    }
     return set({ connector: instance, provider, connected: true });
   };
 
