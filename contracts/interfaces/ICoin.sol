@@ -28,6 +28,14 @@ interface ICoin is IVotes, IERC20 {
 
   /**
    * @notice Convert ETH to Tokens.
+   * @dev This will simply allow the user to convert ETH to tokens without any inputs
+   * @dev simply by sending ETH.
+   * @return Amount of Tokens bought.
+   */
+  function ethToTokenSwap() external payable returns (uint256);
+
+  /**
+   * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value) && minimum output.
    * @param minTokens Minimum Tokens bought.
    * @param deadline Time after which this transaction can no longer be executed.
@@ -48,6 +56,14 @@ interface ICoin is IVotes, IERC20 {
     uint256 deadline,
     address recipient
   ) external payable returns (uint256);
+
+  /**
+   * @notice Convert Tokens to ETH.
+   * @dev This will simply allow the user to convert ETH to tokens without any inputs
+   * @dev simply by sending ETH.
+   * @return Amount of Tokens bought.
+   */
+  function tokenToEthSwap(uint256 tokensSold) external returns (uint256);
 
   /**
    * @notice Convert ETH to Tokens.

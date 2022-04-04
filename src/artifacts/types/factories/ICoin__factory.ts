@@ -245,6 +245,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "ethToTokenSwap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -576,6 +589,25 @@ const _abi = [
     ],
     name: "tokenMint",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokensSold",
+        type: "uint256",
+      },
+    ],
+    name: "tokenToEthSwap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

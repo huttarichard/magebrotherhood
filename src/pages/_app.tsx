@@ -3,6 +3,7 @@ import "swiper/css";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
+import TransactionPresenter from "components/ui/TransactionPresenter";
 import WalletConnectWindow from "components/ui/WalletConnectWindow";
 import type { AppContext, AppProps } from "next/app";
 import Head from "next/head";
@@ -39,6 +40,7 @@ function MageBrotherHoodApp(props: Props) {
           <Component {...pageProps} />
 
           <WalletConnectWindow />
+          <TransactionPresenter />
         </IntlProvider>
       </ThemeProvider>
     </CacheProvider>

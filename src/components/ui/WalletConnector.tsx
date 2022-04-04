@@ -61,7 +61,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
 
   if (!error || tryagain) {
     return (
-      <Box>
+      <Box sx={{ width: "100%" }}>
         <Typography variant="h5">Choose your wallet.</Typography>
         <br />
 
@@ -81,7 +81,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
                       if (onWalletConnected) setTimeout(onWalletConnected, 1500);
                     })
                     .catch((e) => {
-                      console.log(error);
+                      console.log(e);
                       // setErr(e);
                     })
                     .finally(() => {

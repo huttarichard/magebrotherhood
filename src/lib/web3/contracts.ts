@@ -17,24 +17,38 @@ export interface ContractDefinition<T extends IContract> {
   connect: Factory<T>;
 }
 
+export type ContractInterfaces = {
+  [Contract.Coin]: ICoin;
+  [Contract.Staking]: IStaking;
+};
+
+export type ContractFunctions<Z extends Contract> = keyof ContractInterfaces[Z]["functions"];
+
+export type ContractFunctionArguments<
+  Z extends Contract,
+  X extends ContractFunctions<Z>
+> = ContractInterfaces[Z]["functions"][X] extends (...args: infer P) => any ? P : never;
+
 export type Contracts = {
-  [key in Contract]: ContractDefinition<IContract>;
+  [Contract.Coin]: ContractDefinition<ICoin>;
+  [Contract.Staking]: ContractDefinition<IStaking>;
 };
 
 export const contracts: Contracts = {
   [Contract.Coin]: {
     connect: async (signer: Signer | Provider) => {
       const { ICoin__factory } = await import("artifacts/types/factories/ICoin__factory");
+      console.log("connect", env.COIN_ADDRESS, signer);
       return ICoin__factory.connect(env.COIN_ADDRESS, signer);
     },
-    address: process.env.COIN_ADDRESS,
+    address: env.COIN_ADDRESS,
   },
   [Contract.Staking]: {
     connect: async (signer: Signer | Provider) => {
       const { IStaking__factory } = await import("artifacts/types/factories/IStaking__factory");
       return IStaking__factory.connect(env.STAKING_ADDRESS, signer);
     },
-    address: process.env.STAKING_ADDRESS,
+    address: env.STAKING_ADDRESS,
   },
 };
 
