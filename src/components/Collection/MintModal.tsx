@@ -1,12 +1,11 @@
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
-import { useEthers } from "@usedapp/core";
 import { Playables } from "artifacts/types";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
-import { ethers } from "ethers";
-import { usePlayableContract } from "hooks/useCoinContract";
-import useWeb3 from "hooks/useWeb3";
+import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
+import { usePlayableContract } from "hooks/useContract";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import { StakingItem } from "pages/staking";
 import { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
@@ -24,31 +23,34 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   const [hash, setHash] = useState<string | undefined>(undefined);
   const { width } = useWindowSize();
 
-  const { activateBrowserWallet, account, activate } = useEthers();
-  const eths = useWeb3();
-  const { contract, ready, error } = usePlayableContract(eths);
+  // const { activateBrowserWallet, account, activate } = useEthers();
+
+  const wallet = useWeb3Wallet();
+  const window = useWeb3ConnectWindow();
+
+  const { contract, error } = usePlayableContract(wallet);
   let provider;
   let signer;
 
   useEffect(async () => {
-    if (!ready) return;
+    if (!wallet.connected) return;
     console.log("playable contract ready");
 
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    console.log("Prov", provider);
-    signer = provider.getSigner();
-  }, [ready]);
+    // provider = new ethers.providers.Web3Provider(window.ethereum);
+    // console.log("Prov", provider);
+    // signer = provider.getSigner();
+  }, [wallet.connected]);
 
-  console.log(eths);
-  console.log(contract, ready, error);
+  console.log(wallet);
+  console.log(contract, error);
 
-  if (eths.account != undefined && activeStep == 0) {
+  if (wallet.connected && activeStep == 0) {
     setActiveStep(1);
   }
 
   const mint = () => {
     if (!contract) return;
-    if (!eths.account) return;
+    if (!wallet.connected) return;
 
     // export declare namespace Playables {
     //   export type MintParamsStruct = {
@@ -58,13 +60,16 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
     //   };
     //   ...
 
+    console.log(wallet);
+
     const params: Playables.MintParamsStruct = {
       tokenId: "1",
       amount: "1",
       discount: "",
     };
+
     contract
-      .connect(signer)
+      .connect(wallet.provider)
       .mint(params, {
         gasLimit: 1000000,
       })
@@ -73,6 +78,9 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
         setHash(tx.hash);
         setActiveStep(2);
       });
+
+    //TODO: watch for tx to complete
+    //setActiveStep(3)
   };
 
   const resetTransaction = () => {
@@ -88,7 +96,7 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
         <>
           <p>Connect your wallet before minting.</p>
           <Grid container flexDirection="column" alignItems="center">
-            <Button onClick={activateBrowserWallet} text="Connect" borders distorted />
+            <Button onClick={window.connect} text="Connect" borders distorted />
           </Grid>
         </>
       ),
@@ -153,6 +161,7 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
   } else {
     return (
       <Modal
+        wsx={{ minWidth: "calc(100% - 30px)" }}
         open={open}
         onClose={() => {
           handleOpenState(false);

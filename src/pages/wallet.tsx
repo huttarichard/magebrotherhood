@@ -9,12 +9,10 @@ import Button from "components/ui/Button";
 import CurrencyFieldText from "components/ui/CurrencyField";
 // import CurrencyFieldText from "components/ui/";
 import EthereumLogo from "components/ui/EthereumLogo";
-import MustConnect from "components/ui/MustConnectWallet";
 import Paper from "components/ui/Paper";
-import useCoinContract from "hooks/useCoinContract";
-import useWeb3 from "hooks/useWeb3";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormattedMessage, FormattedNumber, useIntl } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
@@ -53,16 +51,12 @@ enum Filter {
   Transfer,
 }
 
-export default function FAQ() {
-  const eths = useWeb3();
+export default function Wallet() {
+  const { activating, connected, error, provider } = useWeb3Wallet();
   const [filter, setFilter] = useState<Filter>(Filter.Assets);
   const [isSubmitting] = useState<boolean>(false);
 
-  const { ready } = useCoinContract(eths);
-
-  useEffect(() => {
-    if (!ready) return;
-  }, [ready]);
+  // const { resolved, contract, error } = useCoinContract();
 
   const intl = useIntl();
 
@@ -81,6 +75,18 @@ export default function FAQ() {
     id: "DtYelJ",
   });
 
+  if (!activating) {
+    return "Loading";
+  }
+
+  if (error) {
+    return error.message;
+  }
+
+  if (!connected) {
+    return "Not connected";
+  }
+
   return (
     <>
       <Head>
@@ -89,109 +95,107 @@ export default function FAQ() {
 
       <Layout>
         <Main>
-          <MustConnect>
-            <div className="head">
-              <Typography variant="h3">
-                <FormattedMessage defaultMessage="Wallet" id="3yk8fB" />
-              </Typography>
-              <Typography variant="body2">{eths.account}</Typography>
-            </div>
+          <div className="head">
+            <Typography variant="h3">
+              <FormattedMessage defaultMessage="Wallet" id="3yk8fB" />
+            </Typography>
+            {/* <Typography variant="body2">{eths.account}</Typography> */}
+          </div>
 
-            <br />
+          <br />
 
-            <div className="body">
-              <Assets magical>
-                <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
-                  <Tab label={assets} />
-                  <Tab label={transfer} />
-                </Tabs>
+          <div className="body">
+            <Assets magical>
+              <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
+                <Tab label={assets} />
+                <Tab label={transfer} />
+              </Tabs>
 
-                <br />
+              <br />
 
-                {filter === Filter.Assets && (
-                  <>
-                    <Grid container alignItems="center">
-                      <Grid item xs container alignItems="center">
-                        <Grid item sx={{ minWidth: "50px" }}>
-                          <BrotherhoodCoinLogo width={50} height={50} color="#AE55A0" />
-                        </Grid>
-                        <Grid item>
-                          <Typography sx={{ padding: 1.5 }}>Brotherhood Coin</Typography>
-                        </Grid>
+              {filter === Filter.Assets && (
+                <>
+                  <Grid container alignItems="center">
+                    <Grid item xs container alignItems="center">
+                      <Grid item sx={{ minWidth: "50px" }}>
+                        <BrotherhoodCoinLogo width={50} height={50} color="#AE55A0" />
                       </Grid>
-
-                      <Grid item xs="auto">
-                        <FormattedNumber
-                          style="currency"
-                          currency="BHC"
-                          currencyDisplay="narrowSymbol"
-                          unitDisplay="narrow"
-                          value={0.1}
-                          maximumFractionDigits={6}
-                          minimumFractionDigits={2}
-                        />
+                      <Grid item>
+                        <Typography sx={{ padding: 1.5 }}>Brotherhood Coin</Typography>
                       </Grid>
                     </Grid>
 
-                    <hr />
+                    <Grid item xs="auto">
+                      <FormattedNumber
+                        style="currency"
+                        currency="BHC"
+                        currencyDisplay="narrowSymbol"
+                        unitDisplay="narrow"
+                        value={0.1}
+                        maximumFractionDigits={6}
+                        minimumFractionDigits={2}
+                      />
+                    </Grid>
+                  </Grid>
 
-                    <Grid container alignItems="center">
-                      <Grid item xs container alignItems="center">
-                        <Grid item sx={{ minWidth: "50px" }}>
-                          <Ethereum width={70} height={70} lightone="#ccc" color="white" />
-                        </Grid>
-                        <Grid item>
-                          <Typography sx={{ padding: 1.5 }}>Ethereum</Typography>
-                        </Grid>
+                  <hr />
+
+                  <Grid container alignItems="center">
+                    <Grid item xs container alignItems="center">
+                      <Grid item sx={{ minWidth: "50px" }}>
+                        <Ethereum width={70} height={70} lightone="#ccc" color="white" />
                       </Grid>
-
-                      <Grid item xs="auto">
-                        <FormattedNumber
-                          style="currency"
-                          currency="ETH"
-                          currencyDisplay="narrowSymbol"
-                          unitDisplay="narrow"
-                          value={0.1}
-                          maximumFractionDigits={6}
-                          minimumFractionDigits={2}
-                        />
+                      <Grid item>
+                        <Typography sx={{ padding: 1.5 }}>Ethereum</Typography>
                       </Grid>
                     </Grid>
-                  </>
-                )}
 
-                {filter === Filter.Transfer && (
-                  <>
-                    <CurrencyFieldText
-                      InputProps={{
-                        name: "eth",
-                        disabled: isSubmitting,
-                      }}
-                      name="eth"
-                      label="Amount BHC"
-                      allowNegative={false}
-                      placeholder="0 BHC"
-                      autoComplete="off"
-                      key="eth"
-                      value="0"
-                    />
+                    <Grid item xs="auto">
+                      <FormattedNumber
+                        style="currency"
+                        currency="ETH"
+                        currencyDisplay="narrowSymbol"
+                        unitDisplay="narrow"
+                        value={0.1}
+                        maximumFractionDigits={6}
+                        minimumFractionDigits={2}
+                      />
+                    </Grid>
+                  </Grid>
+                </>
+              )}
 
-                    <br />
-                    <br />
+              {filter === Filter.Transfer && (
+                <>
+                  <CurrencyFieldText
+                    InputProps={{
+                      name: "eth",
+                      disabled: isSubmitting,
+                    }}
+                    name="eth"
+                    label="Amount BHC"
+                    allowNegative={false}
+                    placeholder="0 BHC"
+                    autoComplete="off"
+                    key="eth"
+                    value="0"
+                  />
 
-                    <TextField placeholder="0x00000000......" value="" label="Address" fullWidth />
+                  <br />
+                  <br />
 
-                    <br />
-                    <br />
+                  <TextField placeholder="0x00000000......" value="" label="Address" fullWidth />
 
-                    <Button text="Make transaction" distorted borders large />
-                  </>
-                )}
-              </Assets>
+                  <br />
+                  <br />
 
-              <Button onClick={eths.deactivate} text={disconnect} distorted borders block large />
-            </div>
-          </MustConnect>
+                  <Button text="Make transaction" distorted borders large />
+                </>
+              )}
+            </Assets>
+
+            {/* <Button onClick={eths.deactivate} text={disconnect} distorted borders block large /> */}
+          </div>
         </Main>
       </Layout>
     </>

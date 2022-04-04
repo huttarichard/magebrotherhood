@@ -28,6 +28,12 @@ const SidebarWrapper = styled(Grid)`
   transition: transform 0.3s;
   background-color: #111;
   height: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("lg")} {
+    @media (max-height: 700px) {
+      overflow-y: scroll;
+    }
+  }
 `;
 
 const CloseIcon = styled.div`
@@ -43,11 +49,14 @@ const List = styled.ul`
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 
   ${({ theme }) => theme.breakpoints.up("lg")} {
-    margin: -2rem 0 0 0;
+    margin: 5rem 0 2rem 0;
     height: 100%;
+
+    @media (max-height: 750px) {
+      margin: 2rem 0 2rem 0;
+    }
   }
 `;
 

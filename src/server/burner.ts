@@ -42,7 +42,7 @@ export async function calculateChangeInCoins(prices: number[]): Promise<number> 
   const ma4 = movingAverage(prices, 4);
   const ma8 = movingAverage(prices, 8);
   const ma24 = movingAverage(prices, 24);
-  console.log("MA4:", ma4, "MA8:", ma8, "MA24:", ma24);
+  console.info("MA4:", ma4, "MA8:", ma8, "MA24:", ma24);
 
   const latestPrice = prices[0];
   let change = 0;

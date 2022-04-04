@@ -1,32 +1,30 @@
 import styled from "@emotion/styled";
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
-import { default as MuiModal, ModalProps } from "@mui/material/Modal";
+import { default as MuiModal, ModalProps as MuiModalProps } from "@mui/material/Modal";
 import React from "react";
-
-export type { ModalProps };
 
 const Wrapper = styled(Box)`
   box-sizing: border-box;
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(100% - 30px);
   transform: translate(-50%, -50%);
   color: #fff;
   padding: 20px;
   border: 2px solid ${({ theme }) => theme.palette.primary.main};
   border-radius: 5px;
   background-color: #000;
-
-  ${({ theme }) => theme.breakpoints.up("lg")} {
-    max-width: 800px;
-  }
 `;
 
-export default function Modal({ children, ...props }: React.PropsWithChildren<ModalProps>) {
+export interface ModalProps extends MuiModalProps {
+  wsx?: SxProps;
+}
+
+export default function Modal({ children, wsx, ...props }: React.PropsWithChildren<ModalProps>) {
   return (
     <MuiModal {...props}>
-      <Wrapper>{children}</Wrapper>
+      <Wrapper sx={wsx}>{children}</Wrapper>
     </MuiModal>
   );
 }

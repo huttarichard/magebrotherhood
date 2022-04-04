@@ -82,6 +82,7 @@ export default function StakingModal({ open, handleOpenState }: StakingModalProp
 
   return (
     <Modal
+      wsx={{ minWidth: "calc(100% - 30px)" }}
       open={open}
       onClose={() => {
         handleOpenState(false);

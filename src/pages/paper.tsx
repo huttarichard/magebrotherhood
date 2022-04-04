@@ -78,6 +78,12 @@ export default function FAQ() {
               </span>
             </a>
           </div>
+
+          {/* we need to describe the vision of creating standart */}
+          {/* we need to explain why metavaerse */}
+          {/* we need to explain value of the coin */}
+          {/* we need to explain dao */}
+          {/* we need to explain no scam */}
         </Main>
       </Layout>
     </>
