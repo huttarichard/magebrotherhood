@@ -1,11 +1,13 @@
-import { useEthers } from "@usedapp/core";
 import Button from "components/ui/Button";
+import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
+import { useWeb3Wallet } from "hooks/useWeb3";
 import { useRouter } from "next/router";
 import { useIntl } from "react-intl";
 
 export default function HeaderWallet() {
-  const { activateBrowserWallet, account } = useEthers();
   const router = useRouter();
+  const { connected } = useWeb3Wallet();
+  const window = useWeb3ConnectWindow();
   // const config = useConfig();
 
   const intl = useIntl();
@@ -22,10 +24,10 @@ export default function HeaderWallet() {
 
   return (
     <div>
-      {account ? (
+      {connected ? (
         <Button onClick={() => router.push("/wallet")} text={wallet} distorted borders block large />
       ) : (
-        <Button onClick={activateBrowserWallet} text={connect} distorted borders block large />
+        <Button onClick={window.connect} text={connect} distorted borders block large />
       )}
     </div>
   );

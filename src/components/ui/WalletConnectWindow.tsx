@@ -12,7 +12,7 @@ interface State {
   close: () => void;
 }
 
-const useWeb3ConnectWindow = create<State>((set) => ({
+export const useWeb3ConnectWindow = create<State>((set) => ({
   open: false,
 
   connect() {
@@ -30,7 +30,7 @@ export default function WalletConnectWindow({ children, ...props }: PropsWithChi
 
   const content = (
     <div style={{ padding: "20px" }}>
-      <WalletConnector {...props} />
+      <WalletConnector onWalletConnected={close} {...props} />
       {children}
     </div>
   );
