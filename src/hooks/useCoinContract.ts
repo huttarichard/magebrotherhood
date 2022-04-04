@@ -1,6 +1,6 @@
 import { formatUnits } from "@ethersproject/units";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
-import { ICoin } from "artifacts/types";
+import { ICoin, Playables } from "artifacts/types";
 import { Name } from "lib/web3/contracts";
 import { useEffect, useState } from "react";
 
@@ -9,6 +9,10 @@ import { Web3 } from "./useWeb3";
 
 export default function useCoinContract(ethers: Web3) {
   return useContract<ICoin>(Name.Coin, ethers);
+}
+
+export function usePlayableContract(ethers: Web3) {
+  return useContract<Playables>(Name.Playables, ethers);
 }
 
 export function useCoinETHPrice(coin: ICoin | null) {

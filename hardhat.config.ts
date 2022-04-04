@@ -86,13 +86,13 @@ const config: HardhatUserConfig = {
       gasPrice: 875000000,
       loggingEnabled: false,
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts: [`0x${process.env.PRIVATE_KEY}`],
-    },
-    ganache: {
-      url: "http://127.0.0.1:7545",
-    },
+    // ropsten: {
+    //   url: process.env.ROPSTEN_URL || "",
+    //   accounts: [`0x${process.env.PRIVATE_KEY}`],
+    // },
+    // ganache: {
+    //   url: "http://127.0.0.1:7545",
+    // },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
       accounts: [`0x${process.env.PRIVATE_KEY}`],

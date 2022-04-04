@@ -141,10 +141,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Coin__factory>;
     getContractFactory(
-      name: "Governance",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Governance__factory>;
-    getContractFactory(
       name: "IAffiliate",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAffiliate__factory>;
@@ -329,11 +325,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Coin>;
-    getContractAt(
-      name: "Governance",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Governance>;
     getContractAt(
       name: "IAffiliate",
       address: string,

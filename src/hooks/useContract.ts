@@ -30,6 +30,7 @@ export default function useContract<T extends Contract>(name: Name, ethers: Web3
 
     getContract(name, ethers.chainId as ChainId, ethers.library as Provider)
       .then((contract) => {
+        console.log(contract);
         if (!contract) {
           throw UNSUPPORTED_CHAIN;
         }
