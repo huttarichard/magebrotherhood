@@ -18,7 +18,7 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace Playables {
+export declare namespace IPlayables {
   export type MintParamsStruct = {
     tokenId: BigNumberish;
     amount: BigNumberish;
@@ -30,7 +30,9 @@ export declare namespace Playables {
     amount: BigNumber;
     discount: string;
   };
+}
 
+export declare namespace Playables {
   export type TokenStruct = {
     uri: string;
     createdAt: BigNumberish;
@@ -148,11 +150,11 @@ export interface PlayablesInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [Playables.MintParamsStruct]
+    values: [IPlayables.MintParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "mintPrice",
-    values: [Playables.MintParamsStruct]
+    values: [IPlayables.MintParamsStruct]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -474,12 +476,12 @@ export interface Playables extends BaseContract {
     ): Promise<[boolean]>;
 
     mint(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     mintPrice(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
 
@@ -657,12 +659,12 @@ export interface Playables extends BaseContract {
   ): Promise<boolean>;
 
   mint(
-    p: Playables.MintParamsStruct,
+    p: IPlayables.MintParamsStruct,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   mintPrice(
-    p: Playables.MintParamsStruct,
+    p: IPlayables.MintParamsStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -840,12 +842,12 @@ export interface Playables extends BaseContract {
     ): Promise<boolean>;
 
     mint(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintPrice(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1102,12 +1104,12 @@ export interface Playables extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     mintPrice(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1268,12 +1270,12 @@ export interface Playables extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     mintPrice(
-      p: Playables.MintParamsStruct,
+      p: IPlayables.MintParamsStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -1,9 +1,9 @@
 import { Signer } from "@ethersproject/abstract-signer";
 import { Provider } from "@ethersproject/providers";
-import type { ICoin, IStaking, Playables } from "artifacts/types";
+import type { ICoin, IPlayables, IStaking } from "artifacts/types";
 import env from "lib/env";
 
-export type IContract = ICoin | IStaking | Playables;
+export type IContract = ICoin | IStaking | IPlayables;
 export type Factory<T extends IContract> = (signer: Signer | Provider) => Promise<T>;
 export type { ICoin, IStaking };
 
@@ -21,6 +21,7 @@ export interface ContractDefinition<T extends IContract> {
 export type ContractInterfaces = {
   [Contract.Coin]: ICoin;
   [Contract.Staking]: IStaking;
+  [Contract.Playables]: IPlayables;
 };
 
 export type ContractFunctions<Z extends Contract> = keyof ContractInterfaces[Z]["functions"];
@@ -33,6 +34,7 @@ export type ContractFunctionArguments<
 export type Contracts = {
   [Contract.Coin]: ContractDefinition<ICoin>;
   [Contract.Staking]: ContractDefinition<IStaking>;
+  [Contract.Playables]: ContractDefinition<IPlayables>;
 };
 
 export const contracts: Contracts = {
@@ -53,10 +55,10 @@ export const contracts: Contracts = {
   },
   [Contract.Playables]: {
     connect: async (signer: Signer | Provider) => {
-      const { Playables__factory } = await import("artifacts/types/factories/Playables__factory");
-      return Playables__factory.connect(env.PLAYABLES_ADDRESS, signer);
+      const { IPlayables__factory } = await import("artifacts/types/factories/IPlayables__factory");
+      return IPlayables__factory.connect(env.PLAYABLES_ADDRESS, signer);
     },
-    address: process.env.STAKING_ADDRESS,
+    address: env.PLAYABLES_ADDRESS,
   },
 };
 

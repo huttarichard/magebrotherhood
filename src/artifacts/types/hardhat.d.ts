@@ -149,6 +149,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ICoin__factory>;
     getContractFactory(
+      name: "IPlayables",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPlayables__factory>;
+    getContractFactory(
       name: "IStakable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IStakable__factory>;
@@ -335,6 +339,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ICoin>;
+    getContractAt(
+      name: "IPlayables",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPlayables>;
     getContractAt(
       name: "IStakable",
       address: string,

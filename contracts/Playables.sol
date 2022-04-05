@@ -14,11 +14,12 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/ICoin.sol";
 import "./interfaces/IAffiliate.sol";
+import "./interfaces/IPlayables.sol";
 
 /**
  * Playables contract.
  */
-contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
+contract Playables is IPlayables, ERC1155, ERC2981, AccessControl, Pausable {
   /**
    * @dev token represents nft playable.
    */
@@ -39,14 +40,14 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   ICoin public coin;
 
   /**
-   * @dev contains all tokens.
-   */
-  mapping(uint256 => Token) public tokens;
-
-  /**
    * @dev Rewarder address;
    */
   IAffiliate public affiliate;
+
+  /**
+   * @dev contains all tokens.
+   */
+  mapping(uint256 => Token) public tokens;
 
   /**
    * @dev keeps contract uri.
@@ -168,14 +169,8 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   }
 
   /**
-   * @dev MintParams containing parameters for minting a token.
+   * @dev Allows execution of only mintable collections.
    */
-  struct MintParams {
-    uint256 tokenId;
-    uint64 amount;
-    string discount;
-  }
-
   modifier onlyMintable(uint256 tokenId, uint256 amount) {
     Token memory cl = tokens[tokenId];
     require(_exists(tokenId), "nonexistent token");
@@ -188,7 +183,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   /**
    * @dev mint function which is using discount
    */
-  function mint(MintParams memory p) public payable whenNotPaused onlyMintable(p.tokenId, p.amount) {
+  function mint(MintParams memory p) external payable whenNotPaused onlyMintable(p.tokenId, p.amount) {
     Token storage token = tokens[p.tokenId];
 
     uint256 price = token.price * p.amount;
@@ -209,7 +204,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    * @dev will perform analysis of tokenId and will return its price and mintability
    */
   function mintPrice(MintParams memory p)
-    public
+    external
     view
     whenNotPaused
     onlyMintable(p.tokenId, p.amount)
@@ -241,7 +236,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     public
     view
     virtual
-    override(ERC1155, ERC2981, AccessControl)
+    override(IERC165, ERC1155, ERC2981, AccessControl)
     returns (bool)
   {
     return super.supportsInterface(interfaceId);

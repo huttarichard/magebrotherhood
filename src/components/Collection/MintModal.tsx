@@ -1,13 +1,11 @@
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
-import { Playables } from "artifacts/types";
 import Button from "components/ui/Button";
 import TransactionStepper from "components/ui/TransactionStepper";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
-import { usePlayableContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { StakingItem } from "pages/staking";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useWindowSize } from "react-use";
 
 import Modal from "../ui/Modal";
@@ -27,61 +25,6 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
 
   const wallet = useWeb3Wallet();
   const window = useWeb3ConnectWindow();
-
-  const { contract, error } = usePlayableContract(wallet);
-  let provider;
-  let signer;
-
-  useEffect(async () => {
-    if (!wallet.connected) return;
-    console.log("playable contract ready");
-
-    // provider = new ethers.providers.Web3Provider(window.ethereum);
-    // console.log("Prov", provider);
-    // signer = provider.getSigner();
-  }, [wallet.connected]);
-
-  console.log(wallet);
-  console.log(contract, error);
-
-  if (wallet.connected && activeStep == 0) {
-    setActiveStep(1);
-  }
-
-  const mint = () => {
-    if (!contract) return;
-    if (!wallet.connected) return;
-
-    // export declare namespace Playables {
-    //   export type MintParamsStruct = {
-    //     tokenId: BigNumberish;
-    //     amount: BigNumberish;
-    //     discount: string;
-    //   };
-    //   ...
-
-    console.log(wallet);
-
-    const params: Playables.MintParamsStruct = {
-      tokenId: "1",
-      amount: "1",
-      discount: "",
-    };
-
-    contract
-      .connect(wallet.provider)
-      .mint(params, {
-        gasLimit: 1000000,
-      })
-      .then((tx) => {
-        console.log(tx);
-        setHash(tx.hash);
-        setActiveStep(2);
-      });
-
-    //TODO: watch for tx to complete
-    //setActiveStep(3)
-  };
 
   const resetTransaction = () => {
     setActiveStep(0);
@@ -109,7 +52,7 @@ export default function MintModal({ open, handleOpenState }: MintModalProps) {
         <>
           <p>Mighty Knight for 0.1 ETH</p>
           <Grid container flexDirection="column" alignItems="center">
-            <Button onClick={mint} text="Mint" borders distorted />
+            {/* <Button onClick={mint} text="Mint" borders distorted /> */}
           </Grid>
         </>
       ),
