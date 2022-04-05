@@ -287,7 +287,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of Tokens that can be bought with input ETH.
    */
   function getEthToTokenInputPrice(uint256 ethSold) external view returns (uint256) {
-    require(ethSold > 0, "invalid input");
+    require(ethSold > 0, "ethSold must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     return getInputPrice(ethSold, address(this).balance, tokenReserve);
   }
@@ -298,7 +298,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of ETH needed to buy output Tokens.
    */
   function getEthToTokenOutputPrice(uint256 tokensBought) external view returns (uint256) {
-    require(tokensBought > 0, "invalid input");
+    require(tokensBought > 0, "tokensBought must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethSold = getOutputPrice(tokensBought, address(this).balance, tokenReserve);
     return ethSold;
@@ -310,7 +310,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of ETH that can be bought with input Tokens.
    */
   function getTokenToEthInputPrice(uint256 tokensSold) external view returns (uint256) {
-    require(tokensSold > 0, "invalid input");
+    require(tokensSold > 0, "tokensSold must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     uint256 ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
     return ethBought;
@@ -322,7 +322,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of ETH that can be bought with input Tokens.
    */
   function getTokenToEthInputPriceWithTax(uint256 tokensSold) external view returns (uint256, uint256) {
-    require(tokensSold > 0, "invalid input");
+    require(tokensSold > 0, "tokensSold must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     return getInputPriceWithTax(tokensSold, tokenReserve, address(this).balance);
   }
@@ -333,7 +333,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of Tokens needed to buy output ETH.
    */
   function getTokenToEthOutputPrice(uint256 ethBought) external view returns (uint256) {
-    require(ethBought > 0, "invalid input");
+    require(ethBought > 0, "ethBought must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     return getOutputPrice(ethBought, tokenReserve, address(this).balance);
   }
@@ -344,7 +344,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
    * @return Amount of Tokens needed to buy output ETH.
    */
   function getTokenToEthOutputPriceWithTax(uint256 ethBought) external view returns (uint256, uint256) {
-    require(ethBought > 0, "invalid input");
+    require(ethBought > 0, "ethBought must be > 0");
     uint256 tokenReserve = balanceOf(address(this));
     return getOutputPriceWithTax(ethBought, tokenReserve, address(this).balance);
   }
@@ -499,7 +499,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
     uint256 tokenReserve = balanceOf(address(this));
     (uint256 ethBought, uint256 tax) = getInputPriceWithTax(tokensSold, tokenReserve, address(this).balance);
-    require(ethBought >= minEth, "invalid input");
+    require(ethBought >= minEth, "eth bought must >= min eth");
 
     Address.sendValue(recipient, ethBought.sub(tax));
     _transfer(buyer, address(this), tokensSold);
@@ -528,7 +528,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable, ICoin {
 
     uint256 tokenReserve = balanceOf(address(this));
     (uint256 tokensSold, uint256 tax) = getOutputPriceWithTax(ethBought, tokenReserve, address(this).balance);
-    require(maxTokens >= tokensSold, "invalid input");
+    require(maxTokens >= tokensSold, "max bought tokens >= tokens sold");
 
     Address.sendValue(recipient, ethBought);
     _transfer(buyer, address(this), tokensSold.add(tax));

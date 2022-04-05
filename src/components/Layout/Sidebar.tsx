@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormattedMessage } from "react-intl";
 
-import HeaderWallet from "./HeaderWallet";
+import HeaderWallet from "./ConnectWallet";
 import { useLayout } from "./store";
 
 const SidebarWrapper = styled(Grid)`

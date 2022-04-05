@@ -2,9 +2,10 @@ import Button from "components/ui/Button";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { useRouter } from "next/router";
+import React from "react";
 import { useIntl } from "react-intl";
 
-export default function HeaderWallet() {
+export default function ConnectWallet({ ...props }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
   const { connected } = useWeb3Wallet();
   const window = useWeb3ConnectWindow();
@@ -23,7 +24,7 @@ export default function HeaderWallet() {
   });
 
   return (
-    <div>
+    <div {...props}>
       {connected ? (
         <Button onClick={() => router.push("/wallet")} text={wallet} distorted borders block large />
       ) : (

@@ -110,10 +110,8 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     let reci: ContractReceipt;
     try {
       result = await fn(...params.args);
-      console.log(result);
       reci = await result.wait(1);
     } catch (e) {
-      console.log(e);
       return set({
         step: Step.Error,
         error: e,
@@ -131,7 +129,6 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     if (get().step === Step.Send) {
       return;
     }
-    console.log("reset");
     set({
       open: false,
       step: Step.None,
@@ -253,7 +250,6 @@ function Error() {
 
 export function Content() {
   const { step } = useWeb3TransactionPresenter();
-  console.log(step);
 
   const steps = {
     [Step.None]: 0,

@@ -43,6 +43,7 @@ interface CurrencyFieldProps extends Omit<Props, "value"> {
 
 export type CurrencyFieldRef = {
   textfield?: HTMLInputElement;
+  value: BigNumber | null;
   setValueSilently: (x: BigNumber) => void;
 };
 
@@ -56,6 +57,7 @@ export const CurrencyField = forwardRef<CurrencyFieldRef, CurrencyFieldProps>((p
     ref,
     () => ({
       textfield: iref.current,
+      value: bn,
       setValueSilently: (x: BigNumber) => {
         if (!iref.current) return;
         setBN(x);

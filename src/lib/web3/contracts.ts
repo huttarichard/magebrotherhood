@@ -41,7 +41,6 @@ export const contracts: Contracts = {
   [Contract.Coin]: {
     connect: async (signer: Signer | Provider) => {
       const { ICoin__factory } = await import("artifacts/types/factories/ICoin__factory");
-      console.log("connect", env.COIN_ADDRESS, signer);
       return ICoin__factory.connect(env.COIN_ADDRESS, signer);
     },
     address: env.COIN_ADDRESS,

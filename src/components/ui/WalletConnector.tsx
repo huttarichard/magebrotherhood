@@ -81,8 +81,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
                       if (onWalletConnected) setTimeout(onWalletConnected, 1500);
                     })
                     .catch((e) => {
-                      console.log(e);
-                      // setErr(e);
+                      console.error(e);
                     })
                     .finally(() => {
                       setTryAgain(false);
