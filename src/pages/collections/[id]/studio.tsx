@@ -1,10 +1,12 @@
 // import { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
 import styled from "@emotion/styled";
-import MintModal from "components/Collection/MintModal";
+import { BigNumber } from "@ethersproject/bignumber";
+import { parseUnits } from "@ethersproject/units";
 import Button from "components/ui/Button";
+import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
 
 import Layout from "../../../components/Layout/Layout";
 import ModelViewerDynamic from "../../../components/ui/ModelViewerDynamic";
@@ -54,7 +56,7 @@ const Card = styled.div`
 `;
 
 export default function Studio() {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const { makeTransaction } = useWeb3TransactionPresenter();
 
   return (
     <>
@@ -164,14 +166,28 @@ export default function Studio() {
                   style={{ height: "50px", width: "115px", borderRadius: "4px" }}
                   text="Mint"
                   onClick={() => {
-                    setModalOpen(true);
+                    makeTransaction<Contract.Playables, "mint">({
+                      description: {
+                        action: "Mint",
+                        description: "Mint Knight",
+                        value: parseUnits("0.3", "ether"),
+                      },
+                      fn: "mint",
+                      args: [
+                        {
+                          tokenId: BigNumber.from("1"),
+                          amount: BigNumber.from("1"),
+                          discount: "",
+                        },
+                      ],
+                      contract: Contract.Playables,
+                    });
                   }}
                 />
               </PriceWrapper>
             </div>
           </Card>
         </Wrapper>
-        <MintModal open={modalOpen} handleOpenState={setModalOpen} stakeQueue={[]} />
       </Layout>
     </>
   );

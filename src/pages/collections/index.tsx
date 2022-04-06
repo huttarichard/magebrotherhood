@@ -1,14 +1,16 @@
 import styled from "@emotion/styled";
+import { BigNumber } from "@ethersproject/bignumber";
+import { parseUnits } from "@ethersproject/units";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import MintModal from "components/Collection/MintModal";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
+import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
 
 const FullImage = styled.img`
   width: 100%;
@@ -59,7 +61,7 @@ const stylesContent = (theme: any) => ({
 });
 
 export default function CollectionsIndex() {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const { makeTransaction } = useWeb3TransactionPresenter();
 
   const items = [
     {
@@ -142,7 +144,22 @@ export default function CollectionsIndex() {
                           style={{ height: "50px", width: "115px", borderRadius: "4px" }}
                           text="Mint"
                           onClick={() => {
-                            setModalOpen(true);
+                            makeTransaction<Contract.Playables, "mint">({
+                              description: {
+                                action: "Mint",
+                                description: "Mint " + item.name,
+                                value: parseUnits(item.price.toString(), "ether"),
+                              },
+                              fn: "mint",
+                              args: [
+                                {
+                                  tokenId: BigNumber.from(item.id),
+                                  amount: BigNumber.from("1"),
+                                  discount: "",
+                                },
+                              ],
+                              contract: Contract.Playables,
+                            });
                           }}
                         />
                       </PriceWrapper>
@@ -153,7 +170,6 @@ export default function CollectionsIndex() {
             ))}
           </div>
         </div>
-        <MintModal open={modalOpen} handleOpenState={setModalOpen} stakeQueue={[]} />
       </Layout>
     </>
   );
