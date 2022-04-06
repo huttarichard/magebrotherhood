@@ -17,7 +17,7 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace IStaking {
+export declare namespace Staking {
   export type TokenInfoStruct = {
     owner: string;
     weight: BigNumberish;
@@ -75,7 +75,7 @@ export interface StakingInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "rewardsSchedule(uint256)": FunctionFragment;
-    "setCoin(address)": FunctionFragment;
+    "setCoinContract(address)": FunctionFragment;
     "slush(address,uint256)": FunctionFragment;
     "stakerHistories(address,uint256)": FunctionFragment;
     "stakingContracts(address)": FunctionFragment;
@@ -190,7 +190,10 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "rewardsSchedule",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "setCoin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setCoinContract",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "slush",
     values: [string, BigNumberish]
@@ -328,7 +331,10 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "rewardsSchedule",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setCoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setCoinContract",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "slush", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakerHistories",
@@ -617,7 +623,7 @@ export interface Staking extends BaseContract {
       nft: string,
       id: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[IStaking.TokenInfoStructOutput]>;
+    ): Promise<[Staking.TokenInfoStructOutput]>;
 
     globalHistory(
       arg0: BigNumberish,
@@ -712,7 +718,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    setCoin(
+    setCoinContract(
       _coin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -835,7 +841,7 @@ export interface Staking extends BaseContract {
     nft: string,
     id: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<IStaking.TokenInfoStructOutput>;
+  ): Promise<Staking.TokenInfoStructOutput>;
 
   globalHistory(
     arg0: BigNumberish,
@@ -930,7 +936,7 @@ export interface Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  setCoin(
+  setCoinContract(
     _coin: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1050,7 +1056,7 @@ export interface Staking extends BaseContract {
       nft: string,
       id: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<IStaking.TokenInfoStructOutput>;
+    ): Promise<Staking.TokenInfoStructOutput>;
 
     globalHistory(
       arg0: BigNumberish,
@@ -1140,7 +1146,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setCoin(_coin: string, overrides?: CallOverrides): Promise<void>;
+    setCoinContract(_coin: string, overrides?: CallOverrides): Promise<void>;
 
     slush(
       nft: string,
@@ -1497,7 +1503,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setCoin(
+    setCoinContract(
       _coin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1711,7 +1717,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setCoin(
+    setCoinContract(
       _coin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

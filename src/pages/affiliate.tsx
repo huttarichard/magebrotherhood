@@ -1,12 +1,14 @@
 import styled from "@emotion/styled";
+import { BigNumber } from "@ethersproject/bignumber";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
-import { Form, Formik } from "formik";
+import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useFormik } from "formik";
+import { Contract } from "lib/web3";
 import Head from "next/head";
-import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
 const Main = styled.div`
@@ -83,20 +85,9 @@ const CardHeader = styled.div`
   }
 `;
 
-interface SwapForm {
-  eth: number;
-}
-
 export default function Swap() {
   const intl = useIntl();
-
-  const initialValues: SwapForm = { eth: 0 };
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-    setIsSubmitting(false);
-  };
+  const { makeTransaction } = useWeb3TransactionPresenter();
 
   // i18n
   const formLabel = intl.formatMessage({
@@ -112,6 +103,28 @@ export default function Swap() {
   const formSubmitButtonText = intl.formatMessage({
     defaultMessage: "Register Code",
     id: "affiliate_page_form_submit_button_text",
+  });
+
+  interface Values {
+    code: string;
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      code: "",
+    },
+    onSubmit: (values: Values) => {
+      makeTransaction<Contract.Promoter, "register">({
+        contract: Contract.Promoter,
+        fn: "register",
+        description: {
+          action: "Transfer",
+          description: "Transfer your bortherhood coins to another address",
+          value: BigNumber.from(0),
+        },
+        args: ["", ""],
+      });
+    },
   });
 
   return (
@@ -153,26 +166,10 @@ export default function Swap() {
 
             <br />
 
-            <Formik
-              initialValues={initialValues}
-              validate={async () => {
-                const errors: { eth?: string } = {};
-
-                return errors;
-              }}
-              onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                  setSubmitting(false);
-                }, 100);
-              }}
-            >
-              {() => (
-                <Form onSubmit={handleSubmit}>
-                  <TextField fullWidth name="code" label={formLabel} helperText={formHelperText} />
-                  <Button text={formSubmitButtonText} disabled={isSubmitting} className="btn" distorted borders large />
-                </Form>
-              )}
-            </Formik>
+            <form onSubmit={formik.handleSubmit}>
+              <TextField fullWidth name="code" label={formLabel} helperText={formHelperText} />
+              <Button text={formSubmitButtonText} className="btn" distorted borders large />
+            </form>
           </CardWrapper>
         </Main>
       </Layout>

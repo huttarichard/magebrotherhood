@@ -279,7 +279,7 @@ export default function Hero() {
       <Background></Background>
       <Model>
         <ModelViewerDynamic
-          src="/assets/5.glb"
+          src="/models/black_knight.glb"
           ar
           ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
           ar-modes="webxr scene-viewer quick-look"

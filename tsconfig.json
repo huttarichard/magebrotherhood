@@ -39,5 +39,5 @@
   ],
   "include": [
     "src/**/*"
-  ]
+, "scripts/screenshots.ts"  ]
 }

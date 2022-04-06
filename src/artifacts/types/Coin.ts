@@ -9,7 +9,6 @@ import {
   CallOverrides,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -34,44 +33,31 @@ export interface CoinInterface extends utils.Interface {
   contractName: "Coin";
   functions: {
     "ADMIN()": FunctionFragment;
-    "BURNER()": FunctionFragment;
     "DECIMALS()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DISTRIBUTOR()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "FREELOADER()": FunctionFragment;
-    "MINTER()": FunctionFragment;
     "NAME()": FunctionFragment;
-    "SPENDER()": FunctionFragment;
     "TICK()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(address,uint256)": FunctionFragment;
     "checkpoints(address,uint32)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
-    "ethToTokenSwap()": FunctionFragment;
-    "ethToTokenSwapInput(uint256,uint256)": FunctionFragment;
-    "ethToTokenSwapOutput(uint256,uint256)": FunctionFragment;
-    "ethToTokenTransferInput(uint256,uint256,address)": FunctionFragment;
-    "ethToTokenTransferOutput(uint256,uint256,address)": FunctionFragment;
-    "getEthToTokenInputPrice(uint256)": FunctionFragment;
-    "getEthToTokenOutputPrice(uint256)": FunctionFragment;
+    "distribute(address,uint256)": FunctionFragment;
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
-    "getTokenToEthInputPrice(uint256)": FunctionFragment;
-    "getTokenToEthInputPriceWithTax(uint256)": FunctionFragment;
-    "getTokenToEthOutputPrice(uint256)": FunctionFragment;
-    "getTokenToEthOutputPriceWithTax(uint256)": FunctionFragment;
     "getVotes(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "liqudityGuard()": FunctionFragment;
-    "liqudityGuardDenominator()": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "numCheckpoints(address)": FunctionFragment;
@@ -80,19 +66,8 @@ export interface CoinInterface extends utils.Interface {
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setLiqudityGuard(uint256,uint256)": FunctionFragment;
-    "setTaxFee(uint256,uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
-    "taxFee()": FunctionFragment;
-    "taxFeeDenominator()": FunctionFragment;
-    "tokenBurn(address,uint256)": FunctionFragment;
-    "tokenMint(address,uint256)": FunctionFragment;
-    "tokenToEthSwap(uint256)": FunctionFragment;
-    "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
-    "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
-    "tokenToEthTransferInput(uint256,uint256,uint256,address)": FunctionFragment;
-    "tokenToEthTransferOutput(uint256,uint256,uint256,address)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -100,23 +75,20 @@ export interface CoinInterface extends utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
-  encodeFunctionData(functionFragment: "BURNER", values?: undefined): string;
   encodeFunctionData(functionFragment: "DECIMALS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "DOMAIN_SEPARATOR",
+    functionFragment: "DISTRIBUTOR",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "FREELOADER",
+    functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "MINTER", values?: undefined): string;
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
-  encodeFunctionData(functionFragment: "SPENDER", values?: undefined): string;
   encodeFunctionData(functionFragment: "TICK", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
@@ -127,6 +99,10 @@ export interface CoinInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "checkpoints",
     values: [string, BigNumberish]
@@ -150,32 +126,8 @@ export interface CoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "ethToTokenSwap",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ethToTokenSwapInput",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ethToTokenSwapOutput",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ethToTokenTransferInput",
-    values: [BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ethToTokenTransferOutput",
-    values: [BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEthToTokenInputPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEthToTokenOutputPrice",
-    values: [BigNumberish]
+    functionFragment: "distribute",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPastTotalSupply",
@@ -188,22 +140,6 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenToEthInputPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenToEthInputPriceWithTax",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenToEthOutputPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenToEthOutputPriceWithTax",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getVotes", values: [string]): string;
   encodeFunctionData(
@@ -219,12 +155,8 @@ export interface CoinInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "liqudityGuard",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liqudityGuardDenominator",
-    values?: undefined
+    functionFragment: "mint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
@@ -255,51 +187,10 @@ export interface CoinInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLiqudityGuard",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTaxFee",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(functionFragment: "taxFee", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "taxFeeDenominator",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenBurn",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenMint",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenToEthSwap",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenToEthSwapInput",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenToEthSwapOutput",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenToEthTransferInput",
-    values: [BigNumberish, BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenToEthTransferOutput",
-    values: [BigNumberish, BigNumberish, BigNumberish, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -315,24 +206,25 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "BURNER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "DECIMALS", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "DISTRIBUTOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "FREELOADER", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "MINTER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "SPENDER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "TICK", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "checkpoints",
     data: BytesLike
@@ -348,34 +240,7 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToTokenSwap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToTokenSwapInput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToTokenSwapOutput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToTokenTransferInput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToTokenTransferOutput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEthToTokenInputPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEthToTokenOutputPrice",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPastTotalSupply",
     data: BytesLike
@@ -388,22 +253,6 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenToEthInputPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenToEthInputPriceWithTax",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenToEthOutputPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenToEthOutputPriceWithTax",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
@@ -411,14 +260,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "liqudityGuard",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liqudityGuardDenominator",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(
@@ -434,42 +276,10 @@ export interface CoinInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setLiqudityGuard",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setTaxFee", data: BytesLike): Result;
-  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "taxFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "taxFeeDenominator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenBurn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "tokenMint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenToEthSwap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenToEthSwapInput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenToEthSwapOutput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenToEthTransferInput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenToEthTransferOutput",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -483,29 +293,23 @@ export interface CoinInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "Bought(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
-    "Deposit(address,uint256,uint256,uint256,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "Sold(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Bought"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Sold"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
@@ -516,21 +320,6 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export type BoughtEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
-  {
-    buyer: string;
-    recipient: string;
-    timestamp: BigNumber;
-    tokensBought: BigNumber;
-    ethSold: BigNumber;
-    tokenReserve: BigNumber;
-    ethReserve: BigNumber;
-  }
->;
-
-export type BoughtEventFilter = TypedEventFilter<BoughtEvent>;
 
 export type DelegateChangedEvent = TypedEvent<
   [string, string, string],
@@ -546,19 +335,6 @@ export type DelegateVotesChangedEvent = TypedEvent<
 
 export type DelegateVotesChangedEventFilter =
   TypedEventFilter<DelegateVotesChangedEvent>;
-
-export type DepositEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber, BigNumber],
-  {
-    depositer: string;
-    timestamp: BigNumber;
-    ethAdded: BigNumber;
-    tokenReserve: BigNumber;
-    ethReserve: BigNumber;
-  }
->;
-
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
 export type PausedEvent = TypedEvent<[string], { account: string }>;
 
@@ -585,21 +361,6 @@ export type RoleRevokedEvent = TypedEvent<
 >;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-
-export type SoldEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
-  {
-    seller: string;
-    recipient: string;
-    timestamp: BigNumber;
-    tokensSold: BigNumber;
-    ethBought: BigNumber;
-    tokenReserve: BigNumber;
-    ethReserve: BigNumber;
-  }
->;
-
-export type SoldEventFilter = TypedEventFilter<SoldEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber],
@@ -642,21 +403,15 @@ export interface Coin extends BaseContract {
   functions: {
     ADMIN(overrides?: CallOverrides): Promise<[string]>;
 
-    BURNER(overrides?: CallOverrides): Promise<[string]>;
-
     DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    DISTRIBUTOR(overrides?: CallOverrides): Promise<[string]>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    FREELOADER(overrides?: CallOverrides): Promise<[string]>;
-
-    MINTER(overrides?: CallOverrides): Promise<[string]>;
-
     NAME(overrides?: CallOverrides): Promise<[string]>;
-
-    SPENDER(overrides?: CallOverrides): Promise<[string]>;
 
     TICK(overrides?: CallOverrides): Promise<[string]>;
 
@@ -673,6 +428,12 @@ export interface Coin extends BaseContract {
     ): Promise<ContractTransaction>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    burn(
+      burnee: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     checkpoints(
       account: string,
@@ -705,45 +466,11 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
 
-    ethToTokenSwap(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    ethToTokenSwapInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    ethToTokenSwapOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    ethToTokenTransferInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
+    distribute(
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    ethToTokenTransferOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    getEthToTokenInputPrice(
-      ethSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getEthToTokenOutputPrice(
-      tokensBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     getPastTotalSupply(
       blockNumber: BigNumberish,
@@ -757,26 +484,6 @@ export interface Coin extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenToEthInputPrice(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getTokenToEthInputPriceWithTax(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
-
-    getTokenToEthOutputPrice(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getTokenToEthOutputPriceWithTax(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
 
     getVotes(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -798,9 +505,11 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    liqudityGuard(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    liqudityGuardDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
+    mint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -840,75 +549,12 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLiqudityGuard(
-      _guard: BigNumberish,
-      _denominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
-
-    taxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    taxFeeDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tokenBurn(
-      burnee: string,
-      tokensToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenMint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenToEthSwap(
-      tokensSold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenToEthSwapInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenToEthSwapOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenToEthTransferInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    tokenToEthTransferOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -932,21 +578,15 @@ export interface Coin extends BaseContract {
 
   ADMIN(overrides?: CallOverrides): Promise<string>;
 
-  BURNER(overrides?: CallOverrides): Promise<string>;
-
   DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
+
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-  FREELOADER(overrides?: CallOverrides): Promise<string>;
-
-  MINTER(overrides?: CallOverrides): Promise<string>;
-
   NAME(overrides?: CallOverrides): Promise<string>;
-
-  SPENDER(overrides?: CallOverrides): Promise<string>;
 
   TICK(overrides?: CallOverrides): Promise<string>;
 
@@ -963,6 +603,12 @@ export interface Coin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  burn(
+    burnee: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   checkpoints(
     account: string,
@@ -995,45 +641,11 @@ export interface Coin extends BaseContract {
 
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
-  ethToTokenSwap(
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  ethToTokenSwapInput(
-    minTokens: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  ethToTokenSwapOutput(
-    tokensBought: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  ethToTokenTransferInput(
-    minTokens: BigNumberish,
-    deadline: BigNumberish,
+  distribute(
     recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  ethToTokenTransferOutput(
-    tokensBought: BigNumberish,
-    deadline: BigNumberish,
-    recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  getEthToTokenInputPrice(
-    ethSold: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getEthToTokenOutputPrice(
-    tokensBought: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   getPastTotalSupply(
     blockNumber: BigNumberish,
@@ -1047,26 +659,6 @@ export interface Coin extends BaseContract {
   ): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  getTokenToEthInputPrice(
-    tokensSold: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getTokenToEthInputPriceWithTax(
-    tokensSold: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
-
-  getTokenToEthOutputPrice(
-    ethBought: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getTokenToEthOutputPriceWithTax(
-    ethBought: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
 
   getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1088,9 +680,11 @@ export interface Coin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  liqudityGuard(overrides?: CallOverrides): Promise<BigNumber>;
-
-  liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+  mint(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1127,75 +721,12 @@ export interface Coin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLiqudityGuard(
-    _guard: BigNumberish,
-    _denominator: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setTaxFee(
-    _feePercent: BigNumberish,
-    _taxFeeDenominator: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
-
-  taxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tokenBurn(
-    burnee: string,
-    tokensToBeBurned: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenMint(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenToEthSwap(
-    tokensSold: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenToEthSwapInput(
-    tokensSold: BigNumberish,
-    minEth: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenToEthSwapOutput(
-    ethBought: BigNumberish,
-    maxTokens: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenToEthTransferInput(
-    tokensSold: BigNumberish,
-    minEth: BigNumberish,
-    deadline: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenToEthTransferOutput(
-    ethBought: BigNumberish,
-    maxTokens: BigNumberish,
-    deadline: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1219,21 +750,15 @@ export interface Coin extends BaseContract {
   callStatic: {
     ADMIN(overrides?: CallOverrides): Promise<string>;
 
-    BURNER(overrides?: CallOverrides): Promise<string>;
-
     DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-    FREELOADER(overrides?: CallOverrides): Promise<string>;
-
-    MINTER(overrides?: CallOverrides): Promise<string>;
-
     NAME(overrides?: CallOverrides): Promise<string>;
-
-    SPENDER(overrides?: CallOverrides): Promise<string>;
 
     TICK(overrides?: CallOverrides): Promise<string>;
 
@@ -1250,6 +775,12 @@ export interface Coin extends BaseContract {
     ): Promise<boolean>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burn(
+      burnee: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     checkpoints(
       account: string,
@@ -1279,43 +810,11 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
-    ethToTokenSwap(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ethToTokenSwapInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ethToTokenSwapOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ethToTokenTransferInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
+    distribute(
       recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ethToTokenTransferOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEthToTokenInputPrice(
-      ethSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEthToTokenOutputPrice(
-      tokensBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     getPastTotalSupply(
       blockNumber: BigNumberish,
@@ -1329,26 +828,6 @@ export interface Coin extends BaseContract {
     ): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    getTokenToEthInputPrice(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthInputPriceWithTax(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
-
-    getTokenToEthOutputPrice(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthOutputPriceWithTax(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
 
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1370,9 +849,11 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    liqudityGuard(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+    mint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1407,75 +888,12 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLiqudityGuard(
-      _guard: BigNumberish,
-      _denominator: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
-
-    taxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenBurn(
-      burnee: string,
-      tokensToBeBurned: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    tokenMint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    tokenToEthSwap(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenToEthSwapInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenToEthSwapOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenToEthTransferInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenToEthTransferOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1507,25 +925,6 @@ export interface Coin extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
-    "Bought(address,address,uint256,uint256,uint256,uint256,uint256)"(
-      buyer?: string | null,
-      recipient?: string | null,
-      timestamp?: BigNumberish | null,
-      tokensBought?: null,
-      ethSold?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): BoughtEventFilter;
-    Bought(
-      buyer?: string | null,
-      recipient?: string | null,
-      timestamp?: BigNumberish | null,
-      tokensBought?: null,
-      ethSold?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): BoughtEventFilter;
-
     "DelegateChanged(address,address,address)"(
       delegator?: string | null,
       fromDelegate?: string | null,
@@ -1547,21 +946,6 @@ export interface Coin extends BaseContract {
       previousBalance?: null,
       newBalance?: null
     ): DelegateVotesChangedEventFilter;
-
-    "Deposit(address,uint256,uint256,uint256,uint256)"(
-      depositer?: string | null,
-      timestamp?: BigNumberish | null,
-      ethAdded?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): DepositEventFilter;
-    Deposit(
-      depositer?: string | null,
-      timestamp?: BigNumberish | null,
-      ethAdded?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): DepositEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
@@ -1599,25 +983,6 @@ export interface Coin extends BaseContract {
       sender?: string | null
     ): RoleRevokedEventFilter;
 
-    "Sold(address,address,uint256,uint256,uint256,uint256,uint256)"(
-      seller?: string | null,
-      recipient?: string | null,
-      timestamp?: BigNumberish | null,
-      tokensSold?: null,
-      ethBought?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): SoldEventFilter;
-    Sold(
-      seller?: string | null,
-      recipient?: string | null,
-      timestamp?: BigNumberish | null,
-      tokensSold?: null,
-      ethBought?: null,
-      tokenReserve?: null,
-      ethReserve?: null
-    ): SoldEventFilter;
-
     "Transfer(address,address,uint256)"(
       from?: string | null,
       to?: string | null,
@@ -1636,21 +1001,15 @@ export interface Coin extends BaseContract {
   estimateGas: {
     ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
 
-    BURNER(overrides?: CallOverrides): Promise<BigNumber>;
-
     DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    DISTRIBUTOR(overrides?: CallOverrides): Promise<BigNumber>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    FREELOADER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MINTER(overrides?: CallOverrides): Promise<BigNumber>;
-
     NAME(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SPENDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     TICK(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1667,6 +1026,12 @@ export interface Coin extends BaseContract {
     ): Promise<BigNumber>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burn(
+      burnee: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     checkpoints(
       account: string,
@@ -1699,44 +1064,10 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    ethToTokenSwap(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    ethToTokenSwapInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    ethToTokenSwapOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    ethToTokenTransferInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
+    distribute(
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    ethToTokenTransferOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    getEthToTokenInputPrice(
-      ethSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEthToTokenOutputPrice(
-      tokensBought: BigNumberish,
-      overrides?: CallOverrides
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getPastTotalSupply(
@@ -1752,26 +1083,6 @@ export interface Coin extends BaseContract {
 
     getRoleAdmin(
       role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthInputPrice(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthInputPriceWithTax(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthOutputPrice(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenToEthOutputPriceWithTax(
-      ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1795,9 +1106,11 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    liqudityGuard(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liqudityGuardDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+    mint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1837,75 +1150,12 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLiqudityGuard(
-      _guard: BigNumberish,
-      _denominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    taxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenBurn(
-      burnee: string,
-      tokensToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenMint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenToEthSwap(
-      tokensSold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenToEthSwapInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenToEthSwapOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenToEthTransferInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenToEthTransferOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1930,23 +1180,17 @@ export interface Coin extends BaseContract {
   populateTransaction: {
     ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    BURNER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    DISTRIBUTOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    FREELOADER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MINTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    SPENDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TICK(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1965,6 +1209,12 @@ export interface Coin extends BaseContract {
     balanceOf(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      burnee: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     checkpoints(
@@ -2001,44 +1251,10 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ethToTokenSwap(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ethToTokenSwapInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ethToTokenSwapOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ethToTokenTransferInput(
-      minTokens: BigNumberish,
-      deadline: BigNumberish,
+    distribute(
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ethToTokenTransferOutput(
-      tokensBought: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getEthToTokenInputPrice(
-      ethSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getEthToTokenOutputPrice(
-      tokensBought: BigNumberish,
-      overrides?: CallOverrides
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getPastTotalSupply(
@@ -2054,26 +1270,6 @@ export interface Coin extends BaseContract {
 
     getRoleAdmin(
       role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTokenToEthInputPrice(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTokenToEthInputPriceWithTax(
-      tokensSold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTokenToEthOutputPrice(
-      ethBought: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTokenToEthOutputPriceWithTax(
-      ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2100,10 +1296,10 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    liqudityGuard(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liqudityGuardDenominator(
-      overrides?: CallOverrides
+    mint(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2147,75 +1343,12 @@ export interface Coin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setLiqudityGuard(
-      _guard: BigNumberish,
-      _denominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    taxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    taxFeeDenominator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenBurn(
-      burnee: string,
-      tokensToBeBurned: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenMint(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenToEthSwap(
-      tokensSold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenToEthSwapInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenToEthSwapOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenToEthTransferInput(
-      tokensSold: BigNumberish,
-      minEth: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenToEthTransferOutput(
-      ethBought: BigNumberish,
-      maxTokens: BigNumberish,
-      deadline: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

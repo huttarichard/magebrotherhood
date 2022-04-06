@@ -109,7 +109,7 @@ export default function Studio() {
           `}</style>
           <ModelViewerDynamic
             style={{ width: "100%", height: "100%" }}
-            src="/assets/5.glb"
+            src="/models/black_knight.glb"
             poster="/data/2/poster.webp"
             environment-image="/assets/studio.hdr"
             skybox-image="/assets/studio.hdr"

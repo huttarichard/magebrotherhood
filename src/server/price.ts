@@ -7,10 +7,10 @@ import express from "express";
 import { open } from "lmdb";
 import { resolve } from "path";
 
-import CoinJSON from "../artifacts/contracts/Coin.sol/Coin.json";
-import { Coin } from "../artifacts/types/Coin";
+import ExchangeJSON from "../artifacts/contracts/Exchange.sol/Exchange.json";
+import { Exchange } from "../artifacts/types/Exchange";
 
-const COIN_CONTRACT = process.env.COIN_CONTRACT as string;
+const EXCHANGE_CONTRACT = process.env.EXCHANGE_CONTRACT as string;
 const DAY = 1000 * 60 * 60 * 24;
 
 const app = express();
@@ -20,7 +20,7 @@ const provider = new JsonRpcProvider({
   timeout: 5000,
 });
 
-const coin = new Contract(COIN_CONTRACT, CoinJSON.abi, provider) as unknown as Coin;
+const exchange = new Contract(EXCHANGE_CONTRACT, ExchangeJSON.abi, provider) as unknown as Exchange;
 
 const database = open({
   path: resolve(__dirname, "storage"),
@@ -38,7 +38,7 @@ app.get("/", async (req, res) => {
 });
 
 const loop = async () => {
-  const ouputPrice = await coin.getEthToTokenOutputPrice(parseEther("1"));
+  const ouputPrice = await exchange.getEthToTokenOutputPrice(parseEther("1"));
   await database.put(Date.now(), ouputPrice);
 };
 

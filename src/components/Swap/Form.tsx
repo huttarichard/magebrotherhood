@@ -8,7 +8,7 @@ import { CurrencyField, CurrencyFieldRef } from "components/ui/CurrencyField";
 import Card from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { useCoinContract } from "hooks/useContract";
+import { useExchangeContract } from "hooks/useContract";
 import { useWeb3Remote } from "hooks/useWeb3";
 import { Contract } from "lib/web3";
 import { formatBNToEtherFloatFixed } from "lib/web3/currency";
@@ -101,7 +101,7 @@ interface Props {
 export default function SwapForm({ children, onTransactionSubmit }: PropsWithChildren<Props>) {
   const intl = useIntl();
   const web3Remote = useWeb3Remote();
-  const { connected, contract: coin, error } = useCoinContract(web3Remote);
+  const { connected, contract: exchange, error } = useExchangeContract(web3Remote);
   const presenter = useWeb3TransactionPresenter();
 
   const [mode, setMode] = useState<Mode | null>(Mode.EthToBhc);
@@ -166,11 +166,11 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
       onBNChange={async (x: BigNumber | null) => {
         setEth(x);
 
-        if (!x || !coin) {
+        if (!x || !exchange) {
           return;
         }
 
-        const res = await coin.getEthToTokenInputPrice(x);
+        const res = await exchange.getEthToTokenInputPrice(x);
         bhcRef?.current?.setValueSilently(res);
         setConverting(null);
       }}
@@ -197,11 +197,11 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
       onBNChange={async (x: BigNumber | null) => {
         setBhc(x);
 
-        if (!x || !coin) {
+        if (!x || !exchange) {
           return;
         }
 
-        const [res, tax] = await coin.getTokenToEthInputPriceWithTax(x);
+        const [res, tax] = await exchange.getTokenToEthInputPriceWithTax(x);
         ethRef?.current?.setValueSilently(res);
         setTax(tax);
         setConverting(null);
@@ -225,7 +225,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
     const minTokens = bhc.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
 
     console.log(eth, bhc);
-    presenter.makeTransaction<Contract.Coin, "ethToTokenSwapInput">({
+    presenter.makeTransaction<Contract.Exchange, "ethToTokenSwapInput">({
       args: [
         minTokens,
         Math.floor(Date.now() / 1000 + 60),
@@ -233,7 +233,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
           value: eth,
         },
       ],
-      contract: Contract.Coin,
+      contract: Contract.Exchange,
       description: {
         action: "Swap",
         description: `Swap ${formatBNToEtherFloatFixed(eth)} ETH for ${formatBNToEtherFloatFixed(bhc)} BHC.`,
@@ -249,9 +249,9 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
 
     const minEth = eth.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
 
-    presenter.makeTransaction<Contract.Coin, "tokenToEthSwapInput">({
+    presenter.makeTransaction<Contract.Exchange, "tokenToEthSwapInput">({
       args: [bhc, minEth, Math.floor(Date.now() / 1000 + 60)],
-      contract: Contract.Coin,
+      contract: Contract.Exchange,
       description: {
         action: "Swap",
         description: `Swap ${formatBNToEtherFloatFixed(bhc)} BHC for ${formatBNToEtherFloatFixed(eth)} ETH .`,
@@ -262,7 +262,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
   };
 
   const body =
-    coin || !connected ? (
+    exchange || !connected ? (
       <form>
         {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
         <Button
@@ -270,7 +270,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
           onClick={() => {
             mode === Mode.EthToBhc ? ethToTokenSwap() : tokenToETHSwap();
           }}
-          disabled={!coin || isSubmitting || converting !== null || presenter.open}
+          disabled={!exchange || isSubmitting || converting !== null || presenter.open}
           className="btn"
           distorted
           block

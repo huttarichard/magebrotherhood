@@ -3,35 +3,28 @@
 
 pragma solidity ^0.8.13;
 
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./interfaces/IStakable.sol";
 import "./interfaces/ICoin.sol";
-import "./interfaces/IStaking.sol";
-import "./SafeTransfer.sol";
 
 /**
  * @title NFT Staking
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
  * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
  */
-contract Staking is ERC165, Pausable, AccessControl, IStaking {
+contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Receiver {
   using SafeCast for uint256;
   using SafeMath for uint256;
   using SignedSafeMath for int256;
-  using StakableSafeTransfer for IStakable;
 
   event Started();
   event Disabled();
@@ -74,6 +67,18 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
   }
 
   /**
+   * Used to represent the current staking status of an NFT.
+   * Optimised for use in storage.
+   */
+  struct TokenInfo {
+    address owner;
+    uint128 weight;
+    uint256 amount;
+    uint16 depositCycle;
+    uint16 withdrawCycle;
+  }
+
+  /**
    * The ERC1155-compliant (optional ERC721-compliance) contract from which staking is accepted.
    */
   struct ContractStaking {
@@ -86,7 +91,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
 
   uint256 public startTimestamp;
 
-  ICoin public coin;
+  IDistributor public coin;
 
   uint32 public immutable cycleLengthInSeconds;
   uint16 public immutable periodLengthInCycles;
@@ -143,32 +148,34 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
 
     _setRoleAdmin(REWARDER, ADMIN);
     _setRoleAdmin(SLUSHER, ADMIN);
+
     _setupRole(ADMIN, _msgSender());
+    _setupRole(SLUSHER, _msgSender());
 
     cycleLengthInSeconds = _cycleLengthInSeconds;
     periodLengthInCycles = _periodLengthInCycles;
 
-    setCoin(_coin);
+    setCoinContract(_coin);
   }
 
   /**
    * @dev Will pause the contract.
    */
-  function pause() external onlyRole(ADMIN) {
+  function pause() public onlyRole(ADMIN) {
     _pause();
   }
 
   /**
    * @dev Will unpause the contract.
    */
-  function unpause() external onlyRole(ADMIN) {
+  function unpause() public onlyRole(ADMIN) {
     _unpause();
   }
 
   /**
    * @dev will set the coin contract
    */
-  function setCoin(address _coin) public onlyRole(ADMIN) {
+  function setCoinContract(address _coin) public onlyRole(ADMIN) {
     require(_coin != address(0), "invalid address");
     coin = ICoin(_coin);
   }
@@ -179,7 +186,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
    * @dev Reverts if the staking has already started.
    * @dev Emits a Started event.
    */
-  function start() external onlyRole(ADMIN) hasNotStarted {
+  function start() public onlyRole(ADMIN) hasNotStarted {
     startTimestamp = block.timestamp;
     emit Started();
   }
@@ -203,7 +210,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     uint16 startPeriod,
     uint16 endPeriod,
     uint256 rewardsPerCycle
-  ) external onlyRole(REWARDER) {
+  ) public onlyRole(REWARDER) {
     require(startPeriod != 0 && startPeriod <= endPeriod, "wrong period range");
 
     if (startTimestamp != 0) {
@@ -224,7 +231,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
   /**
    * Will enable contract and staking for give contract
    */
-  function addContract(address nft) external onlyRole(ADMIN) {
+  function addContract(address nft) public onlyRole(ADMIN) {
     stakingContracts[nft].nft = IStakable(nft);
     stakingContracts[nft].enabled = true;
   }
@@ -232,7 +239,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
   /**
    * Will enable contract and staking for give contract
    */
-  function removeContract(address nft) external onlyRole(ADMIN) {
+  function removeContract(address nft) public onlyRole(ADMIN) {
     stakingContracts[nft].enabled = false;
   }
 
@@ -263,7 +270,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     ContractStaking storage staker = stakingContracts[nft];
     TokenInfo storage tokenInfo = staker.tokens[tokenId];
     require(tokenInfo.owner == address(this), "do not own this token");
-    staker.nft.safeTransferFromWithFallback(address(this), recipient, tokenId, tokenInfo.amount, "");
+    staker.nft.safeTransferFrom(address(this), recipient, tokenId, tokenInfo.amount, "");
   }
 
   /**
@@ -310,6 +317,21 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
   }
 
   /**
+   * ERC1155Receiver hook for batch transfer.
+   * @dev Reverts if the caller is not the whitelisted NFT contract.
+   */
+  function onERC1155BatchReceived(
+    address, /*operator*/
+    address from,
+    uint256[] calldata ids,
+    uint256[] calldata amounts,
+    bytes calldata /*data*/
+  ) external returns (bytes4) {
+    _batchStake(ids, from, amounts);
+    return this.onERC1155BatchReceived.selector;
+  }
+
+  /**
    * Stakes the NFT received by the contract for its owner. The NFT's weight will count for the current cycle.
    * @dev Reverts if `tokenId` is still on cooldown.
    * @dev Emits an HistoriesUpdated event.
@@ -346,21 +368,6 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     staker.tokens[tokenId] = TokenInfo(owner, weight, amount, currentCycle, 0);
 
     emit NftStaked(owner, currentCycle, address(staker.nft), tokenId, weight);
-  }
-
-  /**
-   * ERC1155Receiver hook for batch transfer.
-   * @dev Reverts if the caller is not the whitelisted NFT contract.
-   */
-  function onERC1155BatchReceived(
-    address, /*operator*/
-    address from,
-    uint256[] calldata ids,
-    uint256[] calldata amounts,
-    bytes calldata /*data*/
-  ) external returns (bytes4) {
-    _batchStake(ids, from, amounts);
-    return this.onERC1155BatchReceived.selector;
   }
 
   /**
@@ -422,7 +429,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
    * @dev Emits a NftUnstaked event.
    * @param tokenId The token identifier, referencing the NFT being unstaked.
    */
-  function unstake(address nft, uint256 tokenId) external {
+  function unstake(address nft, uint256 tokenId) public {
     ContractStaking storage staker = stakingContracts[nft];
     require(staker.enabled, "contract not enabled");
 
@@ -444,7 +451,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     // set the withdrawal cycle to ensure it cannot be re-staked during the same cycle
     tokenInfo.withdrawCycle = currentCycle;
 
-    staker.nft.safeTransferFromWithFallback(address(this), _msgSender(), tokenId, tokenInfo.amount, "");
+    staker.nft.safeTransferFrom(address(this), _msgSender(), tokenId, tokenInfo.amount, "");
     emit NftUnstaked(_msgSender(), currentCycle, address(staker.nft), tokenId, weight);
   }
 
@@ -458,7 +465,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
    * @dev Emits the NftsBatchUnstaked event for each NFT unstaked.
    * @param tokenIds The token identifiers, referencing the NFTs being unstaked.
    */
-  function batchUnstake(address nft, uint256[] calldata tokenIds) external {
+  function batchUnstake(address nft, uint256[] calldata tokenIds) public {
     ContractStaking storage staker = stakingContracts[nft];
     require(staker.enabled, "contract not enabled");
 
@@ -497,7 +504,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
 
     _updateHistories(_msgSender(), -totalUnstakedWeight, currentCycle);
 
-    staker.nft.safeBatchTransferFromWithFallback(address(this), _msgSender(), tokenIds, values, "");
+    staker.nft.safeBatchTransferFrom(address(this), _msgSender(), tokenIds, values, "");
     emit NftsBatchUnstaked(_msgSender(), currentCycle, address(staker.nft), tokenIds, weights);
   }
 
@@ -511,7 +518,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
    * @return amount The total claimable rewards.
    */
   function estimateRewards(uint16 maxPeriods)
-    external
+    public
     view
     whenNotPaused
     hasStarted
@@ -569,7 +576,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
     }
 
     if (claim.amount != 0) {
-      require(coin.transferFrom(address(coin), _msgSender(), claim.amount), "could not be paid");
+      coin.distribute(_msgSender(), claim.amount);
     }
 
     emit RewardsClaimed(_msgSender(), _getCycle(block.timestamp), claim.startPeriod, claim.periods, claim.amount);
@@ -578,7 +585,7 @@ contract Staking is ERC165, Pausable, AccessControl, IStaking {
   /**
    * @return the token info for given token and contract.
    */
-  function getTokenInfo(address nft, uint256 id) external view returns (TokenInfo memory) {
+  function getTokenInfo(address nft, uint256 id) public view returns (TokenInfo memory) {
     return stakingContracts[nft].tokens[id];
   }
 

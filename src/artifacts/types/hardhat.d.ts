@@ -25,42 +25,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
-      name: "GovernorCountingSimple",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GovernorCountingSimple__factory>;
-    getContractFactory(
-      name: "GovernorSettings",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GovernorSettings__factory>;
-    getContractFactory(
-      name: "GovernorTimelockControl",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GovernorTimelockControl__factory>;
-    getContractFactory(
-      name: "GovernorVotes",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GovernorVotes__factory>;
-    getContractFactory(
-      name: "GovernorVotesQuorumFraction",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GovernorVotesQuorumFraction__factory>;
-    getContractFactory(
-      name: "IGovernorTimelock",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IGovernorTimelock__factory>;
-    getContractFactory(
-      name: "Governor",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Governor__factory>;
-    getContractFactory(
-      name: "IGovernor",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IGovernor__factory>;
-    getContractFactory(
-      name: "TimelockController",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TimelockController__factory>;
-    getContractFactory(
       name: "IVotes",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVotes__factory>;
@@ -133,37 +97,41 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
-      name: "Affiliate",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Affiliate__factory>;
-    getContractFactory(
       name: "Coin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Coin__factory>;
     getContractFactory(
-      name: "IAffiliate",
+      name: "Exchange",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IAffiliate__factory>;
+    ): Promise<Contracts.Exchange__factory>;
     getContractFactory(
       name: "ICoin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ICoin__factory>;
     getContractFactory(
-      name: "IPlayables",
+      name: "IDistributor",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IPlayables__factory>;
+    ): Promise<Contracts.IDistributor__factory>;
+    getContractFactory(
+      name: "IExchange",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IExchange__factory>;
+    getContractFactory(
+      name: "IPromoter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPromoter__factory>;
     getContractFactory(
       name: "IStakable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IStakable__factory>;
     getContractFactory(
-      name: "IStaking",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IStaking__factory>;
-    getContractFactory(
       name: "Playables",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Playables__factory>;
+    getContractFactory(
+      name: "Promoter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Promoter__factory>;
     getContractFactory(
       name: "Staking",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -184,51 +152,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
-    getContractAt(
-      name: "GovernorCountingSimple",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GovernorCountingSimple>;
-    getContractAt(
-      name: "GovernorSettings",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GovernorSettings>;
-    getContractAt(
-      name: "GovernorTimelockControl",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GovernorTimelockControl>;
-    getContractAt(
-      name: "GovernorVotes",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GovernorVotes>;
-    getContractAt(
-      name: "GovernorVotesQuorumFraction",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GovernorVotesQuorumFraction>;
-    getContractAt(
-      name: "IGovernorTimelock",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IGovernorTimelock>;
-    getContractAt(
-      name: "Governor",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Governor>;
-    getContractAt(
-      name: "IGovernor",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IGovernor>;
-    getContractAt(
-      name: "TimelockController",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TimelockController>;
     getContractAt(
       name: "IVotes",
       address: string,
@@ -320,45 +243,50 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
-      name: "Affiliate",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Affiliate>;
-    getContractAt(
       name: "Coin",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Coin>;
     getContractAt(
-      name: "IAffiliate",
+      name: "Exchange",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IAffiliate>;
+    ): Promise<Contracts.Exchange>;
     getContractAt(
       name: "ICoin",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ICoin>;
     getContractAt(
-      name: "IPlayables",
+      name: "IDistributor",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IPlayables>;
+    ): Promise<Contracts.IDistributor>;
+    getContractAt(
+      name: "IExchange",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IExchange>;
+    getContractAt(
+      name: "IPromoter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPromoter>;
     getContractAt(
       name: "IStakable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IStakable>;
     getContractAt(
-      name: "IStaking",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IStaking>;
-    getContractAt(
       name: "Playables",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Playables>;
+    getContractAt(
+      name: "Promoter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Promoter>;
     getContractAt(
       name: "Staking",
       address: string,
