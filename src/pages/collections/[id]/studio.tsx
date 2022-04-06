@@ -177,7 +177,7 @@ export default function Studio() {
                         {
                           tokenId: BigNumber.from("1"),
                           amount: BigNumber.from("1"),
-                          discount: "",
+                          promoCode: "",
                         },
                       ],
                       contract: Contract.Playables,

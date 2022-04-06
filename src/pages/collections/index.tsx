@@ -155,7 +155,7 @@ export default function CollectionsIndex() {
                                 {
                                   tokenId: BigNumber.from(item.id),
                                   amount: BigNumber.from("1"),
-                                  discount: "",
+                                  promoCode: "",
                                 },
                               ],
                               contract: Contract.Playables,
