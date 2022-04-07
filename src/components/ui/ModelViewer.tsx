@@ -35,6 +35,7 @@ export default function Model(props: React.PropsWithChildren<ModelProps>) {
   }, [id]);
 
   const update = () => setTimeout(forceUpdate, 100);
+  const log = (e) => console.log(e);
 
   useDebouncedEffect(
     () => {
@@ -44,14 +45,19 @@ export default function Model(props: React.PropsWithChildren<ModelProps>) {
       el.addEventListener("model-visibility", update);
       el.addEventListener("load", update);
       el.addEventListener("preload", update);
+      el.addEventListener("error", log);
+      el.addEventListener("progress", log);
+      el.addEventListener("render-scale", log);
 
       if (!visible) {
+        console.log("pause");
         el.pause();
         el.style.display = "none";
         return;
       }
       el.style.display = "block";
       el.play();
+      console.log("play");
     },
     [visible, id, c],
     200
