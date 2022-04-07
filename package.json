@@ -34,7 +34,7 @@
     "@fortawesome/pro-solid-svg-icons": "^6.1.1",
     "@fortawesome/pro-thin-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@google/model-viewer": "^1.10.1",
+    "@google/model-viewer": "^1.11.0",
     "@mui/material": "^5.5.1",
     "@mui/x-data-grid": "^5.6.1",
     "@shopify/screenshot-glb": "^1.8.0",

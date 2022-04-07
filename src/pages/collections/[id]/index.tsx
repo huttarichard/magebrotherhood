@@ -1,5 +1,3 @@
-// import { ModelViewerElement } from "@google/model-viewer/lib/model-viewer";
-
 import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
@@ -7,11 +5,9 @@ import Button from "components/ui/Button";
 import ModelViewerDynamic from "components/ui/ModelViewerDynamic";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { Contract } from "lib/web3/contracts";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
-import router from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Layout from "../../../components/Layout/Layout";
 
@@ -59,21 +55,31 @@ const Card = styled.div`
   }
 `;
 
-function Studio() {
+interface Item {
+  title: string;
+  description: string;
+  price: number;
+}
+
+export default function Studio() {
   const { makeTransaction } = useWeb3TransactionPresenter();
   const [loading, setLoading] = useState(false);
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState<Item>({
+    title: "Warrior",
+    description: "Warrior",
+    price: 0.1,
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("/api/collections/" + router.query.id)
-      .then((res) => res.json())
-      .then((data) => {
-        setItem(data);
-        setLoading(false);
-        console.log(data);
-      });
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch("/api/collections/" + router.query.id)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setItem(data);
+  //       setLoading(false);
+  //       // console.log(data);
+  //     });
+  // }, []);
 
   return (
     <>
@@ -126,9 +132,10 @@ function Studio() {
               transition: transform 0.3s, opacity 0.3s;
             }
           `}</style>
+
           <ModelViewerDynamic
             style={{ width: "100%", height: "100%" }}
-            src={"/models/" + router.query.id + ".glb"}
+            src="/models/2.glb"
             poster="/data/2/poster.webp"
             environment-image="/assets/studio.hdr"
             skybox-image="/assets/studio.hdr"
@@ -141,6 +148,8 @@ function Studio() {
             disable-zoom
             autoplay
             ar
+            bounds="tight"
+            enable-pan
           >
             {/* <div
               className="Hotspot"
@@ -205,7 +214,3 @@ function Studio() {
     </>
   );
 }
-
-export default dynamic(() => Promise.resolve(Studio), {
-  ssr: false,
-});

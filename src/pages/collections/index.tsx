@@ -59,11 +59,20 @@ const stylesContent = (theme: any) => ({
   },
 });
 
+interface Item {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+}
+
 export default function CollectionsIndex() {
   const { makeTransaction } = useWeb3TransactionPresenter();
 
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
     setLoading(true);
