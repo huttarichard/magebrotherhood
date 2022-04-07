@@ -170,6 +170,8 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
           return;
         }
 
+        console.log(x);
+
         const res = await exchange.getEthToTokenInputPrice(x);
         bhcRef?.current?.setValueSilently(res);
         setConverting(null);
@@ -224,7 +226,6 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
 
     const minTokens = bhc.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
 
-    console.log(eth, bhc);
     presenter.makeTransaction<Contract.Exchange, "ethToTokenSwapInput">({
       args: [
         minTokens,

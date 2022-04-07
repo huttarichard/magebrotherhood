@@ -12,8 +12,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
   using SafeMath for uint256;
 
-  uint256 public constant DECIMALS = 10**18;
-
   string public constant NAME = "Brotherhood Coin";
 
   string public constant TICK = "BHC";
@@ -27,7 +25,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
     _setupRole(ADMIN, _msgSender());
     _setupRole(DISTRIBUTOR, _msgSender());
 
-    _mint(address(this), liquidity * DECIMALS);
+    _mint(address(this), liquidity);
   }
 
   /**

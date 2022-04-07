@@ -33,17 +33,35 @@ interface DeployParams {
   stakingPeriod: number;
 }
 
+interface DeployedContract {
+  address: string;
+  args: any[];
+}
+interface DeployArguments {
+  Coin?: DeployedContract;
+  Exchange?: DeployedContract;
+  Promoter?: DeployedContract;
+  Playables?: DeployedContract;
+  Staking?: DeployedContract;
+}
+
 task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   const coinLiquidity = parseEther(taskArgs.coinLiquidity.toFixed(0));
   const exchangeLiq = parseEther(taskArgs.exchangeLiquidity.toFixed(0));
   const stakingCycle = taskArgs.stakingCycle;
   const stakingPeriod = taskArgs.stakingPeriod;
 
+  const args: DeployArguments = {};
+
   // Coin
   console.info("Deploying coin...");
   const Coin = (await hre.ethers.getContractFactory("Coin")) as Coin__factory;
   const coin = await Coin.deploy(coinLiquidity);
   await coin.deployed();
+  args.Coin = {
+    address: coin.address,
+    args: [coinLiquidity.toString()],
+  };
   console.info("Coin address: ", coin.address);
   console.info("Coin tx hash: ", coin.deployTransaction.hash);
   console.info("\n");
@@ -55,6 +73,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
     value: exchangeLiq,
   });
   await exchange.deployed();
+  args.Exchange = {
+    address: exchange.address,
+    args: [coin.address],
+  };
+
   console.info("Exchange address: ", exchange.address);
   console.info("Exchange tx hash: ", exchange.deployTransaction.hash);
   console.info("\n");
@@ -68,6 +91,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   const Promoter = (await hre.ethers.getContractFactory("Promoter")) as Promoter__factory;
   const promoter = await Promoter.deploy(coin.address);
   await promoter.deployed();
+
+  args.Promoter = {
+    address: promoter.address,
+    args: [coin.address],
+  };
 
   console.info("Promoter address: ", promoter.address);
   console.info("Promoter tx hash: ", promoter.deployTransaction.hash);
@@ -83,6 +111,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   const playables = await Playables.deploy(exchange.address, promoter.address, "ipfs://..");
   await playables.deployed();
 
+  args.Playables = {
+    address: playables.address,
+    args: [exchange.address, promoter.address, "ipfs://.."],
+  };
+
   console.info("Playables address: ", playables.address);
   console.info("Playables tx hash: ", playables.deployTransaction.hash);
   console.info("\n");
@@ -92,6 +125,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   const staking = await Staking.deploy(stakingCycle, stakingPeriod, coin.address);
   await staking.deployed();
 
+  args.Staking = {
+    address: staking.address,
+    args: [stakingCycle, stakingPeriod, coin.address],
+  };
+
   console.info("Staking address: ", staking.address);
   console.info("Staking tx hash: ", staking.deployTransaction.hash);
   console.info("\n");
@@ -100,6 +138,9 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   await coin.grantRole(await coin.DISTRIBUTOR(), staking.address);
   console.info("Role granted");
   console.info("\n");
+
+  const jsonArgs = JSON.stringify(args);
+  const buffer = Buffer.from(jsonArgs);
 
   const newEnvFile = updateEnvFile([
     {
@@ -141,6 +182,10 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
     {
       key: "NEXT_PUBLIC_EXCHANGE_ADDRESS",
       value: "$EXCHANGE_ADDRESS",
+    },
+    {
+      key: "DEPLOY_ARGS",
+      value: `"${buffer.toString("base64")}"`,
     },
   ]);
 
@@ -234,6 +279,48 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
   .addParam("supply", "supply of the token", null, types.int)
   .addOptionalParam("stakingWeight", "staking weight for token", 1, types.int)
   .addOptionalParam("pin", "staking period in cycles", false, types.boolean);
+
+task("etherscan", "Compiles the entire project, building all artifacts")
+  .setAction(async (taskargs, hre) => {
+    const DEPLOY_ARGS = process.env.DEPLOY_ARGS as string;
+    const args: DeployArguments = JSON.parse(Buffer.from(DEPLOY_ARGS, "base64").toString());
+
+    interface Contract extends DeployedContract {
+      name: string;
+    }
+
+    const contracts: Contract[] =
+      taskargs.contracts === "all"
+        ? Object.keys(args).map((e) => ({ name: e, ...args[e] }))
+        : taskargs.contracts.split(",").map((c) => {
+            const contract = args[c];
+            if (!contract) {
+              throw new Error(`Contract ${c} not found`);
+            }
+            return { name: c, ...contract };
+          });
+
+    for (const key in contracts) {
+      try {
+        await hre.run("verify", {
+          constructorArgsParams: contracts[key].args.map((e) => e.toString()),
+          address: contracts[key].address,
+          contractName: contracts[key].name,
+        });
+      } catch (e) {
+        if ((e as Error).message.includes("403 - Forbidden")) {
+          // Or rather 403 because etherscan is peice of....
+          console.error(
+            `${contracts[key].name}:`,
+            "403 error, trying again later, this might be due etherscan rate limiting"
+          );
+          continue;
+        }
+        console.error(e);
+      }
+    }
+  })
+  .addOptionalParam("contracts", "contract you want to verify", "all", types.string);
 
 const updateEnvFile = (envVariables: { key: string; value: any }[]): string => {
   // get `.env` from path of current directory

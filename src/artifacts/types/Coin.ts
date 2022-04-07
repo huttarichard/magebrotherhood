@@ -33,7 +33,6 @@ export interface CoinInterface extends utils.Interface {
   contractName: "Coin";
   functions: {
     "ADMIN()": FunctionFragment;
-    "DECIMALS()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "DISTRIBUTOR()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
@@ -75,7 +74,6 @@ export interface CoinInterface extends utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
-  encodeFunctionData(functionFragment: "DECIMALS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -206,7 +204,6 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "DECIMALS", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
@@ -403,8 +400,6 @@ export interface Coin extends BaseContract {
   functions: {
     ADMIN(overrides?: CallOverrides): Promise<[string]>;
 
-    DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     DISTRIBUTOR(overrides?: CallOverrides): Promise<[string]>;
@@ -578,8 +573,6 @@ export interface Coin extends BaseContract {
 
   ADMIN(overrides?: CallOverrides): Promise<string>;
 
-  DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
@@ -749,8 +742,6 @@ export interface Coin extends BaseContract {
 
   callStatic: {
     ADMIN(overrides?: CallOverrides): Promise<string>;
-
-    DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1001,8 +992,6 @@ export interface Coin extends BaseContract {
   estimateGas: {
     ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
 
-    DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     DISTRIBUTOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1179,8 +1168,6 @@ export interface Coin extends BaseContract {
 
   populateTransaction: {
     ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
