@@ -39,7 +39,7 @@ export async function createIPFSOpenseaToken(token: Token) {
 
   const metadata = {
     description: token.description,
-    external_url: "https://magebrotherhoodcom.io/collections/" + token.id,
+    external_url: "https://magebrotherhood.com/collections/" + token.id,
     image: "ipfs://" + imageHash.path,
     name: token.name,
     animation_url: "ipfs://" + glbHash.path,
