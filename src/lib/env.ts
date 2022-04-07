@@ -1,6 +1,5 @@
 const envconfig = {
   // Network
-  DEFAULT_NETWORK: process.env.NEXT_PUBLIC_DEFAULT_NETWORK || process.env.DEFAULT_NETWORK || 1,
   NETWORK: parseInt(process.env.NEXT_PUBLIC_NETWORK || "1") || 1,
 
   // Infura
@@ -16,5 +15,9 @@ const envconfig = {
   // Coin market cap
   CMC_API_KEY: process.env.NEXT_PUBLIC_CMC_API_KEY || "",
 };
+
+if (typeof window !== "undefined") {
+  (<any>window).envvars = envconfig;
+}
 
 export default envconfig;

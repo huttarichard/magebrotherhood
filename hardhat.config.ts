@@ -13,7 +13,7 @@ import { HardhatUserConfig } from "hardhat/config";
 dotenv.config();
 
 // Import tasks
-// require("./hardhat.tasks");
+require("./hardhat.tasks");
 
 const config: HardhatUserConfig = {
   solidity: {

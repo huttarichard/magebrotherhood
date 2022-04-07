@@ -5,10 +5,11 @@ import all from "it-all";
 import { NextApiRequest, NextApiResponse } from "next";
 import { concat } from "uint8arrays";
 
-const NETWORK = process.env.NETWORK;
+const NETWORK = parseInt(process.env.NETWORK as string);
 const INFURA_KEY = process.env.INFURA_KEY;
 const IPFS_PUBLIC_KEY = process.env.INFURA_IPFS_PUBLIC_KEY;
 const IPFS_SECRET_KEY = process.env.INFURA_IPFS_SECRET_KEY;
+const IPFS_GATEWAY = process.env.INFURA_IPFS_GATEWAY;
 const INFURA_IPFS_NODE = process.env.INFURA_IPFS_NODE;
 const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
 
@@ -32,7 +33,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = await all(ipfs.cat(token.uri.replace("ipfs://", "")));
   const buffer = Buffer.from(concat(data));
+  console.log(buffer.toString());
   const json = JSON.parse(buffer.toString());
+
+  for (const prop in json) {
+    if (typeof json[prop] !== "string") {
+      continue;
+    }
+    if (!json[prop].startsWith("ipfs://")) {
+      continue;
+    }
+    json[prop] = json[prop].replace("ipfs://", IPFS_GATEWAY + "/ipfs/");
+  }
 
   res.json(json);
 }

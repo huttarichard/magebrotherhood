@@ -2,10 +2,13 @@ import "@nomiclabs/hardhat-ethers";
 
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
+import * as envfile from "envfile";
 import { readFileSync } from "fs";
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import path from "path";
+import { resolve } from "path";
 
+// import { Playables } from "./src/artifacts/types/Playables";
 import { Coin__factory } from "./src/artifacts/types/factories/Coin__factory";
 import { Exchange__factory } from "./src/artifacts/types/factories/Exchange__factory";
 import { Playables__factory } from "./src/artifacts/types/factories/Playables__factory";
@@ -24,19 +27,23 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 });
 
 interface DeployParams {
-  [key: string]: string;
+  coinLiquidity: number;
+  exchangeLiquidity: number;
+  stakingCycle: number;
+  stakingPeriod: number;
 }
 
 task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
-  const coinLiquidity = parseEther(taskArgs["coinLiquidity"]);
-  const exchangeLiq = parseEther(taskArgs["exchangeLiquidity"]);
-  const stakingCycle = parseInt(taskArgs["stakingCycle"]);
-  const stakingPeriod = parseInt(taskArgs["stakingPeriod"]);
+  const coinLiquidity = parseEther(taskArgs.coinLiquidity.toFixed(0));
+  const exchangeLiq = parseEther(taskArgs.exchangeLiquidity.toFixed(0));
+  const stakingCycle = taskArgs.stakingCycle;
+  const stakingPeriod = taskArgs.stakingPeriod;
 
   // Coin
   console.info("Deploying coin...");
   const Coin = (await hre.ethers.getContractFactory("Coin")) as Coin__factory;
   const coin = await Coin.deploy(coinLiquidity);
+  await coin.deployed();
   console.info("Coin address: ", coin.address);
   console.info("Coin tx hash: ", coin.deployTransaction.hash);
   console.info("\n");
@@ -94,21 +101,90 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("Role granted");
   console.info("\n");
 
+  const newEnvFile = updateEnvFile([
+    {
+      key: "COIN_ADDRESS",
+      value: `"${coin.address}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_COIN_ADDRESS",
+      value: "$COIN_ADDRESS",
+    },
+    {
+      key: "STAKING_ADDRESS",
+      value: `"${staking.address}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_STAKING_ADDRESS",
+      value: "$STAKING_ADDRESS",
+    },
+    {
+      key: "PROMOTER_ADDRESS",
+      value: `"${promoter.address}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_PROMOTER_ADDRESS",
+      value: "$PROMOTER_ADDRESS",
+    },
+    {
+      key: "PLAYABLES_ADDRESS",
+      value: `"${playables.address}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_PLAYABLES_ADDRESS",
+      value: "$PLAYABLES_ADDRESS",
+    },
+    {
+      key: "EXCHANGE_ADDRESS",
+      value: `"${exchange.address}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_EXCHANGE_ADDRESS",
+      value: "$EXCHANGE_ADDRESS",
+    },
+  ]);
+
+  console.info(newEnvFile);
+
   console.info("Done!");
 })
-  .addOptionalParam("coinLiquidity", "amount of bhc", "10000000")
-  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", "0")
-  .addOptionalParam("stakingCycle", "staking cycle in seconds", "60")
-  .addOptionalParam("stakingPeriod", "staking period in cycles", "2");
+  .addOptionalParam("coinLiquidity", "amount of bhc", 10000000, types.int)
+  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0, types.int)
+  .addOptionalParam("stakingCycle", "staking cycle in seconds", 60, types.int)
+  .addOptionalParam("stakingPeriod", "staking period in cycles", 2, types.int);
 
-task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: DeployParams, hre) => {
-  const id = parseInt(taskArgs["id"]);
-  const glb = path.resolve(__dirname, "public/assets", id + ".glb");
-  const png = path.resolve(__dirname, "public/assets", id + ".png");
+interface AddTokensParams {
+  id: number;
+  name: string;
+  description: string;
+  playables: string;
+  royalty: string;
+  price: number;
+  supply: number;
+  stakingWeight: number;
+  pin: boolean;
+}
+
+// Example:
+// yarn hardhat --network "rinkeby" playables:token:add
+//   --id 1
+//   --name "Knight"
+//   --description "Warrior"
+//   --playables "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF"
+//   --royalty "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF"
+//   --price 0.01
+//   --supply 800
+
+task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: AddTokensParams, hre) => {
+  const [owner] = await hre.ethers.getSigners();
+
+  const id = taskArgs.id;
+  const glb = path.resolve(__dirname, "public/models", id + ".glb");
+  const png = path.resolve(__dirname, "public/images/tokens", id + ".png");
 
   const glbFile = readFileSync(glb);
   const pngFile = readFileSync(png);
-  const stakingWeight = parseInt(taskArgs["stakingWeight"]);
+  const stakingWeight = taskArgs.stakingWeight;
 
   const hash = await createIPFSOpenseaToken({
     id,
@@ -120,15 +196,28 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
     image: pngFile,
   });
 
-  const Playables = (await hre.ethers.getContractFactory("Playables")) as Playables__factory;
-  const playables = Playables.attach(taskArgs["playables"]);
+  const Playables = await hre.ethers.getContractFactory("Playables");
+  const playables = Playables.attach(taskArgs.playables).connect(owner);
+
+  console.info("Token: ", BigNumber.from(id).toString());
+
+  console.info({
+    createdAt: BigNumber.from(Math.floor(Date.now() / 1000)).toString(),
+    launchedAt: BigNumber.from(Math.floor(Date.now() / 1000)).toString(),
+    minted: 0,
+    price: parseEther(taskArgs.price.toFixed(8)).toString(),
+    royalty: taskArgs.royalty,
+    supply: BigNumber.from(taskArgs["supply"]).toString(),
+    uri: "ipfs://" + hash,
+    weight: BigNumber.from(stakingWeight).toString(),
+  });
 
   await playables.setToken(BigNumber.from(id), {
     createdAt: BigNumber.from(Math.floor(Date.now() / 1000)),
     launchedAt: BigNumber.from(Math.floor(Date.now() / 1000)),
     minted: 0,
-    price: parseEther(taskArgs["price"]),
-    royalty: "",
+    price: parseEther(taskArgs.price.toFixed(8)),
+    royalty: taskArgs.royalty,
     supply: BigNumber.from(taskArgs["supply"]),
     uri: "ipfs://" + hash,
     weight: BigNumber.from(stakingWeight),
@@ -136,48 +225,29 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
 
   console.info("Done!");
 })
-  .addParam("id", "id of the token")
-  .addParam("name", "name of the token")
-  .addParam("description", "description of the token")
-  .addParam("playables", "address of the playables contract")
-  .addParam("price", "price of the token")
-  .addParam("supply", "supply of the token")
-  .addOptionalParam("stakingWeight", "staking weight for token", "1")
-  .addOptionalParam("pin", "staking period in cycles", "");
+  .addParam("id", "id of the token", null, types.int)
+  .addParam("name", "name of the token", null, types.string)
+  .addParam("description", "description of the token", null, types.string)
+  .addParam("playables", "address of the playables contract", null, types.string)
+  .addParam("royalty", "address of the roaylty receiver", null, types.string)
+  .addParam("price", "price of the token", null, types.float)
+  .addParam("supply", "supply of the token", null, types.int)
+  .addOptionalParam("stakingWeight", "staking weight for token", 1, types.int)
+  .addOptionalParam("pin", "staking period in cycles", false, types.boolean);
 
-task("deploy:coin", "deploys coin contract", async (taskArgs, hre) => {
-  const Coin = await hre.ethers.getContractFactory("Coin");
-  const coin = await Coin.deploy(1000000);
-  console.info("coin: ", coin.address, coin.deployTransaction.hash);
-});
+const updateEnvFile = (envVariables: { key: string; value: any }[]): string => {
+  // get `.env` from path of current directory
+  const path = resolve(__dirname, ".env");
+  const data = readFileSync(path, "utf8");
 
-task("deploy:affiliate", "deploys affiliate contract", async (taskArgs: { coin: string }, hre) => {
-  const Affiliate = await hre.ethers.getContractFactory("Affiliate");
-  const affiliate = await Affiliate.deploy(taskArgs.coin);
-  console.info("affiliate: ", affiliate.address, affiliate.deployTransaction.hash);
-}).addParam("coin", "the coin contract");
+  const parsedFile = envfile.parse(data);
+  delete parsedFile["PRIVATE_KEY"];
 
-task("deploy:playables", "deploys playables contract", async (taskArgs: { coin: string; affiliate: string }, hre) => {
-  const Playables = await hre.ethers.getContractFactory("Playables");
-  const playables = await Playables.deploy(taskArgs.coin, taskArgs.affiliate, "");
-  console.info("playables: ", playables.address, playables.deployTransaction.hash);
-})
-  .addParam("coin", "the coin contract")
-  .addParam("affiliate", "the affiliate contract");
+  envVariables.forEach((envVar: { key: string; value: any }) => {
+    if (envVar.key && envVar.value) {
+      parsedFile[envVar.key] = envVar.value;
+    }
+  });
 
-task(
-  "deploy:staking",
-  "deploys staking contract",
-  async (taskArgs: { coin: string; cycleLengthInSeconds: string; periodLengthInCycles: string }, hre) => {
-    const Playables = await hre.ethers.getContractFactory("Playables");
-    const playables = await Playables.deploy(
-      taskArgs.periodLengthInCycles,
-      taskArgs.cycleLengthInSeconds,
-      taskArgs.coin
-    );
-    console.info("staking: ", playables.address, playables.deployTransaction.hash);
-  }
-)
-  .addParam("coin", "the coin contract")
-  .addParam("cycleLengthInSeconds", "cycle length in seconds")
-  .addParam("periodLengthInCycles", "period length in cycles");
+  return envfile.stringify(parsedFile);
+};
