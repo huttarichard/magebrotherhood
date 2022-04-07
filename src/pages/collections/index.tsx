@@ -11,11 +11,12 @@ import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter"
 import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const FullImage = styled.img`
   width: 100%;
   height: 100%;
-  max-height: 500px;
+  // max-width: 50%;
   border-radius: 6px;
   object-fit: cover;
   background-size: cover;
@@ -28,7 +29,7 @@ const FullImage = styled.img`
 const PriceWrapper = styled.div`
   background: #5a5a5a;
   height: 50px;
-  width: 230px;
+  width: 240px;
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
@@ -40,8 +41,6 @@ const stylesCard = (theme: any) => ({
   flexDirection: "row",
   maxWidth: "1000px",
 
-  // Match [sm, md)
-  //       [600px, 900px)
   [theme.breakpoints.between("xs", "sm")]: {
     flexDirection: "column",
   },
@@ -63,32 +62,19 @@ const stylesContent = (theme: any) => ({
 export default function CollectionsIndex() {
   const { makeTransaction } = useWeb3TransactionPresenter();
 
-  const items = [
-    {
-      id: 1,
-      name: "Mighty Knight",
-      description:
-        "Knight is a powerful warrior. He is a master of sword fighting and is able to use his sword to deal damage to his enemies. He is also a master of defending himself and his allies. Damage dealt by Knight is increased by his level significantly.",
-      image: "/images/nftcharacter.png",
-      price: 0.3,
-    },
-    {
-      id: 2,
-      name: "Old Assasin",
-      description:
-        "Knight is a powerful warrior. He is a master of sword fighting and is able to use his sword to deal damage to his enemies. He is also a master of defending himself and his allies. Damage dealt by Knight is increased by his level significantly.",
-      image: "/images/nftcharacter.png",
-      price: 0.3,
-    },
-    {
-      id: 3,
-      name: "Fat Spearman",
-      description:
-        "Knight is a powerful warrior. He is a master of sword fighting and is able to use his sword to deal damage to his enemies. He is also a master of defending himself and his allies. Damage dealt by Knight is increased by his level significantly.",
-      image: "/images/nftcharacter.png",
-      price: 0.1,
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(data);
+        setLoading(false);
+        console.log(data);
+      });
+  }, []);
 
   return (
     <>
@@ -104,7 +90,7 @@ export default function CollectionsIndex() {
               <Card key={item.id} sx={stylesCard}>
                 <span style={{ width: "100%", height: "100%", position: "relative" }}>
                   <FullImage src={item.image} />
-                  <Link href={"/collections/1/studio"} passHref>
+                  <Link href={"/collections/" + item.id} passHref>
                     <Button
                       text="View in 3D"
                       style={{
@@ -118,7 +104,7 @@ export default function CollectionsIndex() {
                     />
                   </Link>
                 </span>
-                <Box>
+                <Box sx={{ minWidth: "50%" }}>
                   <CardContent sx={stylesContent}>
                     <Typography component="div" variant="h3">
                       {item.name}

@@ -1,4 +1,5 @@
 import { InfuraProvider } from "@ethersproject/providers";
+import { formatUnits } from "@ethersproject/units";
 import { Playables__factory as Playables } from "artifacts/types/factories/Playables__factory";
 import { create } from "ipfs-http-client";
 import all from "it-all";
@@ -46,5 +47,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     json[prop] = json[prop].replace("ipfs://", IPFS_GATEWAY + "/ipfs/");
   }
 
-  res.json(json);
+  res.json({
+    id: req.query.id,
+    supply: token.supply.toString(),
+    minted: token.minted.toString(),
+    weight: token.weight.toString(),
+    price: formatUnits(token.price, "ether"),
+    ...json,
+  });
 }
