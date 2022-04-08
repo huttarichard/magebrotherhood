@@ -5,11 +5,17 @@
   "+lWQIJ": {
     "defaultMessage": "Tržiště"
   },
+  "1v/O7j": {
+    "defaultMessage": "Připojte prosím svou peněženku."
+  },
   "3yk8fB": {
     "defaultMessage": "Peněženka"
   },
   "9fPQ1/": {
     "defaultMessage": "Litepaper"
+  },
+  "DtYelJ": {
+    "defaultMessage": "Převod"
   },
   "EBDrtq": {
     "defaultMessage": "Podmínky použití"
@@ -55,6 +61,9 @@
   },
   "cg1VJ2": {
     "defaultMessage": "Připojte peněženku"
+  },
+  "d1uESJ": {
+    "defaultMessage": "Aktiva"
   },
   "ejEGdx": {
     "defaultMessage": "Domů"

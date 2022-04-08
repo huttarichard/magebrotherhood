@@ -10,8 +10,8 @@ import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useExchangeContract } from "hooks/useContract";
 import { useWeb3Remote } from "hooks/useWeb3";
-import { Contract } from "lib/web3";
-import { formatBNToEtherFloatFixed } from "lib/web3/currency";
+import { Contract } from "lib/contracts";
+import { formatBNToEtherFloatFixed } from "lib/currency";
 import Link from "next/link";
 import { PropsWithChildren, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -86,19 +86,7 @@ enum Currency {
   BHC,
 }
 
-interface Transaction {
-  buy: Currency;
-  buyAmount: BigNumber;
-  sell: Currency;
-  sellAmount: BigNumber;
-  sellTax: BigNumber;
-}
-
-interface Props {
-  onTransactionSubmit: (t: Transaction) => void | Promise<void>;
-}
-
-export default function SwapForm({ children, onTransactionSubmit }: PropsWithChildren<Props>) {
+export default function SwapForm({ children }: PropsWithChildren<unknown>) {
   const intl = useIntl();
   const web3Remote = useWeb3Remote();
   const { connected, contract: exchange, error } = useExchangeContract(web3Remote);
@@ -108,23 +96,11 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
   const [eth, setEth] = useState<BigNumber | null>(null);
   const [bhc, setBhc] = useState<BigNumber | null>(null);
   const [tax, setTax] = useState<BigNumber>(BigNumber.from(0));
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [converting, setConverting] = useState<Currency | null>();
 
   // refs
   const bhcRef = useRef<CurrencyFieldRef | null>(null);
   const ethRef = useRef<CurrencyFieldRef | null>(null);
-
-  const handleSubmit = (t: Transaction) => {
-    setIsSubmitting(true);
-    const promise = onTransactionSubmit(t);
-
-    if (promise instanceof Promise) {
-      promise.finally(() => setIsSubmitting(false));
-    } else {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleModeSwitch = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -154,7 +130,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
 
   const formElements = [
     <CurrencyField
-      disabled={isSubmitting || converting === Currency.BHC}
+      disabled={converting === Currency.BHC || !exchange}
       name="eth"
       label={mode === Mode.EthToBhc ? `${labelSell} ETH` : `${labelReceive} ETH`}
       value={eth}
@@ -166,12 +142,14 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
       onBNChange={async (x: BigNumber | null) => {
         setEth(x);
 
-        if (!x || !exchange) {
+        if (!x || x.eq(0) || !exchange) {
           return;
         }
 
-        const res = await exchange.getEthToTokenInputPrice(x);
-        bhcRef?.current?.setValueSilently(res);
+        try {
+          const res = await exchange.getEthToTokenInputPrice(x);
+          bhcRef?.current?.setValueSilently(res);
+        } catch (e) {}
         setConverting(null);
       }}
       key="eth"
@@ -185,7 +163,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
     </span>,
 
     <CurrencyField
-      disabled={isSubmitting || converting === Currency.ETH}
+      disabled={converting === Currency.ETH || !exchange}
       name="bhc"
       label={mode === Mode.EthToBhc ? `${labelReceive} BHC` : `${labelSell} BHC`}
       value={bhc}
@@ -197,7 +175,7 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
       onBNChange={async (x: BigNumber | null) => {
         setBhc(x);
 
-        if (!x || !exchange) {
+        if (!x || x.eq(0) || !exchange) {
           return;
         }
 
@@ -264,12 +242,14 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
     exchange || !connected ? (
       <form>
         {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+
+        {mode === Mode.BhcToEth && <small>Selling tax 5% will be applied.</small>}
         <Button
           text={swapButtonText}
           onClick={() => {
             mode === Mode.EthToBhc ? ethToTokenSwap() : tokenToETHSwap();
           }}
-          disabled={!exchange || isSubmitting || converting !== null || presenter.open}
+          disabled={!exchange || converting !== null || presenter.open}
           className="btn"
           distorted
           block

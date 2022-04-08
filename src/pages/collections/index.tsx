@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { Contract } from "lib/web3/contracts";
+import { Contract } from "lib/contracts";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";

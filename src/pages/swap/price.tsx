@@ -2,13 +2,8 @@ import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
-import { useExchangeContract } from "hooks/useContract";
-import { useWeb3Remote } from "hooks/useWeb3";
-import { Candle, FILTER_ALL, getCandles } from "lib/web3/exchange";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useState } from "react";
 
 const CoinPriceChart = dynamic(() => import("components/Swap/Chart"), {
   ssr: false,
@@ -62,32 +57,8 @@ const Chart = styled.div`
   }
 `;
 
-export async function getServerSideProps() {
-  const { getCandlesWithInfura } = await import("lib/web3/exchange");
-
-  const data = await getCandlesWithInfura();
-  return { props: { data } };
-}
-
-interface Props {
-  data: Candle[];
-}
-
-export default function Swap({ data }: Props) {
-  console.log(data);
+export default function Swap() {
   const router = useRouter();
-  const [priceData, setPriceData] = useState<Candle[]>(data);
-  const web3 = useWeb3Remote();
-  const { contract, connected, error } = useExchangeContract(web3);
-
-  useEffect(() => {
-    if (!contract) return;
-    contract.on(FILTER_ALL(contract), async () => {
-      console.log("receive event");
-      const data = await getCandles(contract);
-      setPriceData(data);
-    });
-  }, [connected]);
 
   return (
     <Layout>
@@ -97,8 +68,7 @@ export default function Swap({ data }: Props) {
         <Button className="btn" small text="Swap coins" onClick={() => router.push("/swap")} />
       </Title>
       <Chart>
-        {error && <div>{error.message}</div>}
-        <CoinPriceChart data={priceData} />
+        <CoinPriceChart />
       </Chart>
     </Layout>
   );

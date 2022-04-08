@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import Button from "components/ui/Button";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { Contract } from "lib/web3/contracts";
+import { Contract } from "lib/contracts";
 import Head from "next/head";
 
 import Layout from "../components/Layout/Layout";

@@ -1,8 +1,8 @@
 import { Provider } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
 import { Playables } from "artifacts/types";
-import { getCoinUSDPrice } from "lib/cmc";
-import { Coin, Contract, Exchange, IContract, LoadedContracts, loadMany, Staking } from "lib/web3/contracts";
+import { Coin, Contract, Exchange, IContract, LoadedContracts, loadMany, Staking } from "lib/contracts";
+import env from "lib/env";
 import { useEffect, useState } from "react";
 
 import { Web3 } from "./useWeb3";
@@ -109,28 +109,16 @@ export function useCoinETHPrice(web3: Web3) {
   const [price, setPrice] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!contract) return;
+    if (!contract || !web3.provider) return;
 
-    Promise.all([contract.balanceOf(contract.address), contract.provider.getBalance(contract.address)]).then(
+    Promise.all([contract.balanceOf(contract.address), web3.provider.getBalance(env.EXCHANGE_ADDRESS)]).then(
       ([b, e]) => {
         const bhc = parseFloat(formatUnits(b, "ether"));
         const eth = parseFloat(formatUnits(e, "ether"));
         setPrice(eth / bhc);
       }
     );
-  }, [contract]);
-
-  return price;
-}
-
-export function useCoinUSDPrice(web3: Web3) {
-  const eth = useCoinETHPrice(web3);
-  const [price, setPrice] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!eth) return;
-    getCoinUSDPrice("ETH").then((e) => setPrice(eth * e));
-  }, [eth]);
+  }, [contract, web3.provider]);
 
   return price;
 }

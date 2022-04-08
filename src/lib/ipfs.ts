@@ -1,12 +1,147 @@
-import { create } from "ipfs-http-client";
+import { InfuraProvider } from "@ethersproject/providers";
+import { formatUnits } from "@ethersproject/units";
+import { create as createClient, IPFSHTTPClient } from "ipfs-http-client";
+import all from "it-all";
+import { concat } from "uint8arrays";
+
+import { contracts, Playables } from "./contracts";
+import env from "./env";
+
+if (typeof window !== "undefined") {
+  throw new Error("do not use ipfs in browser");
+}
 
 const IPFS_PUBLIC_KEY = process.env.INFURA_IPFS_PUBLIC_KEY;
 const IPFS_SECRET_KEY = process.env.INFURA_IPFS_SECRET_KEY;
+const IPFS_GATEWAY = process.env.INFURA_IPFS_GATEWAY;
 const INFURA_IPFS_NODE = process.env.INFURA_IPFS_NODE;
+const INFURA_KEY = env.INFURA_KEY;
+const NETWORK = env.NETWORK;
 
-function authorization() {
+export function authorization() {
   const buff = Buffer.from(IPFS_PUBLIC_KEY + ":" + IPFS_SECRET_KEY);
   return "Basic " + buff.toString("base64");
+}
+
+export async function create() {
+  return createClient({
+    url: INFURA_IPFS_NODE,
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+}
+
+export function replaceIPFSUris(obj: any) {
+  for (const prop in obj) {
+    if (!obj.hasOwnProperty(prop)) {
+      continue;
+    }
+    if (typeof obj[prop] === "object") {
+      obj[prop] = replaceIPFSUris(obj[prop]);
+    }
+    if (typeof obj[prop] !== "string") {
+      continue;
+    }
+    if (!obj[prop].startsWith("ipfs://")) {
+      continue;
+    }
+    obj[prop] = obj[prop].replace("ipfs://", IPFS_GATEWAY + "/ipfs/");
+  }
+  return obj;
+}
+
+export class NonExistingToken extends Error {}
+
+export async function getToken({
+  id,
+  ipfs,
+  playables,
+  replaceURISWithGateway = true,
+}: {
+  id: string;
+  ipfs: IPFSHTTPClient;
+  playables: Playables;
+  replaceURISWithGateway: boolean;
+}) {g
+  const token = await playables.tokens(id);
+
+  if (token.createdAt.eq(0)) {
+    throw new NonExistingToken(`Token ${id} does not exist`);
+  }
+
+  const data = await all(ipfs.cat(token.uri.replace("ipfs://", "")));
+  const buffer = Buffer.from(concat(data));
+  let json = JSON.parse(buffer.toString());
+
+  if (replaceURISWithGateway) {
+    json = replaceIPFSUris(json);
+  }
+
+  return {
+    id: id,
+    createdAt: new Date(token.createdAt.toNumber() * 1000),
+    launchedAt: new Date(token.launchedAt.toNumber() * 1000),
+    supply: token.supply.toString(),
+    minted: token.minted.toString(),
+    weight: token.weight.toString(),
+    price: formatUnits(token.price, "ether"),
+    ...json,
+  };
+}
+
+export async function getTokenSimple(id: string, replaceURISWithGateway = true) {
+  const ethProvider = new InfuraProvider(NETWORK, INFURA_KEY);
+  const playables = await contracts.playables.connect(ethProvider);
+  const ipfs = await create();
+
+  return getToken({
+    id,
+    ipfs,
+    playables,
+    replaceURISWithGateway,
+  });
+}
+
+export async function getTokens({
+  ipfs,
+  playables,
+  replaceURISWithGateway = true,
+}: {
+  ipfs: IPFSHTTPClient;
+  playables: Playables;
+  replaceURISWithGateway: boolean;
+}) {
+  const tokens: any[] = [];
+  for (let i = 1; i <= 100; i++) {
+    try {
+      const json = await getToken({
+        id: i.toString(),
+        ipfs,
+        playables,
+        replaceURISWithGateway,
+      });
+      tokens.push(json);
+    } catch (e) {
+      if (e instanceof NonExistingToken) {
+        break;
+      }
+      throw e;
+    }
+  }
+  return tokens;
+}
+
+export async function getTokensSimple(replaceURISWithGateway = true) {
+  const ethProvider = new InfuraProvider(NETWORK, INFURA_KEY);
+  const playables = await contracts.playables.connect(ethProvider);
+  const ipfs = await create();
+
+  return getTokens({
+    ipfs,
+    playables,
+    replaceURISWithGateway,
+  });
 }
 
 interface Token {
@@ -21,12 +156,7 @@ interface Token {
 }
 
 export async function createIPFSOpenseaToken(token: Token) {
-  const ipfs = await create({
-    url: INFURA_IPFS_NODE,
-    headers: {
-      Authorization: authorization(),
-    },
-  });
+  const ipfs = await create();
 
   console.info("Adding screenshot to IPFS");
   const imageHash = await ipfs.add(token.image);

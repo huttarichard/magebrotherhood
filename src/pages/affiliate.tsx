@@ -7,7 +7,7 @@ import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useFormik } from "formik";
-import { Contract } from "lib/web3";
+import { Contract } from "lib/contracts";
 import Head from "next/head";
 import { FormattedMessage, useIntl } from "react-intl";
 

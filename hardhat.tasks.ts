@@ -17,8 +17,8 @@ import { Playables__factory } from "./src/artifacts/types/factories/Playables__f
 import { Promoter__factory } from "./src/artifacts/types/factories/Promoter__factory";
 import { Staking__factory } from "./src/artifacts/types/factories/Staking__factory";
 import { Playables } from "./src/artifacts/types/Playables";
+import { formatBNToEtherFloatFixed } from "./src/lib/currency";
 import { createIPFSOpenseaToken } from "./src/lib/ipfs";
-import { formatBNToEtherFloatFixed } from "./src/lib/web3/currency";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -380,7 +380,7 @@ task("info", "Prints info about current state of the contracts, must have .env s
     // BHC Liquidity
     const bhcLiquidity = await coin.balanceOf(coin.address);
     const bhcLiquidityNumber = formatBNToEtherFloatFixed(bhcLiquidity);
-    table.push(["BHC Liquidity", bhcLiquidity]);
+    table.push(["BHC Liquidity", bhcLiquidityNumber]);
 
     // ETH Liquidity
     const ethLiquidity = await owner.provider?.getBalance(exchange.address);

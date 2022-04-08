@@ -16,11 +16,5 @@ export default function Swap() {
     return <Spinner />;
   }
 
-  return (
-    <SwapForm
-      onTransactionSubmit={(t) => {
-        console.info(t);
-      }}
-    ></SwapForm>
-  );
+  return <SwapForm></SwapForm>;
 }

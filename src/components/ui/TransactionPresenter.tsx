@@ -10,7 +10,7 @@ import { default as MuiStep } from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { useWeb3Wallet } from "hooks/useWeb3";
-import { Contract, ContractFunctionArguments, ContractFunctions, load } from "lib/web3";
+import { Contract, ContractFunctionArguments, ContractFunctions, load } from "lib/contracts";
 import { useEffect } from "react";
 import { useWindowSize } from "react-use";
 import create from "zustand";

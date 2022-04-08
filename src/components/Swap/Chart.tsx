@@ -1,3 +1,6 @@
+import Spinner from "components/ui/Spinner";
+import { useExchangeHourlyCandles } from "hooks/useExchangeContract";
+import { useWeb3Remote } from "hooks/useWeb3";
 import Chart from "kaktana-react-lightweight-charts";
 import { Candle } from "lib/web3/exchange";
 
@@ -5,15 +8,16 @@ const state = {
   options: {
     layout: {
       backgroundColor: "#111",
-      lineColor: "#2B2B43",
-      textColor: "#D9D9D9",
+      // background: { type: ColorType.Solid, color: "#FFFFFF" },
+      // fontSize: 16,
+      // textColor: "#D9D9D9",
     },
     grid: {
-      vertLines: {
-        color: "#111",
-      },
       horzLines: {
-        color: "#111",
+        visible: false,
+      },
+      vertLines: {
+        visible: false,
       },
     },
   },
@@ -34,7 +38,13 @@ const state = {
   ],
 };
 
-export default function Price({ data }: { data: Candle[] }) {
-  state.candlestickSeries[0].data = data;
+export default function Price() {
+  const web3 = useWeb3Remote();
+  const { candles } = useExchangeHourlyCandles(web3);
+
+  if (candles.length === 0) {
+    return <Spinner />;
+  }
+  state.candlestickSeries[0].data = candles;
   return <Chart options={state.options} candlestickSeries={state.candlestickSeries} autoWidth autoHeight />;
 }
