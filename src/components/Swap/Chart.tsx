@@ -1,8 +1,7 @@
 import Spinner from "components/ui/Spinner";
-import { useExchangeHourlyCandles } from "hooks/useExchangeContract";
+import { Candle, useExchangeHourlyCandles } from "hooks/useExchangeContract";
 import { useWeb3Remote } from "hooks/useWeb3";
 import Chart from "kaktana-react-lightweight-charts";
-import { Candle } from "lib/web3/exchange";
 
 const state = {
   options: {

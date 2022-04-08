@@ -18,7 +18,6 @@ import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
-import StakingModal from "../components/Staking/StakingModal";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -218,11 +217,6 @@ export default function Staking() {
           </Grid>
         </Paper>
       </Wrapper>
-      <StakingModal
-        open={modalOpen}
-        handleOpenState={setModalOpen}
-        stakeQueue={rows.filter((el) => el.queuedForStaking)}
-      />
     </Layout>
   );
 }
