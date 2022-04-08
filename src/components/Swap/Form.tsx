@@ -170,8 +170,6 @@ export default function SwapForm({ children, onTransactionSubmit }: PropsWithChi
           return;
         }
 
-        console.log(x);
-
         const res = await exchange.getEthToTokenInputPrice(x);
         bhcRef?.current?.setValueSilently(res);
         setConverting(null);

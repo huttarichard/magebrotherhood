@@ -325,6 +325,15 @@ contract Exchange is Ownable, Pausable {
   }
 
   /**
+   * @notice Returns reserves of the exchange.
+   * @return bhc amount of bhc in reserve.
+   * @return eth amount of bhc in reserve.
+   */
+  function reserves() external view returns (uint256, uint256) {
+    return (_balance(), address(this).balance);
+  }
+
+  /**
    * @notice Convert ETH to Tokens.
    * @dev User specifies exact input (msg.value).
    * @dev User cannot specify minimum output or deadline.
@@ -345,7 +354,7 @@ contract Exchange is Ownable, Pausable {
     uint256 inputReserve, // balance - eth sold
     uint256 outputReserve // token balance of this
   ) internal view returns (uint256) {
-    require(inputReserve > 0 && outputReserve > 0, "INVALID_VALUE");
+    require(inputReserve > 0 && outputReserve > 0, "not enough liquidity");
     uint256 inputAmountWithFee = inputAmount.mul(liqudityGuardDenominator - liqudityGuard);
     uint256 numerator = inputAmountWithFee.mul(outputReserve);
     uint256 denominator = inputReserve.mul(liqudityGuardDenominator).add(inputAmountWithFee);
@@ -381,7 +390,7 @@ contract Exchange is Ownable, Pausable {
     uint256 inputReserve,
     uint256 outputReserve
   ) internal view returns (uint256) {
-    require(inputReserve > 0 && outputReserve > 0, "invalid input");
+    require(inputReserve > 0 && outputReserve > 0, "not enough liquidity");
     uint256 numerator = inputReserve.mul(outputAmount).mul(liqudityGuardDenominator);
     uint256 denominator = (outputReserve.sub(outputAmount)).mul(liqudityGuardDenominator - liqudityGuard);
     return (numerator / denominator).add(1);
@@ -418,7 +427,7 @@ contract Exchange is Ownable, Pausable {
     uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
     require(tokensBought >= minTokens, "buy amount not satisfied");
 
-    _transferCoinFromPool(recipient, tokensBought);
+    coin.distribute(recipient, tokensBought);
 
     emit Bought(buyer, recipient, block.timestamp, tokensBought, ethSold, _balance(), address(this).balance);
     return tokensBought;
@@ -442,7 +451,7 @@ contract Exchange is Ownable, Pausable {
       Address.sendValue(payable(buyer), ethRefund);
     }
 
-    _transferCoinFromPool(recipient, tokensBought);
+    coin.distribute(recipient, tokensBought);
 
     emit Bought(buyer, recipient, block.timestamp, tokensBought, ethSold, _balance(), address(this).balance);
     return ethSold;
@@ -463,7 +472,7 @@ contract Exchange is Ownable, Pausable {
     require(ethBought >= minEth, "eth bought must >= min eth");
 
     Address.sendValue(recipient, ethBought.sub(tax));
-    _transferCoinToPool(seller, tokensSold);
+    coin.take(seller, tokensSold);
 
     emit Sold(seller, recipient, block.timestamp, tokensSold, ethBought, _balance(), address(this).balance);
     return ethBought;
@@ -485,7 +494,7 @@ contract Exchange is Ownable, Pausable {
     require(maxTokens >= tokensSold, "max bought tokens >= tokens sold");
 
     Address.sendValue(recipient, ethBought);
-    _transferCoinToPool(seller, tokensSold.add(tax));
+    coin.take(seller, tokensSold.add(tax));
 
     emit Sold(seller, recipient, block.timestamp, tokensSold, ethBought, _balance(), address(this).balance);
     return tokensSold;
@@ -498,23 +507,10 @@ contract Exchange is Ownable, Pausable {
     return amount.div(taxFeeDenominator).mul(taxFee);
   }
 
+  /**
+   * @dev will return current reserve of tokens.
+   */
   function _balance() internal view returns (uint256) {
-    return coin.balanceOf(address(this));
-  }
-
-  function _transferCoin(
-    address from,
-    address to,
-    uint256 bhcAmount
-  ) internal {
-    coin.transferFrom(from, to, bhcAmount);
-  }
-
-  function _transferCoinToPool(address from, uint256 bhcAmount) internal {
-    require(coin.transferFrom(from, address(this), bhcAmount), "could not transfer");
-  }
-
-  function _transferCoinFromPool(address to, uint256 bhcAmount) internal {
-    require(coin.transferFrom(address(this), to, bhcAmount), "could not transfer");
+    return coin.balanceOf(address(coin));
   }
 }

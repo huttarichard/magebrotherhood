@@ -1172,7 +1172,7 @@ declare module "lightweight-charts/dist/lightweight-charts.esm.development" {
      *         return;
      *     }
      *
-     *     console.log(`Click at ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+     *     console.debug(`Click at ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
      * }
      *
      * chart.subscribeClick(myClickHandler);
@@ -1200,7 +1200,7 @@ declare module "lightweight-charts/dist/lightweight-charts.esm.development" {
      *         return;
      *     }
      *
-     *     console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+     *     console.debug(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
      * }
      *
      * chart.subscribeClick(myCrosshairMoveHandler);
@@ -1337,7 +1337,7 @@ declare module "lightweight-charts/dist/lightweight-charts.esm.development" {
      * @example Getting bars info for current visible range
      * ```js
      * const barsInfo = series.barsInLogicalRange(chart.timeScale().getVisibleLogicalRange());
-     * console.log(barsInfo);
+     * console.debug(barsInfo);
      * ```
      * @example Implementing downloading historical data while scrolling
      * ```js
@@ -1449,11 +1449,11 @@ declare module "lightweight-charts/dist/lightweight-charts.esm.development" {
      * ]);
      *
      * chart.subscribeCrosshairMove(param => {
-     *     console.log(param.hoveredMarkerId);
+     *     console.debug(param.hoveredMarkerId);
      * });
      *
      * chart.subscribeClick(param => {
-     *     console.log(param.hoveredMarkerId);
+     *     console.debug(param.hoveredMarkerId);
      * });
      * ```
      */
@@ -1493,10 +1493,10 @@ declare module "lightweight-charts/dist/lightweight-charts.esm.development" {
      * @example
      * ```js
      * const lineSeries = chart.addLineSeries();
-     * console.log(lineSeries.seriesType()); // "Line"
+     * console.debug(lineSeries.seriesType()); // "Line"
      *
      * const candlestickSeries = chart.addCandlestickSeries();
-     * console.log(candlestickSeries.seriesType()); // "Candlestick"
+     * console.debug(candlestickSeries.seriesType()); // "Candlestick"
      * ```
      */
     seriesType(): TSeriesType;

@@ -57,10 +57,17 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
   }
 
   /**
-   * @dev will burn tokens.
+   * @dev will distribute tokens.
    */
   function distribute(address recipient, uint256 amount) public onlyRole(DISTRIBUTOR) {
     _transfer(address(this), recipient, amount);
+  }
+
+  /**
+   * @dev will burn tokens.
+   */
+  function take(address owner, uint256 amount) public onlyRole(DISTRIBUTOR) {
+    _transfer(owner, address(this), amount);
   }
 
   /**

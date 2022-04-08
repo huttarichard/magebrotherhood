@@ -34,7 +34,6 @@ export default function Model(props: React.PropsWithChildren<ModelProps>) {
   }, [id]);
 
   const update = () => setTimeout(forceUpdate, 100);
-  // const log = (e) => console.log(e);
 
   useDebouncedEffect(
     () => {

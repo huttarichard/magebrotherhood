@@ -77,7 +77,6 @@ export default function Studio() {
   //     .then((data) => {
   //       setItem(data);
   //       setLoading(false);
-  //       // console.log(data);
   //     });
   // }, []);
 

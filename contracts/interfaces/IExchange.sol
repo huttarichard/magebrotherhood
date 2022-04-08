@@ -169,4 +169,11 @@ interface IExchange {
    * @return Amount of Tokens needed to buy output ETH.
    */
   function getTokenToEthOutputPriceWithTax(uint256 ethBought) external view returns (uint256, uint256);
+
+  /**
+   * @notice Returns reserves of the exchange.
+   * @return bhc amount of bhc in reserve.
+   * @return eth amount of bhc in reserve.
+   */
+  function reserves() external view returns (uint256, uint256);
 }

@@ -1,6 +1,5 @@
 import Chart from "kaktana-react-lightweight-charts";
-
-import data from "./data.json";
+import { Candle } from "lib/web3/exchange";
 
 const state = {
   options: {
@@ -30,11 +29,12 @@ const state = {
         wickUpColor: "#ec12f9",
         wickDownColor: "#8d11db",
       },
-      data: data.slice(0, 2000),
+      data: [] as Candle[],
     },
   ],
 };
 
-export default function Price() {
+export default function Price({ data }: { data: Candle[] }) {
+  state.candlestickSeries[0].data = data;
   return <Chart options={state.options} candlestickSeries={state.candlestickSeries} autoWidth autoHeight />;
 }

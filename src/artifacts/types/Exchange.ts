@@ -40,6 +40,7 @@ export interface ExchangeInterface extends utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "reserves()": FunctionFragment;
     "setLiqudityGuard(uint256,uint256)": FunctionFragment;
     "setTaxFee(uint256,uint256)": FunctionFragment;
     "taxFee()": FunctionFragment;
@@ -114,6 +115,7 @@ export interface ExchangeInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "reserves", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setLiqudityGuard",
     values: [BigNumberish, BigNumberish]
@@ -214,6 +216,7 @@ export interface ExchangeInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "reserves", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLiqudityGuard",
     data: BytesLike
@@ -437,6 +440,8 @@ export interface Exchange extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
     setLiqudityGuard(
       _guard: BigNumberish,
       _denominator: BigNumberish,
@@ -581,6 +586,8 @@ export interface Exchange extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
   setLiqudityGuard(
     _guard: BigNumberish,
     _denominator: BigNumberish,
@@ -715,6 +722,8 @@ export interface Exchange extends BaseContract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     setLiqudityGuard(
       _guard: BigNumberish,
@@ -929,6 +938,8 @@ export interface Exchange extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    reserves(overrides?: CallOverrides): Promise<BigNumber>;
+
     setLiqudityGuard(
       _guard: BigNumberish,
       _denominator: BigNumberish,
@@ -1075,6 +1086,8 @@ export interface Exchange extends BaseContract {
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    reserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setLiqudityGuard(
       _guard: BigNumberish,

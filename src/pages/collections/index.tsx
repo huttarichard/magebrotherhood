@@ -81,7 +81,6 @@ export default function CollectionsIndex() {
       .then((data) => {
         setItems(data);
         setLoading(false);
-        console.log(data);
       });
   }, []);
 

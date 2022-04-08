@@ -30,6 +30,7 @@ export interface ICoinInterface extends utils.Interface {
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getVotes(address)": FunctionFragment;
+    "take(address,uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -71,6 +72,10 @@ export interface ICoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getVotes", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "take",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -102,6 +107,7 @@ export interface ICoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "take", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -232,6 +238,12 @@ export interface ICoin extends BaseContract {
 
     getVotes(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
@@ -298,6 +310,12 @@ export interface ICoin extends BaseContract {
 
   getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  take(
+    owner: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
@@ -360,6 +378,12 @@ export interface ICoin extends BaseContract {
     ): Promise<BigNumber>;
 
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -474,6 +498,12 @@ export interface ICoin extends BaseContract {
 
     getVotes(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
@@ -548,6 +578,12 @@ export interface ICoin extends BaseContract {
     getVotes(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;

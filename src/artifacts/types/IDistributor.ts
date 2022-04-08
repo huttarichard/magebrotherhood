@@ -21,14 +21,20 @@ export interface IDistributorInterface extends utils.Interface {
   contractName: "IDistributor";
   functions: {
     "distribute(address,uint256)": FunctionFragment;
+    "take(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "distribute",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "take",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "take", data: BytesLike): Result;
 
   events: {};
 }
@@ -66,6 +72,12 @@ export interface IDistributor extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   distribute(
@@ -74,9 +86,21 @@ export interface IDistributor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  take(
+    owner: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     distribute(
       recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    take(
+      owner: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -90,11 +114,23 @@ export interface IDistributor extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    take(
+      owner: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     distribute(
       recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    take(
+      owner: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

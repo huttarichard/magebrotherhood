@@ -34,7 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = await all(ipfs.cat(token.uri.replace("ipfs://", "")));
   const buffer = Buffer.from(concat(data));
-  console.log(buffer.toString());
   const json = JSON.parse(buffer.toString());
 
   for (const prop in json) {

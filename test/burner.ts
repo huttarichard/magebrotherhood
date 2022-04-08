@@ -44,7 +44,7 @@ async function printStats(label) {
 
   const price = await currentPrice();
 
-  console.log(label, " | ETH: ", balanceETH, "Coin: ", balanceCoin, "Price: ", price);
+  console.info(label, " | ETH: ", balanceETH, "Coin: ", balanceCoin, "Price: ", price);
 }
 
 describe("Coin Burner", function () {
@@ -63,26 +63,26 @@ describe("Coin Burner", function () {
 
     const price = await currentPrice();
     const priceArr = generatePriceSeries(48, price, 1, -2).reverse();
-    console.log(priceArr);
+    console.info(priceArr);
 
     // adjust the coin amount to reflect the price series
     const targetCoin = 1_000 / priceArr[0] - 1_000;
-    console.log(`Coins minted: ${targetCoin.toFixed(0)} to get to  ${priceArr[0]}`);
+    console.info(`Coins minted: ${targetCoin.toFixed(0)} to get to  ${priceArr[0]}`);
     await coin.connect(owner).tokenMint(coin.address, ethers.utils.parseEther(targetCoin.toFixed(0)));
-    console.log("Confirm:", await currentPrice());
+    console.info("Confirm:", await currentPrice());
 
     await printStats("Before");
 
     const change = await calculateChangeInCoins(priceArr);
-    console.log("Change in coin amount: ", change);
+    console.info("Change in coin amount: ", change);
 
     if (change == 0) {
-      console.log("Do Nothing");
+      console.info("Do Nothing");
     } else if (change > 0) {
-      console.log(`Mint ${change} coins`);
+      console.info(`Mint ${change} coins`);
       await coin.tokenMint(coin.address, ethers.utils.parseEther(change.toFixed(0)));
     } else if (change < 0) {
-      console.log(`Burn ${Math.abs(change)} coins`);
+      console.info(`Burn ${Math.abs(change)} coins`);
       await coin.tokenBurn(coin.address, ethers.utils.parseEther(Math.abs(change).toFixed(0)));
     }
 
@@ -90,6 +90,6 @@ describe("Coin Burner", function () {
 
     const newPrice = await currentPrice();
     const pctChange = newPrice / priceArr[0] - 1;
-    console.log(`Change | Price: ${priceArr[0]} -> ${newPrice} (increase of: ${(pctChange * 100).toFixed(2)}%) `);
+    console.info(`Change | Price: ${priceArr[0]} -> ${newPrice} (increase of: ${(pctChange * 100).toFixed(2)}%) `);
   });
 });

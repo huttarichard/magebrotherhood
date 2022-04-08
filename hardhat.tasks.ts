@@ -2,19 +2,23 @@ import "@nomiclabs/hardhat-ethers";
 
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
+import Table from "cli-table";
 import * as envfile from "envfile";
 import { readFileSync } from "fs";
 import { task, types } from "hardhat/config";
 import path from "path";
 import { resolve } from "path";
 
-// import { Playables } from "./src/artifacts/types/Playables";
+import { Coin } from "./src/artifacts/types/Coin";
+import { Exchange } from "./src/artifacts/types/Exchange";
 import { Coin__factory } from "./src/artifacts/types/factories/Coin__factory";
 import { Exchange__factory } from "./src/artifacts/types/factories/Exchange__factory";
 import { Playables__factory } from "./src/artifacts/types/factories/Playables__factory";
 import { Promoter__factory } from "./src/artifacts/types/factories/Promoter__factory";
 import { Staking__factory } from "./src/artifacts/types/factories/Staking__factory";
+import { Playables } from "./src/artifacts/types/Playables";
 import { createIPFSOpenseaToken } from "./src/lib/ipfs";
+import { formatBNToEtherFloatFixed } from "./src/lib/web3/currency";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -46,6 +50,9 @@ interface DeployArguments {
 }
 
 task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
+  await hre.run("clean");
+  await hre.run("compile");
+
   const coinLiquidity = parseEther(taskArgs.coinLiquidity.toFixed(0));
   const exchangeLiq = parseEther(taskArgs.exchangeLiquidity.toFixed(0));
   const stakingCycle = taskArgs.stakingCycle;
@@ -67,6 +74,12 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("\n");
 
   // Exchange
+
+  if (exchangeLiq.eq(BigNumber.from(0))) {
+    console.warn(
+      "Exchange liquidity is 0, this is not ideal as it will not allow to trade, functions will return errors"
+    );
+  }
   console.info("Deploying exchange (liq: %s)...", formatEther(exchangeLiq));
   const Exchange = (await hre.ethers.getContractFactory("Exchange")) as Exchange__factory;
   const exchange = await Exchange.deploy(coin.address, {
@@ -242,7 +255,7 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
   });
 
   const Playables = await hre.ethers.getContractFactory("Playables");
-  const playables = Playables.attach(taskArgs.playables).connect(owner);
+  const playables = Playables.attach(taskArgs.playables).connect(owner) as Playables;
 
   console.info("Token: ", BigNumber.from(id).toString());
 
@@ -280,7 +293,7 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
   .addOptionalParam("stakingWeight", "staking weight for token", 1, types.int)
   .addOptionalParam("pin", "staking period in cycles", false, types.boolean);
 
-task("etherscan", "Compiles the entire project, building all artifacts")
+task("etherscan", "Verifies all contract with ethersca, keep in mind you have to have .env settup")
   .setAction(async (taskargs, hre) => {
     const DEPLOY_ARGS = process.env.DEPLOY_ARGS as string;
     const args: DeployArguments = JSON.parse(Buffer.from(DEPLOY_ARGS, "base64").toString());
@@ -302,6 +315,8 @@ task("etherscan", "Compiles the entire project, building all artifacts")
 
     for (const key in contracts) {
       try {
+        console.info("\n Contract verification: ", contracts[key].name);
+
         await hre.run("verify", {
           constructorArgsParams: contracts[key].args.map((e) => e.toString()),
           address: contracts[key].address,
@@ -321,6 +336,62 @@ task("etherscan", "Compiles the entire project, building all artifacts")
     }
   })
   .addOptionalParam("contracts", "contract you want to verify", "all", types.string);
+
+task("info", "Prints info about current state of the contracts, must have .env settup").setAction(
+  async (taskargs, hre) => {
+    const [owner] = await hre.ethers.getSigners();
+    await hre.run("compile");
+    console.info("\n");
+
+    console.info("Network: ", hre.network.name);
+
+    const table = new Table({
+      head: ["Stats", "Value"],
+    });
+
+    // const STAKING_ADDRESS = process.env.STAKING_ADDRESS as string;
+    // const PROMOTER_ADDRESS = process.env.PROMOTER_ADDRESS as string;
+    // const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
+
+    const COIN_ADDRESS = process.env.COIN_ADDRESS as string;
+    console.info("Coin address:", COIN_ADDRESS);
+
+    const coinBytecode = await owner.provider?.getCode(COIN_ADDRESS);
+    if (coinBytecode === "0x") {
+      console.error("Coin contract not deployed, check --network parameter");
+      process.exit(1);
+    }
+
+    const Coin = await hre.ethers.getContractFactory("Coin");
+    const coin = Coin.attach(COIN_ADDRESS).connect(owner) as Coin;
+
+    const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+    console.info("Exchange address:", EXCHANGE_ADDRESS);
+
+    const exchangeBytecode = await owner.provider?.getCode(EXCHANGE_ADDRESS);
+    if (exchangeBytecode === "0x") {
+      console.error("Exchange contract not deployed, check --network parameter");
+      process.exit(1);
+    }
+
+    const Exchange = await hre.ethers.getContractFactory("Exchange");
+    const exchange = Exchange.attach(EXCHANGE_ADDRESS).connect(owner) as Exchange;
+
+    // BHC Liquidity
+    const bhcLiquidity = await coin.balanceOf(coin.address);
+    const bhcLiquidityNumber = formatBNToEtherFloatFixed(bhcLiquidity);
+    table.push(["BHC Liquidity", bhcLiquidity]);
+
+    // ETH Liquidity
+    const ethLiquidity = await owner.provider?.getBalance(exchange.address);
+    const ethLiquidityNumber = formatBNToEtherFloatFixed(ethLiquidity);
+    table.push(["ETH Exchange Liquidity", ethLiquidityNumber]);
+
+    table.push(["Liquidity Ratio", (ethLiquidityNumber / bhcLiquidityNumber).toFixed(18)]);
+
+    console.info(table.toString());
+  }
+);
 
 const updateEnvFile = (envVariables: { key: string; value: any }[]): string => {
   // get `.env` from path of current directory

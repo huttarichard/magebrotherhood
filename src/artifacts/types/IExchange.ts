@@ -32,6 +32,7 @@ export interface IExchangeInterface extends utils.Interface {
     "getTokenToEthInputPriceWithTax(uint256)": FunctionFragment;
     "getTokenToEthOutputPrice(uint256)": FunctionFragment;
     "getTokenToEthOutputPriceWithTax(uint256)": FunctionFragment;
+    "reserves()": FunctionFragment;
     "tokenToEthSwap(uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
@@ -83,6 +84,7 @@ export interface IExchangeInterface extends utils.Interface {
     functionFragment: "getTokenToEthOutputPriceWithTax",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "reserves", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenToEthSwap",
     values: [BigNumberish]
@@ -148,6 +150,7 @@ export interface IExchangeInterface extends utils.Interface {
     functionFragment: "getTokenToEthOutputPriceWithTax",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "reserves", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwap",
     data: BytesLike
@@ -260,6 +263,8 @@ export interface IExchange extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
+    reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
     tokenToEthSwap(
       tokensSold: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -356,6 +361,8 @@ export interface IExchange extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
+  reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
   tokenToEthSwap(
     tokensSold: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -449,6 +456,8 @@ export interface IExchange extends BaseContract {
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
+
+    reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
@@ -549,6 +558,8 @@ export interface IExchange extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    reserves(overrides?: CallOverrides): Promise<BigNumber>;
+
     tokenToEthSwap(
       tokensSold: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -645,6 +656,8 @@ export interface IExchange extends BaseContract {
       ethBought: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    reserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,

@@ -49,11 +49,9 @@ describe("Playables contract", function () {
   });
 
   it("it should be no problem to stake", async function () {
-    // console.log(playables);
     // const [owner] = await ethers.getSigners();
     // await playables.mint({ amount: 1, discount: "", payWithCoin: false, tokenId: 0 });
     // const result = await affiliate.payoff(owner.address);
     // const result = await affiliate.payoff(owner.address);
-    // console.log(result);
   });
 });
