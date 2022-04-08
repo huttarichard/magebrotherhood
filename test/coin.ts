@@ -1,7 +1,5 @@
 /// <reference types="@nomiclabs/hardhat-waffle" />
 
-import { BigNumber } from "@ethersproject/bignumber";
-import { formatUnits, parseEther } from "@ethersproject/units";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -17,75 +15,60 @@ describe("Coin contract", function () {
     coin = await coinFactory.deploy(100);
     await coin.deployed();
 
-    const value = ethers.utils.parseEther("100");
-    await owner.sendTransaction({ to: coin.address, value });
-
-    await coin.setLiqudityGuard(BigNumber.from(0), BigNumber.from(1));
-    await coin.setTaxFee(BigNumber.from(0), BigNumber.from(1));
+    // const value = ethers.utils.parseEther("101");
+    // await owner.sendTransaction({ to: coin.address, value });
   });
 
   it("should mint correct supply at deploy", async function () {
-    expect(await coin.balanceOf(coin.address)).to.be.eq(ethers.utils.parseEther("100"));
-    expect(await coin.provider.getBalance(coin.address)).to.be.eq(ethers.utils.parseEther("100"));
+    expect(await coin.balanceOf(coin.address)).to.be.eq(100);
+    expect(await coin.provider.getBalance(coin.address)).to.be.eq(0);
   });
 
-  it("should be able to do simple swap coins", async function () {
-    const [owner] = await ethers.getSigners();
-    const tx2 = await coin.setLiqudityGuard(BigNumber.from(0), BigNumber.from(1));
-    await tx2.wait();
-
-    const tx = await coin.connect(owner).ethToTokenSwap({
-      value: ethers.utils.parseEther("1"),
-    });
-    await tx.wait();
-
-    const balance = await coin.balanceOf(owner.address);
-
-    const b1 = formatUnits(balance, "ether");
-    // as 100 being the initial supply, and 101 balance after transaction
-    const b2 = formatUnits(parseEther("100").div(101), "ether");
-
-    expect(b1).to.be.eq(b2);
+  it("should not accept ETH transfer to coin address", async function () {
+    const [wallet] = await ethers.getSigners();
+    const value = ethers.utils.parseEther("1");
+    await expect(wallet.sendTransaction({ to: coin.address, value })).to.be.reverted;
   });
 
-  it("should be able to do simple swap coins with liquidity guard being 10", async function () {
-    const [owner] = await ethers.getSigners();
-    const tx2 = await coin.setLiqudityGuard(BigNumber.from(10), BigNumber.from(100));
-    await tx2.wait();
+  it("should distribute tokens to specified address", async function () {
+    const [wallet] = await ethers.getSigners();
 
-    const tx = await coin.connect(owner).ethToTokenSwap({
-      value: ethers.utils.parseEther("1"),
-    });
-    await tx.wait();
-
-    const balance = await coin.balanceOf(owner.address);
-
-    const b1 = formatUnits(balance, "wei");
-    const b2 = BigNumber.from("891972249752229930"); // 0.891972249752229930 BHC
-
-    expect(b1).to.be.eq(b2);
+    await coin.distribute(wallet.address, 1);
+    expect(await coin.balanceOf(coin.address)).to.be.eq(99);
+    expect(await coin.balanceOf(wallet.address)).to.be.eq(1);
   });
 
-  it("should be able to transfer and sell tokens", async function () {
-    const [owner, address1] = await ethers.getSigners();
+  it("should disable transfers when contract is paused", async function () {
+    const [wallet] = await ethers.getSigners();
 
-    const original1 = await ethers.provider.getBalance(address1.address);
+    await coin.pause();
+    await expect(coin.distribute(wallet.address, 1)).to.be.reverted;
+  });
 
-    await coin.grantRole(await coin.SPENDER(), owner.address);
+  it("should enable transfers when contract is unpaused", async function () {
+    const [wallet] = await ethers.getSigners();
 
-    const amount = ethers.utils.parseEther("1");
+    await coin.pause();
+    await coin.unpause();
+    await coin.distribute(wallet.address, 1);
+    expect(await coin.balanceOf(coin.address)).to.be.eq(99);
+    expect(await coin.balanceOf(wallet.address)).to.be.eq(1);
+  });
 
-    const tx = await coin.connect(owner).transferFrom(coin.address, address1.address, amount);
-    await tx.wait();
+  it("should burn tokens at specified address", async function () {
+    const [wallet] = await ethers.getSigners();
 
-    const balance = await coin.balanceOf(address1.address);
-    expect(balance).to.be.eq(amount);
+    await coin.distribute(wallet.address, 1);
+    expect(await coin.balanceOf(coin.address)).to.be.eq(99);
+    expect(await coin.balanceOf(wallet.address)).to.be.eq(1);
 
-    const tx2 = await coin.connect(address1).tokenToEthSwap(amount);
-    await tx2.wait();
+    await coin.burn(wallet.address, 1);
+    expect(await coin.balanceOf(coin.address)).to.be.eq(99);
+    expect(await coin.balanceOf(wallet.address)).to.be.eq(0);
+  });
 
-    const original1_x = await ethers.provider.getBalance(address1.address);
-
-    expect(original1_x.sub(original1)).to.be.closeTo(amount, ethers.utils.parseEther("0.01"));
+  it("should burn tokens at contract's address", async function () {
+    await coin.burn(coin.address, 1);
+    expect(await coin.balanceOf(coin.address)).to.be.eq(99);
   });
 });
