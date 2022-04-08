@@ -63,7 +63,7 @@ export async function getToken({
   ipfs: IPFSHTTPClient;
   playables: Playables;
   replaceURISWithGateway: boolean;
-}) {g
+}) {
   const token = await playables.tokens(id);
 
   if (token.createdAt.eq(0)) {
