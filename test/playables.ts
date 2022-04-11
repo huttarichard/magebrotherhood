@@ -7,6 +7,8 @@ import { ethers } from "hardhat";
 import {
   Coin,
   Coin__factory as CoinFactory,
+  Exchange,
+  Exchange__factory as ExchangeFactory,
   Playables,
   Playables__factory as PlayablesFactory,
   Promoter,
@@ -17,6 +19,7 @@ describe("Playables contract", function () {
   let coin: Coin;
   let promoter: Promoter;
   let playables: Playables;
+  let exchange: Exchange;
 
   this.beforeEach(async () => {
     const [owner] = await ethers.getSigners();
@@ -31,8 +34,11 @@ describe("Playables contract", function () {
     await promoter.grantRole(await promoter.MANAGER(), owner.address);
     // await promoter.allowRewarding(owner.address, 100);
 
+    const Exchange = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
+    exchange = await Exchange.deploy(coin.address);
+
     const Playables = (await ethers.getContractFactory("Playables", owner)) as PlayablesFactory;
-    playables = await Playables.deploy(coin.address, promoter.address, "");
+    playables = await Playables.deploy(exchange.address, promoter.address, "");
 
     const token: Playables.TokenStruct = {
       uri: "https://example.com/token.png",
@@ -54,7 +60,7 @@ describe("Playables contract", function () {
   });
 
   it("should initiate promoters and coin addresses", async function () {
-    expect(await playables.liqudityReceiver()).to.equal(coin.address);
+    expect(await playables.liqudityReceiver()).to.equal(exchange.address);
     expect(await playables.promoters()).to.equal(promoter.address);
   });
 
