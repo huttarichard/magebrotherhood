@@ -1,7 +1,7 @@
 import { Provider } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
 import { Playables } from "artifacts/types";
-import { Coin, Contract, Exchange, IContract, LoadedContracts, loadMany, Staking } from "lib/contracts";
+import { Coin, Contract, Exchange, IContract, LoadedContracts, loadMany, Promoter, Staking } from "lib/contracts";
 import env from "lib/env";
 import { useEffect, useState } from "react";
 
@@ -102,6 +102,10 @@ export function useStakingContract(web3: Web3) {
 
 export function usePlayableContract(web3: Web3) {
   return useContract<Playables>(web3, Contract.Playables);
+}
+
+export function usePromoterContract(web3: Web3) {
+  return useContract<Promoter>(web3, Contract.Promoter);
 }
 
 export function useCoinETHPrice(web3: Web3) {

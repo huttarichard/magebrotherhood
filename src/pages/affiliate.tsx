@@ -1,14 +1,20 @@
 import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
+import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useFormik } from "formik";
+import { usePromoterContract } from "hooks/useContract";
+import { useWeb3Wallet } from "hooks/useWeb3";
+import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/contracts";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
 const Main = styled.div`
@@ -85,7 +91,100 @@ const CardHeader = styled.div`
   }
 `;
 
-export default function Swap() {
+function CumputedRewards() {
+  const web3 = useWeb3Wallet();
+  const { contract, error, connected } = usePromoterContract(web3);
+  const { makeTransaction } = useWeb3TransactionPresenter();
+
+  const account = web3.accounts?.[0];
+
+  interface Rewards {
+    enabled: boolean;
+    name: string;
+    code: string;
+    revenue: number;
+    reward: number;
+  }
+  const [rewards, setRewards] = useState<Rewards>();
+
+  useEffect(() => {
+    if (!contract || !account) return;
+    contract.promoters(account).then((result) => {
+      setRewards({
+        enabled: result.enabled,
+        name: result.name,
+        code: result.code,
+        revenue: formatBNToEtherFloatFixed(result.revenue),
+        reward: formatBNToEtherFloatFixed(result.reward),
+      });
+    });
+  }, [contract, account]);
+
+  const handleClaim = () => {
+    if (!account) return;
+
+    makeTransaction({
+      contract: Contract.Promoter,
+      description: {
+        action: "Claim rewards",
+        description: `You can claim your rewards`,
+        value: BigNumber.from("0"),
+      },
+      fn: "release",
+      args: [account],
+    });
+  };
+
+  if (error) {
+    return (
+      <CardWrapper>
+        <>{error.message}</>
+      </CardWrapper>
+    );
+  }
+
+  if (!connected) {
+    <CardWrapper>
+      <CardHeader>
+        <Typography variant="h5">
+          <FormattedMessage defaultMessage="Your account" id="95pnlV" />
+        </Typography>
+      </CardHeader>
+
+      <p>Connect your wallet!</p>
+    </CardWrapper>;
+  }
+
+  if (!rewards || !rewards.enabled) {
+    return null;
+  }
+
+  return (
+    <CardWrapper>
+      <CardHeader>
+        <Typography variant="h5">
+          <FormattedMessage defaultMessage="Your account" id="95pnlV" />
+        </Typography>
+      </CardHeader>
+
+      <Grid container>
+        <Grid item xs>
+          <b>
+            Rewards to claim: {rewards.reward} ETH <small>({rewards.revenue} revenue)</small>
+          </b>
+        </Grid>
+        <Grid item xs="auto">
+          <Button disabled={rewards.reward == 0} small text="Claim rewards" onClick={handleClaim} />
+        </Grid>
+      </Grid>
+    </CardWrapper>
+  );
+}
+
+export default function Affiliate() {
+  const web3 = useWeb3Wallet();
+  const window = useWeb3ConnectWindow();
+
   const intl = useIntl();
   const { makeTransaction } = useWeb3TransactionPresenter();
 
@@ -107,22 +206,33 @@ export default function Swap() {
 
   interface Values {
     code: string;
+    nickname: string;
   }
 
   const formik = useFormik({
     initialValues: {
       code: "",
+      nickname: "",
     },
-    onSubmit: (values: Values) => {
+    onSubmit: (values: Values, helpers) => {
+      if (values.code.length === 0 || values.code.length > 50) {
+        helpers.setFieldError("code", "Invalid code");
+        return;
+      }
+      if (values.nickname.length === 0 || values.nickname.length > 30) {
+        helpers.setFieldError("nickname", "Invalid nickname");
+        return;
+      }
+      console.log(values);
       makeTransaction<Contract.Promoter, "register">({
         contract: Contract.Promoter,
         fn: "register",
         description: {
-          action: "Transfer",
-          description: "Transfer your bortherhood coins to another address",
+          action: "Register Code",
+          description: "Register promotion code",
           value: BigNumber.from(0),
         },
-        args: ["", ""],
+        args: [values.code, values.nickname],
       });
     },
   });
@@ -156,7 +266,9 @@ export default function Swap() {
           </div>
 
           <br />
+          <CumputedRewards />
 
+          <br />
           <CardWrapper>
             <CardHeader>
               <Typography variant="h5">
@@ -167,8 +279,36 @@ export default function Swap() {
             <br />
 
             <form onSubmit={formik.handleSubmit}>
-              <TextField fullWidth name="code" label={formLabel} helperText={formHelperText} />
-              <Button text={formSubmitButtonText} className="btn" distorted borders large />
+              <TextField
+                fullWidth
+                name="code"
+                label={formLabel}
+                helperText={formHelperText}
+                value={formik.values.code}
+                onChange={formik.handleChange}
+                error={formik.touched.code && Boolean(formik.errors.code)}
+              />
+              <br />
+              <br />
+              <TextField
+                fullWidth
+                name="nickname"
+                label="@nickname"
+                helperText="twitter:@magebrotherhood"
+                value={formik.values.nickname}
+                onChange={formik.handleChange}
+                error={formik.touched.nickname && Boolean(formik.errors.nickname)}
+              />
+
+              {web3.connected ? (
+                <>
+                  <Button text={formSubmitButtonText} type="submit" className="btn" distorted borders large />
+                </>
+              ) : (
+                <>
+                  <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
+                </>
+              )}
             </form>
           </CardWrapper>
         </Main>

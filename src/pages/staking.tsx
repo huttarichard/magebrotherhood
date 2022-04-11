@@ -69,6 +69,7 @@ const AmountSelect = styled(NativeSelect)`
 
 const ItemsPaper = styled(Paper)`
   padding: 20px;
+  border: 2px solid #ec12f9;
 
   h3 {
     margin-top: 0;
@@ -157,7 +158,7 @@ function UnstakedItems({ account }: ItemsProps) {
   if (!collection.loading && nodes.length === 0) {
     return (
       <ItemsPaper>
-        <h3>Items to be staked</h3>
+        <Typography variant="h5">Items to be staked</Typography>
         <p>
           No items to stake. Visit <Link href="/collections">collection page</Link> and buy NFT!
         </p>
@@ -283,7 +284,7 @@ function StakedItems({ account }: ItemsProps) {
   if (!collection.loading && nodes.length === 0) {
     return (
       <ItemsPaper>
-        <h3>Currently staking</h3>
+        <Typography variant="h5">Currently staking</Typography>
         <p>Currently you are staking no items.</p>
       </ItemsPaper>
     );

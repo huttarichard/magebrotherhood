@@ -91,6 +91,7 @@
     "ua-parser-js": "^1.0.2",
     "uint8arrays": "^3.0.0",
     "use-debounce": "^7.0.1",
+    "yup": "^0.32.11",
     "zustand": "^3.7.1"
   },
   "devDependencies": {
