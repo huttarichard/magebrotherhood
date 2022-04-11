@@ -21,7 +21,6 @@ export interface IStakableInterface extends utils.Interface {
   contractName: "IStakable";
   functions: {
     "getStakingWeight(uint256)": FunctionFragment;
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
   };
 
@@ -30,20 +29,12 @@ export interface IStakableInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeBatchTransferFrom",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish, BigNumberish, BytesLike]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "getStakingWeight",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeBatchTransferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -87,15 +78,6 @@ export interface IStakable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     safeTransferFrom(
       from: string,
       to: string,
@@ -111,15 +93,6 @@ export interface IStakable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  safeBatchTransferFrom(
-    from: string,
-    to: string,
-    ids: BigNumberish[],
-    values: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   safeTransferFrom(
     from: string,
     to: string,
@@ -134,15 +107,6 @@ export interface IStakable extends BaseContract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     safeTransferFrom(
       from: string,
@@ -162,15 +126,6 @@ export interface IStakable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     safeTransferFrom(
       from: string,
       to: string,
@@ -185,15 +140,6 @@ export interface IStakable extends BaseContract {
     getStakingWeight(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     safeTransferFrom(

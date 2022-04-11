@@ -16,8 +16,8 @@ import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter"
 import { useFormik } from "formik";
 import { useCoinContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
+import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/contracts";
-import { formatBNToEtherFloatFixed } from "lib/currency";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { FormattedMessage, FormattedNumber, useIntl } from "react-intl";

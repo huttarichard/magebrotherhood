@@ -1,21 +1,20 @@
 import styled from "@emotion/styled";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Tab from "@mui/material/Tab";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Tabs from "@mui/material/Tabs";
+import { BigNumber } from "@ethersproject/bignumber";
+import { Grid, NativeSelect, NativeSelectProps, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import knight from "assets/images/knight.png";
+import { ItemCompact } from "components/Collection/List";
 import Button from "components/ui/Button";
-import Image from "next/image";
+import Spinner from "components/ui/Spinner";
+import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
+import { Item, useCollectionsApi } from "hooks/useCollectionApi";
+import { useStakingContract } from "hooks/useContract";
+import { useWeb3Wallet } from "hooks/useWeb3";
+import { formatBNToEtherFloatFixed } from "lib/bn";
+import { Contract, contracts } from "lib/contracts";
 import Link from "next/link";
-import { useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useEffect, useState } from "react";
+import { FormattedMessage } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 
@@ -29,6 +28,7 @@ const Wrapper = styled.div`
 
   .head {
     border-bottom: 1px solid #303030;
+    padding: 15px;
     padding-bottom: 30px;
   }
 
@@ -54,64 +54,256 @@ const Wrapper = styled.div`
   }
 `;
 
-enum ItemType {
-  Playable,
-  Land,
+const AmountSelect = styled(NativeSelect)`
+  min-width: 100px;
+  height: 40px;
+  color: white;
+  margin-right: 30px;
+  font-size: 1.2rem;
+  border-radius: 4px;
+
+  select {
+    padding: 5px 20px;
+  }
+`;
+
+const ItemsPaper = styled(Paper)`
+  padding: 20px;
+
+  h3 {
+    margin-top: 0;
+  }
+`;
+
+function AmountSelector({ amount, ...props }: { amount: number } & NativeSelectProps) {
+  return (
+    <AmountSelect
+      defaultValue={0}
+      inputProps={{
+        name: "age",
+        id: "uncontrolled-native",
+      }}
+      {...props}
+    >
+      <option key={0} selected>
+        Select amount
+      </option>
+      {[...Array(amount).keys()].map((e) => (
+        <option value={e + 1} key={e + 1}>
+          {(e + 1).toString()}
+        </option>
+      ))}
+    </AmountSelect>
+  );
 }
 
-export type StakingItem = {
-  id: number;
-  title: string;
-  type: ItemType;
-  staked: boolean;
-  queuedForStaking: boolean;
-};
+interface ItemsProps {
+  account: string;
+}
 
-const initialRows: StakingItem[] = [
-  { id: 1, title: "Knight", type: ItemType.Playable, staked: false, queuedForStaking: false },
-  { id: 2, title: "Mage", type: ItemType.Playable, staked: false, queuedForStaking: false },
-  { id: 3, title: "Dark wood", type: ItemType.Land, staked: false, queuedForStaking: false },
-];
+function UnstakedItems({ account }: ItemsProps) {
+  const { makeTransaction } = useWeb3TransactionPresenter();
+  const [amount, setAmount] = useState<number | null>(null);
 
-export default function Staking() {
-  enum Filter {
-    YourWallet,
-    Staked,
-  }
+  const collection = useCollectionsApi({
+    account,
+  });
 
-  const intl = useIntl();
-
-  const [rows, setRows] = useState<StakingItem[]>(initialRows);
-  const [filter, setFilter] = useState<Filter>(Filter.YourWallet);
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-
-  const handleStakingQueueChange = (row: StakingItem) => {
-    const rowIndex = rows.findIndex((el) => el.id === row.id);
-    rows[rowIndex].queuedForStaking = !rows[rowIndex].queuedForStaking;
-
-    setRows([...rows]);
+  const handeStaking = (item: Item) => {
+    makeTransaction({
+      contract: Contract.Playables,
+      description: {
+        action: "Trasnfer tokens",
+        description: `Stake ${amount} of ${item.name}`,
+        value: BigNumber.from("0"),
+      },
+      fn: "safeTransferFrom",
+      args: [account, contracts.staking.address as string, BigNumber.from(item.id), BigNumber.from(amount), []],
+    });
   };
 
-  // i18n
-  const tabLabelYourWallet = intl.formatMessage({
-    defaultMessage: "Your Wallet",
-    id: "staking_page_tab_label_your_wallet",
+  const nodes = collection.data
+    .map((item: Item) => {
+      if (item.balance === 0) {
+        return null;
+      }
+      return (
+        <ItemCompact item={item} key={item.id}>
+          <Grid container justifyContent="end" alignItems="center">
+            <Grid item>
+              <AmountSelector
+                value={amount}
+                onChange={(e) => setAmount(parseInt(e.target.value))}
+                amount={item.balance}
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                disabled={amount === null}
+                text="Stake"
+                distorted
+                borders
+                onClick={() => {
+                  handeStaking(item);
+                }}
+              />
+            </Grid>
+          </Grid>
+        </ItemCompact>
+      );
+    })
+    .filter((e) => e !== null);
+
+  if (!collection.loading && nodes.length === 0) {
+    return (
+      <ItemsPaper>
+        <h3>Items to be staked</h3>
+        <p>
+          No items to stake. Visit <Link href="/collections">collection page</Link> and buy NFT!
+        </p>
+      </ItemsPaper>
+    );
+  }
+
+  return (
+    <ItemsPaper>
+      <h3>Items to be staked</h3>
+
+      {collection.loading ? <Spinner /> : nodes}
+    </ItemsPaper>
+  );
+}
+
+function CumputedRewards() {
+  const web3 = useWeb3Wallet();
+  const { contract, error, connected } = useStakingContract(web3);
+  const { makeTransaction } = useWeb3TransactionPresenter();
+
+  interface Rewards {
+    startPeriod: number;
+    periods: number;
+    amount: number;
+  }
+  const [rewards, setRewards] = useState<Rewards>();
+
+  useEffect(() => {
+    if (!contract) return;
+    contract.estimateRewards(BigNumber.from(1000)).then((result) => {
+      setRewards({
+        startPeriod: result.startPeriod,
+        periods: result.periods,
+        amount: formatBNToEtherFloatFixed(result.amount),
+      });
+    });
+  }, [contract]);
+
+  if (error) {
+    return <>{error.message}</>;
+  }
+
+  if (!connected) {
+    return <Spinner />;
+  }
+
+  const handleClaim = () => {
+    if (!rewards) return;
+
+    makeTransaction({
+      contract: Contract.Staking,
+      description: {
+        action: "Claim rewards",
+        description: `You can claim your rewards`,
+        value: BigNumber.from("0"),
+      },
+      fn: "claimRewards",
+      args: [BigNumber.from(rewards.periods)],
+    });
+  };
+
+  if (!rewards) {
+    return null;
+  }
+
+  return (
+    <Grid container>
+      <Grid item xs>
+        <b>
+          Rewards to claim: {rewards.amount} BHC <small>({rewards?.periods} periods)</small>
+        </b>
+      </Grid>
+      <Grid item xs="auto">
+        <Button disabled={rewards.amount == 0} small text="Claim rewards" onClick={handleClaim} />
+      </Grid>
+    </Grid>
+  );
+}
+
+function StakedItems({ account }: ItemsProps) {
+  const { makeTransaction } = useWeb3TransactionPresenter();
+
+  const collection = useCollectionsApi({
+    account,
   });
 
-  const tabLabelYourStaking = intl.formatMessage({
-    defaultMessage: "Staking",
-    id: "staking_page_tab_label_staking",
-  });
+  const handeUnstaking = (item: Item) => {
+    console.log(item);
 
-  const tokenStakeButtonTextSelect = intl.formatMessage({
-    defaultMessage: "Select For Staking",
-    id: "staking_page_token_stake_button_text_select",
-  });
+    makeTransaction({
+      contract: Contract.Staking,
+      description: {
+        action: "Trasnfer tokens",
+        description: `Unstake ${item.name}`,
+        value: BigNumber.from("0"),
+      },
+      fn: "unstake",
+      args: [contracts.playables.address as string, BigNumber.from(item.id)],
+    });
+  };
 
-  const tokenStakeButtonTextUnselect = intl.formatMessage({
-    defaultMessage: "Remove selection",
-    id: "staking_page_token_stake_button_text_unselect",
-  });
+  const nodes = collection.data
+    .map((item: Item) => {
+      if (item.staked === 0) {
+        return null;
+      }
+      return (
+        <ItemCompact item={item} key={item.id}>
+          <Button
+            text="Unstake"
+            distorted
+            borders
+            onClick={() => {
+              handeUnstaking(item);
+            }}
+          />
+        </ItemCompact>
+      );
+    })
+    .filter((e) => e !== null);
+
+  if (!collection.loading && nodes.length === 0) {
+    return (
+      <ItemsPaper>
+        <h3>Currently staking</h3>
+        <p>Currently you are staking no items.</p>
+      </ItemsPaper>
+    );
+  }
+
+  return (
+    <ItemsPaper>
+      <h3>Currently staking</h3>
+      <CumputedRewards />
+      <br />
+
+      {collection.loading ? <Spinner /> : nodes}
+    </ItemsPaper>
+  );
+}
+
+export default function Staking() {
+  const web3 = useWeb3Wallet();
+  const account = web3?.accounts?.[0];
+  const window = useWeb3ConnectWindow();
 
   return (
     <Layout>
@@ -138,84 +330,20 @@ export default function Staking() {
 
         <br />
 
-        <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
-          <Tab label={tabLabelYourWallet} />
-          <Tab label={tabLabelYourStaking} />
-        </Tabs>
-
-        <br />
-
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="Staking table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage defaultMessage="NFT Token" id="staking_page_table_header_nft_token" />
-                </TableCell>
-                <TableCell align="right">
-                  <FormattedMessage defaultMessage="Amount" id="staking_page_table_header_amount" />
-                </TableCell>
-                <TableCell align="right">
-                  <FormattedMessage defaultMessage="Actions" id="staking_page_table_header_actions" />
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row: StakingItem) => (
-                <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    <div className="title">
-                      <Image
-                        className="image"
-                        src={knight.src}
-                        alt="Knight"
-                        priority
-                        width={50}
-                        height={50}
-                        objectFit="cover"
-                      />
-                      <span>{row.title}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell align="right">1</TableCell>
-                  <TableCell align="right">
-                    {row.staked ? (
-                      <span>Staked</span>
-                    ) : (
-                      <Button
-                        small
-                        text={row.queuedForStaking ? tokenStakeButtonTextUnselect : tokenStakeButtonTextSelect}
-                        onClick={() => handleStakingQueueChange(row)}
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <br />
-
-        <Paper className="tostake">
-          <Grid container justifyContent="space-between">
-            {rows.filter((el) => el.queuedForStaking).length ? (
-              <>
-                <Grid item>You selected {rows.filter((el) => el.queuedForStaking).length} items for staking</Grid>
-                <Grid item>
-                  <Button text="Stake" small onClick={() => setModalOpen(true)} />
-                </Grid>
-              </>
-            ) : (
-              <Grid item>
-                <FormattedMessage
-                  defaultMessage="Please select character you want to stake."
-                  id="staking_page_staking_instruction"
-                />
-              </Grid>
-            )}
-          </Grid>
-        </Paper>
+        {web3.connected && account ? (
+          <>
+            <UnstakedItems account={account} />
+            <br />
+            <StakedItems account={account} />
+          </>
+        ) : (
+          <>
+            Please connect your wallet!
+            <br />
+            <br />
+            <Button text="Connect Wallet" onClick={window.connect} />
+          </>
+        )}
       </Wrapper>
     </Layout>
   );

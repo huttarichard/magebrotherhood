@@ -66,6 +66,8 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
 
   bytes32 public constant MANAGER = keccak256("MANAGER");
 
+  // TODO: add token transfer from address(this)
+
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
    */

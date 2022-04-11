@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
@@ -70,6 +71,7 @@ interface Item {
 
 export default function CollectionsIndex() {
   const { makeTransaction } = useWeb3TransactionPresenter();
+  const [modal, setModalOpen] = useState<Item>();
 
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
@@ -138,11 +140,12 @@ export default function CollectionsIndex() {
                           style={{ height: "50px", width: "115px", borderRadius: "4px" }}
                           text="Mint"
                           onClick={() => {
+                            const price = parseUnits(item.price.toString(), "ether");
                             makeTransaction<Contract.Playables, "mint">({
                               description: {
                                 action: "Mint",
                                 description: "Mint " + item.name,
-                                value: parseUnits(item.price.toString(), "ether"),
+                                value: price,
                               },
                               fn: "mint",
                               args: [
@@ -151,6 +154,9 @@ export default function CollectionsIndex() {
                                   amount: BigNumber.from("1"),
                                   promoCode: "",
                                 },
+                                {
+                                  value: price,
+                                },
                               ],
                               contract: Contract.Playables,
                             });
@@ -158,6 +164,8 @@ export default function CollectionsIndex() {
                         />
                       </PriceWrapper>
                     </div>
+
+                    <ModalMeta item={item}></ModalMeta>
                   </CardContent>
                 </Box>
               </Card>

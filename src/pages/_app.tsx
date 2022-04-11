@@ -10,6 +10,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { IntlProvider, MessageFormatElement } from "react-intl";
+import { SWRConfig } from "swr";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -37,7 +38,14 @@ function MageBrotherHoodApp(props: Props) {
       <ThemeProvider>
         <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">
           <GlobalStyle />
-          <Component {...pageProps} />
+          <SWRConfig
+            value={{
+              refreshInterval: 15000,
+              fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
+            }}
+          >
+            <Component {...pageProps} />
+          </SWRConfig>
 
           <WalletConnectWindow />
           <TransactionPresenter />

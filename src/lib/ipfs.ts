@@ -1,10 +1,11 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import { InfuraProvider } from "@ethersproject/providers";
-import { formatUnits } from "@ethersproject/units";
 import { create as createClient, IPFSHTTPClient } from "ipfs-http-client";
 import all from "it-all";
 import { concat } from "uint8arrays";
 
-import { contracts, Playables } from "./contracts";
+import { formatBNToEtherFloatFixed } from "./bn";
+import { contracts, Playables, Staking } from "./contracts";
 import env from "./env";
 
 if (typeof window !== "undefined") {
@@ -53,18 +54,23 @@ export function replaceIPFSUris(obj: any) {
 
 export class NonExistingToken extends Error {}
 
-export async function getToken({
-  id,
-  ipfs,
-  playables,
-  replaceURISWithGateway = true,
-}: {
+export interface GetTokenParams {
   id: string;
   ipfs: IPFSHTTPClient;
   playables: Playables;
+  staking?: Staking;
+  address?: string;
   replaceURISWithGateway: boolean;
-}) {
-  const token = await playables.tokens(id);
+}
+
+export async function getToken(tokenParams: GetTokenParams) {
+  const { id, ipfs, playables, staking, address, replaceURISWithGateway = true } = tokenParams;
+
+  const [token, balance, staked] = await Promise.all([
+    playables.tokens(id),
+    address ? playables.balanceOf(address, id) : BigNumber.from(0),
+    address && staking ? staking.getTokenInfo(playables.address, address, id).then((e) => e.amount) : BigNumber.from(0),
+  ]);
 
   if (token.createdAt.eq(0)) {
     throw new NonExistingToken(`Token ${id} does not exist`);
@@ -82,43 +88,28 @@ export async function getToken({
     id: id,
     createdAt: new Date(token.createdAt.toNumber() * 1000),
     launchedAt: new Date(token.launchedAt.toNumber() * 1000),
-    supply: token.supply.toString(),
-    minted: token.minted.toString(),
-    weight: token.weight.toString(),
-    price: formatUnits(token.price, "ether"),
+    supply: token.supply.toNumber(),
+    minted: token.minted.toNumber(),
+    weight: token.weight.toNumber(),
+    price: formatBNToEtherFloatFixed(token.price),
+    balance: balance.toNumber(),
+    staked: staked.toNumber(),
     ...json,
   };
 }
 
-export async function getTokenSimple(id: string, replaceURISWithGateway = true) {
-  const ethProvider = new InfuraProvider(NETWORK, INFURA_KEY);
-  const playables = await contracts.playables.connect(ethProvider);
-  const ipfs = await create();
-
-  return getToken({
-    id,
-    ipfs,
-    playables,
-    replaceURISWithGateway,
-  });
-}
-
-export async function getTokens({
-  ipfs,
-  playables,
-  replaceURISWithGateway = true,
-}: {
-  ipfs: IPFSHTTPClient;
-  playables: Playables;
-  replaceURISWithGateway: boolean;
-}) {
+export async function getTokens(params: Omit<GetTokenParams, "id">) {
+  const { ipfs, playables, staking, address, replaceURISWithGateway = true } = params;
   const tokens: any[] = [];
+
   for (let i = 1; i <= 100; i++) {
     try {
       const json = await getToken({
         id: i.toString(),
         ipfs,
         playables,
+        staking,
+        address,
         replaceURISWithGateway,
       });
       tokens.push(json);
@@ -132,14 +123,39 @@ export async function getTokens({
   return tokens;
 }
 
-export async function getTokensSimple(replaceURISWithGateway = true) {
+export type GetTokensParams = Omit<GetTokenParams, "ipfs" | "playables" | "staking">;
+
+export async function getTokenSimple(params: GetTokensParams) {
+  const { id, address, replaceURISWithGateway = true } = params;
+
   const ethProvider = new InfuraProvider(NETWORK, INFURA_KEY);
   const playables = await contracts.playables.connect(ethProvider);
+  const staking = await contracts.staking.connect(ethProvider);
+  const ipfs = await create();
+
+  return getToken({
+    id,
+    ipfs,
+    playables,
+    staking,
+    address,
+    replaceURISWithGateway,
+  });
+}
+
+export async function getTokensSimple(params: Omit<GetTokensParams, "id">) {
+  const { address, replaceURISWithGateway = true } = params;
+
+  const ethProvider = new InfuraProvider(NETWORK, INFURA_KEY);
+  const playables = await contracts.playables.connect(ethProvider);
+  const staking = await contracts.staking.connect(ethProvider);
   const ipfs = await create();
 
   return getTokens({
     ipfs,
     playables,
+    address,
+    staking,
     replaceURISWithGateway,
   });
 }

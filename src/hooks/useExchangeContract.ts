@@ -1,6 +1,6 @@
 import { id } from "@ethersproject/hash";
 import type { BoughtEvent, DepositEvent, Exchange, ExchangeInterface, SoldEvent } from "artifacts/types/Exchange";
-import { formatBNToEtherFloatFixed as fmbn } from "lib/currency";
+import { formatBNToEtherFloatFixed as fmbn } from "lib/bn";
 import { useEffect, useState } from "react";
 
 import { useCoinUSDPrice } from "./useCoinMarketCap";

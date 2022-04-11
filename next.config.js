@@ -9,7 +9,7 @@ module.exports = withBundleAnalyzer({
     defaultLocale: "en",
   },
   images: {
-    domains: ["modelviewer.dev"],
+    domains: ["modelviewer.dev", "magebrotherhood.infura-ipfs.io"],
     formats: ["image/avif", "image/webp"],
   },
 });

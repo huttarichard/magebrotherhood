@@ -17,7 +17,7 @@ import { Playables__factory } from "./src/artifacts/types/factories/Playables__f
 import { Promoter__factory } from "./src/artifacts/types/factories/Promoter__factory";
 import { Staking__factory } from "./src/artifacts/types/factories/Staking__factory";
 import { Playables } from "./src/artifacts/types/Playables";
-import { formatBNToEtherFloatFixed } from "./src/lib/currency";
+import { formatBNToEtherFloatFixed, timeNowInBN } from "./src/lib/bn";
 import { createIPFSOpenseaToken } from "./src/lib/ipfs";
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -135,7 +135,7 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
 
   console.info("Deploying staking...");
   const Staking = (await hre.ethers.getContractFactory("Staking")) as Staking__factory;
-  const staking = await Staking.deploy(stakingCycle, stakingPeriod, coin.address);
+  const staking = await Staking.deploy(stakingCycle, stakingPeriod, timeNowInBN(), coin.address);
   await staking.deployed();
 
   args.Staking = {
@@ -150,6 +150,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("Setting distributor permissions on coin for promoter...");
   await coin.grantRole(await coin.DISTRIBUTOR(), staking.address);
   console.info("Role granted");
+  console.info("\n");
+
+  console.info("Adding playable contract to staking...");
+  await staking.addContract(playables.address);
+  console.info("Contract added");
   console.info("\n");
 
   const jsonArgs = JSON.stringify(args);
@@ -207,7 +212,7 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("Done!");
 })
   .addOptionalParam("coinLiquidity", "amount of bhc", 10000000, types.int)
-  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0, types.int)
+  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0.01, types.int)
   .addOptionalParam("stakingCycle", "staking cycle in seconds", 60, types.int)
   .addOptionalParam("stakingPeriod", "staking period in cycles", 2, types.int);
 

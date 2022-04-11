@@ -118,6 +118,16 @@ export const mui: ThemeOptions = {
   },
   shadows: shadows,
   components: {
+    MuiList: {
+      defaultProps: {
+        disablePadding: true,
+      },
+    },
+    MuiMenu: {
+      defaultProps: {
+        elevation: 0,
+      },
+    },
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
