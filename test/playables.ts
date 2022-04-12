@@ -2,6 +2,7 @@
 
 import { parseUnits } from "@ethersproject/units";
 import { expect } from "chai";
+import { BigNumber, BigNumberish } from "ethers";
 import { ethers } from "hardhat";
 
 import {
@@ -14,6 +15,41 @@ import {
   Promoter,
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
+
+const defaultToken: Playables.TokenStruct = {
+  uri: "https://example.com/token.png",
+  createdAt: 0,
+  launchedAt: 0,
+  supply: 100,
+  minted: 0,
+  weight: 1,
+  price: parseUnits("0.02", "ether"),
+  royalty: ethers.Wallet.createRandom().address,
+};
+
+const addToken = async (
+  playables,
+  id: number,
+  uri: string = defaultToken.uri,
+  supply: BigNumberish = defaultToken.supply,
+  minted: BigNumberish = defaultToken.minted,
+  weight: BigNumberish = defaultToken.weight,
+  price: BigNumberish = defaultToken.price,
+  royalty: string = defaultToken.royalty,
+  launchedAt: BigNumberish = defaultToken.launchedAt
+) => {
+  const token: Playables.TokenStruct = {
+    uri,
+    createdAt: 0,
+    launchedAt,
+    supply,
+    minted,
+    weight,
+    price,
+    royalty,
+  };
+  return playables.setToken(id, token);
+};
 
 describe("Playables contract", function () {
   let coin: Coin;
@@ -40,17 +76,7 @@ describe("Playables contract", function () {
     const Playables = (await ethers.getContractFactory("Playables", owner)) as PlayablesFactory;
     playables = await Playables.deploy(exchange.address, promoter.address, "");
 
-    const token: Playables.TokenStruct = {
-      uri: "https://example.com/token.png",
-      createdAt: 0,
-      launchedAt: 0,
-      supply: 100,
-      minted: 0,
-      weight: 0,
-      price: parseUnits("0.02", "ether"),
-      royalty: owner.address,
-    };
-    await playables.setToken(1, token);
+    await addToken(playables, 1);
   });
 
   it("should start with 1 token at index 1", async function () {
@@ -72,24 +98,19 @@ describe("Playables contract", function () {
 
   it("should add token correctly", async function () {
     const tokenId = 2;
-    const token: Playables.TokenStruct = {
-      uri: "https://example.com/token.png",
-      createdAt: 0,
-      launchedAt: 0,
-      supply: 100,
-      minted: 0,
-      weight: 0,
-      price: parseUnits("0.01", "ether"),
-      royalty: ethers.Wallet.createRandom().address,
+    const t: Playables.TokenStruct = {
+      ...defaultToken,
     };
-    await playables.setToken(tokenId, token);
-    expect((await playables.tokens(tokenId)).uri).to.equal(token.uri);
+
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty);
+
+    expect((await playables.tokens(tokenId)).uri).to.equal(t.uri);
     expect((await playables.tokens(tokenId)).createdAt).to.equal((await ethers.provider.getBlock("latest")).timestamp);
-    expect((await playables.tokens(tokenId)).launchedAt).to.equal(token.launchedAt);
-    expect((await playables.tokens(tokenId)).minted).to.equal(token.minted);
-    expect((await playables.tokens(tokenId)).weight).to.equal(token.weight);
-    expect((await playables.tokens(tokenId)).price).to.equal(token.price);
-    expect((await playables.tokens(tokenId)).royalty).to.equal(token.royalty);
+    expect((await playables.tokens(tokenId)).launchedAt).to.equal(t.launchedAt);
+    expect((await playables.tokens(tokenId)).minted).to.equal(t.minted);
+    expect((await playables.tokens(tokenId)).weight).to.equal(t.weight);
+    expect((await playables.tokens(tokenId)).price).to.equal(t.price);
+    expect((await playables.tokens(tokenId)).royalty).to.equal(t.royalty);
   });
 
   it("should mint token", async function () {
@@ -111,15 +132,86 @@ describe("Playables contract", function () {
   });
 
   it("should be unable to mint unlaunched token", async function () {
-    this.skip();
+    const tokenId = 2;
+    const t: Playables.TokenStruct = {
+      ...defaultToken,
+      launchedAt: (await ethers.provider.getBlock("latest")).timestamp + 10000,
+    };
+
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+
+    const [wallet] = await ethers.getSigners();
+    const params: Playables.MintParamsStruct = {
+      tokenId: tokenId,
+      amount: 1,
+      promoCode: "",
+    };
+    await expect(
+      playables.connect(wallet).mint(params, {
+        from: wallet.address,
+        value: t.price,
+      })
+    ).to.be.reverted;
+    expect((await playables.tokens(tokenId)).minted).to.equal(0);
   });
+
   it("should be unable to mint token without remaining supply", async function () {
-    this.skip();
+    const tokenId = 2;
+    const t: Playables.TokenStruct = {
+      ...defaultToken,
+      supply: 1000,
+      minted: 1000,
+    };
+
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+
+    const [wallet] = await ethers.getSigners();
+    const params: Playables.MintParamsStruct = {
+      tokenId: tokenId,
+      amount: 1,
+      promoCode: "",
+    };
+    await expect(
+      playables.connect(wallet).mint(params, {
+        from: wallet.address,
+        value: t.price,
+      })
+    ).to.be.reverted;
+    expect((await playables.tokens(tokenId)).minted).to.equal(1000);
+
+    // ---
+
+    t.minted = 999;
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+
+    params.amount = 2;
+    await expect(
+      playables.connect(wallet).mint(params, {
+        from: wallet.address,
+        value: BigNumber.from(t.price).mul(2),
+      })
+    ).to.be.reverted;
+    expect((await playables.tokens(tokenId)).minted).to.equal(999);
   });
-  it("should receive royalty", async function () {
-    this.skip();
-  });
+
   it("should be unable to mint when paused", async function () {
+    await playables.pause();
+    const [wallet] = await ethers.getSigners();
+    const params: Playables.MintParamsStruct = {
+      tokenId: 1,
+      amount: 1,
+      promoCode: "",
+    };
+    await expect(
+      playables.connect(wallet).mint(params, {
+        from: wallet.address,
+        value: defaultToken.price,
+      })
+    ).to.be.reverted;
+    expect((await playables.tokens(params.tokenId)).minted).to.equal(0);
+  });
+
+  it("should receive royalty", async function () {
     this.skip();
   });
 });
