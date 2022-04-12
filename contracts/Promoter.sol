@@ -154,6 +154,7 @@ contract Promoter is AccessControl, Pausable {
     require(codeLen > 0 && nameLen < 30, "invalid name");
     require(promotersbyCode[code] == address(0), "code already exists");
     promoters[_msgSender()] = Account(true, name, DEFAULT_SHARES, code, 0, 0, 0);
+    promotersbyCode[code] = _msgSender();
   }
 
   /**
