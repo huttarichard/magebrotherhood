@@ -8,7 +8,7 @@ import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useStakingContract } from "hooks/useContract";
-import { Item, useCollectionsApi } from "hooks/useTokens";
+import { FullToken, useTokens } from "hooks/useTokens";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract, contracts } from "lib/web3/contracts";
@@ -106,12 +106,12 @@ function UnstakedItems({ account }: ItemsProps) {
   const { makeTransaction } = useWeb3TransactionPresenter();
   const [amount, setAmount] = useState<number | null>(null);
 
-  const collection = useCollectionsApi({
+  const collection = useTokens({
     staking: true,
     address: account,
   });
 
-  const handeStaking = (item: Item) => {
+  const handeStaking = (item: FullToken) => {
     makeTransaction({
       contract: Contract.Playables,
       description: {
@@ -125,7 +125,7 @@ function UnstakedItems({ account }: ItemsProps) {
   };
 
   const nodes = collection.data
-    .map((item: Item) => {
+    .map((item: FullToken) => {
       if (item.balance === 0) {
         return null;
       }
@@ -244,12 +244,12 @@ function CumputedRewards() {
 function StakedItems({ account }: ItemsProps) {
   const { makeTransaction } = useWeb3TransactionPresenter();
 
-  const collection = useCollectionsApi({
+  const collection = useTokens({
     staking: true,
     address: account,
   });
 
-  const handeUnstaking = (item: Item) => {
+  const handeUnstaking = (item: FullToken) => {
     console.log(item);
 
     makeTransaction({
@@ -265,8 +265,8 @@ function StakedItems({ account }: ItemsProps) {
   };
 
   const nodes = collection.data
-    .map((item: Item) => {
-      if (item.staked === 0) {
+    .map((item: FullToken) => {
+      if (item.staking === 0) {
         return null;
       }
       return (

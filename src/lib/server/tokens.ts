@@ -152,4 +152,4 @@ export async function getTokensPrice(t: Token[], currency = "usd") {
   return t.map((e) => ({ priceUSD: e.price * price }));
 }
 
-export type FullToken = Token & Partial<Staking> & Partial<Balance> & Partial<Metadata> & Partial<Pricing>;
+export type FullToken = Token & Staking & Balance & Metadata & Pricing;

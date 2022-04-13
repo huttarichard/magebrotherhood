@@ -8,12 +8,13 @@ import Typography from "@mui/material/Typography";
 import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
+import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { FullToken, useTokens } from "hooks/useTokens";
 import { useTracking } from "hooks/useTracking";
 import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const FullImage = styled.img`
   width: 100%;
@@ -70,22 +71,100 @@ interface Item {
   price: number;
 }
 
-export default function CollectionsIndex() {
+function Item({ item }: { item: FullToken }) {
   const tracking = useTracking();
   const { makeTransaction } = useWeb3TransactionPresenter();
+  return (
+    <Card key={item.id} sx={stylesCard}>
+      <span style={{ width: "100%", height: "100%", position: "relative" }}>
+        <FullImage src={item.image} />
+        <Link href={"/collections/" + item.id} passHref>
+          <Button
+            text="View in 3D"
+            style={{
+              position: "absolute",
+              width: "200px",
+              bottom: "25px",
+              left: "0",
+              right: "0",
+              margin: "0 auto",
+            }}
+          />
+        </Link>
+      </span>
+      <Box sx={{ minWidth: "50%" }}>
+        <CardContent sx={stylesContent}>
+          <Typography component="div" variant="h3">
+            {item.name}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" component="div">
+            {item.description}
+          </Typography>
+          <div>
+            <PriceWrapper>
+              <span
+                style={{
+                  fontSize: "1.2rem",
+                  padding: "0 12px",
+                  height: "49px",
+                  lineHeight: "45px",
+                  fontFamily: "monospace",
+                }}
+              >
+                {item.price} ETH
+              </span>
+              <Button
+                small
+                style={{ height: "50px", width: "115px", borderRadius: "4px" }}
+                text="Mint"
+                onClick={() => {
+                  const price = parseUnits(item.price.toString(), "ether");
+                  makeTransaction<Contract.Playables, "mint">({
+                    description: {
+                      action: "Mint",
+                      description: "Mint " + item.name,
+                      value: price,
+                    },
+                    fn: "mint",
+                    args: [
+                      {
+                        tokenId: BigNumber.from(item.id),
+                        amount: BigNumber.from("1"),
+                        promoCode: "",
+                      },
+                      {
+                        value: price,
+                      },
+                    ],
+                    contract: Contract.Playables,
+                    update: (event) => {
+                      if (event === "Open") {
+                        tracking.mintInitiate(item.id, 1);
+                      }
+                      if (event === "BeforeSign") {
+                        tracking.mintWaitingToSignTransaction();
+                      }
+                      if (event === "Done") {
+                        tracking.mintCompleted(item.id, 1);
+                      }
+                    },
+                  });
+                }}
+              />
+            </PriceWrapper>
+          </div>
 
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
+          <ModalMeta item={item}></ModalMeta>
+        </CardContent>
+      </Box>
+    </Card>
+  );
+}
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("/api/collections")
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data);
-        setLoading(false);
-      });
-  }, []);
+export default function CollectionsIndex() {
+  const tokens = useTokens({
+    metadata: true,
+  });
 
   return (
     <>
@@ -97,91 +176,7 @@ export default function CollectionsIndex() {
         <div style={{ padding: "2rem" }}>
           <h1>Characters</h1>
           <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "40px" }}>
-            {items.map((item) => (
-              <Card key={item.id} sx={stylesCard}>
-                <span style={{ width: "100%", height: "100%", position: "relative" }}>
-                  <FullImage src={item.image} />
-                  <Link href={"/collections/" + item.id} passHref>
-                    <Button
-                      text="View in 3D"
-                      style={{
-                        position: "absolute",
-                        width: "200px",
-                        bottom: "25px",
-                        left: "0",
-                        right: "0",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </Link>
-                </span>
-                <Box sx={{ minWidth: "50%" }}>
-                  <CardContent sx={stylesContent}>
-                    <Typography component="div" variant="h3">
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" component="div">
-                      {item.description}
-                    </Typography>
-                    <div>
-                      <PriceWrapper>
-                        <span
-                          style={{
-                            fontSize: "1.2rem",
-                            padding: "0 12px",
-                            height: "49px",
-                            lineHeight: "45px",
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {item.price} ETH
-                        </span>
-                        <Button
-                          small
-                          style={{ height: "50px", width: "115px", borderRadius: "4px" }}
-                          text="Mint"
-                          onClick={() => {
-                            const price = parseUnits(item.price.toString(), "ether");
-                            makeTransaction<Contract.Playables, "mint">({
-                              description: {
-                                action: "Mint",
-                                description: "Mint " + item.name,
-                                value: price,
-                              },
-                              fn: "mint",
-                              args: [
-                                {
-                                  tokenId: BigNumber.from(item.id),
-                                  amount: BigNumber.from("1"),
-                                  promoCode: "",
-                                },
-                                {
-                                  value: price,
-                                },
-                              ],
-                              contract: Contract.Playables,
-                              update: (event) => {
-                                if (event === "Open") {
-                                  tracking.mintInitiate(item.id, 1);
-                                }
-                                if (event === "BeforeSign") {
-                                  tracking.mintWaitingToSignTransaction();
-                                }
-                                if (event === "Done") {
-                                  tracking.mintCompleted(item.id, 1);
-                                }
-                              },
-                            });
-                          }}
-                        />
-                      </PriceWrapper>
-                    </div>
-
-                    <ModalMeta item={item}></ModalMeta>
-                  </CardContent>
-                </Box>
-              </Card>
-            ))}
+            {tokens.loading ? <Spinner /> : tokens.data.map((item) => <Item key={item.id} item={item}></Item>)}
           </div>
         </div>
       </Layout>

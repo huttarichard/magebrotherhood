@@ -18,8 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const priceInETH = eth / bhc;
 
-  res.setHeader("Cache-Control", "public, s-maxage=30, stale-while-revalidate=59");
-
   return res.json({
     priceETH: priceInETH,
     priceUSD: priceInETH * price,
