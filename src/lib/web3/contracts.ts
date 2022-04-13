@@ -82,32 +82,10 @@ export const contracts: Contracts = {
   },
 };
 
-export async function load<T extends Contract>(signer: Signer | Provider, c: T) {
+export async function connectFromEnv<T extends Contract>(signer: Signer | Provider, c: T) {
   const obj = contracts[c];
   if (!obj.address) {
     throw new Error("unsupported contract");
   }
   return obj.connect(signer);
-}
-
-export type LoadedContracts = Partial<{
-  [key in Contract]: IContract;
-}>;
-
-export async function loadMany(signer: Signer | Provider, names: Contract[]): Promise<LoadedContracts> {
-  const promises = names.map((name) => {
-    const { connect } = contracts[name];
-    return connect(signer);
-  });
-
-  const loaded = await Promise.all(promises);
-
-  const result: LoadedContracts = {};
-
-  loaded.forEach((e) => {
-    const name = names[loaded.indexOf(e)];
-    result[name] = e;
-  });
-
-  return result;
 }

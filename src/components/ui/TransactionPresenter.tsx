@@ -10,7 +10,7 @@ import { default as MuiStep } from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { useWeb3Wallet } from "hooks/useWeb3";
-import { Contract, ContractFunctionArguments, ContractFunctions, load } from "lib/contracts";
+import { connectFromEnv, Contract, ContractFunctionArguments, ContractFunctions } from "lib/web3/contracts";
 import { useEffect } from "react";
 import { useWindowSize } from "react-use";
 import create from "zustand";
@@ -92,7 +92,7 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     const params = get().params as TransactionParams<any, any>;
     const provider = get().provider as Web3Provider;
 
-    const contract = await load(provider.getSigner(), params.contract);
+    const contract = await connectFromEnv(provider.getSigner(), params.contract);
     const fn = (contract as any).callStatic[params.fn];
     return await fn(...params.args);
   },
@@ -103,7 +103,7 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     const params = get().params as TransactionParams<any, any>;
     const provider = get().provider as Web3Provider;
 
-    const contract = await load(provider.getSigner(), params.contract);
+    const contract = await connectFromEnv(provider.getSigner(), params.contract);
     const fn = (contract as any)[params.fn];
 
     let result: ContractTransaction;

@@ -3,8 +3,7 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
-import { useBHCUSDPrice } from "hooks/useCoinMarketCap";
-import { useWeb3Remote } from "hooks/useWeb3";
+import { useBHCUSDPrice } from "hooks/useMarketData";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
@@ -271,8 +270,7 @@ const Actions = styled.div`
 // const origin = typeof window !== "undefined" ? window?.location?.origin : "";
 
 export default function Hero() {
-  const web3 = useWeb3Remote();
-  const price = useBHCUSDPrice(web3);
+  const price = useBHCUSDPrice();
 
   return (
     <Wrapper>

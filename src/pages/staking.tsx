@@ -7,11 +7,11 @@ import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
-import { Item, useCollectionsApi } from "hooks/useCollectionApi";
+import { Item, useCollectionsApi } from "hooks/useTokens";
 import { useStakingContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract, contracts } from "lib/contracts";
+import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
@@ -107,7 +107,8 @@ function UnstakedItems({ account }: ItemsProps) {
   const [amount, setAmount] = useState<number | null>(null);
 
   const collection = useCollectionsApi({
-    account,
+    staking: true,
+    address: account,
   });
 
   const handeStaking = (item: Item) => {
@@ -243,7 +244,8 @@ function StakedItems({ account }: ItemsProps) {
   const { makeTransaction } = useWeb3TransactionPresenter();
 
   const collection = useCollectionsApi({
-    account,
+    staking: true,
+    address: account,
   });
 
   const handeUnstaking = (item: Item) => {

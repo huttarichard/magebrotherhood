@@ -1,6 +1,7 @@
 import "swiper/css";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";
+import TiktokPixelCode from "components/Marketing/TiktokPixelCode";
 import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
 import TransactionPresenter from "components/ui/TransactionPresenter";
@@ -34,6 +35,8 @@ function MageBrotherHoodApp(props: Props) {
       <Head>
         <title>Mage Brotherhood - Homepage</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
+
+        <TiktokPixelCode />
       </Head>
       <ThemeProvider>
         <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">

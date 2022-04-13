@@ -11,7 +11,7 @@ import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter"
 import { useExchangeContract } from "hooks/useContract";
 import { useWeb3Remote } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract } from "lib/contracts";
+import { Contract } from "lib/web3/contracts";
 import Link from "next/link";
 import { PropsWithChildren, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";

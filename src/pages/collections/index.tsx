@@ -9,7 +9,7 @@ import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { Contract } from "lib/contracts";
+import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";

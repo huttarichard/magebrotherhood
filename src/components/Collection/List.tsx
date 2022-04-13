@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
-import { Item } from "hooks/useCollectionApi";
+import { Item } from "hooks/useTokens";
 import { default as NextImage, ImageProps } from "next/image";
 import React from "react";
 

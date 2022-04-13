@@ -12,7 +12,7 @@ import { useFormik } from "formik";
 import { usePromoterContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract } from "lib/contracts";
+import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
