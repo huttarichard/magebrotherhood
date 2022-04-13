@@ -108,6 +108,8 @@ function UnstakedItems({ account }: ItemsProps) {
 
   const collection = useTokens({
     staking: true,
+    metadata: true,
+    balance: true,
     address: account,
   });
 
@@ -246,6 +248,7 @@ function StakedItems({ account }: ItemsProps) {
 
   const collection = useTokens({
     staking: true,
+    metadata: true,
     address: account,
   });
 

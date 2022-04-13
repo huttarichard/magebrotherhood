@@ -14,7 +14,7 @@ import { FullToken, useTokens } from "hooks/useTokens";
 import { useTracking } from "hooks/useTracking";
 import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 const FullImage = styled.img`
   width: 100%;
@@ -73,24 +73,18 @@ interface Item {
 
 function Item({ item }: { item: FullToken }) {
   const tracking = useTracking();
+  const router = useRouter();
   const { makeTransaction } = useWeb3TransactionPresenter();
   return (
     <Card key={item.id} sx={stylesCard}>
       <span style={{ width: "100%", height: "100%", position: "relative" }}>
         <FullImage src={item.image} />
-        <Link href={"/collections/" + item.id} passHref>
-          <Button
-            text="View in 3D"
-            style={{
-              position: "absolute",
-              width: "200px",
-              bottom: "25px",
-              left: "0",
-              right: "0",
-              margin: "0 auto",
-            }}
-          />
-        </Link>
+        <Button
+          text="View in 3D"
+          onClick={() => {
+            router.push("/collections/" + item.id);
+          }}
+        />
       </span>
       <Box sx={{ minWidth: "50%" }}>
         <CardContent sx={stylesContent}>

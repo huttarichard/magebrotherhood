@@ -40,8 +40,8 @@ fetchTokens.route = "/api/tokens";
 
 export async function fetchToken(id: string, params?: CollectionParams) {
   const px = convertParams(params);
-  const response = await fetch(`/api/token/${id}, ${px ? `?${px}` : ""}`);
+  const response = await fetch(`/api/tokens/${id}${px ? `?${px}` : ""}`);
   return response.json();
 }
 
-fetchToken.route = "/api/token/{id}";
+fetchToken.route = "/api/tokens/{id}";

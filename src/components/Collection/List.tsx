@@ -19,7 +19,7 @@ const Title = styled.div`
 
 export function Image({ item, imageProps }: { item?: FullToken; imageProps?: ImageProps }) {
   if (!item) return null;
-
+  console.log(item, imageProps);
   return (
     <NextImage
       className="image"
