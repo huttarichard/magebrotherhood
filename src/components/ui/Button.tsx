@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import ButtonBase from "@mui/material/ButtonBase";
 // import styled from "@emotion/styled";
 import { styled } from "@mui/material/styles";
+import { useTracking } from "hooks/useTracking";
 import React from "react";
 
 import { distortion, distortionAlternative } from "./animations";
@@ -16,6 +17,7 @@ interface StyleModificationProps {
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, StyleModificationProps {
   text: string;
+  important?: boolean;
 }
 
 const StyledButton = styled(ButtonBase, {
@@ -165,9 +167,17 @@ const StyledButton = styled(ButtonBase, {
   }
 `;
 
-export default function Button({ text, ...props }: Props) {
+export default function Button({ text, important, onClick, ...props }: Props) {
+  const tracking = useTracking();
+
   return (
-    <StyledButton {...props}>
+    <StyledButton
+      {...props}
+      onClick={(e) => {
+        if (important) tracking.clickImportantButton();
+        return onClick ? onClick(e) : undefined;
+      }}
+    >
       <span data-text={text}>{text}</span>
     </StyledButton>
   );

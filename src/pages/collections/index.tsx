@@ -9,6 +9,7 @@ import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useTracking } from "hooks/useTracking";
 import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
@@ -61,7 +62,7 @@ const stylesContent = (theme: any) => ({
 });
 
 interface Item {
-  id: number;
+  id: string;
   name: string;
   title: string;
   description: string;
@@ -70,8 +71,8 @@ interface Item {
 }
 
 export default function CollectionsIndex() {
+  const tracking = useTracking();
   const { makeTransaction } = useWeb3TransactionPresenter();
-  const [modal, setModalOpen] = useState<Item>();
 
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
@@ -159,6 +160,17 @@ export default function CollectionsIndex() {
                                 },
                               ],
                               contract: Contract.Playables,
+                              update: (event) => {
+                                if (event === "Open") {
+                                  tracking.mintInitiate(item.id, 1);
+                                }
+                                if (event === "BeforeSign") {
+                                  tracking.mintWaitingToSignTransaction();
+                                }
+                                if (event === "Done") {
+                                  tracking.mintCompleted(item.id, 1);
+                                }
+                              },
                             });
                           }}
                         />

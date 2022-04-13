@@ -7,8 +7,8 @@ import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
-import { Item, useCollectionsApi } from "hooks/useTokens";
 import { useStakingContract } from "hooks/useContract";
+import { Item, useCollectionsApi } from "hooks/useTokens";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract, contracts } from "lib/web3/contracts";
@@ -141,6 +141,7 @@ function UnstakedItems({ account }: ItemsProps) {
             </Grid>
             <Grid item>
               <Button
+                important
                 disabled={amount === null}
                 text="Stake"
                 distorted
@@ -234,7 +235,7 @@ function CumputedRewards() {
         </b>
       </Grid>
       <Grid item xs="auto">
-        <Button disabled={rewards.amount == 0} small text="Claim rewards" onClick={handleClaim} />
+        <Button disabled={rewards.amount == 0} important small text="Claim rewards" onClick={handleClaim} />
       </Grid>
     </Grid>
   );
@@ -344,7 +345,7 @@ export default function Staking() {
             Please connect your wallet!
             <br />
             <br />
-            <Button text="Connect Wallet" onClick={window.connect} />
+            <Button text="Connect Wallet" important onClick={window.connect} />
           </>
         )}
       </Wrapper>

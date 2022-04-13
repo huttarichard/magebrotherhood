@@ -10,6 +10,7 @@ import { default as MuiStep } from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { useWeb3Wallet } from "hooks/useWeb3";
+import { QueuedEvent } from "lib/tracking";
 import { connectFromEnv, Contract, ContractFunctionArguments, ContractFunctions } from "lib/web3/contracts";
 import { useEffect } from "react";
 import { useWindowSize } from "react-use";
@@ -36,11 +37,15 @@ interface Description {
   value: BigNumber;
 }
 
+type UpdateType = "Open" | "WalletConnected" | "BeforeSign" | "AfterSign" | "Done" | "Close";
+
 interface TransactionParams<Z extends Contract, X extends ContractFunctions<Z>> {
   contract: Z;
   fn: X;
   description: Description;
   args: ContractFunctionArguments<Z, X>;
+  tracking?: QueuedEvent;
+  update?: (t: UpdateType) => void;
 }
 
 interface State {
@@ -82,9 +87,12 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
       params,
       step: Step.ConnectWallet,
     });
+    params.update?.("Open");
   },
 
   connectWallet(provider: Provider) {
+    const { params } = get();
+    params?.update?.("WalletConnected");
     set({ step: Step.Confirmation, provider });
   },
 
@@ -101,6 +109,7 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     set({ step: Step.Send });
 
     const params = get().params as TransactionParams<any, any>;
+    params.update?.("BeforeSign");
     const provider = get().provider as Web3Provider;
 
     const contract = await connectFromEnv(provider.getSigner(), params.contract);
@@ -110,7 +119,9 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
     let reci: ContractReceipt;
     try {
       result = await fn(...params.args);
+      params.update?.("AfterSign");
       reci = await result.wait(1);
+      params.update?.("Done");
     } catch (e) {
       return set({
         step: Step.Error,
@@ -126,9 +137,11 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
   },
 
   close() {
-    if (get().step === Step.Send) {
+    const { params, step } = get();
+    if (step === Step.Send) {
       return;
     }
+    params?.update?.("Close");
     set({
       open: false,
       step: Step.None,
@@ -187,7 +200,7 @@ function Confirmation() {
 
         <br />
 
-        <Button text="Proceed" distorted borders block onClick={confirmed} />
+        <Button text="Proceed" important distorted borders block onClick={confirmed} />
       </Grid>
     </Grid>
   );

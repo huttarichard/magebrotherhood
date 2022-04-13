@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
 import { useBHCUSDPrice } from "hooks/useMarketData";
+import { useTracking } from "hooks/useTracking";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
@@ -238,6 +239,7 @@ const Main = styled.div`
 
 const Actions = styled.div`
   display: none;
+  z-index: 99999;
 
   @media (min-width: 992px) {
     display: flex;
@@ -271,6 +273,7 @@ const Actions = styled.div`
 
 export default function Hero() {
   const price = useBHCUSDPrice();
+  const tracking = useTracking();
 
   return (
     <Wrapper>
@@ -337,7 +340,13 @@ export default function Hero() {
       <Actions>
         <ul>
           <li>
-            <a href="https://discord.gg/HgPQAHzp3Z" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <a
+              href="https://discord.gg/HgPQAHzp3Z"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Discord"
+              onClick={() => tracking.clickImportantButton()}
+            >
               <FontAwesomeIcon icon={faDiscord} size={"2x"} />
             </a>
           </li>
@@ -347,6 +356,7 @@ export default function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Twitter"
+              onClick={() => tracking.clickImportantButton()}
             >
               <FontAwesomeIcon icon={faTwitter} size={"2x"} />
             </a>

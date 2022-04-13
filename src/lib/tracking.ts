@@ -1,6 +1,9 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import { fetchToken as fetchTokenFromAPI } from "lib/api/tokens";
 import type { Metadata, Pricing, Token } from "lib/server/tokens";
-import create from "zustand";
+import create from "zustand/vanilla";
+
+import { formatBNToEtherFloatFixed } from "./bn";
 
 // ttq.instance('pixel_id_1').track('CompletePayment')
 type TikTokEventName =
@@ -42,8 +45,10 @@ interface TikTokEventData {
 export interface TrackingWindow extends Window {
   TiktokAnalyticsObject: string;
 
-  instance: (instance: string) => {
-    track: (event: TikTokEventName, args?: TikTokEventData) => void;
+  ttq: {
+    instance: (instance: string) => {
+      track: (event: TikTokEventName, args?: TikTokEventData) => void;
+    };
   };
 }
 
@@ -55,7 +60,7 @@ function track(name: TikTokEventName, data?: TikTokEventData) {
   if (typeof window === "undefined") {
     return;
   }
-  window.instance(PIXEL_ID).track(name, data);
+  window.ttq.instance(PIXEL_ID).track(name, data);
 }
 
 export interface ClickImportantButton {
@@ -84,7 +89,7 @@ export interface MintCompleted extends TokenData {
 }
 
 interface ExchangeData {
-  quantity: number;
+  amount: BigNumber;
 }
 
 export interface ExchangeInitiate extends ExchangeData {
@@ -179,6 +184,7 @@ export const queue = create<Tracking>((set, get) => {
 
   const processEventQueue = async () => {
     const copy = [...get().queue];
+    if (copy.length === 0) return;
 
     // Free the queue we have the copy in scope
     set({ queue: [] });
@@ -216,15 +222,16 @@ export const queue = create<Tracking>((set, get) => {
 
       if (isExchangeInitiate(event)) {
         const bhc = await fetchBHCPrice();
+        const amount = formatBNToEtherFloatFixed(event.amount);
 
         track("AddToCart", {
           content_type: "product",
           content_id: "exchange_buy_bhc",
           content_name: "bhc",
           currency: "USD",
-          quantity: event.quantity,
-          price: bhc.priceUSD * event.quantity,
-          value: bhc.priceUSD * event.quantity * SELLING_TAX,
+          quantity: Math.ceil(amount),
+          price: bhc.priceUSD,
+          value: bhc.priceUSD * amount * SELLING_TAX,
         });
       }
 
@@ -244,15 +251,16 @@ export const queue = create<Tracking>((set, get) => {
 
       if (isExchangeTransactionCompleted(event)) {
         const bhc = await fetchBHCPrice();
+        const amount = formatBNToEtherFloatFixed(event.amount);
 
         track("CompletePayment", {
           content_type: "product",
           content_id: "exchange_buy_bhc",
           content_name: "bhc",
           currency: "USD",
-          quantity: event.quantity,
-          price: bhc.priceUSD * event.quantity,
-          value: bhc.priceUSD * event.quantity * SELLING_TAX,
+          quantity: Math.ceil(amount),
+          price: bhc.priceUSD,
+          value: bhc.priceUSD * amount * SELLING_TAX,
         });
       }
     });
@@ -265,6 +273,10 @@ export const queue = create<Tracking>((set, get) => {
     tokens: {},
 
     enqueue(event: QueuedEvent) {
+      console.group("Tracking: ", event.name);
+      console.info(event);
+      console.groupEnd();
+
       const events = get().queue;
       set({ queue: [...events, event] });
     },
@@ -277,20 +289,23 @@ queue.subscribe((state) => state.flush());
 
 const tracking = {
   clickImportantButton() {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "ClickImportantButton",
     });
   },
 
   subscribe() {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "Subscribe",
     });
   },
 
   // same as add to cart
   mintInitiate(tokenId: string, quantity: number) {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "MintInitiate",
       quantity,
       tokenId,
@@ -299,14 +314,16 @@ const tracking = {
 
   // same as checkout initiate
   mintWaitingToSignTransaction() {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "MintWaitingToSignTransaction",
     });
   },
 
   // same as pymant completed
   mintCompleted(tokenId: string, quantity: number) {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "MintCompleted",
       quantity,
       tokenId,
@@ -314,25 +331,28 @@ const tracking = {
   },
 
   // same as add to cart
-  exchangeInitiate(quantity: number) {
-    queue().enqueue({
+  exchangeInitiate(bhcBuy: BigNumber) {
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "ExchangeInitiate",
-      quantity,
+      amount: bhcBuy,
     });
   },
 
   // same as checkout initiate
   exchangeWaitingToSignTransaction() {
-    queue().enqueue({
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "ExchangeWaitingToSignTransaction",
     });
   },
 
   // same as pymant completed
-  exchangeCompleted(quantity: number) {
-    queue().enqueue({
+  exchangeCompleted(bhcBuy: BigNumber) {
+    const { enqueue } = queue.getState();
+    enqueue({
       name: "ExchangeTransactionCompleted",
-      quantity,
+      amount: bhcBuy,
     });
   },
 };

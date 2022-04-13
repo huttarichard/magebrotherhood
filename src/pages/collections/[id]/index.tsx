@@ -4,6 +4,7 @@ import { parseUnits } from "@ethersproject/units";
 import Button from "components/ui/Button";
 import ModelViewerDynamic from "components/ui/ModelViewerDynamic";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useTracking } from "hooks/useTracking";
 import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import Link from "next/link";
@@ -62,6 +63,7 @@ interface Item {
 }
 
 export default function Studio() {
+  const tracking = useTracking();
   const { makeTransaction } = useWeb3TransactionPresenter();
   const [loading, setLoading] = useState(false);
   const [item, setItem] = useState<Item>({
@@ -202,6 +204,17 @@ export default function Studio() {
                         },
                       ],
                       contract: Contract.Playables,
+                      update: (event) => {
+                        if (event === "Open") {
+                          tracking.mintInitiate("1", 1);
+                        }
+                        if (event === "BeforeSign") {
+                          tracking.mintWaitingToSignTransaction();
+                        }
+                        if (event === "Done") {
+                          tracking.mintCompleted("1", 1);
+                        }
+                      },
                     });
                   }}
                 />

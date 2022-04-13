@@ -31,30 +31,32 @@ function MageBrotherHoodApp(props: Props) {
   }, []);
 
   return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <title>Mage Brotherhood - Homepage</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
+    <>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>Mage Brotherhood - Homepage</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
+        </Head>
+        <ThemeProvider>
+          <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">
+            <GlobalStyle />
+            <SWRConfig
+              value={{
+                refreshInterval: 15000,
+                fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
+              }}
+            >
+              <Component {...pageProps} />
+            </SWRConfig>
 
-        <TiktokPixelCode />
-      </Head>
-      <ThemeProvider>
-        <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">
-          <GlobalStyle />
-          <SWRConfig
-            value={{
-              refreshInterval: 15000,
-              fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
-            }}
-          >
-            <Component {...pageProps} />
-          </SWRConfig>
+            <WalletConnectWindow />
+            <TransactionPresenter />
+          </IntlProvider>
+        </ThemeProvider>
+      </CacheProvider>
 
-          <WalletConnectWindow />
-          <TransactionPresenter />
-        </IntlProvider>
-      </ThemeProvider>
-    </CacheProvider>
+      <TiktokPixelCode id="C9AU0PRC77U9N0P9CPBG" />
+    </>
   );
 }
 

@@ -174,7 +174,7 @@ function CumputedRewards() {
           </b>
         </Grid>
         <Grid item xs="auto">
-          <Button disabled={rewards.reward == 0} small text="Claim rewards" onClick={handleClaim} />
+          <Button disabled={rewards.reward == 0} important small text="Claim rewards" onClick={handleClaim} />
         </Grid>
       </Grid>
     </CardWrapper>
@@ -302,7 +302,7 @@ export default function Affiliate() {
 
               {web3.connected ? (
                 <>
-                  <Button text={formSubmitButtonText} type="submit" className="btn" distorted borders large />
+                  <Button text={formSubmitButtonText} type="submit" important className="btn" distorted borders large />
                 </>
               ) : (
                 <>

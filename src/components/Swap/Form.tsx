@@ -9,6 +9,7 @@ import Card from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
 import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useExchangeContract } from "hooks/useContract";
+import { useTracking } from "hooks/useTracking";
 import { useWeb3Remote } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
@@ -88,6 +89,7 @@ enum Currency {
 
 export default function SwapForm({ children }: PropsWithChildren<unknown>) {
   const intl = useIntl();
+  const tracking = useTracking();
   const web3Remote = useWeb3Remote();
   const { connected, contract: exchange, error } = useExchangeContract(web3Remote);
   const presenter = useWeb3TransactionPresenter();
@@ -217,6 +219,17 @@ export default function SwapForm({ children }: PropsWithChildren<unknown>) {
         value: eth,
       },
       fn: "ethToTokenSwapInput",
+      update: (event) => {
+        if (event === "Open") {
+          tracking.exchangeInitiate(minTokens);
+        }
+        if (event === "BeforeSign") {
+          tracking.exchangeWaitingToSignTransaction();
+        }
+        if (event === "Done") {
+          tracking.exchangeCompleted(minTokens);
+        }
+      },
     });
   };
 
@@ -245,6 +258,7 @@ export default function SwapForm({ children }: PropsWithChildren<unknown>) {
 
         {mode === Mode.BhcToEth && <small>Selling tax 5% will be applied.</small>}
         <Button
+          important
           text={swapButtonText}
           onClick={() => {
             mode === Mode.EthToBhc ? ethToTokenSwap() : tokenToETHSwap();

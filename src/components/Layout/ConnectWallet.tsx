@@ -28,7 +28,7 @@ export default function ConnectWallet({ ...props }: React.ComponentPropsWithoutR
       {connected ? (
         <Button onClick={() => router.push("/wallet")} text={wallet} distorted borders block large />
       ) : (
-        <Button onClick={window.connect} text={connect} distorted borders block large />
+        <Button onClick={window.connect} text={connect} important distorted borders block large />
       )}
     </div>
   );
