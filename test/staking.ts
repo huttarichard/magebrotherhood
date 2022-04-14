@@ -27,7 +27,6 @@ const STAKING_CONFIG = {
 };
 
 const increaseTimeBy = async (seconds: number) => {
-  network.provider.send("evm_re");
   await network.provider.send("evm_increaseTime", [Number(seconds)]);
   await network.provider.send("evm_mine");
 };
@@ -85,6 +84,7 @@ describe("Staking contract", function () {
       STAKING_CONFIG.startsAt,
       coin.address
     );
+
     await staking.addContract(playables.address);
     await coin.grantRole(await coin.DISTRIBUTOR(), staking.address);
 
