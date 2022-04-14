@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import { BigNumber } from "@ethersproject/bignumber";
-import { parseUnits } from "@ethersproject/units";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,10 +7,8 @@ import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { FullToken, useTokens } from "hooks/useTokens";
-import { useTracking } from "hooks/useTracking";
-import { Contract } from "lib/web3/contracts";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -72,9 +68,8 @@ interface Item {
 }
 
 function Item({ item }: { item: FullToken }) {
-  const tracking = useTracking();
   const router = useRouter();
-  const { makeTransaction } = useWeb3TransactionPresenter();
+  const { mint } = useWeb3TransactionPresenter();
   return (
     <Card key={item.id} sx={stylesCard}>
       <span style={{ width: "100%", height: "100%", position: "relative" }}>
@@ -112,37 +107,7 @@ function Item({ item }: { item: FullToken }) {
                 style={{ height: "50px", width: "115px", borderRadius: "4px" }}
                 text="Mint"
                 onClick={() => {
-                  const price = parseUnits(item.price.toString(), "ether");
-                  makeTransaction<Contract.Playables, "mint">({
-                    description: {
-                      action: "Mint",
-                      description: "Mint " + item.name,
-                      value: price,
-                    },
-                    fn: "mint",
-                    args: [
-                      {
-                        tokenId: BigNumber.from(item.id),
-                        amount: BigNumber.from("1"),
-                        promoCode: "",
-                      },
-                      {
-                        value: price,
-                      },
-                    ],
-                    contract: Contract.Playables,
-                    update: (event) => {
-                      if (event === "Open") {
-                        tracking.mintInitiate(item.id, 1);
-                      }
-                      if (event === "BeforeSign") {
-                        tracking.mintWaitingToSignTransaction();
-                      }
-                      if (event === "Done") {
-                        tracking.mintCompleted(item.id, 1);
-                      }
-                    },
-                  });
+                  mint(item.id, 1);
                 }}
               />
             </PriceWrapper>

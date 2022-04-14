@@ -1,11 +1,7 @@
 import styled from "@emotion/styled";
-import { BigNumber } from "@ethersproject/bignumber";
-import { parseUnits } from "@ethersproject/units";
 import Button from "components/ui/Button";
 import ModelViewerDynamic from "components/ui/ModelViewerDynamic";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { useTracking } from "hooks/useTracking";
-import { Contract } from "lib/web3/contracts";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
@@ -57,30 +53,20 @@ const Card = styled.div`
 `;
 
 interface Item {
+  id: string;
   title: string;
   description: string;
   price: number;
 }
 
 export default function Studio() {
-  const tracking = useTracking();
-  const { makeTransaction } = useWeb3TransactionPresenter();
-  const [loading, setLoading] = useState(false);
+  const { mint } = useWeb3TransactionPresenter();
   const [item, setItem] = useState<Item>({
+    id: "1",
     title: "Warrior",
     description: "Warrior",
     price: 0.1,
   });
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch("/api/collections/" + router.query.id)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setItem(data);
-  //       setLoading(false);
-  //     });
-  // }, []);
 
   return (
     <>
@@ -189,33 +175,7 @@ export default function Studio() {
                   style={{ height: "50px", width: "115px", borderRadius: "4px" }}
                   text="Mint"
                   onClick={() => {
-                    makeTransaction<Contract.Playables, "mint">({
-                      description: {
-                        action: "Mint",
-                        description: "Mint Knight",
-                        value: parseUnits("0.3", "ether"),
-                      },
-                      fn: "mint",
-                      args: [
-                        {
-                          tokenId: BigNumber.from("1"),
-                          amount: BigNumber.from("1"),
-                          promoCode: "",
-                        },
-                      ],
-                      contract: Contract.Playables,
-                      update: (event) => {
-                        if (event === "Open") {
-                          tracking.mintInitiate("1", 1);
-                        }
-                        if (event === "BeforeSign") {
-                          tracking.mintWaitingToSignTransaction();
-                        }
-                        if (event === "Done") {
-                          tracking.mintCompleted("1", 1);
-                        }
-                      },
-                    });
+                    mint(item.id, 1);
                   }}
                 />
               </PriceWrapper>

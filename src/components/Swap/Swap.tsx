@@ -7,12 +7,10 @@ import Button from "components/ui/Button";
 import { CurrencyField, CurrencyFieldRef } from "components/ui/CurrencyField";
 import Card from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
 import { useExchangeContract } from "hooks/useContract";
-import { useTracking } from "hooks/useTracking";
 import { useWeb3Remote } from "hooks/useWeb3";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract } from "lib/web3/contracts";
 import Link from "next/link";
 import { PropsWithChildren, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -89,7 +87,6 @@ enum Currency {
 
 export default function SwapForm({ children }: PropsWithChildren<unknown>) {
   const intl = useIntl();
-  const tracking = useTracking();
   const web3Remote = useWeb3Remote();
   const { connected, contract: exchange, error } = useExchangeContract(web3Remote);
   const presenter = useWeb3TransactionPresenter();
@@ -203,52 +200,17 @@ export default function SwapForm({ children }: PropsWithChildren<unknown>) {
     const bhc = bhcRef.current?.value as BigNumber;
 
     const minTokens = bhc.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
-
-    presenter.makeTransaction<Contract.Exchange, "ethToTokenSwapInput">({
-      args: [
-        minTokens,
-        Math.floor(Date.now() / 1000 + 60),
-        {
-          value: eth,
-        },
-      ],
-      contract: Contract.Exchange,
-      description: {
-        action: "Swap",
-        description: `Swap ${formatBNToEtherFloatFixed(eth)} ETH for ${formatBNToEtherFloatFixed(bhc)} BHC.`,
-        value: eth,
-      },
-      fn: "ethToTokenSwapInput",
-      update: (event) => {
-        if (event === "Open") {
-          tracking.exchangeInitiate(minTokens);
-        }
-        if (event === "BeforeSign") {
-          tracking.exchangeWaitingToSignTransaction();
-        }
-        if (event === "Done") {
-          tracking.exchangeCompleted(minTokens);
-        }
-      },
-    });
+    presenter.ethToTokenSwap(minTokens, eth, bhc);
   };
 
   const tokenToETHSwap = () => {
     const eth = ethRef.current?.value as BigNumber;
     const bhc = bhcRef.current?.value as BigNumber;
 
-    const minEth = eth.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
+    console.info("Tax:", formatBNToEtherFloatFixed(tax));
 
-    presenter.makeTransaction<Contract.Exchange, "tokenToEthSwapInput">({
-      args: [bhc, minEth, Math.floor(Date.now() / 1000 + 60)],
-      contract: Contract.Exchange,
-      description: {
-        action: "Swap",
-        description: `Swap ${formatBNToEtherFloatFixed(bhc)} BHC for ${formatBNToEtherFloatFixed(eth)} ETH .`,
-        value: BigNumber.from(0),
-      },
-      fn: "tokenToEthSwapInput",
-    });
+    const minEth = eth.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
+    presenter.tokenToETHSwap(minEth, eth, bhc);
   };
 
   const body =

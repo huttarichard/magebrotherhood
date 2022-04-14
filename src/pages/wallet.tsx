@@ -12,7 +12,7 @@ import { CurrencyField } from "components/ui/CurrencyField";
 import EthereumLogo from "components/ui/EthereumLogo";
 import Paper from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useFormik } from "formik";
 import { useCoinContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";

@@ -1,3 +1,5 @@
+import type { FullToken } from "lib/server/tokens";
+
 export interface CollectionParams {
   metadata?: boolean;
   staking?: boolean;
@@ -30,7 +32,7 @@ function convertParams(params?: CollectionParams) {
   return px;
 }
 
-export async function fetchTokens(params?: CollectionParams) {
+export async function fetchTokens(params?: CollectionParams): Promise<FullToken[]> {
   const px = convertParams(params);
   const response = await fetch(`/api/tokens${px ? `?${px}` : ""}`);
   return response.json();
@@ -38,7 +40,7 @@ export async function fetchTokens(params?: CollectionParams) {
 
 fetchTokens.route = "/api/tokens";
 
-export async function fetchToken(id: string, params?: CollectionParams) {
+export async function fetchToken(id: string, params?: CollectionParams): Promise<FullToken> {
   const px = convertParams(params);
   const response = await fetch(`/api/tokens/${id}${px ? `?${px}` : ""}`);
   return response.json();

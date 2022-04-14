@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useFormik } from "formik";
 import { usePromoterContract } from "hooks/useContract";

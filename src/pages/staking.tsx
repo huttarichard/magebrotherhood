@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { ItemCompact } from "components/Collection/List";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useStakingContract } from "hooks/useContract";
 import { FullToken, useTokens } from "hooks/useTokens";

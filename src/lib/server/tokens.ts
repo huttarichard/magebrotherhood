@@ -17,6 +17,7 @@ export interface Token {
   minted: number;
   weight: number;
   price: number;
+  priceWei: string;
   royalty: string;
   ipfsURI: string;
 }
@@ -36,6 +37,7 @@ export async function fetchToken(playables: Playables, id: string | number | Big
     minted: token.minted.toNumber(),
     weight: token.weight.toNumber(),
     price: formatBNToEtherFloatFixed(token.price),
+    priceWei: token.price.toString(),
     royalty: token.royalty,
     ipfsURI: token.uri,
   };
