@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import type { IPFSHTTPClient } from "ipfs-http-client";
 import all from "it-all";
-import { formatBNToEtherFloatFixed } from "lib/bn";
+import { formatBNToEtherFloat } from "lib/bn";
 import { fetchMarketPricesWithCoinbase } from "lib/server/market";
 import { concat } from "uint8arrays";
 
@@ -16,10 +16,10 @@ export interface Token {
   supply: number;
   minted: number;
   weight: number;
-  price: number;
-  priceWei: string;
+  priceETH: number;
+  priceWei: BigNumber;
   royalty: string;
-  ipfsURI: string;
+  ipfsUri: string;
 }
 
 export async function fetchToken(playables: Playables, id: string | number | BigNumber): Promise<Token> {
@@ -36,33 +36,70 @@ export async function fetchToken(playables: Playables, id: string | number | Big
     supply: token.supply.toNumber(),
     minted: token.minted.toNumber(),
     weight: token.weight.toNumber(),
-    price: formatBNToEtherFloatFixed(token.price),
-    priceWei: token.price.toString(),
+    priceETH: formatBNToEtherFloat(token.price),
+    priceWei: token.price,
     royalty: token.royalty,
-    ipfsURI: token.uri,
+    ipfsUri: token.uri,
   };
 }
 
-export interface Attribute {
+export interface OpenseaMetadataAttribute {
   trait_type: string;
+  value: string;
+}
+
+export interface OpenseaMetadata {
+  id: string;
+  name: string;
+  description: string;
+  external_url: string;
+  image: string;
+  animation_url: string;
+  models: {
+    glb: string;
+    usdz: string;
+  };
+  attributes: OpenseaMetadataAttribute;
+}
+
+export interface MetadataAttribute {
+  traitType: string;
   value: number;
 }
 
 export interface Metadata {
-  description: string;
-  usdz: string;
-  external_url: string;
-  image: string;
   name: string;
-  animation_url: string;
-  attributes: Attribute[];
+  description: string;
+  externalUrl: string;
+  image: string;
+  animationUrl: string;
+  models: {
+    glb: string;
+    usdz: string;
+  };
+  attributes: MetadataAttribute[];
 }
 
 export async function fetchTokenMetadata(ipfs: IPFSHTTPClient, uri: string): Promise<Metadata> {
   const data = await all(ipfs.cat(uri.replace("ipfs://", "")));
   const buffer = Buffer.from(concat(data));
   const json = JSON.parse(buffer.toString());
-  return json;
+
+  const attrs = json.attributes || [];
+  const attrsMapped = attrs.map((p: OpenseaMetadataAttribute) => ({
+    traitType: p.trait_type,
+    value: p.value,
+  }));
+
+  return {
+    name: json.name,
+    description: json.description,
+    externalUrl: json.external_url,
+    image: json.image,
+    animationUrl: json.animation_url,
+    models: json.models,
+    attributes: attrsMapped,
+  };
 }
 
 export async function fetchTokensMetadata(ipfs: IPFSHTTPClient, uris: string[]): Promise<Metadata[]> {
@@ -145,13 +182,13 @@ export interface Pricing {
 export async function getTokenPrice(t: Token, currency = "usd") {
   const price = await fetchMarketPricesWithCoinbase("eth", currency);
   return {
-    priceUSD: t.price * price,
+    priceUSD: formatBNToEtherFloat(t.priceWei) * price,
   };
 }
 
 export async function getTokensPrice(t: Token[], currency = "usd") {
   const price = await fetchMarketPricesWithCoinbase("eth", currency);
-  return t.map((e) => ({ priceUSD: e.price * price }));
+  return t.map((e) => ({ priceUSD: formatBNToEtherFloat(e.priceWei) * price }));
 }
 
 export type FullToken = Token & Staking & Balance & Metadata & Pricing;

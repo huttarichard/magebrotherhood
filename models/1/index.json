@@ -1,0 +1,31 @@
+{
+    "id": "1",
+    "name": "First Knight",
+    "description": "One of the first characters we ever designed for MageBrotherhood. One of the strongest protector of your kingdom.",
+    "external_url": "https://magebrotherhood.com/tokens/1",
+    "image": "preview.jpg",
+    "animation_url": "model.glb",
+    "launched_at": "2022-04-15T09:12:47.450Z",
+    "created_at": "2022-04-14T09:12:47.450Z",
+    "price_wei": "110000000000000000",
+    "supply": "1000",
+    "staking_weight": "105",
+    "models": {
+        "glb": "model.glb",
+        "usdz": "model.usdz"
+    },
+    "attributes": [
+      {
+        "trait_type": "Staking Weight",
+        "value": 1.05
+      },
+      {
+        "trait_type": "Epoch",
+        "value": "Genesis"
+      },
+      {
+        "trait_type": "Collection",
+        "value": "Dark Knights"
+      }
+    ]
+  }

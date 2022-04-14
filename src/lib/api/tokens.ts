@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import type { FullToken } from "lib/server/tokens";
 
 export interface CollectionParams {
@@ -35,7 +36,15 @@ function convertParams(params?: CollectionParams) {
 export async function fetchTokens(params?: CollectionParams): Promise<FullToken[]> {
   const px = convertParams(params);
   const response = await fetch(`/api/tokens${px ? `?${px}` : ""}`);
-  return response.json();
+  const json = await response.json();
+  return json.map((e: FullToken) => {
+    return {
+      ...e,
+      createdAt: new Date(e.createdAt),
+      launchedAt: new Date(e.launchedAt),
+      priceWei: BigNumber.from(e.priceWei),
+    };
+  });
 }
 
 fetchTokens.route = "/api/tokens";
@@ -43,7 +52,13 @@ fetchTokens.route = "/api/tokens";
 export async function fetchToken(id: string, params?: CollectionParams): Promise<FullToken> {
   const px = convertParams(params);
   const response = await fetch(`/api/tokens/${id}${px ? `?${px}` : ""}`);
-  return response.json();
+  const json = await response.json();
+  return {
+    ...json,
+    createdAt: new Date(json.createdAt),
+    launchedAt: new Date(json.launchedAt),
+    priceWei: BigNumber.from(json.priceWei),
+  };
 }
 
 fetchToken.route = "/api/tokens/{id}";

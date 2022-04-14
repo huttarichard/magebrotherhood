@@ -43,15 +43,16 @@ const CountDown = styled.div<{ small: boolean }>`
 
 export interface CountdownProps {
   countDownDate: Date;
-  small: boolean;
+  small?: boolean;
 }
 
-export default function Countdown({ countDownDate, small }: CountdownProps) {
+export default function Countdown({ countDownDate, small = true }: CountdownProps) {
   const [state, setState] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
+    visible: true,
   });
 
   useEffect(() => {
@@ -62,13 +63,25 @@ export default function Countdown({ countDownDate, small }: CountdownProps) {
       // Find the distance between now and the count down date
       const distance = countDownDate.getTime() - now;
 
+      if (distance <= 0) {
+        clearInterval(interval);
+        setState({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          visible: false,
+        });
+        return;
+      }
+
       // Time calculations for days, hours, minutes and seconds
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      setState({ days, hours, minutes, seconds });
+      setState({ days, hours, minutes, seconds, visible: distance > 0 });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -79,9 +92,13 @@ export default function Countdown({ countDownDate, small }: CountdownProps) {
   const minutesRadius = mapNumber(state.minutes, 60, 0, 0, 360);
   const secondsRadius = mapNumber(state.seconds, 60, 0, 0, 360);
 
+  if (!state.visible) {
+    return null;
+  }
+
   return (
     <CountDown small={small}>
-      {state.days && (
+      {state.days > 0 && (
         <div className="countdown-item">
           <SVGCircle radius={daysRadius} small={small} />
           {state.days}

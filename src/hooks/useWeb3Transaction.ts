@@ -74,7 +74,7 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
       description: {
         action: "Mint",
         description: "Mint " + token.name,
-        value: BigNumber.from(token.priceWei),
+        value: token.priceWei,
       },
       fn: "mint",
       args: [
@@ -84,7 +84,7 @@ export const useWeb3TransactionPresenter = create<State>((set, get) => ({
           promoCode: "",
         },
         {
-          value: BigNumber.from(token.priceWei),
+          value: token.priceWei,
         },
       ],
       contract: Contract.Playables,

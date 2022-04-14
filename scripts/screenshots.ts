@@ -3,13 +3,12 @@ import { FileServer } from "@shopify/screenshot-glb/dist/file-server";
 import { prepareAppOptions } from "@shopify/screenshot-glb/dist/prepare-app-options";
 import { readFileSync } from "fs";
 import { glob } from "glob";
-import path, { basename } from "path";
+import path, { dirname } from "path";
 
-const inputDir = path.resolve(__dirname + "/../public/models");
-const destDir = path.resolve(__dirname + "/../public/images/tokens");
+const inputDir = path.resolve(__dirname + "/../models");
 
 export async function takeScreenshot(file: string) {
-  const output = path.join(destDir, basename(file, ".glb") + ".png");
+  const output = path.join(dirname(file), "preview.jpg");
 
   const modelServer = new FileServer(path.dirname(file));
   await modelServer.start();

@@ -12,15 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ipfs = await createClientFromEnv();
 
   const json = await fetchToken(playables, req.query.id as string);
-  const metadata = await fetchTokenMetadata(ipfs, json.ipfsURI);
+  const metadata = await fetchTokenMetadata(ipfs, json.ipfsUri);
 
-  if (!metadata.usdz) {
+  if (!metadata.models.usdz) {
     return res.status(404).json({
       error: "No USDZ file found",
     });
   }
 
-  const path = metadata.usdz.replace("ipfs://", "");
+  const path = metadata.models.usdz.replace("ipfs://", "");
   const usdz = await all(ipfs.cat(path));
   const usdzBuffer = Buffer.from(concat(usdz));
 

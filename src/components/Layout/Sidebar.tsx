@@ -214,7 +214,7 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
           <Item
             icon={faRectangleVerticalHistory}
             name={<FormattedMessage defaultMessage="Collections" id="ulh3kf" />}
-            link="/collections"
+            link="/tokens"
           />
           <Item icon={faCoinBlank} name={<FormattedMessage defaultMessage="Staking" id="+14VoL" />} link="/staking" />
           <Item

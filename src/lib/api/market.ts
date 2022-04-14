@@ -1,3 +1,5 @@
+import { BigNumber } from "@ethersproject/bignumber";
+
 export interface MarketQuote {
   quote: number;
 }
@@ -18,14 +20,18 @@ fetchMarketQuote.route = "/api/market/quote";
 export interface BHCQuote {
   priceETH: number;
   priceUSD: number;
-  bhcReserves: number;
-  ethReserves: number;
+  bhcReserves: BigNumber;
+  ethReserves: BigNumber;
 }
 
 export async function fetchBHCQuote(): Promise<BHCQuote> {
   const data = await fetch("/api/market/bhc");
   const json = await data.json();
-  return json;
+  return {
+    ...json,
+    bhcReserves: BigNumber.from(json.bhcReserves),
+    ethReserves: BigNumber.from(json.ethReserves),
+  };
 }
 
 fetchBHCQuote.route = "/api/market/quote";

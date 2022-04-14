@@ -5,11 +5,11 @@ import Typography from "@mui/material/Typography";
 import { ItemCompact } from "components/Collection/List";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useStakingContract } from "hooks/useContract";
 import { FullToken, useTokens } from "hooks/useTokens";
 import { useWeb3Wallet } from "hooks/useWeb3";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
@@ -164,7 +164,7 @@ function UnstakedItems({ account }: ItemsProps) {
       <ItemsPaper>
         <Typography variant="h5">Items to be staked</Typography>
         <p>
-          No items to stake. Visit <Link href="/collections">collection page</Link> and buy NFT!
+          No items to stake. Visit <Link href="/tokens">collection page</Link> and buy NFT!
         </p>
       </ItemsPaper>
     );

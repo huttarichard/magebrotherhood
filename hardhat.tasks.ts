@@ -5,8 +5,9 @@ import { formatEther, parseEther } from "@ethersproject/units";
 import Table from "cli-table";
 import * as envfile from "envfile";
 import { readFileSync } from "fs";
+import { glob } from "glob";
 import { task, types } from "hardhat/config";
-import path from "path";
+import path, { dirname, join } from "path";
 import { resolve } from "path";
 
 import { Coin } from "./src/artifacts/types/Coin";
@@ -17,8 +18,9 @@ import { Playables__factory } from "./src/artifacts/types/factories/Playables__f
 import { Promoter__factory } from "./src/artifacts/types/factories/Promoter__factory";
 import { Staking__factory } from "./src/artifacts/types/factories/Staking__factory";
 import { Playables } from "./src/artifacts/types/Playables";
-import { formatBNToEtherFloatFixed, timeNowInBN } from "./src/lib/bn";
-import { createClientFromEnv, createIPFSOpenseaToken } from "./src/lib/server/ipfs";
+import { formatBNToEtherFloatFixed, timeNowInBN, timeToBN } from "./src/lib/bn";
+import { createClientFromEnv, replaceIPFSUrisWithGateway } from "./src/lib/server/ipfs";
+import { OpenseaMetadata } from "./src/lib/server/tokens";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -216,89 +218,74 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   .addOptionalParam("stakingCycle", "staking cycle in seconds", 60, types.int)
   .addOptionalParam("stakingPeriod", "staking period in cycles", 2, types.int);
 
-interface AddTokensParams {
-  id: number;
-  name: string;
-  description: string;
-  playables: string;
-  royalty: string;
-  price: number;
-  supply: number;
-  stakingWeight: number;
-  pin: boolean;
-}
-
-// Example:
-// yarn hardhat --network "rinkeby" playables:token:add
-//   --id 1
-//   --name "Knight"
-//   --description "Warrior"
-//   --playables "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF"
-//   --royalty "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF"
-//   --price 0.01
-//   --supply 800
-
-task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: AddTokensParams, hre) => {
+task("playables:tokens", "adds tokens to contract and ipfs", async (taskArgs, hre) => {
   const [owner] = await hre.ethers.getSigners();
-
-  const id = taskArgs.id;
-  const glb = path.resolve(__dirname, "public/models", id + ".glb");
-  const png = path.resolve(__dirname, "public/images/tokens", id + ".png");
-
-  const glbFile = readFileSync(glb);
-  const pngFile = readFileSync(png);
-  const stakingWeight = taskArgs.stakingWeight;
-
   const ipfs = await createClientFromEnv();
 
-  const hash = await createIPFSOpenseaToken(ipfs, {
-    id,
-    name: taskArgs["name"],
-    description: taskArgs["description"],
-    stakingWeight: stakingWeight,
-    pin: !!taskArgs["pin"],
-    glb: glbFile,
-    image: pngFile,
-  });
-
+  const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
+  const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
-  const playables = Playables.attach(taskArgs.playables).connect(owner) as Playables;
+  const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;
 
-  console.info("Token: ", BigNumber.from(id).toString());
+  const models = path.resolve(__dirname, "models", "**/index.json");
 
-  console.info({
-    createdAt: BigNumber.from(Math.floor(Date.now() / 1000)).toString(),
-    launchedAt: BigNumber.from(Math.floor(Date.now() / 1000)).toString(),
-    minted: 0,
-    price: parseEther(taskArgs.price.toFixed(8)).toString(),
-    royalty: taskArgs.royalty,
-    supply: BigNumber.from(taskArgs["supply"]).toString(),
-    uri: "ipfs://" + hash,
-    weight: BigNumber.from(stakingWeight).toString(),
-  });
+  const files = glob.sync(models);
+  for (const file of files) {
+    console.info("Adding token from file: ", file);
 
-  await playables.setToken(BigNumber.from(id), {
-    createdAt: BigNumber.from(Math.floor(Date.now() / 1000)),
-    launchedAt: BigNumber.from(Math.floor(Date.now() / 1000)),
-    minted: 0,
-    price: parseEther(taskArgs.price.toFixed(8)),
-    royalty: taskArgs.royalty,
-    supply: BigNumber.from(taskArgs["supply"]),
-    uri: "ipfs://" + hash,
-    weight: BigNumber.from(stakingWeight),
-  });
+    const json = JSON.parse(readFileSync(file, "utf8"));
+    const dir = dirname(file);
+
+    const image = readFileSync(join(dir, "preview.jpg"));
+    const imageHash = await ipfs.add(image);
+
+    const glb = readFileSync(join(dir, "model.glb"));
+    const glbHash = await ipfs.add(glb);
+
+    const usdz = readFileSync(join(dir, "model.usdz"));
+    const usdzHash = await ipfs.add(usdz);
+
+    const metadata: OpenseaMetadata = {
+      id: json.id,
+      name: json.name,
+      description: json.description,
+      external_url: json.external_url,
+      image: "ipfs://" + imageHash.path,
+      animation_url: "ipfs://" + glbHash.path,
+      models: {
+        glb: "ipfs://" + glbHash.path,
+        usdz: "ipfs://" + usdzHash.path,
+      },
+      attributes: json.attributes,
+    };
+
+    const metadataHash = await ipfs.add(JSON.stringify(metadata));
+
+    const tokenData: Playables.TokenStruct = {
+      createdAt: timeToBN(new Date(json.created_at)),
+      launchedAt: timeToBN(new Date(json.launched_at)),
+      minted: BigNumber.from(0),
+      price: json.price_wei,
+      royalty: EXCHANGE_ADDRESS,
+      supply: BigNumber.from(json.supply),
+      uri: "ipfs://" + metadataHash.path,
+      weight: BigNumber.from(json.staking_weight),
+    };
+
+    const tokenId = BigNumber.from(json.id);
+
+    await playables.setToken(tokenId, tokenData);
+
+    await ipfs.pin.add(imageHash.path);
+    await ipfs.pin.add(glbHash.path);
+    await ipfs.pin.add(usdzHash.path);
+    await ipfs.pin.add(metadataHash.path);
+
+    console.info("Metadata: ", replaceIPFSUrisWithGateway(metadata));
+  }
 
   console.info("Done!");
-})
-  .addParam("id", "id of the token", null, types.int)
-  .addParam("name", "name of the token", null, types.string)
-  .addParam("description", "description of the token", null, types.string)
-  .addParam("playables", "address of the playables contract", null, types.string)
-  .addParam("royalty", "address of the roaylty receiver", null, types.string)
-  .addParam("price", "price of the token", null, types.float)
-  .addParam("supply", "supply of the token", null, types.int)
-  .addOptionalParam("stakingWeight", "staking weight for token", 1, types.int)
-  .addOptionalParam("pin", "staking period in cycles", false, types.boolean);
+});
 
 task("etherscan", "Verifies all contract with ethersca, keep in mind you have to have .env settup")
   .setAction(async (taskargs, hre) => {

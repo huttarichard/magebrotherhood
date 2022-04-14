@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const additions: any[] = [];
 
   if (fields.metadata) {
-    const result = await fetchTokenMetadata(ifps, token.ipfsURI);
+    const result = await fetchTokenMetadata(ifps, token.ipfsUri);
     additions.push(result);
   }
 

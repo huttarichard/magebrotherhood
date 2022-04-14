@@ -24,5 +24,6 @@ export function useBHCQuote() {
 
 export function useBHCUSDPrice() {
   const response = useBHCQuote();
+  console.log(response);
   return response.data?.priceUSD || 0;
 }
