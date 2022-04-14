@@ -268,7 +268,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
   /**
    * I would almost consider this being case of absuing
    * ownership. But this will be handout to the community via DAO.
-   * mainpurpose of slushing will be to pnush cheaters.
+   * mainpurpose of slushing will be to punish cheaters.
    */
   function slush(
     address stakableContract,
@@ -590,7 +590,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
       require(tokenInfo.owner == owner, "not staked for owner");
 
       // ensure that at least an entire cycle has elapsed before
-      // unstaking the token to avoid an exploit where a a fukll cycle
+      // unstaking the token to avoid an exploit where a a full cycle
       // would be claimable if staking just before the end of a cycle
       // and unstaking right after the start of the new cycle
       require(currentCycle - tokenInfo.depositCycle >= 2, "token still frozen");
