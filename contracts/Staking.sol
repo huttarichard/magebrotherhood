@@ -19,7 +19,8 @@ import "./interfaces/ICoin.sol";
 /**
  * @title NFT Staking
  * Distribute ERC20 rewards over discrete-time schedules for the staking of NFTs.
- * This contract is designed on a self-service model, where users will stake NFTs, unstake NFTs and claim rewards through their own transactions only.
+ * This contract is designed on a self-service model, where users will stake NFTs,
+ * unstake NFTs and claim rewards through their own transactions only.
  */
 contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Receiver {
   using SafeCast for uint256;
@@ -118,7 +119,9 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
    * Constructor.
    * @dev Reverts if the period length value is zero.
    * @dev Reverts if the cycle length value is zero.
-   * @dev Warning: cycles and periods need to be calibrated carefully. Small values will increase computation load while estimating and claiming rewards. Big values will increase the time to wait before a new period becomes claimable.
+   * @dev Warning: cycles and periods need to be calibrated carefully.
+   * @dev Small values will increase computation load while estimating and claiming rewards.
+   * @dev Big values will increase the time to wait before a new period becomes claimable.
    * @param _cycleLengthInSeconds The length of a cycle, in seconds.
    * @param _periodLengthInCycles The length of a period, in cycles.
    * @param _coin The ERC20-based token used as staking rewards.

@@ -6,13 +6,13 @@ import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useFormik } from "formik";
 import { usePromoterContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract } from "lib/contracts";
+import { Contract } from "lib/web3/contracts";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -174,7 +174,7 @@ function CumputedRewards() {
           </b>
         </Grid>
         <Grid item xs="auto">
-          <Button disabled={rewards.reward == 0} small text="Claim rewards" onClick={handleClaim} />
+          <Button disabled={rewards.reward == 0} important small text="Claim rewards" onClick={handleClaim} />
         </Grid>
       </Grid>
     </CardWrapper>
@@ -302,7 +302,7 @@ export default function Affiliate() {
 
               {web3.connected ? (
                 <>
-                  <Button text={formSubmitButtonText} type="submit" className="btn" distorted borders large />
+                  <Button text={formSubmitButtonText} type="submit" important className="btn" distorted borders large />
                 </>
               ) : (
                 <>

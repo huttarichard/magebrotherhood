@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
-import { Item } from "hooks/useCollectionApi";
+import { FullToken } from "hooks/useTokens";
 import { default as NextImage, ImageProps } from "next/image";
 import React from "react";
 
@@ -17,9 +17,9 @@ const Title = styled.div`
   }
 `;
 
-export function Image({ item, imageProps }: { item?: Item; imageProps?: ImageProps }) {
+export function Image({ item, imageProps }: { item?: FullToken; imageProps?: ImageProps }) {
   if (!item) return null;
-
+  console.log(item, imageProps);
   return (
     <NextImage
       className="image"
@@ -34,7 +34,7 @@ export function Image({ item, imageProps }: { item?: Item; imageProps?: ImagePro
   );
 }
 
-export function Description({ item }: { item: Item }) {
+export function Description({ item }: { item: FullToken }) {
   return (
     <Title>
       <b>{item.name}</b>
@@ -44,7 +44,7 @@ export function Description({ item }: { item: Item }) {
 }
 
 export interface ItemProps {
-  item: Item;
+  item: FullToken;
   imageProps?: ImageProps;
 }
 

@@ -3,8 +3,8 @@ import type { BoughtEvent, DepositEvent, Exchange, ExchangeInterface, SoldEvent 
 import { formatBNToEtherFloatFixed as fmbn } from "lib/bn";
 import { useEffect, useState } from "react";
 
-import { useCoinUSDPrice } from "./useCoinMarketCap";
 import { useExchangeContract } from "./useContract";
+import { useCoinUSDPrice } from "./useMarketData";
 import { Web3 } from "./useWeb3";
 
 type EventKeys = keyof ExchangeInterface["events"];

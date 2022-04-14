@@ -65,7 +65,7 @@ export default function Swap() {
       <Title>
         <Typography variant="h4">Brotherhood Coin - BHC/USD</Typography>
         <p>1 DAY CANDLE CHART</p>
-        <Button className="btn" small text="Swap coins" onClick={() => router.push("/swap")} />
+        <Button className="btn" important small text="Swap coins" onClick={() => router.push("/swap")} />
       </Title>
       <Chart>
         <CoinPriceChart />

@@ -15,6 +15,20 @@ export default function Home() {
         <title>Mage Brotherhood - Homepage</title>
       </Head>
 
+      {/* add raising coin
+      add notion that we investment into nft will be returned
+      add how we gonna decentralize the game
+      add tokenomics
+      add how game is not a ponzi
+      exolain better staking
+      add AR
+      add swap from on homepage
+      add DAO
+      integrate better socials
+      add metaverse
+      explain how artist will be rewarded for their art
+      upcomming collection */}
+
       <Layout footer>
         <Hero />
         <GamePreview />

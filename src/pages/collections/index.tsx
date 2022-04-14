@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import { BigNumber } from "@ethersproject/bignumber";
-import { parseUnits } from "@ethersproject/units";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -8,11 +6,11 @@ import Typography from "@mui/material/Typography";
 import ModalMeta from "components/Collection/ModalMeta";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
-import { Contract } from "lib/contracts";
+import Spinner from "components/ui/Spinner";
+import { FullToken, useTokens } from "hooks/useTokens";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import Head from "next/head";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const FullImage = styled.img`
   width: 100%;
@@ -61,7 +59,7 @@ const stylesContent = (theme: any) => ({
 });
 
 interface Item {
-  id: number;
+  id: string;
   name: string;
   title: string;
   description: string;
@@ -69,22 +67,63 @@ interface Item {
   price: number;
 }
 
+function Item({ item }: { item: FullToken }) {
+  const router = useRouter();
+  const { mint } = useWeb3TransactionPresenter();
+  return (
+    <Card key={item.id} sx={stylesCard}>
+      <span style={{ width: "100%", height: "100%", position: "relative" }}>
+        <FullImage src={item.image} />
+        <Button
+          text="View in 3D"
+          onClick={() => {
+            router.push("/collections/" + item.id);
+          }}
+        />
+      </span>
+      <Box sx={{ minWidth: "50%" }}>
+        <CardContent sx={stylesContent}>
+          <Typography component="div" variant="h3">
+            {item.name}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" component="div">
+            {item.description}
+          </Typography>
+          <div>
+            <PriceWrapper>
+              <span
+                style={{
+                  fontSize: "1.2rem",
+                  padding: "0 12px",
+                  height: "49px",
+                  lineHeight: "45px",
+                  fontFamily: "monospace",
+                }}
+              >
+                {item.price} ETH
+              </span>
+              <Button
+                small
+                style={{ height: "50px", width: "115px", borderRadius: "4px" }}
+                text="Mint"
+                onClick={() => {
+                  mint(item.id, 1);
+                }}
+              />
+            </PriceWrapper>
+          </div>
+
+          <ModalMeta item={item}></ModalMeta>
+        </CardContent>
+      </Box>
+    </Card>
+  );
+}
+
 export default function CollectionsIndex() {
-  const { makeTransaction } = useWeb3TransactionPresenter();
-  const [modal, setModalOpen] = useState<Item>();
-
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch("/api/collections")
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data);
-        setLoading(false);
-      });
-  }, []);
+  const tokens = useTokens({
+    metadata: true,
+  });
 
   return (
     <>
@@ -96,80 +135,7 @@ export default function CollectionsIndex() {
         <div style={{ padding: "2rem" }}>
           <h1>Characters</h1>
           <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "40px" }}>
-            {items.map((item) => (
-              <Card key={item.id} sx={stylesCard}>
-                <span style={{ width: "100%", height: "100%", position: "relative" }}>
-                  <FullImage src={item.image} />
-                  <Link href={"/collections/" + item.id} passHref>
-                    <Button
-                      text="View in 3D"
-                      style={{
-                        position: "absolute",
-                        width: "200px",
-                        bottom: "25px",
-                        left: "0",
-                        right: "0",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </Link>
-                </span>
-                <Box sx={{ minWidth: "50%" }}>
-                  <CardContent sx={stylesContent}>
-                    <Typography component="div" variant="h3">
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" component="div">
-                      {item.description}
-                    </Typography>
-                    <div>
-                      <PriceWrapper>
-                        <span
-                          style={{
-                            fontSize: "1.2rem",
-                            padding: "0 12px",
-                            height: "49px",
-                            lineHeight: "45px",
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {item.price} ETH
-                        </span>
-                        <Button
-                          small
-                          style={{ height: "50px", width: "115px", borderRadius: "4px" }}
-                          text="Mint"
-                          onClick={() => {
-                            const price = parseUnits(item.price.toString(), "ether");
-                            makeTransaction<Contract.Playables, "mint">({
-                              description: {
-                                action: "Mint",
-                                description: "Mint " + item.name,
-                                value: price,
-                              },
-                              fn: "mint",
-                              args: [
-                                {
-                                  tokenId: BigNumber.from(item.id),
-                                  amount: BigNumber.from("1"),
-                                  promoCode: "",
-                                },
-                                {
-                                  value: price,
-                                },
-                              ],
-                              contract: Contract.Playables,
-                            });
-                          }}
-                        />
-                      </PriceWrapper>
-                    </div>
-
-                    <ModalMeta item={item}></ModalMeta>
-                  </CardContent>
-                </Box>
-              </Card>
-            ))}
+            {tokens.loading ? <Spinner /> : tokens.data.map((item) => <Item key={item.id} item={item}></Item>)}
           </div>
         </div>
       </Layout>

@@ -1,7 +1,5 @@
 import styled from "@emotion/styled";
-import { BigNumber } from "@ethersproject/bignumber";
-import { ContractReceipt, ContractTransaction } from "@ethersproject/contracts";
-import { Provider, Web3Provider } from "@ethersproject/providers";
+import { Provider } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
 import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -10,53 +8,15 @@ import { default as MuiStep } from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { useWeb3Wallet } from "hooks/useWeb3";
-import { Contract, ContractFunctionArguments, ContractFunctions, load } from "lib/contracts";
+import { Step, useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useEffect } from "react";
 import { useWindowSize } from "react-use";
-import create from "zustand";
 
 import Blockchaining from "./Blockchaining";
 import Button from "./Button";
 import Modal from "./Modal";
 import SuccessCheckmark from "./SuccessCheckmark";
 import WalletConnector, { WalletConnectorProps } from "./WalletConnector";
-
-export enum Step {
-  None = "none",
-  ConnectWallet = "connect",
-  Confirmation = "confirm",
-  Send = "send",
-  Sucess = "success",
-  Error = "error",
-}
-
-interface Description {
-  action: string;
-  description: string;
-  value: BigNumber;
-}
-
-interface TransactionParams<Z extends Contract, X extends ContractFunctions<Z>> {
-  contract: Z;
-  fn: X;
-  description: Description;
-  args: ContractFunctionArguments<Z, X>;
-}
-
-interface State {
-  open: boolean;
-  step: Step;
-  provider?: Provider;
-  error?: Error;
-  hash?: string;
-  gasUsed?: BigNumber;
-  params?: TransactionParams<any, any>;
-  makeTransaction: <Z extends Contract, X extends ContractFunctions<Z>>(params: TransactionParams<Z, X>) => void;
-  close: () => void;
-  connectWallet: (provider: Provider) => void;
-  confirmed: () => Promise<void>;
-  simulate: () => void;
-}
 
 const StepContent = styled.div`
   display: flex;
@@ -71,74 +31,6 @@ const StepContent = styled.div`
     font-family: "Bebas Neue", sans-serif;
   }
 `;
-
-export const useWeb3TransactionPresenter = create<State>((set, get) => ({
-  open: false,
-  step: Step.None,
-
-  makeTransaction(params) {
-    set({
-      open: true,
-      params,
-      step: Step.ConnectWallet,
-    });
-  },
-
-  connectWallet(provider: Provider) {
-    set({ step: Step.Confirmation, provider });
-  },
-
-  async simulate() {
-    const params = get().params as TransactionParams<any, any>;
-    const provider = get().provider as Web3Provider;
-
-    const contract = await load(provider.getSigner(), params.contract);
-    const fn = (contract as any).callStatic[params.fn];
-    return await fn(...params.args);
-  },
-
-  async confirmed() {
-    set({ step: Step.Send });
-
-    const params = get().params as TransactionParams<any, any>;
-    const provider = get().provider as Web3Provider;
-
-    const contract = await load(provider.getSigner(), params.contract);
-    const fn = (contract as any)[params.fn];
-
-    let result: ContractTransaction;
-    let reci: ContractReceipt;
-    try {
-      result = await fn(...params.args);
-      reci = await result.wait(1);
-    } catch (e) {
-      return set({
-        step: Step.Error,
-        error: e,
-      });
-    }
-
-    set({
-      step: reci.status === 1 ? Step.Sucess : Step.Error,
-      hash: reci.transactionHash,
-      gasUsed: reci.gasUsed,
-    });
-  },
-
-  close() {
-    if (get().step === Step.Send) {
-      return;
-    }
-    set({
-      open: false,
-      step: Step.None,
-      params: undefined,
-      provider: undefined,
-      error: undefined,
-      hash: undefined,
-    });
-  },
-}));
 
 function WalletConnect() {
   const { connected, provider } = useWeb3Wallet();
@@ -187,7 +79,7 @@ function Confirmation() {
 
         <br />
 
-        <Button text="Proceed" distorted borders block onClick={confirmed} />
+        <Button text="Proceed" important distorted borders block onClick={confirmed} />
       </Grid>
     </Grid>
   );

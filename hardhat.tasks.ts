@@ -18,7 +18,7 @@ import { Promoter__factory } from "./src/artifacts/types/factories/Promoter__fac
 import { Staking__factory } from "./src/artifacts/types/factories/Staking__factory";
 import { Playables } from "./src/artifacts/types/Playables";
 import { formatBNToEtherFloatFixed, timeNowInBN } from "./src/lib/bn";
-import { createIPFSOpenseaToken } from "./src/lib/ipfs";
+import { createClientFromEnv, createIPFSOpenseaToken } from "./src/lib/server/ipfs";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -212,7 +212,7 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("Done!");
 })
   .addOptionalParam("coinLiquidity", "amount of bhc", 10000000, types.int)
-  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0.01, types.int)
+  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0.01, types.float)
   .addOptionalParam("stakingCycle", "staking cycle in seconds", 60, types.int)
   .addOptionalParam("stakingPeriod", "staking period in cycles", 2, types.int);
 
@@ -249,7 +249,9 @@ task("playables:token:add", "adds token to contract and ipfs", async (taskArgs: 
   const pngFile = readFileSync(png);
   const stakingWeight = taskArgs.stakingWeight;
 
-  const hash = await createIPFSOpenseaToken({
+  const ipfs = await createClientFromEnv();
+
+  const hash = await createIPFSOpenseaToken(ipfs, {
     id,
     name: taskArgs["name"],
     description: taskArgs["description"],

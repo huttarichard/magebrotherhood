@@ -5,13 +5,13 @@ import Typography from "@mui/material/Typography";
 import { ItemCompact } from "components/Collection/List";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
-import { useWeb3TransactionPresenter } from "components/ui/TransactionPresenter";
+import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
-import { Item, useCollectionsApi } from "hooks/useCollectionApi";
 import { useStakingContract } from "hooks/useContract";
+import { FullToken, useTokens } from "hooks/useTokens";
 import { useWeb3Wallet } from "hooks/useWeb3";
 import { formatBNToEtherFloatFixed } from "lib/bn";
-import { Contract, contracts } from "lib/contracts";
+import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
@@ -106,11 +106,14 @@ function UnstakedItems({ account }: ItemsProps) {
   const { makeTransaction } = useWeb3TransactionPresenter();
   const [amount, setAmount] = useState<number | null>(null);
 
-  const collection = useCollectionsApi({
-    account,
+  const collection = useTokens({
+    staking: true,
+    metadata: true,
+    balance: true,
+    address: account,
   });
 
-  const handeStaking = (item: Item) => {
+  const handeStaking = (item: FullToken) => {
     makeTransaction({
       contract: Contract.Playables,
       description: {
@@ -124,7 +127,7 @@ function UnstakedItems({ account }: ItemsProps) {
   };
 
   const nodes = collection.data
-    .map((item: Item) => {
+    .map((item: FullToken) => {
       if (item.balance === 0) {
         return null;
       }
@@ -140,6 +143,7 @@ function UnstakedItems({ account }: ItemsProps) {
             </Grid>
             <Grid item>
               <Button
+                important
                 disabled={amount === null}
                 text="Stake"
                 distorted
@@ -233,7 +237,7 @@ function CumputedRewards() {
         </b>
       </Grid>
       <Grid item xs="auto">
-        <Button disabled={rewards.amount == 0} small text="Claim rewards" onClick={handleClaim} />
+        <Button disabled={rewards.amount == 0} important small text="Claim rewards" onClick={handleClaim} />
       </Grid>
     </Grid>
   );
@@ -242,11 +246,13 @@ function CumputedRewards() {
 function StakedItems({ account }: ItemsProps) {
   const { makeTransaction } = useWeb3TransactionPresenter();
 
-  const collection = useCollectionsApi({
-    account,
+  const collection = useTokens({
+    staking: true,
+    metadata: true,
+    address: account,
   });
 
-  const handeUnstaking = (item: Item) => {
+  const handeUnstaking = (item: FullToken) => {
     console.log(item);
 
     makeTransaction({
@@ -262,8 +268,8 @@ function StakedItems({ account }: ItemsProps) {
   };
 
   const nodes = collection.data
-    .map((item: Item) => {
-      if (item.staked === 0) {
+    .map((item: FullToken) => {
+      if (item.staking === 0) {
         return null;
       }
       return (
@@ -342,7 +348,7 @@ export default function Staking() {
             Please connect your wallet!
             <br />
             <br />
-            <Button text="Connect Wallet" onClick={window.connect} />
+            <Button text="Connect Wallet" important onClick={window.connect} />
           </>
         )}
       </Wrapper>
