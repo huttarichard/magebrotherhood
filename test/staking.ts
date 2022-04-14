@@ -178,7 +178,7 @@ describe("Staking contract", function () {
     expect((await estimateRewards(2 * periods)).amount).to.be.eq(rewardPerPeriods(periods));
     //TODO: either bug or by design (not documented)
     // it was unstaked for the past 10 periods, estimating periods for last 10 periods should therefore be 0
-    // see line 155-157 that it returns only rewards for specified periods, not total claimable
+    // see line 159-161 that it returns only rewards for specified periods, not total claimable
     // UNCOMMENT LINE BELOW TO SEE THE ISSUE
     // expect((await estimateRewards(periods)).amount).to.be.eq(0);
 
