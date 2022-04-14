@@ -16,7 +16,7 @@ import {
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
 
-const defaultToken: Playables.TokenStruct = {
+export const defaultToken: Playables.TokenStruct = {
   uri: "https://example.com/token.png",
   createdAt: 0,
   launchedAt: 0,
@@ -27,7 +27,7 @@ const defaultToken: Playables.TokenStruct = {
   royalty: ethers.Wallet.createRandom().address,
 };
 
-const addToken = async (
+export const addToken = async (
   playables,
   id: number,
   uri: string = defaultToken.uri,
