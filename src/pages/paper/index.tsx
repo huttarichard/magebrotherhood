@@ -2,11 +2,10 @@ import styled from "@emotion/styled";
 import { faDownload } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
+import Layout from "components/Layout/Layout";
 import Head from "next/head";
 import Link from "next/link";
 import { FormattedMessage } from "react-intl";
-
-import Layout from "../components/Layout/Layout";
 
 const Main = styled.div`
   display: flex;

@@ -1,3 +1,4 @@
+import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import Layout from "components/Layout/Layout";
 import Button from "components/ui/Button";
@@ -8,10 +9,17 @@ import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { useWindowSize } from "react-use";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ height: number }>`
   position: relative;
-  height: 100vh;
+  height: ${(props) => props.height}px;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    height: 100%;
+    max-height: 100vh;
+  }
 
   .Hotspot {
   }
@@ -95,46 +103,43 @@ const Card = styled.div`
   }
 `;
 
-export function View({ item }: { item: FullToken }) {
+interface ViewProps {
+  item: FullToken;
+  reference: HTMLDivElement | null;
+}
+
+export function View({ item, reference }: ViewProps) {
   const { mint } = useWeb3TransactionPresenter();
-  console.log(item);
 
   return (
     <>
+      <a rel="ar" href={`${window.location.origin}/api/tokens/${item.id}/usdz`}>
+        Model
+      </a>
       <ModelViewerDynamic
         style={{ width: "100%", height: "100%" }}
-        src={item.models.glb}
-        ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
+        // src={item.models.glb}
+        // src="/models/black_knight.glb"
+        ios-src={`/api/tokens/${item.id}/usdz`}
         environment-image="neutral"
         skybox-image="/assets/studio.hdr"
         ar-modes="webxr scene-viewer quick-look"
-        max-camera-orbit="Infinity 90deg auto"
-        min-field-of-view="80deg"
-        shadow-intensity="1"
-        exposure="1.5"
+        max-camera-orbit="Infinity 90deg 0"
+        camera-orbit="0deg 75deg 2m"
+        min-field-of-view="0deg"
         camera-controls
         autoplay
         ar
         bounds="tight"
-        enable-pan
-      >
-        {/* <div
-              className="Hotspot"
-              slot="hotspot-1"
-              data-position="-0.32750255835575026m 1.388571179507904m 0.4491652455122156m"
-              data-normal="-0.2986048198879707m -0.4614395947503901m 0.8354092781004223m"
-              data-visibility-attribute="visible"
-            >
-              <div className="HotspotAnnotation">
-                <h1>{item.description}</h1>
-              </div>
-            </div> */}
-      </ModelViewerDynamic>
+        minimum-render-scale="1"
+        // enable-pan
+      />
       <Actions>
         <Link href="/tokens" passHref>
           <Button text="Close" />
         </Link>
       </Actions>
+
       {/* <Card>
         <b>{item.name}</b>
         <p>{item.description}</p>
@@ -169,6 +174,11 @@ export function View({ item }: { item: FullToken }) {
 export default function Studio() {
   const router = useRouter();
   const token = useToken(router.query.id as string, { metadata: true });
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [h, setH] = useState<number>(0);
+  const dimensions = useWindowSize();
+
+  useEffect(() => setH(dimensions.height - 60), [dimensions.height]);
 
   return (
     <>
@@ -177,7 +187,23 @@ export default function Studio() {
       </Head>
 
       <Layout>
-        <Wrapper>{token.loading ? <Spinner /> : <View item={token.data as FullToken} />}</Wrapper>
+        <Global
+          styles={css`
+            body,
+            html {
+              height: 100%;
+              width: 100%;
+              overflow: hidden;
+              position: fixed;
+              * {
+                user-select: none;
+              }
+            }
+          `}
+        ></Global>
+        <Wrapper ref={ref} height={h}>
+          {token.loading ? <Spinner /> : <View reference={ref.current} item={token.data as FullToken} />}
+        </Wrapper>
       </Layout>
     </>
   );

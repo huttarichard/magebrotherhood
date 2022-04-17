@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Typography } from "@mui/material";
 import { ItemExpanded, OpenseaBadge } from "components/Collection/List";
 import Layout from "components/Layout/Layout";
+import Button from "components/ui/Button";
 import Countdown from "components/ui/CountDown";
 import Paper from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
@@ -47,6 +48,7 @@ function Item({ item }: { item: FullToken }) {
       <ItemExpanded item={item}>
         <Countdown countDownDate={item.launchedAt} />
         <OpenseaBadge />
+        <Button onClick={() => router.push("/tokens/" + item.id)} text="3D Studio" />
         <a href="https://opensea.io/" title="Buy on OpenSea" target="_blank" rel="noreferrer"></a>
       </ItemExpanded>
     </Card>

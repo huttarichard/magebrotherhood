@@ -36,6 +36,7 @@ function MageBrotherHoodApp(props: Props) {
         <Head>
           <title>Mage Brotherhood - Homepage</title>
           <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
         </Head>
         <ThemeProvider>
           <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">

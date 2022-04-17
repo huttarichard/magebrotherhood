@@ -1,22 +1,9 @@
 import { Global } from "@emotion/react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import { grey } from "@mui/material/colors";
-import Skeleton from "@mui/material/Skeleton";
 import { styled } from "@mui/material/styles";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import Typography from "@mui/material/Typography";
 import * as React from "react";
-
-const drawerBleeding = 56;
-
-interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-}
 
 const Root = styled("div")(({ theme }) => ({
   height: "100%",
@@ -37,37 +24,42 @@ const Puller = styled(Box)(({ theme }) => ({
   left: "calc(50% - 15px)",
 }));
 
-export default function SwipeableEdgeDrawer(props: Props) {
-  const { window } = props;
-  const [open, setOpen] = React.useState(false);
+type Container = Element | (() => Element | null) | null;
+
+interface Props {
+  defaultOpen?: boolean;
+  edge: JSX.Element;
+  edgeSize: number;
+  container?: Container;
+}
+
+export default function SwipeableEdgeDrawer(props: React.PropsWithChildren<Props>) {
+  const { children, defaultOpen = false, edge, edgeSize = 0, container } = props;
+  const [open, setOpen] = React.useState(defaultOpen);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  // This is used only for the example
-  const container = window !== undefined ? () => window().document.body : undefined;
+  console.log(container);
 
   return (
     <Root>
       <Global
         styles={{
           ".MuiDrawer-root > .MuiPaper-root": {
-            height: `calc(50% - ${drawerBleeding}px)`,
+            height: `calc(50% - ${edgeSize}px)`,
             overflow: "visible",
           },
         }}
       />
-      <Box sx={{ textAlign: "center", pt: 1 }}>
-        <Button onClick={toggleDrawer(true)}>Open</Button>
-      </Box>
       <SwipeableDrawer
-        container={container}
+        container={() => document.body}
         anchor="bottom"
         open={open}
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
-        swipeAreaWidth={drawerBleeding}
+        swipeAreaWidth={150}
         disableSwipeToOpen={false}
         ModalProps={{
           keepMounted: true,
@@ -76,7 +68,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
         <StyledBox
           sx={{
             position: "absolute",
-            top: -drawerBleeding,
+            top: -edgeSize,
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
             visibility: "visible",
@@ -85,7 +77,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
           }}
         >
           <Puller />
-          <Typography sx={{ p: 2, color: "text.secondary" }}>51 results</Typography>
+          {edge}
         </StyledBox>
         <StyledBox
           sx={{
@@ -95,7 +87,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
             overflow: "auto",
           }}
         >
-          <Skeleton variant="rectangular" height="100%" />
+          {children}
         </StyledBox>
       </SwipeableDrawer>
     </Root>
