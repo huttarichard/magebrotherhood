@@ -13,7 +13,7 @@ import { useWeb3Wallet } from "hooks/useWeb3";
 import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
-import Head from "next/head";
+import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
@@ -239,9 +239,10 @@ export default function Affiliate() {
 
   return (
     <>
-      <Head>
-        <title>Mage Brotherhood - Homepage</title>
-      </Head>
+      <NextSeo
+        title="MageBrotherhood - Affiliate"
+        description="Ready to earn some Brotherhood Coin? Register for affiliate today."
+      />
 
       <Layout>
         <Main>

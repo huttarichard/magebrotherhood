@@ -3,8 +3,8 @@ import { default as MuiAccordion } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import Head from "next/head";
 import Link from "next/link";
+import { NextSeo } from "next-seo";
 import { FormattedMessage } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
@@ -64,9 +64,10 @@ const items = [
 export default function FAQ() {
   return (
     <>
-      <Head>
-        <title>Mage Brotherhood - Homepage</title>
-      </Head>
+      <NextSeo
+        title="MageBrotherhood - FAQ"
+        description="FAQ section with most common questions about MageBrotherhood. Join our discord community to get help and to get involved."
+      />
 
       <Layout>
         <Main>

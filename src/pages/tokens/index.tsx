@@ -6,8 +6,8 @@ import Countdown from "components/ui/CountDown";
 import Paper from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
 import { FullToken, useTokens } from "hooks/useTokens";
-import Head from "next/head";
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -56,9 +56,10 @@ export default function TokensIndex() {
 
   return (
     <>
-      <Head>
-        <title>Mage Brotherhood - Homepage</title>
-      </Head>
+      <NextSeo
+        title="MageBrotherhood - Tokens"
+        description="Explore collection of MageBrotherhood NFT tokens. Tokens are available on our site or Opensea. Every token listed will be available for staking."
+      />
 
       <Layout>
         <Wrapper>

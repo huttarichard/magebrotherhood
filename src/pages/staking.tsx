@@ -13,6 +13,7 @@ import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
+import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 
@@ -132,7 +133,7 @@ function UnstakedItems({ account }: ItemsProps) {
         return null;
       }
       return (
-        <ItemCompact item={item} key={item.id}>
+        <ItemCompact token={item} key={item.id}>
           <Grid container justifyContent="end" alignItems="center">
             <Grid item>
               <AmountSelector
@@ -273,7 +274,7 @@ function StakedItems({ account }: ItemsProps) {
         return null;
       }
       return (
-        <ItemCompact item={item} key={item.id}>
+        <ItemCompact token={item} key={item.id}>
           <Button
             text="Unstake"
             distorted
@@ -313,45 +314,52 @@ export default function Staking() {
   const window = useWeb3ConnectWindow();
 
   return (
-    <Layout>
-      <Wrapper>
-        <div className="head">
-          <Typography variant="h3">
-            <FormattedMessage defaultMessage="Staking" id="staking_page_title" />
-          </Typography>
+    <>
+      <NextSeo
+        title="MageBrotherhood - Staking"
+        description="Earn Brotherhood Coins by staking. Take your NFT and start staking today."
+      />
+
+      <Layout>
+        <Wrapper>
+          <div className="head">
+            <Typography variant="h3">
+              <FormattedMessage defaultMessage="Staking" id="staking_page_title" />
+            </Typography>
+            <br />
+            <Typography variant="body1">
+              <FormattedMessage
+                defaultMessage="Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long term investors and prevents cheating in game. More about staking in out"
+                id="staking_page_description"
+              />
+              &nbsp;
+              <Link href="/paper">
+                <a>
+                  <FormattedMessage defaultMessage="LitePaper" id="staking_page_description_link_text" />
+                </a>
+              </Link>
+              .
+            </Typography>
+          </div>
+
           <br />
-          <Typography variant="body1">
-            <FormattedMessage
-              defaultMessage="Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long term investors and prevents cheating in game. More about staking in out"
-              id="staking_page_description"
-            />
-            &nbsp;
-            <Link href="/paper">
-              <a>
-                <FormattedMessage defaultMessage="LitePaper" id="staking_page_description_link_text" />
-              </a>
-            </Link>
-            .
-          </Typography>
-        </div>
 
-        <br />
-
-        {web3.connected && account ? (
-          <>
-            <UnstakedItems account={account} />
-            <br />
-            <StakedItems account={account} />
-          </>
-        ) : (
-          <>
-            Please connect your wallet!
-            <br />
-            <br />
-            <Button text="Connect Wallet" important onClick={window.connect} />
-          </>
-        )}
-      </Wrapper>
-    </Layout>
+          {web3.connected && account ? (
+            <>
+              <UnstakedItems account={account} />
+              <br />
+              <StakedItems account={account} />
+            </>
+          ) : (
+            <>
+              Please connect your wallet!
+              <br />
+              <br />
+              <Button text="Connect Wallet" important onClick={window.connect} />
+            </>
+          )}
+        </Wrapper>
+      </Layout>
+    </>
   );
 }

@@ -18,7 +18,7 @@ import { useWeb3Wallet } from "hooks/useWeb3";
 import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
-import Head from "next/head";
+import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
 import { FormattedMessage, FormattedNumber, useIntl } from "react-intl";
 
@@ -287,9 +287,10 @@ export default function Wallet() {
 
   return (
     <>
-      <Head>
-        <title>Mage Brotherhood - Lite Paper</title>
-      </Head>
+      <NextSeo
+        title="MageBrotherhood - Wallet"
+        description="Transfer assets or send your coins. Connect your wallet and get started."
+      />
 
       <Layout>
         <Main>

@@ -29,7 +29,7 @@ export function isQuickLookSupported(): boolean {
   return supported;
 }
 
-export function launchIOSQuick(src: string, arParams: ArLaunchParams) {
+export function launchIOSQuick(src: string, arParams: ArLaunchParamsOptions) {
   const anchor = document.createElement("a");
   anchor.setAttribute("rel", "ar");
   anchor.appendChild(document.createElement("img"));
@@ -44,7 +44,7 @@ export function isSceneViewerSupported(): boolean {
   return isAndroid;
 }
 
-export function launchAndroidSceneViewer(src: string, arParams: ArLaunchParams) {
+export function launchAndroidSceneViewer(src: string, arParams: ArLaunchParamsOptions) {
   const location = window.location.toString();
   const locationUrl = new URL(location);
   const modelUrl = new URL(src, location);
@@ -79,7 +79,7 @@ export function launchAndroidSceneViewer(src: string, arParams: ArLaunchParams) 
 
   const undoHashChange = () => {
     if (self.location.hash === noArViewerSigil) {
-      arParams.error();
+      arParams.error?.();
       // The new history will be the current URL with a new hash.
       // Go back one step so that we reset to the expected URL.
       // NOTE(cdata): this should not invoke any browser-level navigation
