@@ -99,6 +99,7 @@ export async function fetchTokenMetadata(ipfs: IPFSHTTPClient, uri: string): Pro
     animationUrl: json.animation_url,
     models: json.models,
     attributes: attrsMapped,
+    // weight: json.
   };
 }
 

@@ -1,13 +1,11 @@
 import styled from "@emotion/styled";
 import { Typography } from "@mui/material";
-import { ItemExpanded, OpenseaBadge } from "components/Collection/List";
 import Layout from "components/Layout/Layout";
-import Button from "components/ui/Button";
+import { ItemExpanded } from "components/Tokens/List";
 import Countdown from "components/ui/CountDown";
 import Paper from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
 import { FullToken, useTokens } from "hooks/useTokens";
-import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -27,7 +25,7 @@ const Wrapper = styled.div`
 `;
 
 const Card = styled(Paper)`
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 `;
 
 interface Item {
@@ -41,21 +39,17 @@ interface Item {
 
 function Item({ item }: { item: FullToken }) {
   const router = useRouter();
-  const { mint } = useWeb3TransactionPresenter();
-  console.log(typeof item.launchedAt);
+
   return (
     <Card>
-      <ItemExpanded item={item}>
+      <ItemExpanded token={item}>
         <Countdown countDownDate={item.launchedAt} />
-        <OpenseaBadge />
-        <Button onClick={() => router.push("/tokens/" + item.id)} text="3D Studio" />
-        <a href="https://opensea.io/" title="Buy on OpenSea" target="_blank" rel="noreferrer"></a>
       </ItemExpanded>
     </Card>
   );
 }
 
-export default function CollectionsIndex() {
+export default function TokensIndex() {
   const tokens = useTokens({
     metadata: true,
   });
@@ -69,13 +63,15 @@ export default function CollectionsIndex() {
       <Layout>
         <Wrapper>
           <div className="head">
-            <Typography variant="h3">Genesis Collections</Typography>
+            <Typography variant="h3">MageBrotherhood Tokens</Typography>
             <br />
             <Typography variant="body1">Here...</Typography>
           </div>
           <br />
 
           {tokens.loading ? <Spinner /> : tokens.data.map((item) => <Item key={item.id} item={item}></Item>)}
+
+          <br />
         </Wrapper>
       </Layout>
     </>

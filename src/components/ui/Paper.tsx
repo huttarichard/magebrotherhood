@@ -14,7 +14,7 @@ const Paper = styled(MuiPaper, {
   ${(props) =>
     props.magical &&
     css`
-      border: 1px solid white;
+      border: 1px solid #ffffff69;
 
       &::before {
         content: "";

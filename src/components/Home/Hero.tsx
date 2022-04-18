@@ -282,7 +282,8 @@ export default function Hero() {
         <ModelViewerDynamic
           src="/models/black_knight.glb"
           ar
-          ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
+          // ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
+          ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight_2.usdz`}
           ar-modes="webxr scene-viewer quick-look"
           animating
           autoplay

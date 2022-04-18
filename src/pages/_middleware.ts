@@ -1,7 +1,7 @@
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 
 const auth: NextMiddleware = (req: NextRequest) => {
-  if (req.url.includes("/api/")) {
+  if (req.url.includes("/api/tokens")) {
     return NextResponse.next();
   }
   const basicAuth = req.headers.get("authorization");

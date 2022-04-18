@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Grid, NativeSelect, NativeSelectProps, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { ItemCompact } from "components/Collection/List";
+import { ItemCompact } from "components/Tokens/List";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
