@@ -1,80 +1,41 @@
-import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
-import Layout from "components/Layout/Layout";
-import { ItemExpanded } from "components/Tokens/List";
-import Countdown from "components/ui/CountDown";
-import Paper from "components/ui/Paper";
-import Spinner from "components/ui/Spinner";
-import { FullToken, useTokens } from "hooks/useTokens";
-import { useRouter } from "next/router";
-import { NextSeo } from "next-seo";
+import { Box } from "@mui/material";
+import { PageLayoutWithHead } from "components/Layout/Layout";
+import { Card } from "components/Tokens/Card";
+import { SpinnerBlock } from "components/ui/Spinner";
+import { useTokens } from "hooks/useTokens";
 
-const Wrapper = styled.div`
-  min-height: 100vh;
-  display: flex;
-  max-width: 800px;
-  margin: 0 auto;
-  flex-direction: column;
-  padding-top: 30px;
+const TITLE = "Tokens";
 
-  .head {
-    border-bottom: 1px solid #303030;
-    padding: 15px;
-    padding-bottom: 30px;
-  }
+const DESCRIPTION = `
+  Explore collection of MageBrotherhood NFT tokens. Starting with our genesis collection,
+  we are introducing Dark Knights. Collection of first well crafted characters from the MargeBrotherhood universe.
 `;
-
-const Card = styled(Paper)`
-  margin-bottom: 30px;
-`;
-
-interface Item {
-  id: string;
-  name: string;
-  title: string;
-  description: string;
-  image: string;
-  price: number;
-}
-
-function Item({ item }: { item: FullToken }) {
-  const router = useRouter();
-
-  return (
-    <Card>
-      <ItemExpanded token={item}>
-        <Countdown countDownDate={item.launchedAt} />
-      </ItemExpanded>
-    </Card>
-  );
-}
 
 export default function TokensIndex() {
   const tokens = useTokens({
     metadata: true,
   });
 
+  if (tokens.error) {
+    throw tokens.error;
+  }
+
+  if (tokens.loading) {
+    return (
+      <PageLayoutWithHead layout="FullpageColumn" title={TITLE} description={DESCRIPTION}>
+        <SpinnerBlock>Loading Tokens...</SpinnerBlock>
+      </PageLayoutWithHead>
+    );
+  }
+
+  const items = tokens.data.map((item) => (
+    <Card key={item.id} token={item} padding={1} ar mint studio description labels />
+  ));
+
   return (
-    <>
-      <NextSeo
-        title="MageBrotherhood - Tokens"
-        description="Explore collection of MageBrotherhood NFT tokens. Tokens are available on our site or Opensea. Every token listed will be available for staking."
-      />
-
-      <Layout>
-        <Wrapper>
-          <div className="head">
-            <Typography variant="h3">MageBrotherhood Tokens</Typography>
-            <br />
-            <Typography variant="body1">Here...</Typography>
-          </div>
-          <br />
-
-          {tokens.loading ? <Spinner /> : tokens.data.map((item) => <Item key={item.id} item={item}></Item>)}
-
-          <br />
-        </Wrapper>
-      </Layout>
-    </>
+    <PageLayoutWithHead layout="FullpageColumn" title={TITLE} description={DESCRIPTION}>
+      <Box padding={2}>{items}</Box>
+      <br />
+    </PageLayoutWithHead>
   );
 }

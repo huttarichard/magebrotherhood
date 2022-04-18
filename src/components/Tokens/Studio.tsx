@@ -117,12 +117,11 @@ export default function Studio({ token, children }: React.PropsWithChildren<Item
         src={token.models.glb}
         environment-image="neutral"
         skybox-image="/assets/studio.hdr"
-        max-camera-orbit="Infinity 90deg 0"
-        camera-orbit="0deg 75deg 2m"
+        max-camera-orbit="Infinity 90deg 5m"
+        camera-orbit="0deg 75deg 4m"
         min-field-of-view="0deg"
         camera-controls
         autoplay
-        ar
         bounds="tight"
         minimum-render-scale="1"
         // enable-pan

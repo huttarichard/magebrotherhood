@@ -3,10 +3,14 @@ import styled from "@emotion/styled";
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "components/ui/Button";
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 import { PropsWithChildren, useEffect } from "react";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 import Footer from "./Footer";
+import { Head } from "./Head";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useLayout } from "./store";
@@ -42,11 +46,38 @@ const ContentGrid = styled(Grid)`
   }
 `;
 
-export interface LayoutProps {
-  footer?: boolean;
+const FullpageColumn = styled.div`
+  min-height: 100vh;
+  display: flex;
+  max-width: 800px;
+  margin: 0 auto;
+  flex-direction: column;
+  padding-top: 30px;
+`;
+
+const ErrorBoundaryWrapper = styled(FullpageColumn)`
+  justify-content: center;
+  align-items: center;
+`;
+
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <ErrorBoundaryWrapper>
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <Button text="Try Again" onClick={resetErrorBoundary} />
+    </ErrorBoundaryWrapper>
+  );
 }
 
-export default function Layout({ footer = false, children }: PropsWithChildren<LayoutProps>) {
+type LayoutKind = "FullpageColumn";
+
+export interface LayoutProps {
+  footer?: boolean;
+  layout?: LayoutKind;
+}
+
+export default function Layout({ footer = false, layout, children }: PropsWithChildren<LayoutProps>) {
   const { menuOpened, closeMenu } = useLayout();
   const router = useRouter();
 
@@ -62,6 +93,17 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
       router.events.off("routeChangeStart", closeMenu);
     };
   }, []);
+
+  let content;
+
+  switch (layout) {
+    case "FullpageColumn":
+      content = <FullpageColumn>{children}</FullpageColumn>;
+      break;
+    default:
+      content = children;
+      break;
+  }
 
   return (
     <MainGrid container>
@@ -80,10 +122,33 @@ export default function Layout({ footer = false, children }: PropsWithChildren<L
       {isSmall && <Navbar />}
 
       <ContentGrid item>
-        {children}
+        <ErrorBoundary FallbackComponent={ErrorFallback}>{content}</ErrorBoundary>
 
         {footer && <Footer />}
       </ContentGrid>
     </MainGrid>
+  );
+}
+
+export interface PageLayoutProps extends PropsWithChildren<LayoutProps> {
+  title: string;
+  description: string;
+}
+
+export function PageLayout({ children, title, description, ...props }: PageLayoutProps) {
+  return (
+    <>
+      <NextSeo title={`MagebrotherHood - ${title}`} description={description} />
+      <Layout {...props}>{children}</Layout>
+    </>
+  );
+}
+
+export function PageLayoutWithHead(props: PageLayoutProps) {
+  return (
+    <PageLayout {...props}>
+      <Head headline={props.title} description={props.description} />
+      {props.children}
+    </PageLayout>
   );
 }

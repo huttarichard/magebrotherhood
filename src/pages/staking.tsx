@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Grid, NativeSelect, NativeSelectProps, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { ItemCompact } from "components/Tokens/List";
+import { CardSmall } from "components/Tokens/CardSmall";
 import Button from "components/ui/Button";
 import Spinner from "components/ui/Spinner";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
@@ -133,7 +133,7 @@ function UnstakedItems({ account }: ItemsProps) {
         return null;
       }
       return (
-        <ItemCompact token={item} key={item.id}>
+        <CardSmall token={item} key={item.id} description>
           <Grid container justifyContent="end" alignItems="center">
             <Grid item>
               <AmountSelector
@@ -155,7 +155,7 @@ function UnstakedItems({ account }: ItemsProps) {
               />
             </Grid>
           </Grid>
-        </ItemCompact>
+        </CardSmall>
       );
     })
     .filter((e) => e !== null);
@@ -274,7 +274,7 @@ function StakedItems({ account }: ItemsProps) {
         return null;
       }
       return (
-        <ItemCompact token={item} key={item.id}>
+        <CardSmall token={item} key={item.id} description>
           <Button
             text="Unstake"
             distorted
@@ -283,7 +283,7 @@ function StakedItems({ account }: ItemsProps) {
               handeUnstaking(item);
             }}
           />
-        </ItemCompact>
+        </CardSmall>
       );
     })
     .filter((e) => e !== null);

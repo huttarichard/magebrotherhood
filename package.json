@@ -62,6 +62,7 @@
     "react": "^17.0.2",
     "react-device-detect": "^2.1.2",
     "react-dom": "17.0.2",
+    "react-error-boundary": "^3.1.4",
     "react-ga": "^3.3.0",
     "react-intl": "^5.24.8",
     "react-lines-ellipsis": "^0.15.0",
