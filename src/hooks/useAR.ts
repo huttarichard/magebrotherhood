@@ -35,7 +35,9 @@ const UnsupportedHookOuput: HookOutput = {
 };
 
 export default function useAR(src: Models, arParams: ArLaunchParams) {
-  const quickLook = useARQuickLook(src.usdz, arParams);
+  const realityKit = src.usdz.includes(".reality");
+  const contentType = !realityKit ? "model/vnd.usdz+zip" : "model/vnd.reality";
+  const quickLook = useARQuickLook(src.usdz, contentType, arParams);
   const sceneViewer = useSceneViewer(src.glb, arParams);
 
   if (isQuickLookSupported()) {
@@ -49,7 +51,7 @@ export default function useAR(src: Models, arParams: ArLaunchParams) {
   return UnsupportedHookOuput;
 }
 
-export function useARQuickLook(src: string, arParams: ArLaunchParams): HookOutput {
+export function useARQuickLook(src: string, contentType: string, arParams: ArLaunchParams): HookOutput {
   const blob = useBlobDownload();
   const [error, setError] = useState<Error | null>(null);
   const [launching, setLaunching] = useState<boolean>(false);
@@ -58,7 +60,7 @@ export function useARQuickLook(src: string, arParams: ArLaunchParams): HookOutpu
   const launch = async () => {
     setLaunching(true);
     try {
-      const blobURL = await blob.download(src, "model/vnd.usdz+zip");
+      const blobURL = await blob.download(src, contentType);
       launchIOSQuick(blobURL, arParams);
     } catch (e) {
       setError(e);
