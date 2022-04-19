@@ -1,11 +1,11 @@
-import styled from "@emotion/styled";
 import { faHexagonVerticalNft } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BadgeButton, { BadgeButtonProps } from "components/ui/BadgeButton";
-import Modal from "components/ui/Modal";
 import { FullToken } from "hooks/useTokens";
 import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { useState } from "react";
+
+import MintModal from "./MintModal";
 
 // const PriceWrapper = styled.div`
 //   background: #e4e4e4;
@@ -39,18 +39,6 @@ interface ButtonProps extends Omit<BadgeButtonProps, "icon"> {
   token: FullToken;
 }
 
-const Code = styled.div`
-  pre {
-    max-width: 600px;
-    overflow-y: scroll;
-    font-size: 15px;
-  }
-
-  h1 {
-    margin-top: 10px;
-  }
-`;
-
 export default function MintButton({ token, ...props }: ButtonProps) {
   const { mint } = useWeb3TransactionPresenter();
   const [open, setOpen] = useState<boolean>(false);
@@ -72,12 +60,15 @@ export default function MintButton({ token, ...props }: ButtonProps) {
         Mint NFT
       </BadgeButton>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Code>
-          <h1>IPFS Data</h1>
-          <pre>{JSON.stringify(token, null, 2)}</pre>
-        </Code>
-      </Modal>
+      <MintModal
+        onSubmit={(amount: number) => {
+          setOpen(false);
+          mint(token.id, amount);
+        }}
+        token={token}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </>
   );
 }
