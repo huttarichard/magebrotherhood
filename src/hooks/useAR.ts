@@ -34,10 +34,15 @@ const UnsupportedHookOuput: HookOutput = {
   launch: () => Promise.reject(UNSUPPORTED),
 };
 
+function prefixURL(url: string) {
+  if (url.startsWith("/")) {
+    return `${window.location.origin}${url}`;
+  }
+  return url;
+}
+
 export default function useAR(src: Models, arParams: ArLaunchParams) {
-  const realityKit = src.usdz.includes(".reality");
-  const contentType = !realityKit ? "model/vnd.usdz+zip" : "model/vnd.reality";
-  const quickLook = useARQuickLook(src.usdz, contentType, arParams);
+  const quickLook = useARQuickLook(src.usdz, arParams);
   const sceneViewer = useSceneViewer(src.glb, arParams);
 
   if (isQuickLookSupported()) {
@@ -51,7 +56,7 @@ export default function useAR(src: Models, arParams: ArLaunchParams) {
   return UnsupportedHookOuput;
 }
 
-export function useARQuickLook(src: string, contentType: string, arParams: ArLaunchParams): HookOutput {
+export function useARQuickLook(src: string, arParams: ArLaunchParams): HookOutput {
   const blob = useBlobDownload();
   const [error, setError] = useState<Error | null>(null);
   const [launching, setLaunching] = useState<boolean>(false);
@@ -59,8 +64,14 @@ export function useARQuickLook(src: string, contentType: string, arParams: ArLau
 
   const launch = async () => {
     setLaunching(true);
+    const realityKit = src.includes(".reality");
+    if (realityKit) {
+      launchIOSQuick(src, arParams);
+      setLaunching(false);
+      return;
+    }
     try {
-      const blobURL = await blob.download(src, contentType);
+      const blobURL = await blob.download(prefixURL(src), "model/vnd.usdz+zip");
       launchIOSQuick(blobURL, arParams);
     } catch (e) {
       setError(e);
@@ -89,7 +100,7 @@ export function useSceneViewer(src: string, arParams: ArLaunchParams): HookOutpu
     const params: ArLaunchParamsOptions = arParams;
     params.error = unsupported;
     if (supported) {
-      launchAndroidSceneViewer(src, arParams);
+      launchAndroidSceneViewer(prefixURL(src), arParams);
       setLaunching(false);
     } else {
       unsupported();

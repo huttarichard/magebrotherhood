@@ -33,17 +33,17 @@ function ARButton({ models, ...props }: ArQuickLookProps) {
     resizable: true,
   });
 
-  if (!supported) {
-    return (
-      <ARBadgeButton {...props} folded={true} disabled>
-        Device not compatible
-      </ARBadgeButton>
-    );
-  }
+  // if (!supported) {
+  //   return (
+  //     <ARBadgeButton {...props} folded={true} disabled>
+  //       Device not compatible
+  //     </ARBadgeButton>
+  //   );
+  // }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
 
   if (launching) {
     return (

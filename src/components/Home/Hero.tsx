@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Grid, NoSsr } from "@mui/material";
+import { Grid } from "@mui/material";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
 import { ARButton } from "components/Tokens/Buttons";
 import { useBHCUSDPrice } from "hooks/useMarketData";
 import { useTracking } from "hooks/useTracking";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
 import ModelViewerDynamic from "../ui/ModelViewerDynamic";
@@ -237,16 +237,6 @@ function SocialLinks() {
 }
 
 export default function Hero() {
-  // camera-target="-0.6m 1.6m -1.2m"
-  const [models, setModels] = useState<any>();
-
-  useEffect(() => {
-    setModels({
-      glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
-      usdz: window.location.origin + "/models/red_knight.reality",
-    });
-  }, []);
-
   return (
     <Wrapper>
       <Background></Background>
@@ -281,9 +271,13 @@ export default function Hero() {
           </Subheadline>
 
           <div>
-            <NoSsr>
-              <ARButton folded={false} models={models} />
-            </NoSsr>
+            <ARButton
+              folded={false}
+              models={{
+                glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
+                usdz: "/models/red_knight.reality",
+              }}
+            />
           </div>
 
           <BHCPrice />
