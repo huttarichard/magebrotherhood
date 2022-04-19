@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
 import knight from "assets/images/knight.png";
-import Button from "components/ui/Button";
+import { useTokens } from "hooks/useTokens";
 import Image from "next/image";
 import { FormattedMessage } from "react-intl";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
@@ -44,10 +44,6 @@ const Header = styled.div`
     }
   }
 
-  .actions {
-    display: none;
-  }
-
   @media (min-width: 992px) {
     padding: 0;
     display: flex;
@@ -60,11 +56,6 @@ const Header = styled.div`
       p {
         max-width: 1000px;
       }
-    }
-
-    .actions {
-      display: block;
-      padding-right: 2rem;
     }
   }
 
@@ -167,6 +158,8 @@ const sliderConfig: SwiperProps = {
 };
 
 export default function Collection() {
+  const tokens = useTokens({ metadata: true });
+
   return (
     <Wrapper>
       <Header>
@@ -181,28 +174,25 @@ export default function Collection() {
             tagName="p"
           />
         </div>
-        <div className="actions">
-          <Button text="Go to marketplace" />
-        </div>
       </Header>
       <StyledSlider>
         <Swiper {...sliderConfig}>
-          {slides.map((slide) => {
+          {tokens.data.map((token) => {
             return (
-              <SwiperSlide key={slide.title}>
+              <SwiperSlide key={token.id}>
                 <StyledSlide>
                   <div className="img-wrapper">
                     <Image
                       loading="lazy"
-                      src={slide.img}
+                      src={token.image}
                       layout="fill"
                       objectFit="contain"
                       objectPosition="left bottom"
-                      alt={slide.title}
+                      alt={token.name}
                     />
                   </div>
-                  <h3>{slide.title}</h3>
-                  <p>{slide.text}</p>
+                  <h3>{token.name}</h3>
+                  <p>{token.description.slice(0, 50)}</p>
                 </StyledSlide>
               </SwiperSlide>
             );

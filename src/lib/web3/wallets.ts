@@ -62,6 +62,22 @@ export const METAMASK: IProviderInfo = {
   },
 };
 
+export const TRUST: IProviderInfo = {
+  id: "injected",
+  name: "Trust",
+  logo: TrustLogo,
+  type: "injected",
+  check: "isTrust",
+};
+
+export const COINBASE: IProviderInfo = {
+  id: "injected",
+  name: "Coinbase",
+  logo: CoinbaseLogo,
+  type: "injected",
+  check: "isCoinbaseWallet",
+};
+
 export const WALLETCONNECT: IProviderInfo = {
   id: "walletconnect",
   name: "WalletConnect",
@@ -196,22 +212,6 @@ export const OPERA: IProviderInfo = {
   logo: OperaLogo,
   type: "injected",
   check: "isOpera",
-};
-
-export const TRUST: IProviderInfo = {
-  id: "injected",
-  name: "Trust",
-  logo: TrustLogo,
-  type: "injected",
-  check: "isTrust",
-};
-
-export const COINBASE: IProviderInfo = {
-  id: "injected",
-  name: "Coinbase",
-  logo: CoinbaseLogo,
-  type: "injected",
-  check: "isToshi",
 };
 
 export const CIPHER: IProviderInfo = {

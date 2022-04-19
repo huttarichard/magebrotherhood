@@ -5,8 +5,10 @@ import { Grid } from "@mui/material";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
 import { ARButton } from "components/Tokens/Buttons";
+import Button from "components/ui/Button";
 import { useBHCUSDPrice } from "hooks/useMarketData";
 import { useTracking } from "hooks/useTracking";
+import { useRouter } from "next/router";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
@@ -15,7 +17,7 @@ import ModelViewerDynamic from "../ui/ModelViewerDynamic";
 const Wrapper = styled.div`
   position: relative;
   height: calc(100vh - 60px);
-  min-height: 550px;
+  min-height: 772px;
 
   @supports (-webkit-touch-callout: none) {
     height: calc(100vh - 120px);
@@ -237,6 +239,8 @@ function SocialLinks() {
 }
 
 export default function Hero() {
+  const router = useRouter();
+
   return (
     <Wrapper>
       <Background></Background>
@@ -270,17 +274,19 @@ export default function Hero() {
             />
           </Subheadline>
 
-          <div>
-            <ARButton
-              folded={false}
-              models={{
-                glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
-                usdz: "/models/red_knight.reality",
-              }}
-            />
-          </div>
+          <Button text="Explore collections" distorted borders onClick={() => router.push("/tokens")} />
 
           <BHCPrice />
+        </Grid>
+
+        <Grid item xs={12} alignSelf="end">
+          <ARButton
+            folded={false}
+            models={{
+              glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
+              usdz: "/models/hab_en.reality",
+            }}
+          />
         </Grid>
       </Main>
 
