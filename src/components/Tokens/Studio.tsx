@@ -130,7 +130,7 @@ export default function Studio({ token, children }: React.PropsWithChildren<Item
       </ModelViewerDynamic>
 
       <ActionArea>
-        <ARButton className="button" folded inverse token={token} />
+        <ARButton className="button" folded inverse models={token.models} />
         <MetadataButton className="button" folded inverse token={token} />
         <MintButton className="button" folded inverse token={token} />
         <OpenseaButton className="button" folded inverse token={token} />

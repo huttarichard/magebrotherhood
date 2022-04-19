@@ -19,7 +19,7 @@ interface HookOutput {
   launch: () => Promise<void>;
 }
 
-type Models = {
+export type Models = {
   glb: string;
   usdz: string;
 };

@@ -1,6 +1,6 @@
 import BadgeButton, { BadgeButtonProps } from "components/ui/BadgeButton";
-import useAR from "hooks/useAR";
-import { FullToken } from "hooks/useTokens";
+import useAR, { Models } from "hooks/useAR";
+import dynamic from "next/dynamic";
 import React from "react";
 
 import ARQuickIcon from "./ARIcon";
@@ -24,11 +24,11 @@ export function ARBadgeButton({ children, ...props }: Omit<BadgeButtonProps, "ic
 }
 
 export interface ArQuickLookProps extends Omit<BadgeButtonProps, "icon"> {
-  token: FullToken;
+  models: Models;
 }
 
-export default function ARButton({ token, ...props }: ArQuickLookProps) {
-  const { error, launch, launching, progress, supported } = useAR(token.models, {
+function ARButton({ models, ...props }: ArQuickLookProps) {
+  const { error, launch, launching, progress, supported } = useAR(models, {
     link: "https://www.google.com",
     resizable: true,
   });
@@ -59,3 +59,5 @@ export default function ARButton({ token, ...props }: ArQuickLookProps) {
     </ARBadgeButton>
   );
 }
+
+export default dynamic(() => Promise.resolve(ARButton), { ssr: false });

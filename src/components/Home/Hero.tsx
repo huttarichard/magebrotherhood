@@ -1,8 +1,10 @@
 import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Grid } from "@mui/material";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
+import { ARButton } from "components/Tokens/Buttons";
 import { useBHCUSDPrice } from "hooks/useMarketData";
 import { useTracking } from "hooks/useTracking";
 import React from "react";
@@ -56,6 +58,7 @@ const Model = styled.div`
   position: absolute;
   left: 0;
   right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
 
@@ -64,238 +67,194 @@ const Model = styled.div`
     height: 100%;
   }
 
-  @media (min-width: 768px) {
-    left: auto;
-    /* width: 60vw; */
+  ${(props) => props.theme.breakpoints.only("xs")} {
+    height: 60vh;
   }
+`;
 
-  @media (min-width: 992px) {
-    top: 0;
-    /* width: 70%; */
-  }
+const Main = styled(Grid)`
+  position: absolute;
+  top: 100px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 100px);
+  padding: 20px;
+  color: ${({ theme }) => theme.text2};
+  align-items: flex-start;
 
-  @media (min-width: 1200px) {
-    /* top: 10%; */
-    /* bottom: -30%; */
-    /* width: 60%; */
-
-    model-viewer {
-    }
-  }
-
-  @media (min-width: 1600px) {
+  ${(props) => props.theme.breakpoints.up("md")} {
+    align-items: center;
+    padding: 40px;
+    height: calc(100%);
     top: 0;
   }
 `;
 
-const Main = styled.div`
-  position: absolute;
-  top: 0px;
-  right: 1rem;
-  bottom: 50px;
-  left: 1rem;
-  z-index: 9;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: ${({ theme }) => theme.text2};
+const Headline = styled.h1`
+  text-transform: uppercase;
+  font-style: italic;
+  font-size: 4rem;
+  margin: 0 0 2rem;
+  line-height: 1;
 
-  h1 {
+  span {
+    padding-right: 5px;
+    display: inline-block;
+    background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    font-size: 5rem;
+  }
+`;
+
+const Subheadline = styled.p`
+  margin: 0 0 2rem;
+  font-size: 1.3rem;
+  max-width: 75%;
+
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    font-size: 1.8rem;
+  }
+`;
+
+const BHCPriceWrapper = styled.div`
+  margin-top: 10px;
+
+  span {
+    position: relative;
+    left: 10px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-transform: uppercase;
-    font-style: italic;
-    max-width: 230px;
-    font-size: 47px;
-    margin: 0 0 2rem;
-    line-height: 1;
+  }
 
+  ${(props) => props.theme.breakpoints.up("md")} {
+    margin-top: 20px;
     span {
-      padding-right: 5px;
-      display: inline-block;
-      background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
     }
   }
+`;
 
-  p {
-    margin: 0 0 2rem;
-    max-width: 200px;
-    font-size: 20px;
-  }
+function BHCPrice() {
+  const price = useBHCUSDPrice();
+  if (!price)
+    return (
+      <BHCPriceWrapper>
+        BHC:
+        <span>...</span>
+      </BHCPriceWrapper>
+    );
+
+  return (
+    <BHCPriceWrapper>
+      BHC:
+      <span>
+        <FormattedNumber
+          style="currency"
+          currency="USD"
+          currencyDisplay="narrowSymbol"
+          unitDisplay="narrow"
+          value={price}
+          maximumFractionDigits={6}
+          minimumFractionDigits={2}
+        />
+      </span>
+    </BHCPriceWrapper>
+  );
+}
+
+const SocialLinksWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
 
   ul {
     list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
     display: flex;
+  }
 
-    li {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-right: 1rem;
+  li {
+    margin-right: 2rem;
 
-      span {
-        display: inline-block;
-        font-weight: 700;
-
-        &:first-of-type {
-          font-size: 42px;
-          background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        &:last-child {
-          text-transform: uppercase;
-        }
-      }
-
-      &:last-child {
-        margin-right: 0;
-      }
+    &:last-child {
+      margin-right: 0;
     }
   }
 
-  @media (min-width: 768px) {
-    top: 68px;
-    justify-content: center;
+  a {
+    display: block;
+    color: #fff;
 
-    h1 {
-      max-width: 320px;
-      font-size: 68px;
-      line-height: 0.9;
-
-      span {
-        padding-right: 10px;
-      }
-    }
-
-    p {
-      max-width: 350px;
-      font-size: 26px;
-    }
-
-    ul {
-      li {
-        margin-right: 2.5rem;
-
-        span {
-          &:first-of-type {
-            font-size: 54px;
-          }
-        }
-      }
-    }
-  }
-
-  @media (min-width: 992px) {
-    top: 0;
-  }
-
-  @media (min-width: 1200px) {
-    left: 3rem;
-
-    h1 {
-      font-size: 80px;
-      max-width: 550px;
-    }
-
-    p {
-      font-size: 28px;
-      max-width: 550px;
-      margin-bottom: 3rem;
-    }
-
-    ul {
-      li {
-        margin-right: 3rem;
-
-        span {
-          &:first-of-type {
-            font-size: 70px;
-          }
-
-          &:last-of-type {
-            font-size: 18px;
-          }
-        }
-      }
-    }
-  }
-
-  @media (min-width: 1700px) {
-    left: 4rem;
-
-    h1 {
-      max-width: 800px;
-    }
-
-    p {
-      max-width: 700px;
+    ${(props) => props.theme.breakpoints.only("xs")} {
     }
   }
 `;
 
-const Actions = styled.div`
-  display: none;
-  z-index: 99999;
-
-  @media (min-width: 992px) {
-    display: flex;
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-    }
-
-    li {
-      margin-right: 2rem;
-
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-
-    a {
-      display: block;
-      color: #fff;
-    }
-  }
-`;
-
-// const origin = typeof window !== "undefined" ? window?.location?.origin : "";
-
-export default function Hero() {
-  const price = useBHCUSDPrice();
+function SocialLinks() {
   const tracking = useTracking();
 
+  return (
+    <SocialLinksWrapper>
+      <ul>
+        <li>
+          <a
+            href="https://discord.gg/HgPQAHzp3Z"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Discord"
+            onClick={() => tracking.clickImportantButton()}
+          >
+            <FontAwesomeIcon icon={faDiscord} size={"2x"} />
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://twitter.com/MageBrotherhood"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Twitter"
+            onClick={() => tracking.clickImportantButton()}
+          >
+            <FontAwesomeIcon icon={faTwitter} size={"2x"} />
+          </a>
+        </li>
+      </ul>
+    </SocialLinksWrapper>
+  );
+}
+
+export default function Hero() {
+  // camera-target="-0.6m 1.6m -1.2m"
   return (
     <Wrapper>
       <Background></Background>
       <Model>
         <ModelViewerDynamic
           src="/models/black_knight.glb"
-          ar
-          // ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight.usdz#custom=https://magebrotherhood.com/mint.html`}
-          ios-src={`https://magebrotherhood.fra1.cdn.digitaloceanspaces.com/knight_2.usdz`}
-          ar-modes="webxr scene-viewer quick-look"
           animating
           autoplay
           camera-orbit="-7.436deg 107.8deg auto"
-          camera-target="-0.6m 1.5m -1m"
+          camera-target="-0.6m 1.6m -1.2m"
           environment-image="neutral"
           loading="eager"
         />
       </Model>
-      <Main>
-        <div>
-          <h1>
+      <Main container>
+        <Grid item xs={12} md={8}>
+          <Headline>
             <FormattedMessage
               defaultMessage="Play for victory, earn <span>rewards.</span>"
               values={{
@@ -303,67 +262,30 @@ export default function Hero() {
               }}
               id="home_hero_title"
             />
-          </h1>
-          <FormattedMessage
-            defaultMessage="NFT P2E game powered by blockchain enhanced by AR, managed by DAO."
-            tagName="p"
-            id="home_hero_subtitle"
-          />
+          </Headline>
 
-          <ul>
-            {/* <li>
-              <span>8K</span>
-              <span>NFT LEFT</span>
-            </li> */}
-            <li>
-              <span>
-                {price ? (
-                  <FormattedNumber
-                    style="currency"
-                    currency="USD"
-                    currencyDisplay="narrowSymbol"
-                    unitDisplay="narrow"
-                    value={price}
-                    maximumFractionDigits={6}
-                    minimumFractionDigits={2}
-                  />
-                ) : (
-                  "..."
-                )}
-              </span>
-              <span>
-                <FormattedMessage defaultMessage="BROTHERHOOD COIN" id="home_brotherhood_coin" />
-              </span>
-            </li>
-          </ul>
-        </div>
+          <Subheadline>
+            <FormattedMessage
+              defaultMessage="NFT P2E game powered by blockchain enhanced by AR, managed by DAO."
+              id="home_hero_subtitle"
+            />
+          </Subheadline>
+
+          <div>
+            <ARButton
+              folded={false}
+              models={{
+                glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
+                usdz: "https://magebrotherhood.infura-ipfs.io/ipfs/QmY5jWcy8ZXwQ2ot8B8e2cQEGknYKnkQ4JvhVcRQjTjb6J",
+              }}
+            />
+          </div>
+
+          <BHCPrice />
+        </Grid>
       </Main>
-      <Actions>
-        <ul>
-          <li>
-            <a
-              href="https://discord.gg/HgPQAHzp3Z"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Discord"
-              onClick={() => tracking.clickImportantButton()}
-            >
-              <FontAwesomeIcon icon={faDiscord} size={"2x"} />
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://twitter.com/MageBrotherhood"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-              onClick={() => tracking.clickImportantButton()}
-            >
-              <FontAwesomeIcon icon={faTwitter} size={"2x"} />
-            </a>
-          </li>
-        </ul>
-      </Actions>
+
+      <SocialLinks />
     </Wrapper>
   );
 }

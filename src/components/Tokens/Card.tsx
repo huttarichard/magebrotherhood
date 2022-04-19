@@ -161,7 +161,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
 
             {ar && (
               <ImageActionsTopLeft>
-                <ARButton small className="button" folded token={token} />
+                <ARButton small className="button" folded models={token.models} />
               </ImageActionsTopLeft>
             )}
 
