@@ -94,6 +94,12 @@ const Main = styled(Grid)`
   }
 `;
 
+const TextArea = styled(Grid)`
+  ${(props) => props.theme.breakpoints.up("md")} {
+    padding-top: 120px;
+  }
+`;
+
 const Headline = styled.h1`
   text-transform: uppercase;
   font-style: italic;
@@ -256,7 +262,7 @@ export default function Hero() {
         />
       </Model>
       <Main container>
-        <Grid item xs={12} md={8}>
+        <TextArea item xs={12} md={8}>
           <Headline>
             <FormattedMessage
               defaultMessage="Play for victory, earn <span>rewards.</span>"
@@ -274,17 +280,17 @@ export default function Hero() {
             />
           </Subheadline>
 
-          <Button text="Explore collections" distorted borders onClick={() => router.push("/tokens")} />
+          <Button text="Tokens" distorted borders onClick={() => router.push("/tokens")} />
 
           <BHCPrice />
-        </Grid>
+        </TextArea>
 
         <Grid item xs={12} alignSelf="end">
           <ARButton
             folded={false}
             models={{
               glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
-              usdz: "/models/hab_en.reality",
+              usdz: "/models/red_knight.reality",
             }}
           />
         </Grid>

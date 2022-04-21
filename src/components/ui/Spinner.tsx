@@ -6,7 +6,7 @@ import * as React from "react";
 // Inspired by the former Facebook spinners.
 export default function Spinner(props: CircularProgressProps) {
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "relative" }} component="div">
       <CircularProgress
         variant="determinate"
         sx={{

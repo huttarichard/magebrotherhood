@@ -34,7 +34,9 @@ export default function TokensIndex() {
 
   return (
     <PageLayoutWithHead layout="FullpageColumn" title={TITLE} description={DESCRIPTION}>
-      <Box padding={2}>{items}</Box>
+      <Box padding={2} component="div">
+        {items}
+      </Box>
       <br />
     </PageLayoutWithHead>
   );

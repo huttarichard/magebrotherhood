@@ -61,7 +61,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
 
   if (!error || tryagain) {
     return (
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%" }} component="div">
         <Typography variant="h5">Choose your wallet.</Typography>
         <br />
 

@@ -153,7 +153,7 @@ export function Content() {
   };
 
   return (
-    <Box sx={{ padding: 1 }}>
+    <Box sx={{ padding: 1 }} component="div">
       <Stepper activeStep={steps[step]} sx={{ mb: 4 }}>
         <MuiStep>
           <StepLabel error={false}>Connect Wallet</StepLabel>

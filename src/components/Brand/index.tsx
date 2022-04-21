@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import Logo from "./Logo";
+import Icon from "./Icon";
 
 interface BrandProps {
   block?: boolean;
@@ -54,7 +54,7 @@ const Wrapper = styled.div<BrandProps>`
 export default function Brand(props: BrandProps) {
   return (
     <Wrapper block={props.block}>
-      <Logo color="#fff" />
+      <Icon color="#fff" />
       <span>Mage Brotherhood</span>
     </Wrapper>
   );

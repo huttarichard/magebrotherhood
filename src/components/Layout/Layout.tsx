@@ -39,6 +39,7 @@ const ContentGrid = styled(Grid)`
   position: relative;
   z-index: 9;
   padding-top: 60px;
+  min-height: 100vh;
 
   ${({ theme }) => theme.breakpoints.up("lg")} {
     width: calc(100% - 340px);
@@ -114,7 +115,7 @@ export default function Layout({ footer = false, layout, children }: PropsWithCh
       )}
 
       {isSmall && (
-        <Drawer anchor="left" open={menuOpened} onClose={closeMenu}>
+        <Drawer PaperProps={{ elevation: 0 }} anchor="left" open={menuOpened} onClose={closeMenu}>
           <Sidebar closeIcon />
         </Drawer>
       )}
