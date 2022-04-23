@@ -9,10 +9,16 @@ export interface Props extends Omit<PrimitiveProps, "object"> {
 }
 
 export function Model({ glb, ...props }: Props) {
-  const { scene, animations } = useGLTF(glb);
+  const { scene, nodes, animations } = useGLTF(glb);
   const [mixer, setMixer] = useState<THREE.AnimationMixer>();
 
   useEffect(() => {
+    Object.values(nodes).forEach((node) => {
+      if (node.isMesh) {
+        // Set up shadows
+        node.receiveShadow = node.castShadow = true;
+      }
+    });
     if (!animations.length) {
       return;
     }

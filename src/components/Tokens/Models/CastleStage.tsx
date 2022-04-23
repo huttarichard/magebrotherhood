@@ -9,7 +9,7 @@ export default function CastleStage({ children }: React.PropsWithChildren<unknow
       <Stage environment={"night"} intensity={0.5} shadows position={[0, 1, 0]}>
         {children}
 
-        {/* <planeGeometry args={[30, 0]} /> */}
+        <planeGeometry args={[30, 0]} />
       </Stage>
 
       <mesh position={[0, 0, 0]}>
