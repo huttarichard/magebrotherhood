@@ -2,7 +2,7 @@ import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import Layout from "components/Layout/Layout";
 import Studio from "components/Tokens/Studio";
-import Spinner from "components/ui/Spinner";
+import { SpinnerBlock } from "components/ui/Spinner";
 import { FullToken, useToken } from "hooks/useTokens";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -48,7 +48,9 @@ export default function StudioPage() {
 
       <Layout>
         <Global styles={GlobalStyles}></Global>
-        <Wrapper height={h}>{token.loading ? <Spinner /> : <Studio token={token.data as FullToken} />}</Wrapper>
+        <Wrapper height={h}>
+          {token.loading ? <SpinnerBlock>Loading Studio...</SpinnerBlock> : <Studio token={token.data as FullToken} />}
+        </Wrapper>
       </Layout>
     </>
   );

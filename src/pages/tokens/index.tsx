@@ -23,7 +23,9 @@ export default function TokensIndex() {
   if (tokens.loading) {
     return (
       <PageLayoutWithHead layout="FullpageColumn" title={TITLE} description={DESCRIPTION}>
-        <SpinnerBlock style={{ minHeight: 100 }}>Loading Tokens...</SpinnerBlock>
+        <Box component="div" padding={4}>
+          <SpinnerBlock>Loading Tokens...</SpinnerBlock>
+        </Box>
       </PageLayoutWithHead>
     );
   }

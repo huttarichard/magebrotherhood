@@ -32,7 +32,7 @@ export const Image = styled(NextImage)`
 `;
 
 export const PaperCard = styled(Paper)`
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 `;
 
 const Content = styled(Grid)`
@@ -122,20 +122,11 @@ const Label = styled.div`
   opacity: 0.6;
 `;
 
-const ImageContainer = styled.div<{ size: number; rect: number }>`
+export const ImageContainer = styled.div<{ size: number }>`
   display: inherit;
   position: relative;
   height: ${(props) => props.size}px;
-  width: 100%;
-
-  @media screen and (min-width: 415px) {
-    width: ${(props) => props.size}px;
-  }
-
-  ${(props) => props.theme.breakpoints.up("sm")} {
-    width: ${(props) => props.size - props.rect}px;
-    height: ${(props) => props.size + props.rect}px;
-  }
+  width: ${(props) => props.size}px;
 `;
 
 export interface CardProps {
@@ -156,8 +147,16 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
     <PaperCard>
       <Grid container>
         <Grid item container sm="auto" alignItems="center">
-          <ImageContainer size={290} rect={20}>
-            <Image className="image" src={token.image} alt={token.name} priority layout="fill" />
+          <ImageContainer size={260}>
+            <Image
+              className="image"
+              src={token.image}
+              alt={token.name}
+              priority
+              width={260}
+              height={260}
+              layout="fill"
+            />
 
             {ar && (
               <ImageActionsTopLeft>

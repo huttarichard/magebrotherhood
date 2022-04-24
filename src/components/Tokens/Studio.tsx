@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { OrbitControls, Stats } from "@react-three/drei";
-import Spinner from "components/ui/Spinner";
+import { SpinnerBlock } from "components/ui/Spinner";
 import { FullToken } from "hooks/useTokens";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
@@ -41,7 +41,7 @@ const ActionArea = styled.div`
 export function Studio({ token, stats }: ItemProps) {
   return (
     <Wrapper>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<SpinnerBlock>Loading Studio...</SpinnerBlock>}>
         {stats && <Stats />}
         {/* <Canvas>
           <color attach="background" args={["#fff"]} />
