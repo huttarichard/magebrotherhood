@@ -20,6 +20,7 @@ const config = {
     domains: ["magebrotherhood.infura-ipfs.io"],
     formats: ["image/avif", "image/webp"],
   },
+  optimizeFonts: false,
   async headers() {
     return [
       {
