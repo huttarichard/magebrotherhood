@@ -161,7 +161,17 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
 
             {ar && (
               <ImageActionsTopLeft>
-                <ARButton small className="button" folded models={token.models} />
+                <ARButton
+                  small
+                  className="button"
+                  folded
+                  ar={{
+                    glb: `/models/tokens/${token.id}/model.glb`,
+                    usdz: `/models/tokens/${token.id}/model.usdz`,
+                    link: "https://magebrotherhood.com",
+                    resizable: true,
+                  }}
+                />
               </ImageActionsTopLeft>
             )}
 

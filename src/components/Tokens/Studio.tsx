@@ -53,6 +53,8 @@ export function Studio({ token, stats }: ItemProps) {
         {/* <Canvas shadows dpr={[1, 2]} camera={{ position: [-1, 3, 7], fov: 50 }}> */}
         <Canvas shadows>
           <ambientLight intensity={0.1} />
+          <ambientLight color={"#8d11db"} intensity={0.1} />
+
           <spotLight
             position={[3, 7, 7]}
             intensity={7}
@@ -107,7 +109,17 @@ export function Studio({ token, stats }: ItemProps) {
         </Canvas>
 
         <ActionArea>
-          <ARButton className="button" folded inverse models={token.models} />
+          <ARButton
+            className="button"
+            folded
+            inverse
+            ar={{
+              glb: token.models.glb,
+              usdz: token.models.usdz,
+              link: "",
+              resizable: true,
+            }}
+          />
           <MetadataButton className="button" folded inverse token={token} />
           <MintButton className="button" folded inverse token={token} />
           <OpenseaButton className="button" folded inverse token={token} />

@@ -1,5 +1,6 @@
 import BadgeButton, { BadgeButtonProps } from "components/ui/BadgeButton";
-import useAR, { Models } from "hooks/useAR";
+import useAR, { Params } from "hooks/useAR";
+import { ARMode } from "lib/ar";
 import dynamic from "next/dynamic";
 import React from "react";
 
@@ -24,16 +25,13 @@ export function ARBadgeButton({ children, ...props }: Omit<BadgeButtonProps, "ic
 }
 
 export interface ArQuickLookProps extends Omit<BadgeButtonProps, "icon"> {
-  models: Models;
+  ar: Params;
 }
 
-function ARButton({ models, ...props }: ArQuickLookProps) {
-  const { error, launch, launching, progress, supported } = useAR(models, {
-    link: "https://www.google.com",
-    resizable: true,
-  });
+function ARButton({ ar, ...props }: ArQuickLookProps) {
+  const { error, mode, launching, progress, launcher } = useAR(ar);
 
-  if (!supported) {
+  if (mode == ARMode.NONE) {
     return (
       <ARBadgeButton {...props} folded={true} disabled>
         Device not compatible
@@ -54,7 +52,7 @@ function ARButton({ models, ...props }: ArQuickLookProps) {
   }
 
   return (
-    <ARBadgeButton {...props} onClick={() => launch()}>
+    <ARBadgeButton {...props} onClick={() => launcher()}>
       View in AR
     </ARBadgeButton>
   );

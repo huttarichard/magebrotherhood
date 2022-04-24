@@ -6,6 +6,9 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const withTM = require("next-transpile-modules")(["three"]);
 
+/**
+ * @type {import('next').NextConfig}
+ */
 const config = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -16,6 +19,37 @@ const config = {
   images: {
     domains: ["modelviewer.dev", "magebrotherhood.infura-ipfs.io"],
     formats: ["image/avif", "image/webp"],
+  },
+  async headers() {
+    return [
+      {
+        source: "/models/tokens/:id/model.usdz",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "model/vnd.usdz+zip",
+          },
+        ],
+      },
+      {
+        source: "/models/*.reality",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "model/vnd.reality",
+          },
+        ],
+      },
+      {
+        source: "/models/tokens/:id/model.glb",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "model/gltf-binary",
+          },
+        ],
+      },
+    ];
   },
 };
 

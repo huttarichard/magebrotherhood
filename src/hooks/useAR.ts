@@ -2,6 +2,7 @@ import {
   ArLaunchParams,
   ArLaunchParamsOptions,
   ARMode,
+  ARModeKind,
   isQuickLookSupported,
   isSceneViewerSupported,
   launchAndroidSceneViewer,
@@ -9,103 +10,110 @@ import {
 } from "lib/ar";
 import { useEffect, useState } from "react";
 
-import { useBlobDownload } from "./useBlobDownload";
+import { downloadAsBlobURL } from "./useBlobDownload";
 
-interface HookOutput {
+interface ARState {
+  mode: ARModeKind;
   launching: boolean;
+  launcher: () => Promise<void>;
   progress: number;
   error: Error | null;
-  supported: boolean;
-  launch: () => Promise<void>;
 }
 
-export type Models = {
-  glb: string;
-  usdz: string;
-};
-
-const UNSUPPORTED = new Error("Scene viewer not supported on this device");
-
-const UnsupportedHookOuput: HookOutput = {
-  supported: false,
-  error: UNSUPPORTED,
-  launching: false,
-  progress: 0,
-  launch: () => Promise.reject(UNSUPPORTED),
-};
-
-function prefixURL(url: string) {
-  if (url.startsWith("/")) {
-    return `${window.location.origin}${url}`;
-  }
-  return url;
+export interface Params extends ArLaunchParams {
+  glb?: string;
+  usdz?: string;
+  reality?: string;
 }
 
-export default function useAR(src: Models, arParams: ArLaunchParams) {
-  const quickLook = useARQuickLook(src.usdz, arParams);
-  const sceneViewer = useSceneViewer(src.glb, arParams);
-
-  if (isQuickLookSupported()) {
-    return { mode: ARMode.QUICK_LOOK, ...quickLook };
-  }
-
-  if (isSceneViewerSupported()) {
-    return { mode: ARMode.SCENE_VIEWER, ...sceneViewer };
-  }
-
-  return UnsupportedHookOuput;
-}
-
-export function useARQuickLook(src: string, arParams: ArLaunchParams): HookOutput {
-  const blob = useBlobDownload();
-  const [error, setError] = useState<Error | null>(null);
-  const [launching, setLaunching] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
-
-  const launch = async () => {
-    setLaunching(true);
-    const realityKit = src.includes(".reality");
-    if (realityKit) {
-      launchIOSQuick(src, arParams);
-      setLaunching(false);
-      return;
-    }
-    try {
-      const blobURL = await blob.download(prefixURL(src), "model/vnd.usdz+zip");
-      launchIOSQuick(blobURL, arParams);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLaunching(false);
-    }
+export default function useAR(params: Params): ARState {
+  const arParams: ArLaunchParams = {
+    link: params.link,
+    resizable: params.resizable,
+    soundURL: params.soundURL,
   };
 
-  useEffect(() => setProgress(blob.progress), [blob.progress]);
-
-  return { launching, progress, error, supported: isQuickLookSupported(), launch };
-}
-
-export function useSceneViewer(src: string, arParams: ArLaunchParams): HookOutput {
-  const [error, setError] = useState<Error | null>(null);
-  const [supported, setSupported] = useState<boolean>(isSceneViewerSupported());
-  const [launching, setLaunching] = useState<boolean>(false);
+  const [state, set] = useState<ARState>({
+    mode: isQuickLookSupported() ? ARMode.QUICK_LOOK : ARMode.NONE,
+    launching: false,
+    launcher: () => Promise.reject(new Error("Device is not supported")),
+    progress: 0,
+    error: null,
+  });
 
   const unsupported = () => {
-    setSupported(false);
-    setError(new Error("Scene viewer not supported on this device"));
+    set({
+      ...state,
+      error: new Error("Scene viewer not supported on this device"),
+      mode: ARMode.NONE,
+    });
   };
 
-  const launch = async () => {
-    setLaunching(true);
-    const params: ArLaunchParamsOptions = arParams;
-    params.error = unsupported;
-    if (supported) {
-      launchAndroidSceneViewer(prefixURL(src), arParams);
-      setLaunching(false);
-    } else {
-      unsupported();
+  const launchReality = async () => {
+    set({ ...state, launching: true });
+    launchIOSQuick(params.reality as string, arParams);
+    set({ ...state, launching: false, progress: 100 });
+  };
+
+  const launchUSDZ = async () => {
+    set({ ...state, launching: true, progress: 0 });
+    try {
+      const blobURL = await downloadAsBlobURL(params.usdz as string, "model/vnd.usdz+zip", (p) => {
+        set({ ...state, progress: p });
+      });
+      launchIOSQuick(blobURL, arParams);
+    } catch (e) {
+      set({ ...state, error: e });
+    } finally {
+      set({ ...state, launching: false, progress: 100 });
     }
   };
 
-  return { launching, progress: 0, error, supported, launch };
+  const launchGLB = async () => {
+    set({ ...state, launching: true, progress: 0 });
+    const args: ArLaunchParamsOptions = arParams;
+    args.error = unsupported;
+    launchAndroidSceneViewer(params.glb as string, args);
+    set({ ...state, launching: false, progress: 100 });
+  };
+
+  useEffect(() => {
+    // Reality file, doesnt support blob urls
+    if (isQuickLookSupported() && params.reality) {
+      set({
+        ...state,
+        mode: ARMode.QUICK_LOOK,
+        launcher: launchReality,
+      });
+      return;
+    }
+
+    // USDZ file, similar to reality, supports blob urls
+    if (isQuickLookSupported() && params.usdz) {
+      set({
+        ...state,
+        mode: ARMode.QUICK_LOOK,
+        launcher: launchUSDZ,
+      });
+      return;
+    }
+
+    // GLB file, doesnt support blob urls
+    if (isSceneViewerSupported()) {
+      set({
+        ...state,
+        mode: ARMode.SCENE_VIEWER,
+        launcher: launchGLB,
+      });
+      return;
+    }
+
+    set({
+      ...state,
+      mode: ARMode.NONE,
+      error: new Error("QuickLook AR viewer not supported on this device"),
+    });
+  }, [params]);
+
+  return state;
 }

@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 
-import ModelViewerDynamic from "../ui/ModelViewerDynamic";
+import Character from "./Character";
 
 const Wrapper = styled.div`
   position: relative;
@@ -249,18 +249,12 @@ export default function Hero() {
 
   return (
     <Wrapper>
-      <Background></Background>
+      <Background />
+
       <Model>
-        <ModelViewerDynamic
-          src="/models/black_knight.glb"
-          animating
-          autoplay
-          camera-orbit="-7.436deg 107.8deg auto"
-          camera-target="-0.6m 1.6m -1.2m"
-          environment-image="neutral"
-          loading="eager"
-        />
+        <Character />
       </Model>
+
       <Main container>
         <TextArea item xs={12} md={8}>
           <Headline>
@@ -288,9 +282,12 @@ export default function Hero() {
         <Grid item xs={12} alignSelf="end">
           <ARButton
             folded={false}
-            models={{
-              glb: "https://magebrotherhood.infura-ipfs.io/ipfs/QmTgG7SD78qEYaiL9iw9JACciENoLUNN3FdNwfWrYdaVZN",
-              usdz: "/models/red_knight.reality",
+            ar={{
+              glb: "/models/tokens/1/model.glb",
+              usdz: "/models/tokens/1/model.usdz",
+              reality: "/models/welcome_mage.reality",
+              link: "https://magebrotherhood.com",
+              resizable: true,
             }}
           />
         </Grid>

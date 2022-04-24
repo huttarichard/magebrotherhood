@@ -4,16 +4,11 @@ import { PrimitiveProps } from "@react-three/fiber";
 import { useEffect } from "react";
 
 export default function Castle(props: Omit<PrimitiveProps, "object">) {
-  const gltf = useGLTF("/models/castle.glb");
+  const { scene } = useGLTF("/models/environments/castle.glb");
   useEffect(() => {
-    Object.values((gltf as any).nodes).forEach((node: any) => {
-      if (node.isMesh) {
-        // Set up shadows
-        node.receiveShadow = node.castShadow = true;
-      }
-    });
+    scene.traverse((obj) => (obj.receiveShadow = obj.castShadow = true));
   });
-  return <primitive {...props} object={gltf.scene} />;
+  return <primitive {...props} object={scene} />;
 }
 
-useGLTF.preload("/models/castle.glb");
+useGLTF.preload("/models/environments/castle.glb");
