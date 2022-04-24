@@ -39,6 +39,7 @@ export function Model({ glb, ...props }: Props) {
 export default function Character() {
   const large = useMediaQuery("(max-width: 1350px)");
   const medium = useMediaQuery("(max-width: 800px)");
+  const small = useMediaQuery("(max-width: 500px)");
 
   const settings = {
     modelPosition: [1.4, 0, 1],
@@ -52,7 +53,12 @@ export default function Character() {
 
   if (medium) {
     settings.modelPosition = [1, 0, 1];
-    settings.scale = 3.5;
+    settings.scale = 4.5;
+  }
+
+  if (small) {
+    settings.modelPosition = [1, 0, 1];
+    settings.scale = 5;
   }
 
   return (
