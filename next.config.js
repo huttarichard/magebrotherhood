@@ -17,7 +17,7 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["modelviewer.dev", "magebrotherhood.infura-ipfs.io"],
+    domains: ["magebrotherhood.infura-ipfs.io"],
     formats: ["image/avif", "image/webp"],
   },
   async headers() {
@@ -32,7 +32,7 @@ const config = {
         ],
       },
       {
-        source: "/models/*.reality",
+        source: "/models/welcome_mage.reality",
         headers: [
           {
             key: "Content-Type",

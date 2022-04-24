@@ -8,11 +8,10 @@ import { ARButton } from "components/Tokens/Buttons";
 import Button from "components/ui/Button";
 import { useBHCUSDPrice } from "hooks/useMarketData";
 import { useTracking } from "hooks/useTracking";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
 import { FormattedMessage, FormattedNumber } from "react-intl";
-
-import Character from "./Character";
 
 const Wrapper = styled.div`
   position: relative;
@@ -243,6 +242,10 @@ function SocialLinks() {
     </SocialLinksWrapper>
   );
 }
+
+const Character = dynamic(() => import("./Character"), {
+  ssr: false,
+});
 
 export default function Hero() {
   const router = useRouter();

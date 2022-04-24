@@ -2,11 +2,10 @@ import { useMediaQuery } from "@mui/material";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { PrimitiveProps, useFrame } from "@react-three/fiber";
-import Spinner from "components/ui/Spinner";
-import dynamic from "next/dynamic";
+import { SpinnerBlock } from "components/ui/Spinner";
 import { Suspense } from "react";
 import { useEffect, useState } from "react";
-import * as THREE from "three";
+import { AnimationMixer } from "three/src/animation/AnimationMixer";
 
 export interface Props extends Omit<PrimitiveProps, "object"> {
   glb: string;
@@ -14,7 +13,7 @@ export interface Props extends Omit<PrimitiveProps, "object"> {
 
 export function Model({ glb, ...props }: Props) {
   const { scene, animations } = useGLTF(glb);
-  const [mixer, setMixer] = useState<THREE.AnimationMixer>();
+  const [mixer, setMixer] = useState<AnimationMixer>();
 
   useEffect(() => {
     scene.traverse((obj) => (obj.receiveShadow = obj.castShadow = true));
@@ -22,7 +21,7 @@ export function Model({ glb, ...props }: Props) {
     if (!animations.length) {
       return;
     }
-    const mixer = new THREE.AnimationMixer(scene);
+    const mixer = new AnimationMixer(scene);
     setMixer(mixer);
     animations.forEach((clip) => {
       const action = mixer.clipAction(clip);
@@ -37,7 +36,7 @@ export function Model({ glb, ...props }: Props) {
   return <primitive object={scene} {...props} />;
 }
 
-export function Character() {
+export default function Character() {
   const large = useMediaQuery("(max-width: 1350px)");
   const medium = useMediaQuery("(max-width: 800px)");
 
@@ -57,7 +56,7 @@ export function Character() {
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <Suspense fallback={<SpinnerBlock />}>
       <Canvas
         shadows
         camera={{
@@ -86,7 +85,3 @@ export function Character() {
     </Suspense>
   );
 }
-
-export default dynamic(() => Promise.resolve(Character), {
-  ssr: false,
-});

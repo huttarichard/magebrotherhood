@@ -3,6 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { PrimitiveProps, useFrame } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import * as THREE from "three";
+import { AnimationMixer } from "three/src/animation/AnimationMixer";
 
 export interface Props extends Omit<PrimitiveProps, "object"> {
   glb: string;
@@ -18,7 +19,7 @@ export function Model({ glb, ...props }: Props) {
     if (!animations.length) {
       return;
     }
-    const mixer = new THREE.AnimationMixer(scene);
+    const mixer = new AnimationMixer(scene);
     setMixer(mixer);
     animations.forEach((clip) => {
       const action = mixer.clipAction(clip);
