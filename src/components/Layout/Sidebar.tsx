@@ -63,11 +63,13 @@ const List = styled.ul`
 const ListItem = styled.li`
   display: flex;
   border-bottom: 1px solid #cfcfcf29;
+  cursor: pointer;
 
   a {
     display: flex;
     align-items: center;
     text-decoration: none;
+    width: 100%;
 
     svg {
       display: inline-block;
@@ -176,18 +178,18 @@ function Item({ icon, name, link, soon = false }: ItemProps) {
     } else {
       return <></>;
     }
-  } else {
-    return (
-      <ListItem>
-        <Link href={link as string}>
-          <a>
-            <FontAwesomeIcon icon={icon} />
-            <span>{name}</span>
-          </a>
-        </Link>
-      </ListItem>
-    );
   }
+
+  return (
+    <Link href={link as string} passHref>
+      <ListItem>
+        <a>
+          <FontAwesomeIcon icon={icon} />
+          <span>{name}</span>
+        </a>
+      </ListItem>
+    </Link>
+  );
 }
 
 export interface SidebarProps {

@@ -52,13 +52,13 @@ export default function Character() {
   }
 
   if (medium) {
-    settings.modelPosition = [1, 0, 1];
-    settings.scale = 4.5;
+    settings.modelPosition = [0.8, 0, 1];
+    settings.scale = 4;
   }
 
   if (small) {
-    settings.modelPosition = [1, 0, 1];
-    settings.scale = 5;
+    settings.modelPosition = [0.6, 0, 1];
+    settings.scale = 3;
   }
 
   return (

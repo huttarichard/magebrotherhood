@@ -18,10 +18,6 @@ const Wrapper = styled.div`
   height: calc(100vh - 60px);
   min-height: 772px;
 
-  @supports (-webkit-touch-callout: none) {
-    height: calc(100vh - 120px);
-  }
-
   ${(props) => props.theme.breakpoints.up("lg")} {
     height: 100%;
     max-height: 100vh;
@@ -61,16 +57,7 @@ const Model = styled.div`
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 100%;
-
-  model-viewer {
-    width: 100%;
-    height: 100%;
-  }
-
-  ${(props) => props.theme.breakpoints.only("xs")} {
-    height: 60vh;
-  }
+  height: calc(100% + 140px);
 `;
 
 const Main = styled(Grid)`
@@ -88,7 +75,7 @@ const Main = styled(Grid)`
   ${(props) => props.theme.breakpoints.up("md")} {
     align-items: center;
     padding: 40px;
-    height: calc(100%);
+    height: 100%;
     top: 0;
   }
 `;
@@ -116,6 +103,10 @@ const Headline = styled.h1`
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     font-size: 5rem;
+  }
+
+  @media screen and (max-width: 800px) {
+    font-size: 3.5rem;
   }
 `;
 
@@ -286,8 +277,8 @@ export default function Hero() {
           <ARButton
             folded={false}
             ar={{
-              glb: "/models/tokens/1/model.glb",
-              usdz: "/models/tokens/1/model.usdz",
+              glb: "/models/tokens/2/model.glb",
+              usdz: "/models/tokens/2/model.usdz",
               reality: "/models/welcome_mage.reality",
               link: "https://magebrotherhood.com",
               resizable: true,
