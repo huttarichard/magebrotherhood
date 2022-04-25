@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import Head from "next/head";
+import { PageLayout } from "components/Layout/Layout";
 
 const Main = styled.div`
   max-width: 800px;
@@ -19,13 +19,28 @@ const Break = styled.br`
   break-after: page;
 `;
 
-export default function FormalPaper() {
-  return (
-    <>
-      <Head>
-        <title>Mage Brotherhood - Lite Paper</title>
-      </Head>
+export default function SwapPaperFormalPage() {
+  {
+    /* we need to describe the vision of creating standart */
+  }
+  {
+    /* we need to explain why metavaerse */
+  }
+  {
+    /* we need to explain value of the coin */
+  }
+  {
+    /* we need to explain dao */
+  }
+  {
+    /* we need to explain no scam */
+  }
 
+  return (
+    <PageLayout
+      title="Formal Litepaper"
+      description="Understand in-depth our economy and our ecosystem. 20 min reading."
+    >
       <Main>
         <h1>MageBrotherhood</h1>
         <p>
@@ -390,6 +405,6 @@ export default function FormalPaper() {
           certified adviser.
         </p>
       </Main>
-    </>
+    </PageLayout>
   );
 }

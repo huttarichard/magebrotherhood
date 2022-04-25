@@ -7,7 +7,7 @@ import Polygon from "components/Home/Polygon";
 import Roadmap from "components/Home/Roadmap";
 import Layout from "components/Layout/Layout";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
       {/* add raising coin

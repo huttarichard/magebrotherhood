@@ -11,7 +11,7 @@ const DESCRIPTION = `
   we are introducing Dark Knights. Collection of first well crafted characters from the MargeBrotherhood universe.
 `;
 
-export default function TokensIndex() {
+export default function TokensIndexPage() {
   const tokens = useTokens({
     metadata: true,
   });

@@ -3,7 +3,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Layout from "components/Layout/Layout";
+import { PageLayout } from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
 import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
@@ -13,7 +13,6 @@ import { useWeb3Wallet } from "hooks/useWeb3";
 import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
-import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
 
 const Main = styled.div`
@@ -176,7 +175,7 @@ function CumputedRewards() {
   );
 }
 
-export default function Affiliate() {
+export default function AffiliatePage() {
   const web3 = useWeb3Wallet();
   const window = useWeb3ConnectWindow();
 
@@ -216,71 +215,67 @@ export default function Affiliate() {
   });
 
   return (
-    <>
-      <NextSeo
-        title="MageBrotherhood - Affiliate"
-        description="Ready to earn some Brotherhood Coin? Register for affiliate today."
-      />
+    <PageLayout
+      title="MageBrotherhood - Affiliate"
+      description="Ready to earn some Brotherhood Coin? Register for affiliate today."
+    >
+      <Main>
+        <div className="head">
+          <Typography variant="h3">Affiliate</Typography>
+          <br />
+          <Typography variant="body1">
+            Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing
+            allows to reward you for influencing and your community by discounting our services.
+          </Typography>
+          <br />
+          <Typography variant="body1">
+            Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward varies
+            depending on price of ethereums gas, but you can expect some nice gains! Register code below and start
+            earning.
+          </Typography>
+        </div>
 
-      <Layout>
-        <Main>
-          <div className="head">
-            <Typography variant="h3">Affiliate</Typography>
-            <br />
-            <Typography variant="body1">
-              Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing
-              allows to reward you for influencing and your community by discounting our services.
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward
-              varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and
-              start earning.
-            </Typography>
-          </div>
+        <br />
+        <CumputedRewards />
+
+        <br />
+        <CardWrapper>
+          <CardHeader>
+            <Typography variant="h5">Register</Typography>
+          </CardHeader>
 
           <br />
-          <CumputedRewards />
 
-          <br />
-          <CardWrapper>
-            <CardHeader>
-              <Typography variant="h5">Register</Typography>
-            </CardHeader>
-
+          <form onSubmit={formik.handleSubmit}>
+            <TextField
+              fullWidth
+              name="code"
+              label="CODE"
+              helperText="For example ADAM123"
+              value={formik.values.code}
+              onChange={formik.handleChange}
+              error={formik.touched.code && Boolean(formik.errors.code)}
+            />
             <br />
+            <br />
+            <TextField
+              fullWidth
+              name="nickname"
+              label="@nickname"
+              helperText="twitter:@magebrotherhood"
+              value={formik.values.nickname}
+              onChange={formik.handleChange}
+              error={formik.touched.nickname && Boolean(formik.errors.nickname)}
+            />
 
-            <form onSubmit={formik.handleSubmit}>
-              <TextField
-                fullWidth
-                name="code"
-                label="CODE"
-                helperText="For example ADAM123"
-                value={formik.values.code}
-                onChange={formik.handleChange}
-                error={formik.touched.code && Boolean(formik.errors.code)}
-              />
-              <br />
-              <br />
-              <TextField
-                fullWidth
-                name="nickname"
-                label="@nickname"
-                helperText="twitter:@magebrotherhood"
-                value={formik.values.nickname}
-                onChange={formik.handleChange}
-                error={formik.touched.nickname && Boolean(formik.errors.nickname)}
-              />
-
-              {web3.connected ? (
-                <Button text="Register Code" type="submit" important className="btn" distorted borders large />
-              ) : (
-                <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
-              )}
-            </form>
-          </CardWrapper>
-        </Main>
-      </Layout>
-    </>
+            {web3.connected ? (
+              <Button text="Register Code" type="submit" important className="btn" distorted borders large />
+            ) : (
+              <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
+            )}
+          </form>
+        </CardWrapper>
+      </Main>
+    </PageLayout>
   );
 }

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
-import Layout from "components/Layout/Layout";
+import { PageLayout } from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -22,12 +22,6 @@ const Title = styled.div`
   ${(props) => props.theme.breakpoints.up("lg")} {
     top: 0;
   }
-
-  /* width: 100%;
-  height: 100%;
-  right: 0;
-  bottom: 0;
-  z-index: -1; */
 
   h4 {
     padding: 0;
@@ -57,11 +51,11 @@ const Chart = styled.div`
   }
 `;
 
-export default function Swap() {
+export default function SwapPricePage() {
   const router = useRouter();
 
   return (
-    <Layout>
+    <PageLayout title="BHC/USD Chart" description="TradingView chart of our token.">
       <Title>
         <Typography variant="h4">Brotherhood Coin - BHC/USD</Typography>
         <p>1 DAY CANDLE CHART</p>
@@ -70,6 +64,6 @@ export default function Swap() {
       <Chart>
         <CoinPriceChart />
       </Chart>
-    </Layout>
+    </PageLayout>
   );
 }

@@ -4,9 +4,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
 
-import Layout from "../components/Layout/Layout";
+import { PageLayout } from "../components/Layout/Layout";
 
 const Main = styled.div`
   display: flex;
@@ -60,41 +59,37 @@ const items = [
   },
 ];
 
-export default function FAQ() {
+export default function FAQPage() {
   return (
-    <>
-      <NextSeo
-        title="MageBrotherhood - FAQ"
-        description="FAQ section with most common questions about MageBrotherhood. Join our discord community to get help and to get involved."
-      />
-
-      <Layout>
-        <Main>
-          <div className="head">
-            <Typography variant="h3"></Typography>
-            <br />
-            <Typography variant="body1">
-              Some of the most frequented questions asked are answered here. We understand that not every curious mind
-              will simply be happy with this list, so for such a beings there is &nbsp;
-              <Link href="/">
-                <a>Discord</a>
-              </Link>
-              .
-            </Typography>
-          </div>
-
+    <PageLayout
+      title="MageBrotherhood - FAQ"
+      description="FAQ section with most common questions about MageBrotherhood. Join our discord community to get help and to get involved."
+    >
+      <Main>
+        <div className="head">
+          <Typography variant="h3"></Typography>
           <br />
+          <Typography variant="body1">
+            Some of the most frequented questions asked are answered here. We understand that not every curious mind
+            will simply be happy with this list, so for such a beings there is &nbsp;
+            <Link href="/">
+              <a>Discord</a>
+            </Link>
+            .
+          </Typography>
+        </div>
 
-          <div>
-            {items.map((item) => (
-              <Accord key={item.title}>
-                <StyledAccordionSummary>{item.title}</StyledAccordionSummary>
-                <StyledAccordionDetails>{item.text}</StyledAccordionDetails>
-              </Accord>
-            ))}
-          </div>
-        </Main>
-      </Layout>
-    </>
+        <br />
+
+        <div>
+          {items.map((item) => (
+            <Accord key={item.title}>
+              <StyledAccordionSummary>{item.title}</StyledAccordionSummary>
+              <StyledAccordionDetails>{item.text}</StyledAccordionDetails>
+            </Accord>
+          ))}
+        </div>
+      </Main>
+    </PageLayout>
   );
 }

@@ -13,10 +13,9 @@ import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
 
-import Layout from "../components/Layout/Layout";
+import { PageLayout } from "../components/Layout/Layout";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -307,50 +306,46 @@ function StakedItems({ account }: ItemsProps) {
   );
 }
 
-export default function Staking() {
+export default function StakingPage() {
   const web3 = useWeb3Wallet();
   const account = web3?.accounts?.[0];
   const window = useWeb3ConnectWindow();
 
   return (
-    <>
-      <NextSeo
-        title="MageBrotherhood - Staking"
-        description="Earn Brotherhood Coins by staking. Take your NFT and start staking today."
-      />
-
-      <Layout>
-        <Wrapper>
-          <div className="head">
-            <Typography variant="h3">Staking</Typography>
-            <br />
-            <Typography variant="body1">
-              Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long
-              term investors and prevents cheating in game. More about staking in out &nbsp;
-              <Link href="/paper">
-                <a>LitePaper.</a>
-              </Link>
-            </Typography>
-          </div>
-
+    <PageLayout
+      title="MageBrotherhood - Staking"
+      description="Earn Brotherhood Coins by staking. Take your NFT and start staking today."
+    >
+      <Wrapper>
+        <div className="head">
+          <Typography variant="h3">Staking</Typography>
           <br />
+          <Typography variant="body1">
+            Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long
+            term investors and prevents cheating in game. More about staking in out &nbsp;
+            <Link href="/paper">
+              <a>LitePaper.</a>
+            </Link>
+          </Typography>
+        </div>
 
-          {web3.connected && account ? (
-            <>
-              <UnstakedItems account={account} />
-              <br />
-              <StakedItems account={account} />
-            </>
-          ) : (
-            <>
-              Please connect your wallet!
-              <br />
-              <br />
-              <Button text="Connect Wallet" important onClick={window.connect} />
-            </>
-          )}
-        </Wrapper>
-      </Layout>
-    </>
+        <br />
+
+        {web3.connected && account ? (
+          <>
+            <UnstakedItems account={account} />
+            <br />
+            <StakedItems account={account} />
+          </>
+        ) : (
+          <>
+            Please connect your wallet!
+            <br />
+            <br />
+            <Button text="Connect Wallet" important onClick={window.connect} />
+          </>
+        )}
+      </Wrapper>
+    </PageLayout>
   );
 }

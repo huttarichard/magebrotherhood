@@ -72,7 +72,7 @@ const Tranding = styled(Paper)`
   }
 `;
 
-export default function Swap() {
+export default function SwapIndexPage() {
   const router = useRouter();
 
   return (

@@ -1,10 +1,9 @@
 import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
-import Layout from "components/Layout/Layout";
+import { PageLayout } from "components/Layout/Layout";
 import Studio from "components/Tokens/Studio";
 import { SpinnerBlock } from "components/ui/Spinner";
 import { FullToken, useToken } from "hooks/useTokens";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
@@ -41,17 +40,11 @@ export default function StudioPage() {
   useEffect(() => setH(dimensions.height - 60), [dimensions.height]);
 
   return (
-    <>
-      <Head>
-        <title>Mage Brotherhood - Homepage</title>
-      </Head>
-
-      <Layout>
-        <Global styles={GlobalStyles}></Global>
-        <Wrapper height={h}>
-          {token.loading ? <SpinnerBlock>Loading Studio...</SpinnerBlock> : <Studio token={token.data as FullToken} />}
-        </Wrapper>
-      </Layout>
-    </>
+    <PageLayout title="Studio" description="Explore characters from our metaverse.">
+      <Global styles={GlobalStyles}></Global>
+      <Wrapper height={h}>
+        {token.loading ? <SpinnerBlock>Loading Studio...</SpinnerBlock> : <Studio token={token.data as FullToken} />}
+      </Wrapper>
+    </PageLayout>
   );
 }
