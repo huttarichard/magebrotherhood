@@ -6,7 +6,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import roadmapKnight from "assets/images/roadmapKnight.png";
 import Timeline from "components/ui/Timeline";
 import { useEffect, useRef, useState } from "react";
-import { FormattedMessage } from "react-intl";
 import { useWindowScroll } from "react-use";
 
 const Wrapper = styled.div`
@@ -40,24 +39,6 @@ const Knight = styled(Grid)`
     opacity: 1;
   }
 `;
-
-// const phases = [
-//   {
-//     text: "launch of website (Q2)",
-//   },
-//   {
-//     text: "Presale start for collection Dark Knights (Q2)",
-//   },
-//   {
-//     text: "audit with certik (Q2)",
-//   },
-//   {
-//     text: "Liquidity bootstrapping and staking start (Q2)",
-//   },
-//   {
-//     text: "Launch of collection Dark Knights (Q2) ",
-//   },
-// ];
 
 const items = [
   {
@@ -109,7 +90,7 @@ export default function Roadmap() {
   return (
     <Wrapper ref={scrollRef}>
       <Typography sx={{ color: theme.text1 }} variant="h4" textAlign="center">
-        <FormattedMessage defaultMessage="Roadmap" id="home_roadmap_title" />
+        Roadmap
       </Typography>
 
       <Background />
@@ -120,7 +101,7 @@ export default function Roadmap() {
         <Grid item container xs={6} sx={{ display: { xs: "none", sm: upcommingVisible ? "block" : "none" } }}>
           <Grid item container alignContent="center" sx={{ height: "100%" }}>
             <Typography sx={{ color: theme.text1 }} variant="h4">
-              <FormattedMessage defaultMessage="Upcoming Events" id="home_roadmap_upcoming_events" />
+              Upcoming Events
             </Typography>
           </Grid>
         </Grid>

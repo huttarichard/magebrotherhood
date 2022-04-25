@@ -15,7 +15,6 @@ import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
 import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
 
 const Main = styled.div`
   display: flex;
@@ -146,9 +145,7 @@ function CumputedRewards() {
   if (!connected) {
     <CardWrapper>
       <CardHeader>
-        <Typography variant="h5">
-          <FormattedMessage defaultMessage="Your account" id="95pnlV" />
-        </Typography>
+        <Typography variant="h5">Your account</Typography>
       </CardHeader>
 
       <p>Connect your wallet!</p>
@@ -162,9 +159,7 @@ function CumputedRewards() {
   return (
     <CardWrapper>
       <CardHeader>
-        <Typography variant="h5">
-          <FormattedMessage defaultMessage="Your account" id="95pnlV" />
-        </Typography>
+        <Typography variant="h5">Your account</Typography>
       </CardHeader>
 
       <Grid container>
@@ -185,24 +180,7 @@ export default function Affiliate() {
   const web3 = useWeb3Wallet();
   const window = useWeb3ConnectWindow();
 
-  const intl = useIntl();
   const { makeTransaction } = useWeb3TransactionPresenter();
-
-  // i18n
-  const formLabel = intl.formatMessage({
-    defaultMessage: "CODE",
-    id: "affiliate_page_form_label",
-  });
-
-  const formHelperText = intl.formatMessage({
-    defaultMessage: "For example ADAM123",
-    id: "affiliate_page_form_helper_text",
-  });
-
-  const formSubmitButtonText = intl.formatMessage({
-    defaultMessage: "Register Code",
-    id: "affiliate_page_form_submit_button_text",
-  });
 
   interface Values {
     code: string;
@@ -247,22 +225,17 @@ export default function Affiliate() {
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">
-              <FormattedMessage defaultMessage="Affiliate" id="affiliate_page_title" />
+            <Typography variant="h3">Affiliate</Typography>
+            <br />
+            <Typography variant="body1">
+              Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing
+              allows to reward you for influencing and your community by discounting our services.
             </Typography>
             <br />
             <Typography variant="body1">
-              <FormattedMessage
-                defaultMessage="Looking to make same extra cash? Hey, we might have something for you. Our first decentralized marketing allows to reward you for influencing and your community by discounting our services."
-                id="affiliate_page_description_p1"
-              />
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              <FormattedMessage
-                defaultMessage="Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and start earning."
-                id="affiliate_page_description_p2"
-              />
+              Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward
+              varies depending on price of ethereums gas, but you can expect some nice gains! Register code below and
+              start earning.
             </Typography>
           </div>
 
@@ -272,9 +245,7 @@ export default function Affiliate() {
           <br />
           <CardWrapper>
             <CardHeader>
-              <Typography variant="h5">
-                <FormattedMessage defaultMessage="Register" id="affiliate_page_form_title" />
-              </Typography>
+              <Typography variant="h5">Register</Typography>
             </CardHeader>
 
             <br />
@@ -283,8 +254,8 @@ export default function Affiliate() {
               <TextField
                 fullWidth
                 name="code"
-                label={formLabel}
-                helperText={formHelperText}
+                label="CODE"
+                helperText="For example ADAM123"
                 value={formik.values.code}
                 onChange={formik.handleChange}
                 error={formik.touched.code && Boolean(formik.errors.code)}
@@ -302,13 +273,9 @@ export default function Affiliate() {
               />
 
               {web3.connected ? (
-                <>
-                  <Button text={formSubmitButtonText} type="submit" important className="btn" distorted borders large />
-                </>
+                <Button text="Register Code" type="submit" important className="btn" distorted borders large />
               ) : (
-                <>
-                  <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
-                </>
+                <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
               )}
             </form>
           </CardWrapper>

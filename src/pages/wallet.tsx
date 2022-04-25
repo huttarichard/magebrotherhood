@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import ConnectWallet from "components/Layout/ConnectWallet";
 import BrotherhoodCoinLogo from "components/ui/BrotherhoodCoinLogo";
 import Button from "components/ui/Button";
-import { CurrencyField } from "components/ui/CurrencyField";
+import CurrencyField from "components/ui/CurrencyField";
 import EthereumLogo from "components/ui/EthereumLogo";
 import Paper from "components/ui/Paper";
 import Spinner from "components/ui/Spinner";
@@ -20,7 +20,6 @@ import { formatBNToEtherFloatFixed } from "lib/bn";
 import { Contract } from "lib/web3/contracts";
 import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
-import { FormattedMessage, FormattedNumber, useIntl } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 
@@ -98,15 +97,7 @@ export function YourAssets() {
         </Grid>
 
         <Grid item xs="auto">
-          <FormattedNumber
-            style="currency"
-            currency="BHC"
-            currencyDisplay="narrowSymbol"
-            unitDisplay="narrow"
-            value={formatBNToEtherFloatFixed(bhc)}
-            maximumFractionDigits={6}
-            minimumFractionDigits={2}
-          />
+          <span>${formatBNToEtherFloatFixed(bhc).toFixed(8)}</span>
         </Grid>
       </Grid>
 
@@ -123,15 +114,7 @@ export function YourAssets() {
         </Grid>
 
         <Grid item xs="auto">
-          <FormattedNumber
-            style="currency"
-            currency="ETH"
-            currencyDisplay="narrowSymbol"
-            unitDisplay="narrow"
-            value={formatBNToEtherFloatFixed(eth)}
-            maximumFractionDigits={6}
-            minimumFractionDigits={2}
-          />
+          <span>${formatBNToEtherFloatFixed(eth).toFixed(8)}</span>
         </Grid>
       </Grid>
     </>
@@ -183,7 +166,7 @@ export function Transfer() {
         autoComplete="off"
         key="eth"
         value={formik.values.amount}
-        onBNChange={(value) => {
+        onValueChange={(value) => {
           formik.setFieldValue("amount", value);
         }}
       />
@@ -223,29 +206,12 @@ export default function Wallet() {
 
   // const { resolved, contract, error } = useCoinContract();
 
-  const intl = useIntl();
-
-  // const disconnect = intl.formatMessage({
-  //   defaultMessage: "Disconnect Wallet",
-  //   id: "mVjtAF",
-  // });
-
-  const assets = intl.formatMessage({
-    defaultMessage: "Assets",
-    id: "d1uESJ",
-  });
-
-  const transfer = intl.formatMessage({
-    defaultMessage: "Transfer",
-    id: "DtYelJ",
-  });
-
   let body = (
     <>
       <Assets magical>
         <Tabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
-          <Tab label={assets} />
-          <Tab label={transfer} />
+          <Tab label="Assets" />
+          <Tab label="Transfers" />
         </Tabs>
 
         <br />
@@ -295,9 +261,7 @@ export default function Wallet() {
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">
-              <FormattedMessage defaultMessage="Your Wallet" id="+KnohG" />
-            </Typography>
+            <Typography variant="h3">Your Wallet</Typography>
             <Typography variant="body2">{accounts?.length ? accounts[0] : ""}</Typography>
           </div>
 

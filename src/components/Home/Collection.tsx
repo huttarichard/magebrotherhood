@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import knight from "assets/images/knight.png";
 import { useTokens } from "hooks/useTokens";
 import Image from "next/image";
-import { FormattedMessage } from "react-intl";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 const Wrapper = styled.div`
@@ -164,15 +163,8 @@ export default function Collection() {
     <Wrapper>
       <Header>
         <div className="text">
-          <Typography variant="h3">
-            <FormattedMessage defaultMessage="Upcomming Collection" id="home_collection_title" />
-          </Typography>
-
-          <FormattedMessage
-            defaultMessage="Collection of dark night ERC1155 comming later this month."
-            id="home_collection_subtitle"
-            tagName="p"
-          />
+          <Typography variant="h3">Upcomming Collection</Typography>
+          <p>Collection of dark night ERC1155 comming later this month.</p>
         </div>
       </Header>
       <StyledSlider>

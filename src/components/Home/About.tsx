@@ -5,7 +5,6 @@ import team1 from "assets/images/team1.jpg";
 import team2 from "assets/images/team2.jpg";
 import team3 from "assets/images/team3.jpg";
 import Image from "next/image";
-import { FormattedMessage } from "react-intl";
 
 const Wrapper = styled.div`
   position: relative;
@@ -149,14 +148,9 @@ export default function About() {
       <Main>
         <Header>
           <div className="text">
-            <h2>
-              <FormattedMessage defaultMessage="About Bortherhood" id="IH+ANq" />
-            </h2>
+            <h2>About Bortherhood</h2>
             <p>
-              <FormattedMessage
-                id="IKmvQj"
-                defaultMessage={`Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things.`}
-              />
+              Mage Brotherhood is aiming to create first-ever decentralized economy for a game full of magical things.
             </p>
           </div>
         </Header>

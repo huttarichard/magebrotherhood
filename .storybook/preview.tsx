@@ -2,8 +2,6 @@ import * as NextImage from "next/image";
 import { addDecorator } from "@storybook/react";
 import ThemeProvider from '../src/components/ui/ThemeProvider'
 import { css, Global } from "@emotion/react";
-import { IntlProvider } from "react-intl";
-import messages from "../src/translations/en.json"
 
 const OriginalNextImage = NextImage.default;
 
@@ -57,6 +55,3 @@ addDecorator((story) => (
 
 addDecorator((storyFn) => <ThemeProvider>{storyFn()}</ThemeProvider>);
 
-addDecorator((storyFn) => {
-  return (<IntlProvider messages={messages} locale="en" defaultLocale="en">{storyFn()}</IntlProvider>)
-});

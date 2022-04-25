@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Layout from "components/Layout/Layout";
 import Head from "next/head";
 import Link from "next/link";
-import { FormattedMessage } from "react-intl";
 
 const Main = styled.div`
   display: flex;
@@ -56,9 +55,7 @@ export default function FAQ() {
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">
-              <FormattedMessage defaultMessage="Lite Paper" id="NBPZxQ" />
-            </Typography>
+            <Typography variant="h3">Lite Paper</Typography>
             <br />
             <Typography variant="body1">
               Here you can find documents briefly describing our ecosystem, more in detail than visualizations on site.
@@ -72,9 +69,7 @@ export default function FAQ() {
           <div className="body">
             <a className="download" href="/litepaper.pdf" download>
               <FontAwesomeIcon icon={faDownload} />
-              <span>
-                <FormattedMessage defaultMessage="PDF LITEPAPER" id="jXdcLd" />
-              </span>
+              <span>PDF LITEPAPER</span>
             </a>
           </div>
 

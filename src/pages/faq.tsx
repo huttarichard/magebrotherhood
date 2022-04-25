@@ -5,7 +5,6 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
-import { FormattedMessage } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 
@@ -72,21 +71,13 @@ export default function FAQ() {
       <Layout>
         <Main>
           <div className="head">
-            <Typography variant="h3">
-              <FormattedMessage defaultMessage="FAQ" id="faq_page_title" />
-            </Typography>
+            <Typography variant="h3"></Typography>
             <br />
             <Typography variant="body1">
-              <FormattedMessage
-                defaultMessage="Some of the most frequented questions asked are answered here. We understand that not every curious mind
-              will simply be happy with this list, so for such a beings there is"
-                id="faq_page_description"
-              />
-              &nbsp;
+              Some of the most frequented questions asked are answered here. We understand that not every curious mind
+              will simply be happy with this list, so for such a beings there is &nbsp;
               <Link href="/">
-                <a>
-                  <FormattedMessage defaultMessage="Discord" id="faq_page_description_link_text" />
-                </a>
+                <a>Discord</a>
               </Link>
               .
             </Typography>

@@ -4,21 +4,21 @@ import { faArrowUpArrowDown } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
 import Button from "components/ui/Button";
-import { CurrencyField, CurrencyFieldRef } from "components/ui/CurrencyField";
+import { CurrencyFieldDebounced } from "components/ui/CurrencyField";
 import Card from "components/ui/Paper";
-import Spinner from "components/ui/Spinner";
+import { SpinnerBlock } from "components/ui/Spinner";
 import { useExchangeContract } from "hooks/useContract";
 import { useWeb3Remote } from "hooks/useWeb3";
 import { useWeb3TransactionPresenter } from "hooks/useWeb3Transaction";
 import { formatBNToEtherFloatFixed } from "lib/bn";
 import Link from "next/link";
-import { PropsWithChildren, useRef, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { PropsWithChildren, useState } from "react";
 
 const CardWrapper = styled(Card)`
   margin: 0 auto;
   padding: 17px;
   min-width: 350px;
+  width: 100%;
 
   ${(props) => props.theme.breakpoints.down("md")} {
     margin: 0;
@@ -39,9 +39,10 @@ const CardWrapper = styled(Card)`
   small {
     font-size: 15px;
     text-align: center;
+    padding-top: 10px;
     display: flex;
     justify-content: center;
-    padding-top: 10px;
+    align-items: center;
 
     a {
       padding-left: 5px;
@@ -75,31 +76,26 @@ const CardHeader = styled.div`
   }
 `;
 
-enum Mode {
-  EthToBhc,
-  BhcToEth,
-}
-
-enum Currency {
-  ETH,
-  BHC,
-}
-
-export default function SwapForm({ children }: PropsWithChildren<unknown>) {
-  const intl = useIntl();
+export function Form() {
   const web3Remote = useWeb3Remote();
-  const { connected, contract: exchange, error } = useExchangeContract(web3Remote);
+  const { loading, contract: exchange, error } = useExchangeContract(web3Remote);
   const presenter = useWeb3TransactionPresenter();
+
+  enum Mode {
+    EthToBhc,
+    BhcToEth,
+  }
+
+  enum Currency {
+    ETH,
+    BHC,
+  }
 
   const [mode, setMode] = useState<Mode | null>(Mode.EthToBhc);
   const [eth, setEth] = useState<BigNumber | null>(null);
   const [bhc, setBhc] = useState<BigNumber | null>(null);
   const [tax, setTax] = useState<BigNumber>(BigNumber.from(0));
   const [converting, setConverting] = useState<Currency | null>();
-
-  // refs
-  const bhcRef = useRef<CurrencyFieldRef | null>(null);
-  const ethRef = useRef<CurrencyFieldRef | null>(null);
 
   const handleModeSwitch = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -111,75 +107,49 @@ export default function SwapForm({ children }: PropsWithChildren<unknown>) {
     }
   };
 
-  // i18n
-  const labelSell = intl.formatMessage({
-    defaultMessage: "Sell",
-    id: "swap_page_label_sell",
-  });
-
-  const labelReceive = intl.formatMessage({
-    defaultMessage: "Receive",
-    id: "swap_page_label_receive",
-  });
-
-  const swapButtonText = intl.formatMessage({
-    defaultMessage: "Swap",
-    id: "swap_page_swap_button_text",
-  });
-
   const formElements = [
-    <CurrencyField
+    <CurrencyFieldDebounced
       disabled={converting === Currency.BHC || !exchange}
       name="eth"
-      label={mode === Mode.EthToBhc ? `${labelSell} ETH` : `${labelReceive} ETH`}
+      label={mode === Mode.EthToBhc ? `Sell ETH` : `Receive ETH`}
       value={eth}
-      ref={ethRef}
       placeholder="0 ETH"
-      onBNChangeStart={() => {
+      onValueChangeStart={() => {
         setConverting(Currency.ETH);
       }}
-      onBNChange={async (x: BigNumber | null) => {
+      onValueChange={async (x: BigNumber | null) => {
         setEth(x);
-
         if (!x || x.eq(0) || !exchange) {
           return;
         }
-
-        try {
-          const res = await exchange.getEthToTokenInputPrice(x);
-          bhcRef?.current?.setValueSilently(res);
-        } catch (e) {}
+        const res = await exchange.getEthToTokenInputPrice(x);
+        setBhc(res);
         setConverting(null);
       }}
       key="eth"
     />,
 
     <span key="switch" className="switch" onClick={handleModeSwitch}>
-      <span>
-        <FormattedMessage defaultMessage="Switch" id="swap_page_switch_button_text" />
-      </span>
+      <span>Switch</span>
       <FontAwesomeIcon icon={faArrowUpArrowDown} />
     </span>,
 
-    <CurrencyField
+    <CurrencyFieldDebounced
       disabled={converting === Currency.ETH || !exchange}
       name="bhc"
-      label={mode === Mode.EthToBhc ? `${labelReceive} BHC` : `${labelSell} BHC`}
+      label={mode === Mode.EthToBhc ? `Receive BHC` : `Sell BHC`}
       value={bhc}
-      ref={bhcRef}
       placeholder="0 BHC"
-      onBNChangeStart={() => {
+      onValueChangeStart={() => {
         setConverting(Currency.BHC);
       }}
-      onBNChange={async (x: BigNumber | null) => {
+      onValueChange={async (x: BigNumber | null) => {
         setBhc(x);
-
         if (!x || x.eq(0) || !exchange) {
           return;
         }
-
         const [res, tax] = await exchange.getTokenToEthInputPriceWithTax(x);
-        ethRef?.current?.setValueSilently(res);
+        setEth(res);
         setTax(tax);
         setConverting(null);
       }}
@@ -187,78 +157,65 @@ export default function SwapForm({ children }: PropsWithChildren<unknown>) {
     />,
   ];
 
-  if (error) {
-    return (
-      <Typography variant="h5">
-        <FormattedMessage defaultMessage="Failed to connect to Ethereum" id="we6FuP" />
-      </Typography>
-    );
-  }
-
   const ethToTokenSwap = () => {
-    const eth = ethRef.current?.value as BigNumber;
-    const bhc = bhcRef.current?.value as BigNumber;
-
+    if (!bhc || !eth) return;
     const minTokens = bhc.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
     presenter.ethToTokenSwap(minTokens, eth, bhc);
   };
 
   const tokenToETHSwap = () => {
-    const eth = ethRef.current?.value as BigNumber;
-    const bhc = bhcRef.current?.value as BigNumber;
-
+    if (!bhc || !eth) return;
     console.info("Tax:", formatBNToEtherFloatFixed(tax));
-
     const minEth = eth.mul(BigNumber.from(9999)).div(BigNumber.from(10000));
     presenter.tokenToETHSwap(minEth, eth, bhc);
   };
 
-  const body =
-    exchange || !connected ? (
-      <form>
-        {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+  if (loading) {
+    return <SpinnerBlock />;
+  }
 
-        {mode === Mode.BhcToEth && <small>Selling tax 5% will be applied.</small>}
-        <Button
-          important
-          text={swapButtonText}
-          onClick={() => {
-            mode === Mode.EthToBhc ? ethToTokenSwap() : tokenToETHSwap();
-          }}
-          disabled={!exchange || converting !== null || presenter.open}
-          className="btn"
-          distorted
-          block
-          borders
-          large
-        />
-      </form>
-    ) : (
-      <Spinner />
-    );
+  if (error) {
+    throw error;
+  }
 
+  return (
+    <form>
+      {mode === Mode.EthToBhc ? formElements.map((el) => el) : formElements.reverse().map((el) => el)}
+
+      {mode === Mode.BhcToEth && <small>Selling tax 5% will be applied.</small>}
+      <Button
+        important
+        text="Swap"
+        onClick={() => {
+          mode === Mode.EthToBhc ? ethToTokenSwap() : tokenToETHSwap();
+        }}
+        disabled={!exchange || converting !== null || presenter.open}
+        className="btn"
+        distorted
+        block
+        borders
+        large
+      />
+    </form>
+  );
+}
+
+export default function SwapForm({ children }: PropsWithChildren<unknown>) {
   return (
     <CardWrapper>
       <CardHeader>
-        <Typography variant="h1">
-          <FormattedMessage defaultMessage="Swap" id="swap_page_title" />
-        </Typography>
+        <Typography variant="h1">Swap</Typography>
       </CardHeader>
 
-      {body}
+      <Form />
+
       {children}
 
       <small>
-        <FormattedMessage
-          defaultMessage='By clicking "SWAP" you are agreeing to'
-          id="swap_page_terms_acceptance_text"
-        />
+        By clicking &quot;SWAP&quot; you are agreeing to
         <Link href="/tos">
-          <a>
-            <FormattedMessage defaultMessage="terms of conditions" id="swap_page_terms_acceptance_link_text" />
-          </a>
+          <a>terms of conditions.</a>
         </Link>
-        .
       </small>
     </CardWrapper>
   );

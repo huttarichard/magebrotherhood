@@ -11,7 +11,6 @@ import { useTracking } from "hooks/useTracking";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
-import { FormattedMessage, FormattedNumber } from "react-intl";
 
 const Wrapper = styled.div`
   position: relative;
@@ -156,17 +155,7 @@ function BHCPrice() {
   return (
     <BHCPriceWrapper>
       BHC:
-      <span>
-        <FormattedNumber
-          style="currency"
-          currency="USD"
-          currencyDisplay="narrowSymbol"
-          unitDisplay="narrow"
-          value={price}
-          maximumFractionDigits={6}
-          minimumFractionDigits={2}
-        />
-      </span>
+      <span>${price.toFixed(8)}</span>
     </BHCPriceWrapper>
   );
 }
@@ -252,21 +241,10 @@ export default function Hero() {
       <Main container>
         <TextArea item xs={12} md={8}>
           <Headline>
-            <FormattedMessage
-              defaultMessage="Play for victory, earn <span>rewards.</span>"
-              values={{
-                span: (chunks: any) => <span>{chunks}</span>,
-              }}
-              id="home_hero_title"
-            />
+            Play for victory, earn <span>rewards.</span>
           </Headline>
 
-          <Subheadline>
-            <FormattedMessage
-              defaultMessage="NFT P2E game powered by blockchain enhanced by AR, managed by DAO."
-              id="home_hero_subtitle"
-            />
-          </Subheadline>
+          <Subheadline>NFT P2E game powered by blockchain enhanced by AR, managed by DAO.</Subheadline>
 
           <Button text="Tokens" distorted borders onClick={() => router.push("/tokens")} />
 
@@ -277,8 +255,7 @@ export default function Hero() {
           <ARButton
             folded={false}
             ar={{
-              glb: "/models/tokens/2/model.glb",
-              usdz: "/models/tokens/2/model.usdz",
+              glb: "/models/welcome_mage.glb",
               reality: "/models/welcome_mage.reality",
               link: "https://magebrotherhood.com",
               resizable: true,

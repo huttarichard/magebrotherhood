@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import { faArrowRight, faChartCandlestick } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Layout from "components/Layout/Layout";
+import { PageLayout } from "components/Layout/Layout";
 import SwapForm from "components/Swap/Swap";
 import Paper from "components/ui/Paper";
 import { useRouter } from "next/router";
-import { FormattedMessage } from "react-intl";
 
 const Main = styled.div`
   display: flex;
@@ -13,7 +12,9 @@ const Main = styled.div`
   justify-content: start;
   align-items: center;
   height: 100%;
-  padding-top: 30px;
+  padding: 30px;
+  max-width: 450px;
+  margin: 0 auto;
 
   ${(props) => props.theme.breakpoints.up("md")} {
     margin: 0 auto;
@@ -22,6 +23,8 @@ const Main = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0px;
+    padding-top: 30px;
   }
 `;
 
@@ -34,6 +37,7 @@ const Tranding = styled(Paper)`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   max-width: 390px;
 
@@ -52,17 +56,19 @@ const Tranding = styled(Paper)`
   }
 
   svg {
-    font-size: 39px;
+    font-size: 2rem;
   }
 
-  .text svg {
-    font-size: 21px;
-  }
+  .text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
 
-  ${(props) => props.theme.breakpoints.down("md")} {
-    margin: 20px;
-    width: calc(100% - 52px);
-    margin-top: 50px;
+    svg {
+      padding-left: 10px;
+      font-size: 2rem;
+    }
   }
 `;
 
@@ -70,7 +76,7 @@ export default function Swap() {
   const router = useRouter();
 
   return (
-    <Layout>
+    <PageLayout title="Swap" description="Buy or sell your bortherhood coins.">
       <Main>
         <SwapForm />
 
@@ -78,11 +84,11 @@ export default function Swap() {
           <FontAwesomeIcon icon={faChartCandlestick} />
 
           <div className="text">
-            <FormattedMessage defaultMessage="Trading view chart" id="swap_page_chart_button_text" />
+            Trading view chart
             <FontAwesomeIcon icon={faArrowRight} />
           </div>
         </Tranding>
       </Main>
-    </Layout>
+    </PageLayout>
   );
 }

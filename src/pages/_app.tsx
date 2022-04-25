@@ -7,12 +7,10 @@ import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
 import TransactionPresenter from "components/ui/TransactionPresenter";
 import WalletConnectWindow from "components/ui/WalletConnectWindow";
-import type { AppContext, AppProps } from "next/app";
+import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { DefaultSeo } from "next-seo";
 import { useEffect } from "react";
-import { IntlProvider, MessageFormatElement } from "react-intl";
 import { SWRConfig } from "swr";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -25,13 +23,10 @@ const url = "https://www.magebrotherhood.com/";
 
 interface Props extends AppProps {
   emotionCache?: EmotionCache;
-  messages: Record<string, string> | Record<string, MessageFormatElement[]>;
 }
 
 function MageBrotherHoodApp(props: Props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps, messages } = props;
-  const { locale } = useRouter();
-  const [shortLocale] = locale ? locale.split("-") : ["en"];
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   useEffect(() => {
     setTimeout(() => document.getElementById("loader")?.remove(), 50);
@@ -45,7 +40,7 @@ function MageBrotherHoodApp(props: Props) {
       openGraph={{
         url,
         title,
-        locale: locale,
+        locale: "en",
         description,
         images: [
           {
@@ -78,20 +73,18 @@ function MageBrotherHoodApp(props: Props) {
         {seo}
 
         <ThemeProvider>
-          <IntlProvider messages={messages} locale={shortLocale} defaultLocale="en">
-            <GlobalStyle />
-            <SWRConfig
-              value={{
-                refreshInterval: 15000,
-                fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
-              }}
-            >
-              <Component {...pageProps} />
-            </SWRConfig>
+          <GlobalStyle />
+          <SWRConfig
+            value={{
+              refreshInterval: 15000,
+              fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
+            }}
+          >
+            <Component {...pageProps} />
+          </SWRConfig>
 
-            <WalletConnectWindow />
-            <TransactionPresenter />
-          </IntlProvider>
+          <WalletConnectWindow />
+          <TransactionPresenter />
         </ThemeProvider>
       </CacheProvider>
 
@@ -99,13 +92,5 @@ function MageBrotherHoodApp(props: Props) {
     </>
   );
 }
-
-MageBrotherHoodApp.getInitialProps = async ({ router }: AppContext) => {
-  const { locale } = router;
-  const [shortLocale] = locale ? locale.split("-") : ["en"];
-  const { default: messages } = await import(`translations/${shortLocale}`);
-
-  return { messages };
-};
 
 export default MageBrotherHoodApp;

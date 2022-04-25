@@ -2,17 +2,42 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { InputProps } from "@mui/material/Input";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NumberFormat, { NumberFormatProps, NumberFormatValues } from "react-number-format";
 import { useDebouncedCallback } from "use-debounce";
 
-export interface Props extends NumberFormatProps<TextFieldProps> {
+interface Props extends NumberFormatProps<TextFieldProps> {
   textfield?: Partial<InputProps>;
   value: string;
 }
 
-const CurrencyFieldText = ({ value, ...props }: Props) => {
+export interface CurrencyFieldProps extends Omit<Props, "value" | "onValueChange"> {
+  disabled?: boolean;
+  value: BigNumber | null;
+  onValueChange?: (val: BigNumber | null) => void | Promise<void>;
+  decimalScale?: number;
+}
+
+export default function CurrencyField(props: CurrencyFieldProps) {
+  const { value, disabled, name, onValueChange, textfield, ...rest } = props;
+
+  const _onValueChange = async (bn: BigNumber | null) => Promise.resolve(onValueChange ? onValueChange(bn) : undefined);
+
+  const onInputChange = (values: NumberFormatValues) => {
+    if (disabled) {
+      return;
+    }
+
+    const inUndefined = values.value === undefined || values.value === "";
+    if (inUndefined) {
+      _onValueChange(null);
+      return;
+    }
+
+    const val = BigNumber.from(parseEther(values.value));
+    _onValueChange(val);
+  };
+
   return (
     <NumberFormat
       customInput={TextField}
@@ -22,60 +47,37 @@ const CurrencyFieldText = ({ value, ...props }: Props) => {
       thousandSeparator={true}
       variant="outlined"
       fullWidth
-      value={value}
-      decimalScale={8}
-      {...props}
+      value={BigNumber.isBigNumber(value) ? formatEther(value) : ""}
+      InputProps={{ name, disabled: disabled ?? false, ...(textfield || {}) }}
+      allowNegative={false}
+      autoComplete="off"
+      decimalScale={props.decimalScale ?? 12}
+      onValueChange={onInputChange}
+      {...rest}
     />
   );
-};
-
-export default CurrencyFieldText;
-
-interface CurrencyFieldProps extends Omit<Props, "value"> {
-  disabled?: boolean;
-  value: BigNumber | null;
-  name?: string;
-  onBNChangeStart?: (val: BigNumber | null) => void | Promise<void>;
-  onBNChange?: (val: BigNumber | null) => void | Promise<void>;
-  debounce?: number;
-  decimalScale?: number;
 }
 
-export type CurrencyFieldRef = {
-  textfield?: HTMLInputElement;
-  value: BigNumber | null;
-  setValueSilently: (x: BigNumber) => void;
-};
+export interface CurrencyFieldDebouncedProps extends Omit<CurrencyFieldProps, "onValueChange"> {
+  onValueChangeStart?: () => void | Promise<void>;
+  onValueChange?: (val: BigNumber | null) => void | Promise<void>;
+  debounce?: number;
+}
 
-export const CurrencyField = forwardRef<CurrencyFieldRef, CurrencyFieldProps>((props: CurrencyFieldProps, ref) => {
-  const { value, disabled, name, onBNChange, onBNChangeStart, debounce, textfield, ...rest } = props;
-  const [bn, setBN] = useState<BigNumber | null>(value);
+export function CurrencyFieldDebounced(props: CurrencyFieldDebouncedProps) {
+  const { value, debounce, onValueChange, onValueChangeStart, ...rest } = props;
   const [changing, setChanging] = useState<boolean>(false);
-  const iref = useRef<HTMLInputElement>();
+  const [bn, setBN] = useState<BigNumber | null>(value);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      textfield: iref.current,
-      value: bn,
-      setValueSilently: (x: BigNumber) => {
-        if (!iref.current) return;
-        setBN(x);
-      },
-    }),
-    [iref, props]
-  );
-
-  const onChange = async (bn: BigNumber | null) => {
-    if (onBNChange) {
-      return await Promise.resolve(onBNChange(bn));
-    }
-    return;
-  };
+  useEffect(() => {
+    if (changing) return;
+    setBN(value);
+  }, [value]);
 
   const callback = useDebouncedCallback(
-    (x: BigNumber | null) => {
-      onChange(x).then(() => setChanging(false));
+    () => {
+      const promise = Promise.resolve(onValueChange ? onValueChange(bn) : undefined);
+      promise.then(() => setChanging(false));
     },
     debounce ?? 400,
     {
@@ -85,72 +87,13 @@ export const CurrencyField = forwardRef<CurrencyFieldRef, CurrencyFieldProps>((p
     }
   );
 
-  useEffect(() => {
-    if (value === bn) return;
-
-    if (value === null) {
+  const onInputChange = () => {
+    if (!changing) {
+      onValueChangeStart && onValueChangeStart();
       setChanging(true);
-      setBN(null);
-      callback.cancel();
-
-      setTimeout(() => {
-        callback(null);
-        callback.flush();
-      }, 0);
     }
-
-    if (bn && value && bn.eq(value)) {
-      return;
-    }
-
-    setBN(value);
-  }, [value]);
-
-  useEffect(() => {
-    changing && onBNChangeStart && onBNChangeStart(bn);
-  }, [changing]);
-
-  const onInputChange = (values: NumberFormatValues) => {
-    if (disabled) {
-      return;
-    }
-
-    const inUndefined = values.value === undefined || values.value === "";
-    if (inUndefined) {
-      setChanging(true);
-      setBN(null);
-      callback.cancel();
-
-      setTimeout(() => {
-        callback(null);
-        callback.flush();
-      }, 0);
-      return;
-    }
-
-    const x = BigNumber.from(parseEther(values.value));
-    if (bn && x && bn.eq(x)) {
-      return;
-    }
-
-    setChanging(true);
-    setBN(x);
-    callback.cancel();
-    callback(x);
+    callback();
   };
 
-  return (
-    <CurrencyFieldText
-      InputProps={{ name, disabled: disabled ?? false, ...(textfield || {}), inputRef: iref }}
-      name={name}
-      value={BigNumber.isBigNumber(bn) ? formatEther(bn) : ""}
-      allowNegative={false}
-      autoComplete="off"
-      decimalScale={props.decimalScale ?? 8}
-      onValueChange={onInputChange}
-      {...rest}
-    />
-  );
-});
-
-CurrencyField.displayName = "CurrenctField";
+  return <CurrencyField value={bn} onKeyDown={onInputChange} onValueChange={(e) => setBN(e)} {...rest} />;
+}

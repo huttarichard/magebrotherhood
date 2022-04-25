@@ -12,15 +12,15 @@ const Template: ComponentStory<typeof Accordion> = (args) => <Accordion {...args
 
 const items = [
   {
-    title: "Hello",
+    title: "1",
     text: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur odit debitis fugiat, aperiam quidem voluptatem vel quam repellat sint dicta?",
   },
   {
-    title: "Hello",
+    title: "2",
     text: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur odit debitis fugiat, aperiam quidem voluptatem vel quam repellat sint dicta?",
   },
   {
-    title: "Hello",
+    title: "3",
     text: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur odit debitis fugiat, aperiam quidem voluptatem vel quam repellat sint dicta?",
   },
 ];

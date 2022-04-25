@@ -66,7 +66,6 @@
     "react-dom": "^18.0.0",
     "react-error-boundary": "^3.1.4",
     "react-ga": "^3.3.0",
-    "react-intl": "^5.24.8",
     "react-lines-ellipsis": "^0.15.0",
     "react-number-format": "^4.9.1",
     "react-player": "^2.10.0",

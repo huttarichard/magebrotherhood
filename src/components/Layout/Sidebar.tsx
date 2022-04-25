@@ -18,7 +18,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Brand from "components/Brand";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormattedMessage } from "react-intl";
 
 import HeaderWallet from "./ConnectWallet";
 import { useLayout } from "./store";
@@ -212,26 +211,14 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
       </Grid>
       <Grid item flexGrow="1">
         <List>
-          <Item icon={faHouse} name={<FormattedMessage defaultMessage="Home" id="ejEGdx" />} link="/" />
-          <Item
-            icon={faRectangleVerticalHistory}
-            name={<FormattedMessage defaultMessage="Tokens" id="P6EE/a" />}
-            link="/tokens"
-          />
-          <Item icon={faCoinBlank} name={<FormattedMessage defaultMessage="Staking" id="+14VoL" />} link="/staking" />
-          <Item
-            icon={faMoneyCheckDollar}
-            name={<FormattedMessage defaultMessage="Affiliate" id="tfQoB8" />}
-            link="/affiliate"
-          />
-          <Item icon={faCartArrowDown} name={<FormattedMessage defaultMessage="Marketplace" id="+lWQIJ" />} soon />
-          <Item icon={faArrowsLeftRight} name={<FormattedMessage defaultMessage="Swap" id="s8BnAC" />} link="/swap" />
-          <Item
-            icon={faFileContract}
-            name={<FormattedMessage defaultMessage="Litepaper" id="9fPQ1/" />}
-            link="/paper"
-          />
-          <Item icon={faCommentsQuestion} name={<FormattedMessage defaultMessage="FAQ" id="W8nHSd" />} link="/faq" />
+          <Item icon={faHouse} name="Home" link="/" />
+          <Item icon={faRectangleVerticalHistory} name="Tokens" link="/tokens" />
+          <Item icon={faCoinBlank} name="Staking" link="/staking" />
+          <Item icon={faMoneyCheckDollar} name="Affiliate" link="/affiliate" />
+          <Item icon={faCartArrowDown} name="Marketplace" soon />
+          <Item icon={faArrowsLeftRight} name="Swap" link="/swap" />
+          <Item icon={faFileContract} name="Litepaper" link="/paper" />
+          <Item icon={faCommentsQuestion} name="FAQ" link="/faq" />
         </List>
       </Grid>
       <Bottom item>

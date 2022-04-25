@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Paper from "components/ui/Paper";
 import React from "react";
-import { FormattedMessage } from "react-intl";
 import ReactPlayer from "react-player/lazy";
 
 const Wrapper = styled.div`
@@ -23,13 +22,10 @@ export default function Scheme() {
   return (
     <Wrapper>
       <Typography variant="h2" textAlign="center">
-        <FormattedMessage defaultMessage="In-Game Short Movie" id="home_game_preview_title" />
+        In-Game Short Movie
       </Typography>
       <Typography variant="body1" textAlign="center">
-        <FormattedMessage
-          defaultMessage="Or game department has been quite busy, watch short movie we put together for our fans!"
-          id="home_game_preview_subtitle"
-        />
+        Or game department has been quite busy, watch short movie we put together for our fans!
       </Typography>
       <br />
 

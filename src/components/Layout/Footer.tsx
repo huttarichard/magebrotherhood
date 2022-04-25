@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { FormattedMessage } from "react-intl";
 
 const Main = styled.footer`
   width: 100%;
@@ -96,23 +95,17 @@ export default function Footer() {
         <ul>
           <li>
             <Link href="/privacy-policy">
-              <a>
-                <FormattedMessage defaultMessage="Privacy Policy" id="vx0nkZ" />
-              </a>
+              <a>Privacy Policy</a>
             </Link>
           </li>
           <li>
             <Link href="/terms-of-use">
-              <a>
-                <FormattedMessage defaultMessage="Terms of use" id="EBDrtq" />
-              </a>
+              <a>Terms of use</a>
             </Link>
           </li>
           <li>
             <Link href="/contact">
-              <a>
-                <FormattedMessage defaultMessage="Contact" id="zFegDD" />
-              </a>
+              <a>Contact</a>
             </Link>
           </li>
         </ul>
@@ -129,9 +122,7 @@ export default function Footer() {
           </a>
         </li>
       </ul>
-      <span>
-        <FormattedMessage defaultMessage="All rights reserved" id="iSM+et" />
-      </span>
+      <span>All rights reserved</span>
     </Main>
   );
 }

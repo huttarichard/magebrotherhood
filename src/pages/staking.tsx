@@ -15,7 +15,6 @@ import { Contract, contracts } from "lib/web3/contracts";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 import { useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
 
 import Layout from "../components/Layout/Layout";
 
@@ -323,22 +322,14 @@ export default function Staking() {
       <Layout>
         <Wrapper>
           <div className="head">
-            <Typography variant="h3">
-              <FormattedMessage defaultMessage="Staking" id="staking_page_title" />
-            </Typography>
+            <Typography variant="h3">Staking</Typography>
             <br />
             <Typography variant="body1">
-              <FormattedMessage
-                defaultMessage="Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long term investors and prevents cheating in game. More about staking in out"
-                id="staking_page_description"
-              />
-              &nbsp;
+              Is a vital and key component of our ecosystem. It allows for equal distribution of tokens, it rewards long
+              term investors and prevents cheating in game. More about staking in out &nbsp;
               <Link href="/paper">
-                <a>
-                  <FormattedMessage defaultMessage="LitePaper" id="staking_page_description_link_text" />
-                </a>
+                <a>LitePaper.</a>
               </Link>
-              .
             </Typography>
           </div>
 

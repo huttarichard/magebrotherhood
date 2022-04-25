@@ -1,4 +1,4 @@
-import Spinner from "components/ui/Spinner";
+import { SpinnerBlock } from "components/ui/Spinner";
 import { Candle, useExchangeHourlyCandles } from "hooks/useExchangeContract";
 import { useWeb3Remote } from "hooks/useWeb3";
 import Chart from "kaktana-react-lightweight-charts";
@@ -42,7 +42,7 @@ export default function Price() {
   const { candles } = useExchangeHourlyCandles(web3);
 
   if (candles.length === 0) {
-    return <Spinner />;
+    return <SpinnerBlock />;
   }
   state.candlestickSeries[0].data = candles;
   return <Chart options={state.options} candlestickSeries={state.candlestickSeries} autoWidth autoHeight />;
