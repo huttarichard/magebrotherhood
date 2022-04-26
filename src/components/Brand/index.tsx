@@ -26,7 +26,7 @@ const Wrapper = styled.div<BrandProps>`
     max-width: 100%;
     font-size: 1.4rem;
     line-height: 1.4rem;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   ${(props) => props.theme.breakpoints.up("lg")} {

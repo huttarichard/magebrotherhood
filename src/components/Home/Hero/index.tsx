@@ -1,13 +1,11 @@
 import styled from "@emotion/styled";
-import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Grid } from "@mui/material";
 import heroGhost from "assets/images/background.jpg";
 import heroBg2 from "assets/images/heroBg2.png";
+import List from "components/Socials/List";
 import { ARButton } from "components/Tokens/Buttons";
 import Button from "components/ui/Button";
 import { useBHCUSDPrice } from "hooks/useMarketData";
-import { useTracking } from "hooks/useTracking";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
@@ -56,20 +54,28 @@ const Model = styled.div`
   right: 0;
   bottom: 0;
   width: 100%;
-  height: calc(100% + 140px);
+  height: 100%;
+
+  canvas {
+    height: calc(100% + 50px);
+    width: calc(100% + 50px);
+  }
 `;
 
 const Main = styled(Grid)`
   position: absolute;
-  top: 100px;
+  top: 0px;
   right: 0;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 100px);
+  height: 100%;
   padding: 20px;
   color: ${({ theme }) => theme.text2};
   align-items: flex-start;
+
+  max-width: 1800px;
+  margin: 0 auto;
 
   ${(props) => props.theme.breakpoints.up("md")} {
     align-items: center;
@@ -80,8 +86,16 @@ const Main = styled(Grid)`
 `;
 
 const TextArea = styled(Grid)`
+  padding-top: 20px;
+  text-align: center;
+
   ${(props) => props.theme.breakpoints.up("md")} {
-    padding-top: 120px;
+    text-align: left;
+    max-width: 1000px;
+  }
+
+  @media screen and (min-height: 1000px) and (min-width: 900px) {
+    padding-top: 200px;
   }
 `;
 
@@ -105,17 +119,17 @@ const Headline = styled.h1`
   }
 
   @media screen and (max-width: 800px) {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
   }
 `;
 
 const Subheadline = styled.p`
   margin: 0 0 2rem;
   font-size: 1.3rem;
-  max-width: 75%;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     font-size: 1.8rem;
+    max-width: 75%;
   }
 `;
 
@@ -165,20 +179,10 @@ const SocialLinksWrapper = styled.div`
   position: absolute;
   top: 2rem;
   right: 2rem;
+  display: none;
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-  }
-
-  li {
-    margin-right: 2rem;
-
-    &:last-child {
-      margin-right: 0;
-    }
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    display: block;
   }
 
   a {
@@ -189,39 +193,6 @@ const SocialLinksWrapper = styled.div`
     }
   }
 `;
-
-function SocialLinks() {
-  const tracking = useTracking();
-
-  return (
-    <SocialLinksWrapper>
-      <ul>
-        <li>
-          <a
-            href="https://discord.gg/HgPQAHzp3Z"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Discord"
-            onClick={() => tracking.clickImportantButton()}
-          >
-            <FontAwesomeIcon icon={faDiscord} size={"2x"} />
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://twitter.com/MageBrotherhood"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Twitter"
-            onClick={() => tracking.clickImportantButton()}
-          >
-            <FontAwesomeIcon icon={faTwitter} size={"2x"} />
-          </a>
-        </li>
-      </ul>
-    </SocialLinksWrapper>
-  );
-}
 
 const Character = dynamic(() => import("./Character"), {
   ssr: false,
@@ -264,7 +235,9 @@ export default function Hero() {
         </Grid>
       </Main>
 
-      <SocialLinks />
+      <SocialLinksWrapper>
+        <List />
+      </SocialLinksWrapper>
     </Wrapper>
   );
 }

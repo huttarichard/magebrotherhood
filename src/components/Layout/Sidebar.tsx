@@ -17,7 +17,6 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Brand from "components/Brand";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import HeaderWallet from "./ConnectWallet";
 import { useLayout } from "./store";
@@ -197,7 +196,6 @@ export interface SidebarProps {
 
 export default function Sidebar({ closeIcon = false }: SidebarProps) {
   const { closeMenu } = useLayout();
-  const router = useRouter();
 
   return (
     <SidebarWrapper container direction="column" wrap="nowrap">
@@ -223,11 +221,6 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
       </Grid>
       <Bottom item>
         <HeaderWallet />
-        {router.locale !== router.defaultLocale && (
-          <Link href={router.pathname} locale={router.defaultLocale} passHref>
-            <small>Switch to english version</small>
-          </Link>
-        )}
       </Bottom>
     </SidebarWrapper>
   );

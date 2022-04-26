@@ -3,6 +3,8 @@ import { faBars } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Grid from "@mui/material/Grid";
 import Brand from "components/Brand";
+import Discord from "components/Socials/Discord";
+import Twitter from "components/Socials/Twitter";
 
 import { useLayout } from "./store";
 
@@ -32,6 +34,27 @@ const ActionArea = styled(Grid)`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 0.6rem;
+
+  a {
+    color: white;
+
+    &.twitter {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    &.discord {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    &.bars {
+      font-size: 1.5rem;
+      min-width: 30px;
+      text-align: right;
+    }
+  }
 `;
 
 export default function Navbar() {
@@ -44,7 +67,12 @@ export default function Navbar() {
           <Brand />
         </BrandWrapper>
         <ActionArea item xs>
-          <FontAwesomeIcon icon={faBars} onClick={openMenu} />
+          <Twitter />
+          <Discord />
+
+          <a className="bars" onClick={openMenu}>
+            <FontAwesomeIcon icon={faBars} />
+          </a>
         </ActionArea>
       </GridWrapper>
     </NavbarContainer>
