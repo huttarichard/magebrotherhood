@@ -50,6 +50,9 @@ export async function fetchTokens(params?: CollectionParams): Promise<FullToken[
 fetchTokens.route = "/api/tokens";
 
 export async function fetchToken(id: string, params?: CollectionParams): Promise<FullToken> {
+  if (!id || !parseInt(id)) {
+    throw new Error("invalid token id");
+  }
   const px = convertParams(params);
   const response = await fetch(`/api/tokens/${id}${px ? `?${px}` : ""}`);
   const json = await response.json();

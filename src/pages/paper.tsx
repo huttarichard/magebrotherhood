@@ -110,8 +110,8 @@ export default function SwapPaperFormalPage() {
         <Break />
         <h2>Implementation</h2>
         <p>
-          From many reasons we chose to use Ethereum blockchain and solidity for our decentralised ecosystem, but mainly
-          for following:
+          From many reasons we choose to use Ethereum blockchain and solidity for our decentralised ecosystem, but
+          mainly for following:
         </p>
         <ul>
           <li>
@@ -146,7 +146,7 @@ export default function SwapPaperFormalPage() {
         <p>
           MageBrotherhood is aiming to introduce and give new life to the well known standard of semi fungible tokens.
           Known as ERC1155; where one token can be owned by multiple parties. For gaming environments where each asset
-          needs to be carefully crafted, this is much more compelling than representing each asset on its own unique
+          needs to be carefully crafted, this is much more compelling than representing each asset with its own unique
           token.
         </p>
         <p>

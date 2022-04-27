@@ -4,7 +4,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
-const withTM = require("next-transpile-modules")(["three"]);
+const withTM = require("next-transpile-modules")(["three", "threejs-meshline"]);
 
 /**
  * @type {import('next').NextConfig}

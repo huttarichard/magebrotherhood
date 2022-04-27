@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { OrbitControls, Stats } from "@react-three/drei";
+import { Vector3 } from "@react-three/fiber";
 import { SpinnerBlock } from "components/ui/Spinner";
 import { FullToken } from "hooks/useTokens";
 import dynamic from "next/dynamic";
@@ -9,11 +10,6 @@ import { ARButton, MetadataButton, MintButton, OpenseaButton } from "./Buttons";
 import Canvas from "./Models/Canvas";
 import Castle from "./Models/Castle";
 import { Model } from "./Models/Model";
-
-export interface ItemProps {
-  token: FullToken;
-  stats?: boolean;
-}
 
 const Wrapper = styled.div`
   position: relative;
@@ -38,91 +34,70 @@ const ActionArea = styled.div`
   }
 `;
 
-export function Studio({ token, stats }: ItemProps) {
+interface SceneProps {
+  token: FullToken;
+  position: Vector3;
+}
+
+function Scene({ token, position }: SceneProps) {
+  return (
+    <group position={position}>
+      <spotLight position={[3, 7, 7]} intensity={4} angle={0.3} penumbra={1} shadow-mapSize={[512, 512]} castShadow />
+      <Model castShadow receiveShadow position={[0, -0.95, 0]} scale={5} glb={token.models.glb} />
+      <mesh castShadow receiveShadow position={[0, -1, 0]}>
+        <Castle castShadow receiveShadow scale={2} />
+      </mesh>
+    </group>
+  );
+}
+
+export interface StudioProps {
+  token: FullToken;
+  stats?: boolean;
+  metadata?: boolean;
+  mint?: boolean;
+  opensea?: boolean;
+  ar?: boolean;
+  fov?: number;
+}
+
+export function Studio({ token, stats, metadata, mint, opensea, ar, fov }: StudioProps) {
   return (
     <Wrapper>
       <Suspense fallback={<SpinnerBlock>Loading Studio...</SpinnerBlock>}>
         {stats && <Stats />}
-        {/* <Canvas>
-          <color attach="background" args={["#fff"]} />
-          <ambientLight color={"#8d11db"} intensity={0.6} />
-          <CastleStage>
-            <Model scale={20} glb={token.models.glb} />
-          </CastleStage>
-        </Canvas> */}
-        {/* <Canvas shadows dpr={[1, 2]} camera={{ position: [-1, 3, 7], fov: 50 }}> */}
-        <Canvas shadows>
-          <ambientLight intensity={0.1} />
-          <ambientLight color={"#8d11db"} intensity={0.1} />
 
-          <spotLight
-            position={[3, 7, 7]}
-            intensity={7}
-            angle={0.3}
-            penumbra={1}
-            shadow-mapSize={[512, 512]}
-            castShadow
-          />
+        <Canvas shadows camera={{ fov: fov ?? 60 }}>
+          <ambientLight intensity={0.2} />
+          <ambientLight color={"#8d11db"} intensity={0.15} />
 
-          {/* <PresentationControls
-            global
-            config={{ mass: 1, tension: 500 }}
-            // snap={{ mass: 4, tension: 1500 }}
-            // rotation={[0, 0.3, 0]}
-            polar={[-Math.PI / 3, Math.PI / 3]}
-          > */}
-          {/* <TransformControls> */}
-          <Model castShadow receiveShadow position={[0, -0.95, 0]} scale={5} glb={token.models.glb} />
-          {/* </TransformControls> */}
-
-          <mesh castShadow receiveShadow position={[0, -1, 0]}>
-            <Castle castShadow receiveShadow scale={2} />
-          </mesh>
-          {/* </PresentationControls> */}
-
-          {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.95, 0]}>
-            <planeGeometry args={[5, 5]} />
-            <MeshReflectorMaterial
-              blur={[500, 500]}
-              resolution={2048}
-              mixBlur={1.5}
-              mixStrength={50}
-              roughness={1}
-              depthScale={0.7}
-              minDepthThreshold={0.4}
-              maxDepthThreshold={1.4}
-              color="#121212"
-              metalness={0.5}
-              mirror={0}
-            />
-          </mesh> */}
-          {/* <Environment preset="city" /> */}
-          {/* <BakeShadows /> */}
+          <Scene token={token} position={[0, -0.5, 0]} />
           <OrbitControls
+            autoRotate
+            autoRotateSpeed={0.2}
             enablePan={false}
             enableZoom={false}
-            minPolarAngle={Math.PI / 2.4}
-            maxPolarAngle={Math.PI / 2.4}
+            maxPolarAngle={Math.PI / 2.2}
           />
-
-          {/* <OrbitControls makeDefault /> */}
         </Canvas>
 
         <ActionArea>
-          <ARButton
-            className="button"
-            folded
-            inverse
-            ar={{
-              glb: token.models.glb,
-              usdz: token.models.usdz,
-              link: "",
-              resizable: true,
-            }}
-          />
-          <MetadataButton className="button" folded inverse token={token} />
-          <MintButton className="button" folded inverse token={token} />
-          <OpenseaButton className="button" folded inverse token={token} />
+          {ar && (
+            <ARButton
+              className="button"
+              folded
+              inverse
+              ar={{
+                glb: token.models.glb,
+                usdz: token.models.usdz,
+                link: "",
+                resizable: true,
+              }}
+            />
+          )}
+          {metadata && <MetadataButton className="button" folded inverse token={token} />}
+          {mint && <MintButton className="button" folded inverse token={token} />}
+          {opensea && <OpenseaButton className="button" folded inverse token={token} />}
         </ActionArea>
       </Suspense>
     </Wrapper>

@@ -99,7 +99,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
    * @dev Will add token metadata to given token id
    */
   function deleteToken(uint256 tokenId) public onlyRole(MANAGER) {
-    tokens[tokenId] = Token("", 0, 0, 0, 0, 0, 0, address(0));
+    delete tokens[tokenId];
   }
 
   /**

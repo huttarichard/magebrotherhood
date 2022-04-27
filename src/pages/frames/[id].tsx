@@ -1,6 +1,5 @@
 import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
-import { PageLayout } from "components/Layout/Layout";
 import Studio from "components/Tokens/Studio";
 import { SpinnerBlock } from "components/ui/Spinner";
 import { FullToken, useToken } from "hooks/useTokens";
@@ -31,24 +30,31 @@ const GlobalStyles = css`
   }
 `;
 
-export default function StudioPage() {
+export default function FrameIDPage() {
   const router = useRouter();
-  const token = useToken(router.query.id as string, { metadata: true });
+  const id = router.query.id as string;
+
+  const token = useToken(id, { metadata: true });
   const [h, setH] = useState<number>(0);
   const dimensions = useWindowSize();
 
-  useEffect(() => setH(dimensions.height - 60), [dimensions.height]);
+  useEffect(() => setH(dimensions.height), [dimensions.height]);
+
+  if (token.error) {
+    return <div>{token.error?.message}</div>;
+  }
 
   return (
-    <PageLayout title="Studio" description="Explore characters from our metaverse.">
+    <>
       <Global styles={GlobalStyles}></Global>
+
       <Wrapper height={h}>
         {token.loading ? (
           <SpinnerBlock>Loading Studio...</SpinnerBlock>
         ) : (
-          <Studio ar opensea metadata mint token={token.data as FullToken} />
+          <Studio ar fov={40} token={token.data as FullToken} />
         )}
       </Wrapper>
-    </PageLayout>
+    </>
   );
 }
