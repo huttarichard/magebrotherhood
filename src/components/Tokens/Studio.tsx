@@ -43,7 +43,13 @@ function Scene({ token, position }: SceneProps) {
   return (
     <group position={position}>
       <spotLight position={[3, 7, 7]} intensity={4} angle={0.3} penumbra={1} shadow-mapSize={[512, 512]} castShadow />
-      <Model castShadow receiveShadow position={[0, -0.95, 0]} scale={5} glb={token.models.glb} />
+      <Model
+        castShadow
+        receiveShadow
+        position={[0, -0.95, 0]}
+        scale={5.5}
+        glb={`/models/tokens/${token.id}/model.glb`}
+      />
       <mesh castShadow receiveShadow position={[0, -1, 0]}>
         <Castle castShadow receiveShadow scale={2} />
       </mesh>
@@ -62,12 +68,18 @@ export interface StudioProps {
 }
 
 export function Studio({ token, stats, metadata, mint, opensea, ar, fov }: StudioProps) {
+  const loading = <SpinnerBlock>Loading Studio...</SpinnerBlock>;
+
+  if (!token) {
+    return loading;
+  }
+
   return (
     <Wrapper>
-      <Suspense fallback={<SpinnerBlock>Loading Studio...</SpinnerBlock>}>
+      <Suspense fallback={loading}>
         {stats && <Stats />}
 
-        <Canvas shadows camera={{ fov: fov ?? 60 }}>
+        <Canvas shadows camera={{ fov: fov ?? 50 }}>
           <ambientLight intensity={0.2} />
           <ambientLight color={"#8d11db"} intensity={0.15} />
 
@@ -88,8 +100,8 @@ export function Studio({ token, stats, metadata, mint, opensea, ar, fov }: Studi
               folded
               inverse
               ar={{
-                glb: token.models.glb,
-                usdz: token.models.usdz,
+                glb: `/models/tokens/${token.id}/model.glb`,
+                usdz: `/models/tokens/${token.id}/model.usdz`,
                 link: "",
                 resizable: true,
               }}

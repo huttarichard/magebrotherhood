@@ -33,7 +33,7 @@ const GlobalStyles = css`
 
 export default function StudioPage() {
   const router = useRouter();
-  const token = useToken(router.query.id as string, { metadata: true });
+  const token = useToken(router.query.id as string);
   const [h, setH] = useState<number>(0);
   const dimensions = useWindowSize();
 

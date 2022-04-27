@@ -2,13 +2,14 @@ import styled from "@emotion/styled";
 import { NoSsr } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import preview from "assets/images/preview.png";
 import Paper from "components/ui/Paper";
 import React from "react";
 import ReactPlayer from "react-player/lazy";
 
 const Wrapper = styled.div`
   height: auto;
-  padding: 10rem 1rem;
+  padding: 10rem 1rem 10rem 1rem;
   overflow: hidden;
 `;
 
@@ -33,12 +34,12 @@ export default function Scheme() {
         <VideoGrid item>
           <Paper
             magical
-            sx={{ maxHeight: "600px", maxWidth: "1200px", margin: "0 auto", height: "100%", width: "100%" }}
+            sx={{ maxHeight: "80vw", maxWidth: "1000px", margin: "0 auto", height: "100%", width: "100%" }}
           >
             <NoSsr>
               <ReactPlayer
                 url="https://www.youtube.com/watch?v=p9PH3fZpqqQ"
-                light
+                light={preview.src}
                 width="100%"
                 height="100%"
                 style={{ borderRadius: "10px", overflow: "hidden" }}

@@ -111,7 +111,6 @@ export default function useAR(params: Params): ARState {
     set({
       ...state,
       mode: ARMode.NONE,
-      error: new Error("QuickLook AR viewer not supported on this device"),
     });
   }, [params]);
 

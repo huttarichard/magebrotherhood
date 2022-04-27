@@ -2,7 +2,7 @@ import { ArcballControls, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { PrimitiveProps, useFrame } from "@react-three/fiber";
 import { SpinnerBlock } from "components/ui/Spinner";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Group } from "three";
@@ -44,15 +44,17 @@ export function Manipulator() {
   const { camera, size } = useThree();
   const ref = useRef<Group>(null);
 
-  useFrame(() => {
+  const memo = () => {
     if (!ref.current) return;
     ref.current.rotation.y = -0.1 - window.scrollY / size.height;
     ref.current.position.y = -2.1 - window.scrollY / size.height;
     ref.current.position.x = 1.4 - (300 / window.innerWidth) * 1.8;
-  });
+  };
 
-  const height = Math.min(window.innerHeight / 180, 5);
-  console.log(height);
+  useMemo(memo, [window.scrollY, size.height, window.innerWidth]);
+  useEffect(memo, []);
+
+  const height = Math.min(window.innerHeight / 120, 8);
 
   return (
     <>
@@ -64,11 +66,6 @@ export function Manipulator() {
 
       <group ref={ref} position={[1.2, -2.1, 0]}>
         <Model position={[0, 0, 0]} scale={height} glb="/models/tokens/2/model.glb" />
-
-        {/* <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[170, 170]} />
-          <meshPhongMaterial color="#ff0000" opacity={1} transparent />
-        </mesh> */}
       </group>
 
       <ArcballControls enableZoom={false} enableRotate={false} makeDefault camera={camera} />

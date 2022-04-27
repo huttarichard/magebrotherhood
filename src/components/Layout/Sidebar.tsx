@@ -16,6 +16,7 @@ import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Brand from "components/Brand";
+import { useBHCUSDPrice } from "hooks/useMarketData";
 import Link from "next/link";
 
 import HeaderWallet from "./ConnectWallet";
@@ -190,6 +191,40 @@ function Item({ icon, name, link, soon = false }: ItemProps) {
   );
 }
 
+const BHCPriceWrapper = styled.div`
+  margin-top: 10px;
+  font-size: 1.5rem;
+
+  span {
+    position: relative;
+    left: 10px;
+    display: inline-block;
+    font-weight: 700;
+    background: linear-gradient(${({ theme }) => theme.primary2}, ${({ theme }) => theme.primary1});
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+  }
+`;
+
+function BHCPrice() {
+  const price = useBHCUSDPrice();
+  if (!price)
+    return (
+      <BHCPriceWrapper>
+        BHC:
+        <span>...</span>
+      </BHCPriceWrapper>
+    );
+
+  return (
+    <BHCPriceWrapper>
+      BHC:
+      <span>${price.toFixed(8)}</span>
+    </BHCPriceWrapper>
+  );
+}
+
 export interface SidebarProps {
   closeIcon?: boolean;
 }
@@ -221,6 +256,7 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
       </Grid>
       <Bottom item>
         <HeaderWallet />
+        <BHCPrice />
       </Bottom>
     </SidebarWrapper>
   );
