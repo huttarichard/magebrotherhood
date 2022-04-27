@@ -377,7 +377,7 @@ export default function SwapPaperFormalPage() {
         <h3>Decentralized state synchronization</h3>
 
         <Break />
-        <h2>Disclaimer</h2>
+        <h2 id="disclaimer">Disclaimer</h2>
         <p>
           Cryptocurrency trading entails a high level of risk and is not suited for all investors. You should carefully
           evaluate your investment objectives, degree of experience, and risk appetite before deciding to trade

@@ -33,13 +33,13 @@ export default function Footer() {
     <FooterWrapper container justifyContent="space-between">
       <Grid container item xs="auto" gap={1.2} alignItems="center">
         <Grid item>
-          <Link href="/privacy-policy">
+          <Link href="/privacy">
             <a>Privacy Policy</a>
           </Link>
         </Grid>
         <Grid item>
-          <Link href="/terms-of-use">
-            <a>Terms of use</a>
+          <Link href="/paper#disclaimer">
+            <a>Disclaimer</a>
           </Link>
         </Grid>
       </Grid>
