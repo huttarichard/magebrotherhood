@@ -1,8 +1,8 @@
 /// <reference types="@nomiclabs/hardhat-waffle" />
 
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
 import { expect } from "chai";
-import { BigNumber, BigNumberish } from "ethers";
 import { ethers } from "hardhat";
 
 import {

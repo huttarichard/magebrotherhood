@@ -1,128 +1,57 @@
 import styled from "@emotion/styled";
-import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Grid } from "@mui/material";
+import Discord from "components/Socials/Discord";
+import Twitter from "components/Socials/Twitter";
 import Link from "next/link";
 
-const Main = styled.footer`
+const FooterWrapper = styled(Grid)`
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem;
+  height: 70px;
   background-color: #fff;
+  padding: 1rem;
+  color: black;
 
-  nav {
-    width: 100%;
-    margin-bottom: 1rem;
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-evenly;
-    }
-
-    a {
-      text-decoration: none;
-      font-family: "Bebas Neue", sans-serif;
-      color: #000;
-    }
+  a {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-decoration: none;
   }
 
-  > ul {
-    width: 50%;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-
-    li {
-      margin-right: 1rem;
-    }
-
-    a {
-      color: #000;
-    }
+  svg {
+    font-size: 1.4rem;
   }
 
-  span {
-    display: block;
-    width: 50%;
-    text-align: right;
-  }
-
-  @media (min-width: 992px) {
-    padding: 2rem 3rem;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-
-    nav {
-      width: auto;
-      justify-content: flex-start;
-      margin-bottom: 0;
-
-      li {
-        margin-right: 1rem;
-      }
-    }
-
-    > ul {
-      width: auto;
-    }
-
-    span {
-      width: auto;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    nav {
-      a {
-        font-size: 25px;
-      }
-    }
-
-    span {
-      font-size: 25px;
-    }
+  svg,
+  a {
+    color: black;
   }
 `;
 
 export default function Footer() {
   return (
-    <Main>
-      <nav>
-        <ul>
-          <li>
-            <Link href="/privacy-policy">
-              <a>Privacy Policy</a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/terms-of-use">
-              <a>Terms of use</a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/contact">
-              <a>Contact</a>
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      <ul>
-        <li>
-          <a href="https://discord.gg/HgPQAHzp3Z" target="_blank" rel="noopener noreferrer" aria-label="Discord">
-            <FontAwesomeIcon icon={faDiscord} />
-          </a>
-        </li>
-        <li>
-          <a href="https://twitter.com/MageBrotherhood" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-            <FontAwesomeIcon icon={faTwitter} />
-          </a>
-        </li>
-      </ul>
-      <span>All rights reserved</span>
-    </Main>
+    <FooterWrapper container justifyContent="space-between">
+      <Grid container item xs="auto" gap={1.2} alignItems="center">
+        <Grid item>
+          <Link href="/privacy-policy">
+            <a>Privacy Policy</a>
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link href="/terms-of-use">
+            <a>Terms of use</a>
+          </Link>
+        </Grid>
+      </Grid>
+
+      <Grid container item xs="auto" gap={2} alignItems="center">
+        <Grid item>
+          <Twitter />
+        </Grid>
+        <Grid item>
+          <Discord />
+        </Grid>
+      </Grid>
+    </FooterWrapper>
   );
 }

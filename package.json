@@ -8,12 +8,9 @@
     "lint": "next lint",
     "hardhat": "hardhat --tsconfig ./tsconfig.hardhat.json",
     "storybook": "start-storybook -p 6006",
-    "litepaper": "markdown-pdf --cwd ./litepaper --paper-border 0px --paper-format A4 --css-path ./litepaper/style.css --out ./public/litepaper.pdf ./litepaper/*.md",
     "airdrop": "ts-node --project ./tsconfig.hardhat.json ./src/server/airdrop.ts",
     "screenshots": "ts-node --project ./tsconfig.hardhat.json ./scripts/screenshots.ts",
-    "build-storybook": "build-storybook",
-    "formatjs:extract": "formatjs extract 'src/**/*.ts*' --ignore='**/*.d.ts' --out-file lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]'",
-    "formatjs:compile": "formatjs compile-folder lang/ src/translations/"
+    "build-storybook": "build-storybook"
   },
   "resolutions": {
     "@walletconnect/ethereum-provider": "1.7.1"
@@ -73,8 +70,6 @@
     "swiper": "^8.0.7",
     "swr": "^1.3.0",
     "three": "^0.139.2",
-    "three.meshline": "^1.4.0",
-    "threejs-meshline": "^2.0.12",
     "twitter-api-v2": "^1.11.2",
     "ua-parser-js": "^1.0.2",
     "uint8arrays": "^3.0.0",
@@ -126,7 +121,6 @@
     "hardhat": "^2.9.0",
     "hardhat-exposed": "^0.2.3",
     "hardhat-gas-reporter": "^1.0.8",
-    "markdown-pdf": "^10.0.0",
     "next-transpile-modules": "^9.0.0",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
