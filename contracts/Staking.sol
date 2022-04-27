@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "hardhat/console.sol";
 
 import "./interfaces/IStakable.sol";
 import "./interfaces/ICoin.sol";
@@ -715,8 +716,9 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
         // only calculate and update the claimable rewards if there is
         // something to calculate with
         if ((globalSnapshot.stake != 0) && (stakerSnapshot.stake != 0) && (rewardPerCycle != 0)) {
-          uint256 snapshotReward = (endCycle - startCycle).mul(rewardPerCycle).mul(stakerSnapshot.stake);
+          uint256 snapshotReward = (endCycle - startCycle).mul(rewardPerCycle);
           snapshotReward /= globalSnapshot.stake;
+          snapshotReward *= stakerSnapshot.stake;
 
           claim.amount = claim.amount.add(snapshotReward);
         }

@@ -16,13 +16,13 @@ import {
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
 
-export const defaultToken: Playables.TokenStruct = {
+export const defaultToken = {
   uri: "https://example.com/token.png",
   createdAt: 0,
   launchedAt: 0,
-  supply: 100,
+  supply: 1000,
   minted: 0,
-  weight: 1,
+  weight: 100,
   price: parseUnits("0.02", "ether"),
   royalty: ethers.Wallet.createRandom().address,
 };
@@ -98,9 +98,7 @@ describe("Playables contract", function () {
 
   it("should add token correctly", async function () {
     const tokenId = 2;
-    const t: Playables.TokenStruct = {
-      ...defaultToken,
-    };
+    const t = defaultToken;
 
     await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty);
 
@@ -133,7 +131,7 @@ describe("Playables contract", function () {
 
   it("should be unable to mint unlaunched token", async function () {
     const tokenId = 2;
-    const t: Playables.TokenStruct = {
+    const t = {
       ...defaultToken,
       launchedAt: (await ethers.provider.getBlock("latest")).timestamp + 10000,
     };
@@ -157,7 +155,7 @@ describe("Playables contract", function () {
 
   it("should be unable to mint token without remaining supply", async function () {
     const tokenId = 2;
-    const t: Playables.TokenStruct = {
+    const t = {
       ...defaultToken,
       supply: 1000,
       minted: 1000,
