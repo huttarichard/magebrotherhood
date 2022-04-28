@@ -99,7 +99,7 @@ export default function useAR(params: Params): ARState {
     }
 
     // GLB file, doesnt support blob urls
-    if (isSceneViewerSupported()) {
+    if (isSceneViewerSupported() && params.glb) {
       set({
         ...state,
         mode: ARMode.SCENE_VIEWER,
@@ -112,7 +112,7 @@ export default function useAR(params: Params): ARState {
       ...state,
       mode: ARMode.NONE,
     });
-  }, [params]);
+  }, [params.reality, params.usdz, params.glb]);
 
   return state;
 }

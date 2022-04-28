@@ -2,7 +2,7 @@ import { ArcballControls, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { PrimitiveProps, useFrame } from "@react-three/fiber";
 import { SpinnerBlock } from "components/ui/Spinner";
-import { Suspense, useMemo } from "react";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Group } from "three";
@@ -44,15 +44,12 @@ export function Manipulator() {
   const { camera, size } = useThree();
   const ref = useRef<Group>(null);
 
-  const memo = () => {
+  useFrame(() => {
     if (!ref.current) return;
     ref.current.rotation.y = -0.1 - window.scrollY / size.height;
     ref.current.position.y = -2.1 - window.scrollY / size.height;
     ref.current.position.x = 1.4 - (300 / window.innerWidth) * 1.8;
-  };
-
-  useMemo(memo, [window.scrollY, size.height, window.innerWidth]);
-  useEffect(memo, []);
+  });
 
   const height = Math.min(window.innerHeight / 120, 8);
 
