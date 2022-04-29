@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import InfoGraphics from "components/Home/Metaverse/InfoGraphics";
+import InfoGraphics from "components/Ecosystem/InfoGraphics";
 import { PageLayout } from "components/Layout/Layout";
 
 const Main = styled.div`
