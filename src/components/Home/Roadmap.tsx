@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import roadmapKnight from "assets/images/roadmapKnight.png";
+import Countdown from "components/ui/CountDown";
 import Timeline from "components/ui/Timeline";
 import { useEffect, useRef, useState } from "react";
 import { useWindowScroll } from "react-use";
@@ -14,6 +15,8 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.primary2};
   color: ${({ theme }) => theme.text2};
   padding: 2rem 0 0 0;
+  background: rgb(236, 18, 249);
+  background: linear-gradient(337deg, rgba(236, 18, 249, 1) 0%, rgba(141, 17, 219, 1) 100%);
 
   h2 {
     text-align: center;
@@ -42,9 +45,9 @@ const Knight = styled(Grid)`
 
 const items = [
   {
-    title: "Freelancer",
-    period: "2013 - present",
-    desc: "My current employment. Way better than the position before!",
+    title: "Initial Idea",
+    period: "2020",
+    desc: "We started thinking on a new NFT idea that would be usable in online gaming.",
   },
   {
     title: "Apple Inc.",
@@ -87,9 +90,11 @@ export default function Roadmap() {
     setUpcommingVisible(sh - kh - 1 <= ot + 100);
   }, [y, down]);
 
+  const date = new Date(Date.now() + 1000 * 60 * 60 * 24 * 2);
+
   return (
     <Wrapper ref={scrollRef}>
-      <Typography sx={{ color: theme.text1 }} variant="h4" textAlign="center">
+      <Typography sx={{ color: theme.text1 }} variant="h2" textAlign="center">
         Roadmap
       </Typography>
 
@@ -99,10 +104,17 @@ export default function Roadmap() {
 
       <Knight container justifyContent="end" ref={knightRef} className={upcommingVisible ? "visible" : ""}>
         <Grid item container xs={6} sx={{ display: { xs: "none", sm: upcommingVisible ? "block" : "none" } }}>
-          <Grid item container alignContent="center" sx={{ height: "100%" }}>
-            <Typography sx={{ color: theme.text1 }} variant="h4">
-              Upcoming Events
-            </Typography>
+          <Grid item container alignItems="center" sx={{ height: "100%" }}>
+            <Grid item xs={12}>
+              <Typography sx={{ color: theme.text1 }} variant="h4">
+                Upcomming Mint
+              </Typography>
+              <br />
+
+              <Countdown countDownDate={date} />
+
+              <p>Our first collection will start in little while. So be ready!</p>
+            </Grid>
           </Grid>
         </Grid>
       </Knight>

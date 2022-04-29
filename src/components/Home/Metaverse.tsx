@@ -1,0 +1,117 @@
+import styled from "@emotion/styled";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import coins from "assets/images/coins.png";
+import contracts from "assets/images/contracts.png";
+import exchange from "assets/images/exchange.png";
+import Paper from "components/ui/Paper";
+import Image from "next/image";
+import React from "react";
+
+// import Sticky from "react-sticky-el";
+
+const Wrapper = styled.div`
+  height: auto;
+  min-height: 772px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10rem 40px 14rem 40px;
+
+  .heading {
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+
+    h2 {
+      padding-top: 10px;
+    }
+  }
+`;
+
+const Card = styled(Paper)`
+  min-height: auto;
+  padding: 20px;
+  /* border: 3px solid #c431da; */
+
+  .img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    opacity: 0.9;
+  }
+`;
+
+export default function Metaverse() {
+  return (
+    <Wrapper>
+      <div className="scrolling-area">
+        <div className="heading">
+          <Typography variant="h2" textAlign="center">
+            <span className="long">Metaverse</span> Ecosystem
+          </Typography>
+          <Typography variant="body1" textAlign="center">
+            Our metaverse-ready ecosystem is fair to investors and fair to players.
+          </Typography>
+        </div>
+
+        <br />
+
+        <Grid container gap={2}>
+          <Grid item xs={12} md>
+            <Card magical>
+              <Grid container>
+                <Grid item xs={12} sm={12} className="img">
+                  <Image src={contracts.src} width={180} height={250} objectFit="fill" alt="Contracts" />
+                </Grid>
+                <Grid item xs>
+                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="body2">
+                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                    industrys standard dummy text ever.
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md>
+            <Card magical>
+              <Grid container>
+                <Grid item xs={12} sm={12} className="img">
+                  <Image src={coins.src} width={180} height={250} objectFit="fill" alt="Contracts" />
+                </Grid>
+                <Grid item xs>
+                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="body2">
+                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                    industrys standard dummy text ever.
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md>
+            <Card magical>
+              <Grid container>
+                <Grid item xs={12} sm={12} className="img">
+                  <Image src={exchange.src} width={180} height={250} objectFit="fill" alt="Contracts" />
+                </Grid>
+                <Grid item xs>
+                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="body2">
+                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                    industrys standard dummy text ever.
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+        </Grid>
+      </div>
+    </Wrapper>
+  );
+}

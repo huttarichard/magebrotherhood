@@ -9,14 +9,19 @@ import ReactPlayer from "react-player/lazy";
 
 const Wrapper = styled.div`
   height: auto;
-  padding: 10rem 1rem 10rem 1rem;
+  padding: 10rem 1rem 14rem 1rem;
   overflow: hidden;
+  box-shadow: 0px 8px 0px 0px #ffffff1a;
 `;
 
 const VideoGrid = styled(Grid)`
   width: 100%;
-  height: 600px;
+  height: 30vh;
   padding-top: 5rem;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 600px;
+  }
 `;
 
 export default function Scheme() {
@@ -42,7 +47,7 @@ export default function Scheme() {
                 light={preview.src}
                 width="100%"
                 height="100%"
-                style={{ borderRadius: "10px", overflow: "hidden" }}
+                style={{ borderRadius: "4px", overflow: "hidden" }}
               />
             </NoSsr>
           </Paper>

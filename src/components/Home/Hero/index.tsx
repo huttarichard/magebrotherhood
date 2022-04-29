@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
-import heroBg2 from "assets/images/heroBg2.png";
+import shape from "assets/images/shape.png";
 import List from "components/Socials/List";
 import Button from "components/ui/Button";
 import useAR from "hooks/useAR";
@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   height: calc(100vh - 60px);
   min-height: 772px;
   box-shadow: 0px 8px 0px 0px #ffffff1a;
+  max-height: 100vh;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
     height: 100%;
@@ -36,7 +37,7 @@ const Background = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background: transparent url(${heroBg2.src}) no-repeat;
+  background: transparent url(${shape.src}) no-repeat;
   background-size: cover;
 
   @media (min-width: 1200px) {

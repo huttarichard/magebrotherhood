@@ -12,11 +12,11 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.text2};
-  height: 40vh;
-  min-height: 540px;
+  height: 30vh;
+  min-height: 440px;
 
   ${(props) => props.theme.breakpoints.up("lg")} {
-    height: 50vh;
+    height: 40vh;
   }
 `;
 

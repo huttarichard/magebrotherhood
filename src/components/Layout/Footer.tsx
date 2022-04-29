@@ -45,6 +45,7 @@ export default function Footer() {
       </Grid>
 
       <Grid container item xs="auto" gap={2} alignItems="center">
+        <Grid item>Made with ❤️   in Prague.</Grid>
         <Grid item>
           <Twitter />
         </Grid>

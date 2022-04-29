@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
-import knight from "assets/images/knight.png";
 import { useTokens } from "hooks/useTokens";
 import Image from "next/image";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
@@ -14,9 +13,15 @@ const Wrapper = styled.div`
   align-items: flex-start;
   justify-content: center;
   margin: 0 auto;
-  padding: 6rem 1rem;
+  padding: 10rem 40px;
   max-width: 100vw;
   overflow: hidden;
+  box-shadow: 0px 8px 0px 0px #ffffff1a;
+
+  > div {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 
   ${(props) => props.theme.breakpoints.up("md")} {
     /* max-width: 1432px; */
@@ -73,7 +78,6 @@ const Header = styled.div`
 
 const StyledSlider = styled.div`
   width: 100%;
-  margin-bottom: 6rem;
 
   .swiper-slide {
     max-width: 240px;
@@ -106,39 +110,10 @@ const StyledSlide = styled.div`
 
   @media (min-width: 992px) {
     .img-wrapper {
-      height: 20vw;
-      max-height: 320px;
+      height: 250px;
     }
   }
 `;
-
-const slides = [
-  {
-    title: "Bendy1",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant in cursus proin.",
-    img: knight.src,
-  },
-  {
-    title: "Dark knight",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
-    img: knight.src,
-  },
-  {
-    title: "Ninja",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu, sed habitant.",
-    img: knight.src,
-  },
-  {
-    title: "Bendy2",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
-    img: knight.src,
-  },
-  {
-    title: "Bendy3",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst et risus arcu.",
-    img: knight.src,
-  },
-];
 
 const sliderConfig: SwiperProps = {
   slidesPerView: 1.5,
@@ -161,36 +136,38 @@ export default function Collection() {
 
   return (
     <Wrapper>
-      <Header>
-        <div className="text">
-          <Typography variant="h3">Upcomming Collection</Typography>
-          <p>Collection of dark night ERC1155 comming later this month.</p>
-        </div>
-      </Header>
-      <StyledSlider>
-        <Swiper {...sliderConfig}>
-          {tokens.data.map((token) => {
-            return (
-              <SwiperSlide key={token.id}>
-                <StyledSlide>
-                  <div className="img-wrapper">
-                    <Image
-                      loading="lazy"
-                      src={token.image}
-                      layout="fill"
-                      objectFit="contain"
-                      objectPosition="left bottom"
-                      alt={token.name}
-                    />
-                  </div>
-                  <h3>{token.name}</h3>
-                  <p>{token.description.slice(0, 50)}</p>
-                </StyledSlide>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </StyledSlider>
+      <div>
+        <Header>
+          <div className="text">
+            <Typography variant="h3">Upcomming Collection</Typography>
+            <p>Collection of dark night ERC1155 comming later this month.</p>
+          </div>
+        </Header>
+        <StyledSlider>
+          <Swiper {...sliderConfig}>
+            {tokens.data.map((token) => {
+              return (
+                <SwiperSlide key={token.id}>
+                  <StyledSlide>
+                    <div className="img-wrapper">
+                      <Image
+                        loading="lazy"
+                        src={token.image}
+                        layout="fill"
+                        objectFit="contain"
+                        objectPosition="left bottom"
+                        alt={token.name}
+                      />
+                    </div>
+                    <h3>{token.name}</h3>
+                    <p>{token.description.slice(0, 50)}</p>
+                  </StyledSlide>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </StyledSlider>
+      </div>
     </Wrapper>
   );
 }

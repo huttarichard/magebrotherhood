@@ -1,10 +1,11 @@
-import About from "components/Home/About";
 import Collection from "components/Home/Collection";
-import Scheme from "components/Home/Ecosystem";
 import GamePreview from "components/Home/GamePreview";
 import Hero from "components/Home/Hero";
+import Join from "components/Home/Join";
+import Metaverse from "components/Home/Metaverse";
 import Polygon from "components/Home/Polygon";
-import Roadmap from "components/Home/Roadmap";
+import Studio from "components/Home/Studio";
+import Swap from "components/Home/Swap";
 import Layout from "components/Layout/Layout";
 
 export default function HomePage() {
@@ -27,11 +28,14 @@ export default function HomePage() {
       <Layout footer>
         <Hero />
         <GamePreview />
-        <Scheme />
-        <Polygon />
         <Collection />
-        <Roadmap />
-        <About />
+        <Studio />
+        <Metaverse />
+        <Polygon />
+        <Swap />
+        <Join />
+        {/* <Roadmap />
+        <About /> */}
       </Layout>
     </>
   );
