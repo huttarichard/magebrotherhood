@@ -35,7 +35,7 @@ export const PaperCard = styled(Paper)`
   margin-bottom: 50px;
 `;
 
-const Content = styled(Grid)`
+export const Content = styled(Grid)`
   height: 100%;
 
   b.weight {

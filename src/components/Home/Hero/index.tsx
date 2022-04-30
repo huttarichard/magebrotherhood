@@ -1,4 +1,3 @@
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
 import shape from "assets/images/shape.png";
@@ -9,7 +8,6 @@ import { ARMode } from "lib/ar";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { isMobileOnly } from "react-device-detect";
 
 const Wrapper = styled.div`
   position: relative;
@@ -23,12 +21,10 @@ const Wrapper = styled.div`
     max-height: 100vh;
   }
 
-  ${() =>
-    isMobileOnly &&
-    css`
-      max-height: calc(100vh - 140px);
-      min-height: 672px;
-    `}
+  @media screen and (max-width: 992px) and (orientation: portrait) {
+    max-height: calc(100vh - 140px);
+    min-height: 672px;
+  }
 `;
 
 const Background = styled.div`

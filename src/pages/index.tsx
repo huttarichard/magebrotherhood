@@ -34,8 +34,6 @@ export default function HomePage() {
         <Polygon />
         <Swap />
         <Join />
-        {/* <Roadmap />
-        <About /> */}
       </Layout>
     </>
   );

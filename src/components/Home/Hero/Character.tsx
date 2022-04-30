@@ -51,7 +51,7 @@ export function Manipulator() {
     ref.current.position.x = 1.4 - (300 / window.innerWidth) * 1.8;
   });
 
-  const height = Math.min(window.innerHeight / 120, 8);
+  const height = Math.min(window.innerHeight / 130, 8);
 
   return (
     <>
@@ -75,8 +75,6 @@ export default function Character() {
     <Suspense fallback={<SpinnerBlock />}>
       <Canvas shadows camera={{ fov: 50, position: [0, -1, 4] }}>
         <Manipulator />
-
-        {/* <PerspectiveCamera></PerspectiveCamera> */}
       </Canvas>
     </Suspense>
   );

@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { PageLayout } from "components/Layout/Layout";
 import Button from "components/ui/Button";
 import Card from "components/ui/Paper";
-import { useWeb3ConnectWindow } from "components/ui/WalletConnectWindow";
 import { useFormik } from "formik";
 import { usePromoterContract } from "hooks/useContract";
 import { useWeb3Wallet } from "hooks/useWeb3";
@@ -176,9 +175,6 @@ function CumputedRewards() {
 }
 
 export default function AffiliatePage() {
-  const web3 = useWeb3Wallet();
-  const window = useWeb3ConnectWindow();
-
   const { makeTransaction } = useWeb3TransactionPresenter();
 
   interface Values {
@@ -229,9 +225,8 @@ export default function AffiliatePage() {
           </Typography>
           <br />
           <Typography variant="body1">
-            Everytime someone mints with your code, you will be rewarded with brotherhood coin! Amount of reward varies
-            depending on price of ethereums gas, but you can expect some nice gains! Register code below and start
-            earning.
+            Everytime someone mints with your code, you will be rewarded with brotherhood coin! Get stared by filling
+            the form below.
           </Typography>
         </div>
 
@@ -268,11 +263,7 @@ export default function AffiliatePage() {
               error={formik.touched.nickname && Boolean(formik.errors.nickname)}
             />
 
-            {web3.connected ? (
-              <Button text="Register Code" type="submit" important className="btn" distorted borders large />
-            ) : (
-              <Button text="Connect Wallet" className="btn" distorted borders large onClick={window.connect} />
-            )}
+            <Button text="Register Code" type="submit" important className="btn" distorted borders large />
           </form>
         </CardWrapper>
       </Main>

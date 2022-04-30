@@ -1,8 +1,14 @@
+import "swiper/css";
+import "swiper/css/virtual";
+
 import styled from "@emotion/styled";
+import { Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTokens } from "hooks/useTokens";
 import Image from "next/image";
-import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useWindowSize } from "react-use";
 
 const Wrapper = styled.div`
   position: relative;
@@ -12,19 +18,15 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin: 0 auto;
-  padding: 10rem 40px;
-  max-width: 100vw;
   overflow: hidden;
   box-shadow: 0px 8px 0px 0px #ffffff1a;
+  width: 100%;
 
-  > div {
+  .overflow {
     max-width: 1400px;
     margin: 0 auto;
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    /* max-width: 1432px; */
+    overflow: hidden;
+    width: inherit;
   }
 `;
 
@@ -33,58 +35,13 @@ const Header = styled.div`
   padding: 0 1rem;
   margin-bottom: 3rem;
 
-  .text {
-    h2 {
-      margin: 0 0 2rem;
-      color: #fff;
-      font-family: "Bebas Neue", sans-serif;
-      font-weight: 400;
-      font-size: 3rem;
-    }
-
-    p {
-      margin: 0;
-      color: #fff;
-    }
-  }
-
-  @media (min-width: 992px) {
-    padding: 0;
-    display: flex;
-    align-items: center;
-
-    .text {
-      flex: 1;
-      margin-right: 4rem;
-
-      p {
-        max-width: 1000px;
-      }
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .text {
-      h2 {
-        font-size: 5rem;
-      }
-
-      p {
-        font-size: 20px;
-      }
-    }
+  p {
+    font-size: 1.5rem;
   }
 `;
 
-const StyledSlider = styled.div`
-  width: 100%;
-
-  .swiper-slide {
-    max-width: 240px;
-  }
-`;
-
-const StyledSlide = styled.div`
+const StyledSlide = styled(Grid)`
+  padding: 1rem;
   .img-wrapper {
     position: relative;
     height: 240px;
@@ -96,9 +53,7 @@ const StyledSlide = styled.div`
 
   h3 {
     margin: 0 0 0.5rem;
-    color: ${({ theme }) => theme.primary1};
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: 2rem;
   }
 
@@ -110,63 +65,55 @@ const StyledSlide = styled.div`
 
   @media (min-width: 992px) {
     .img-wrapper {
-      height: 250px;
+      height: 240px;
+
+      img {
+        width: 100%;
+      }
     }
   }
 `;
 
-const sliderConfig: SwiperProps = {
-  slidesPerView: 1.5,
-  spaceBetween: 50,
-  breakpoints: {
-    500: {
-      slidesPerView: 1.5,
-    },
-    992: {
-      slidesPerView: 2.5,
-    },
-    1200: {
-      slidesPerView: 3.5,
-    },
-  },
-};
-
 export default function Collection() {
   const tokens = useTokens({ metadata: true });
+  const [w, sw] = useState<number | null>(null);
+  const { width } = useWindowSize();
+  // const { width } = useScreen();
+
+  useEffect(() => {
+    sw(width);
+  }, [width]);
 
   return (
     <Wrapper>
-      <div>
+      <div className="overflow">
         <Header>
           <div className="text">
-            <Typography variant="h3">Upcomming Collection</Typography>
-            <p>Collection of dark night ERC1155 comming later this month.</p>
+            <Typography variant="h3">First Collection</Typography>
+            <p>Collection of dark knights ERC1155, our first ever made, well crafted characters.</p>
           </div>
         </Header>
-        <StyledSlider>
-          <Swiper {...sliderConfig}>
-            {tokens.data.map((token) => {
-              return (
-                <SwiperSlide key={token.id}>
-                  <StyledSlide>
-                    <div className="img-wrapper">
-                      <Image
-                        loading="lazy"
-                        src={token.image}
-                        layout="fill"
-                        objectFit="contain"
-                        objectPosition="left bottom"
-                        alt={token.name}
-                      />
-                    </div>
-                    <h3>{token.name}</h3>
-                    <p>{token.description.slice(0, 50)}</p>
-                  </StyledSlide>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </StyledSlider>
+
+        <Grid container>
+          {tokens.data.map((token, index) => {
+            return (
+              <StyledSlide item xs={6} sm={4} md={3} lg key={index}>
+                <div className="img-wrapper">
+                  <Image
+                    loading="lazy"
+                    src={token.image}
+                    layout="fill"
+                    objectFit="cover"
+                    objectPosition="left bottom"
+                    alt={token.name}
+                  />
+                </div>
+                <h3>{token.name}</h3>
+                <p>{token.description}</p>
+              </StyledSlide>
+            );
+          })}
+        </Grid>
       </div>
     </Wrapper>
   );

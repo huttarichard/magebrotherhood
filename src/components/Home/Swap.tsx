@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Form from "components/Swap/Swap";
+import Link from "next/link";
 import React from "react";
 
 const Wrapper = styled.div`
@@ -24,16 +25,19 @@ export default function Swap() {
           <Grid item sm="auto" sx={{ md: { paddingRight: 10 } }} order={2}>
             <Form />
           </Grid>
-          <Grid item xs padding={2} order={1}>
+          <Grid item xs padding={{ xs: 0, sm: 2 }} order={1}>
             <Typography variant="h2">Broherhood Coin</Typography>
             <Typography variant="body1">
               Our ERC20 tokens called Brotherhood Coin (BHC) is in-game currency designed to be part of our ecosystem.
-              Its main purpose is to enable L2 scaling solutions and to give us control over how to rewards players for
-              their actions.
+              Its main purpose is to enable L2 scaling solutions and to give us control over how are the rewards
+              disribues.
             </Typography>
             <br />
-            <Typography variant="body1">You can read more about BHC in our LITEPAPER.</Typography>
+            <Typography variant="body1">
+              You can read more about BHC in our <Link href="/paper">LITEPAPER</Link>.
+            </Typography>
             <br />
+            <hr />
             <br />
           </Grid>
         </Grid>

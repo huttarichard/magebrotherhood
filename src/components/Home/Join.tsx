@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import background from "assets/images/background.png";
 import Discord from "components/Socials/Discord";
@@ -23,16 +22,13 @@ const Wrapper = styled.div`
     margin-top: 1rem;
     color: white;
 
-    > div {
-      height: 100%;
-    }
-
-    .text {
-      font-size: 1.5rem;
-    }
-
-    .icon {
-      padding: 0 20px;
+    .discord,
+    .twitter {
+      line-height: 5rem;
+      font-size: 1.4rem;
+      text-decoration: none;
+      font-weight: 400;
+      color: white;
     }
   }
 
@@ -40,6 +36,8 @@ const Wrapper = styled.div`
     color: white;
     font-size: 3rem;
     width: 80px;
+    position: relative;
+    top: 10px;
   }
 `;
 
@@ -49,27 +47,14 @@ export default function Join() {
       <div>
         <div>
           <Typography variant="h2">Join Brotherhood</Typography>
+          <Typography variant="body1">We will be happy o have you onboard!</Typography>
         </div>
         <br />
         <Paper className="card">
-          <Grid container justifyContent="center" alignItems="center">
-            <Grid item xs="auto" className="icon">
-              <Discord />
-            </Grid>
-            <Grid item xs className="text">
-              Get your invite to discord
-            </Grid>
-          </Grid>
+          <Discord>Get your invite to discord</Discord>
         </Paper>
         <Paper className="card">
-          <Grid container justifyContent="center" alignItems="center">
-            <Grid item xs="auto" className="icon">
-              <Twitter />
-            </Grid>
-            <Grid item xs className="text">
-              Follow us on twitter
-            </Grid>
-          </Grid>
+          <Twitter>Follow us on twitter</Twitter>
         </Paper>
       </div>
     </Wrapper>
