@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   height: auto;
   overflow: hidden;
   box-shadow: 0px 8px 0px 0px #ffffff1a;
-  padding: 10rem 40px;
+  padding: 10rem 0px;
 
   > div {
     max-width: 1400px;

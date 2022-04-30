@@ -19,7 +19,6 @@ const Wrapper = styled.div`
   padding: 10rem 40px 14rem 40px;
 
   .heading {
-    height: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,6 +57,7 @@ export default function Metaverse() {
           </Typography>
         </div>
 
+        <br />
         <br />
 
         <Grid container gap={2}>
