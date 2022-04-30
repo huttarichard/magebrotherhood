@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { NoSsr } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import preview from "assets/images/preview.png";
+import preview from "assets/images/preview.jpg";
 import Paper from "components/ui/Paper";
 import React from "react";
 import ReactPlayer from "react-player/lazy";

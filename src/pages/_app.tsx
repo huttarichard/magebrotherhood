@@ -29,7 +29,7 @@ function MageBrotherHoodApp(props: Props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   useEffect(() => {
-    setTimeout(() => document.getElementById("loader")?.remove(), 50);
+    setTimeout(() => document.getElementById("loader")?.remove(), 200);
   }, []);
 
   const seo = (

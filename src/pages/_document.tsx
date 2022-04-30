@@ -1,11 +1,11 @@
 import createEmotionServer from "@emotion/server/create-instance";
 import styled from "@emotion/styled";
-import Logo from "components/Brand/Logo";
+import Icon from "components/Brand/Icon";
 import { createEmotionCache } from "components/ui/ThemeProvider";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
 const Loader = styled.div`
-  position: absolute;
+  position: fixed;
   z-index: 99999999;
   top: 0;
   bottom: 0;
@@ -45,7 +45,7 @@ class MagebrotherHoodDocument extends Document {
         </Head>
         <body>
           <Loader id="loader">
-            <Logo color="#333333" />
+            <Icon color="#fff" style={{ opacity: 0.7 }} />
           </Loader>
 
           <Main />
