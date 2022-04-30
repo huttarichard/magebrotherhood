@@ -3,7 +3,7 @@ import { Grid } from "@mui/material";
 import { FullToken } from "hooks/useTokens";
 import React from "react";
 
-import { ContentGrid, Description, Image, PaperCard } from "./Card";
+import { Content, Description, Image, PaperCard } from "./Card";
 
 const ImageContainer = styled.div<{ size: number }>`
   display: inherit;
@@ -16,20 +16,31 @@ export interface CardSmallProps {
   token: FullToken;
   padding?: number;
   description?: boolean;
+  size?: number;
 }
 
 export function CardSmall(props: React.PropsWithChildren<CardSmallProps>) {
-  const { token, description, children, padding } = props;
+  const { token, description, children, padding, size } = props;
   return (
     <PaperCard>
       <Grid container>
-        <Grid item container xs="auto" alignItems="center">
-          <ImageContainer size={80}>
+        <Grid item container sm="auto" alignItems="center">
+          <ImageContainer size={size ?? 80}>
             <Image className="image" src={token.image} alt={token.name} priority layout="fill" />
           </ImageContainer>
         </Grid>
 
-        <ContentGrid padding={padding}>
+        <Content
+          item
+          sm
+          container
+          direction="column"
+          justifyContent="center"
+          padding={{ sm: padding ?? 0 }}
+          paddingLeft={{ sm: padding ? padding + 1 : 0 }}
+          paddingTop={{ xs: padding }}
+          paddingBottom={{ xs: padding }}
+        >
           {description && (
             <Description item>
               <b>{token.name}</b>
@@ -42,7 +53,7 @@ export function CardSmall(props: React.PropsWithChildren<CardSmallProps>) {
               {children}
             </Grid>
           )}
-        </ContentGrid>
+        </Content>
       </Grid>
     </PaperCard>
   );

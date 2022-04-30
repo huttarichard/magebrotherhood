@@ -39,7 +39,14 @@ export default function Scheme() {
         <VideoGrid item>
           <Paper
             magical
-            sx={{ maxHeight: "80vw", maxWidth: "1000px", margin: "0 auto", height: "100%", width: "100%" }}
+            sx={{
+              maxHeight: "80vw",
+              maxWidth: "1000px",
+              minHeight: "250px",
+              margin: "0 auto",
+              height: "100%",
+              width: "100%",
+            }}
           >
             <NoSsr>
               <ReactPlayer

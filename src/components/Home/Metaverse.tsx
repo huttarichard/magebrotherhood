@@ -6,6 +6,7 @@ import contracts from "assets/images/contracts.png";
 import exchange from "assets/images/exchange.png";
 import Paper from "components/ui/Paper";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 // import Sticky from "react-sticky-el";
@@ -67,10 +68,11 @@ export default function Metaverse() {
                   <Image src={contracts.src} width={180} height={250} objectFit="fill" alt="Contracts" />
                 </Grid>
                 <Grid item xs>
-                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="h5">Buy NFT</Typography>
                   <Typography variant="body2">
-                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industrys standard dummy text ever.
+                    You can buy one of our semi funguble ERC1155 tokens.{" "}
+                    <b>You get ticket to play, asset to sell, and something to stake!</b> Checkout our tokens{" "}
+                    <Link href="/tokens">here.</Link> Every WEI given to us will be delegated towards BHC pool.
                   </Typography>
                 </Grid>
               </Grid>
@@ -84,10 +86,10 @@ export default function Metaverse() {
                   <Image src={coins.src} width={180} height={250} objectFit="fill" alt="Contracts" />
                 </Grid>
                 <Grid item xs>
-                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="h5">Stake Tokens</Typography>
                   <Typography variant="body2">
-                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industrys standard dummy text ever.
+                    We are rewarding investors with BHC for holding the tokens. We collectlively have an incentive not
+                    to sell, making floor price to go up.
                   </Typography>
                 </Grid>
               </Grid>
@@ -101,10 +103,11 @@ export default function Metaverse() {
                   <Image src={exchange.src} width={180} height={250} objectFit="fill" alt="Contracts" />
                 </Grid>
                 <Grid item xs>
-                  <Typography variant="h5">Contracts</Typography>
+                  <Typography variant="h5">Exchange BHC</Typography>
                   <Typography variant="body2">
-                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industrys standard dummy text ever.
+                    If you feel you want some of the ETH you invested back, you can exchange BHC for ETH. Checkout the
+                    swap <Link href="/swap">here.</Link>.{" "}
+                    <i>Note: to prevent centralization and to reward long term investors, sell fee 2-5% is applied.</i>
                   </Typography>
                 </Grid>
               </Grid>
