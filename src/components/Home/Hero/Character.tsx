@@ -2,6 +2,7 @@ import { ArcballControls, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { PrimitiveProps, useFrame } from "@react-three/fiber";
 import { SpinnerBlock } from "components/ui/Spinner";
+import useOnScreen from "hooks/useOnScreen";
 import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
@@ -71,10 +72,13 @@ export function Manipulator() {
 }
 
 export default function Character() {
+  const canvas = useRef<any>();
+  const visible = useOnScreen(canvas);
+
   return (
     <Suspense fallback={<SpinnerBlock />}>
-      <Canvas shadows camera={{ fov: 50, position: [0, -1, 4] }}>
-        <Manipulator />
+      <Canvas ref={canvas} shadows camera={{ fov: 50, position: [0, -1, 4] }}>
+        {visible && <Manipulator />}
       </Canvas>
     </Suspense>
   );
