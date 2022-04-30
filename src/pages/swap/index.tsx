@@ -39,7 +39,7 @@ const Tranding = styled(Paper)`
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  max-width: 390px;
+  min-width: 300px;
 
   &:before {
     content: "";
