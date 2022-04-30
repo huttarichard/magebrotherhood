@@ -17,7 +17,7 @@ import { PropsWithChildren, useState } from "react";
 const CardWrapper = styled(Card)`
   margin: 0 auto;
   padding: 17px;
-  min-width: 350px;
+  min-width: 300px;
   width: 100%;
 
   ${(props) => props.theme.breakpoints.down("md")} {
