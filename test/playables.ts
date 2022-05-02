@@ -24,7 +24,6 @@ export const defaultToken = {
   minted: 0,
   weight: 100,
   price: parseUnits("0.02", "ether"),
-  royalty: ethers.Wallet.createRandom().address,
 };
 
 export const addToken = async (
@@ -35,7 +34,6 @@ export const addToken = async (
   minted: BigNumberish = defaultToken.minted,
   weight: BigNumberish = defaultToken.weight,
   price: BigNumberish = defaultToken.price,
-  royalty: string = defaultToken.royalty,
   launchedAt: BigNumberish = defaultToken.launchedAt
 ) => {
   const token: Playables.TokenStruct = {
@@ -46,7 +44,6 @@ export const addToken = async (
     minted,
     weight,
     price,
-    royalty,
   };
   return playables.setToken(id, token);
 };
@@ -100,7 +97,7 @@ describe("Playables contract", function () {
     const tokenId = 2;
     const t = defaultToken;
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty);
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price);
 
     expect((await playables.tokens(tokenId)).uri).to.equal(t.uri);
     expect((await playables.tokens(tokenId)).createdAt).to.equal((await ethers.provider.getBlock("latest")).timestamp);
@@ -108,7 +105,7 @@ describe("Playables contract", function () {
     expect((await playables.tokens(tokenId)).minted).to.equal(t.minted);
     expect((await playables.tokens(tokenId)).weight).to.equal(t.weight);
     expect((await playables.tokens(tokenId)).price).to.equal(t.price);
-    expect((await playables.tokens(tokenId)).royalty).to.equal(t.royalty);
+    // expect((await playables.tokens(tokenId)).royalty).to.equal(t.royalty);
   });
 
   it("should mint token", async function () {
@@ -136,7 +133,7 @@ describe("Playables contract", function () {
       launchedAt: (await ethers.provider.getBlock("latest")).timestamp + 10000,
     };
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
 
     const [wallet] = await ethers.getSigners();
     const params: Playables.MintParamsStruct = {
@@ -161,7 +158,7 @@ describe("Playables contract", function () {
       minted: 1000,
     };
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
 
     const [wallet] = await ethers.getSigners();
     const params: Playables.MintParamsStruct = {
@@ -180,7 +177,7 @@ describe("Playables contract", function () {
     // ---
 
     t.minted = 999;
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.royalty, t.launchedAt);
+    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
 
     params.amount = 2;
     await expect(

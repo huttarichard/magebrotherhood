@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "./interfaces/ICoin.sol";
 import "./interfaces/IPromoter.sol";
@@ -17,8 +16,6 @@ import "./interfaces/IPromoter.sol";
  * Playables contract.
  */
 contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
-  using SafeMath for uint256;
-
   /**
    * @dev token represents nft playable.
    */
@@ -26,21 +23,16 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     string uri;
     uint256 createdAt;
     uint256 launchedAt;
-    uint256 supply;
-    uint256 minted;
+    uint64 supply;
+    uint64 minted;
     uint128 weight;
     uint256 price;
-    address royalty;
   }
 
   /**
-   * @dev MintParams containing parameters for minting a token.
+   * @dev contains all tokens.
    */
-  struct MintParams {
-    uint256 tokenId;
-    uint64 amount;
-    string promoCode;
-  }
+  mapping(uint256 => Token) public tokens;
 
   /**
    * @dev Coin address;
@@ -53,20 +45,13 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   IPromoter public promoters;
 
   /**
-   * @dev contains all tokens.
-   */
-  mapping(uint256 => Token) public tokens;
-
-  /**
-   * @dev keeps contract uri.
+   * @dev keeps the defaul non-reaveal contract uri.
    */
   string public contractURI;
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
-  bytes32 public constant MANAGER = keccak256("MANAGER");
-
-  // TODO: add token transfer from address(this)
+  bytes32 public constant REWARDER = keccak256("REWARDER");
 
   /**
    * @dev Contructor will accept ERC20 coin which will be used as reward taker.
@@ -76,37 +61,28 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     address _promoter,
     string memory _preURI
   ) ERC1155(_preURI) {
-    _setRoleAdmin(MANAGER, ADMIN);
+    _setRoleAdmin(REWARDER, ADMIN);
     _setupRole(ADMIN, _msgSender());
-    _setupRole(MANAGER, _msgSender());
-
+    _setupRole(REWARDER, _msgSender());
     _setDefaultRoyalty(_receiver, 500);
-
     setLiquidityReceiver(_receiver);
     setPromoterContract(_promoter);
   }
 
   /**
+   * @dev will set contract uri.
+   * @dev See https://docs.opensea.io/docs/contract-level-metadata.
+   */
+  function setContractURI(string calldata _uri) public onlyRole(ADMIN) {
+    contractURI = _uri;
+  }
+
+  /**
    * @dev Will add token metadata to given token id
    */
-  function setToken(uint256 tokenId, Token memory token) public onlyRole(MANAGER) {
+  function setToken(uint256 tokenId, Token memory token) public onlyRole(ADMIN) {
     tokens[tokenId] = token;
     tokens[tokenId].createdAt = block.timestamp;
-    _setTokenRoyalty(tokenId, token.royalty, 500);
-  }
-
-  /**
-   * @dev Will add token metadata to given token id
-   */
-  function deleteToken(uint256 tokenId) public onlyRole(MANAGER) {
-    delete tokens[tokenId];
-  }
-
-  /**
-   * @dev will set contract uri. See https://docs.opensea.io/docs/contract-level-metadata.
-   */
-  function setContractURI(string calldata _uri) public onlyRole(MANAGER) {
-    contractURI = _uri;
   }
 
   /**
@@ -124,7 +100,14 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   }
 
   /**
-   * @dev will set the coin contract
+   * @dev See {IERC1155-isApprovedForAll}.
+   */
+  function isApprovedForAll(address account, address operator) public view override returns (bool) {
+    return hasRole(ADMIN, operator) || super.isApprovedForAll(account, operator);
+  }
+
+  /**
+   * @dev will set the liquidity receiver. IE wallet receiving all funds.
    */
   function setLiquidityReceiver(address payable receiver) public onlyRole(ADMIN) {
     require(receiver != address(0), "invalid address");
@@ -132,7 +115,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   }
 
   /**
-   * @dev will set the rewarder
+   * @dev will set the promoter contract.
    */
   function setPromoterContract(address kontrakt) public onlyRole(ADMIN) {
     require(kontrakt != address(0), "invalid address");
@@ -142,7 +125,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   /**
    * @dev will set default royalty info.
    */
-  function setDefaultRoyalty(address _receiver, uint96 feeNumerator) public onlyRole(MANAGER) {
+  function setDefaultRoyalty(address _receiver, uint96 feeNumerator) public onlyRole(ADMIN) {
     _setDefaultRoyalty(_receiver, feeNumerator);
   }
 
@@ -153,7 +136,7 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     uint256 tokenId,
     address _receiver,
     uint96 feeNumerator
-  ) public onlyRole(MANAGER) {
+  ) public onlyRole(ADMIN) {
     _setTokenRoyalty(tokenId, _receiver, feeNumerator);
   }
 
@@ -167,6 +150,15 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
   }
 
   /**
+   * @dev MintParams containing parameters for minting a token.
+   */
+  struct MintParams {
+    uint256 tokenId;
+    uint64 amount;
+    string promoCode; // optional
+  }
+
+  /**
    * @dev mint function which is using discount
    */
   function mint(MintParams memory p) external payable whenNotPaused {
@@ -175,20 +167,35 @@ contract Playables is ERC1155, ERC2981, AccessControl, Pausable {
     Token storage token = tokens[p.tokenId];
     require(block.timestamp >= token.launchedAt, "not launched yet");
     require(p.amount > 0, "amount must be greater than 0");
-    require(token.minted.add(p.amount) <= token.supply, "maximum supply exceeded");
+    require(token.minted + p.amount <= token.supply, "maximum supply exceeded");
 
-    uint256 price = token.price.mul(p.amount);
+    uint256 price = token.price * p.amount;
 
     if (bytes(p.promoCode).length > 0) {
-      uint256 reward = promoters.addRevenueByCode(p.promoCode, price);
-      price = price.sub(reward);
+      uint256 rewardAmount = promoters.addRevenueByCode(p.promoCode, price);
+      price = price - rewardAmount;
     }
 
     require(msg.value >= price, "not enough eth given");
     Address.sendValue(liqudityReceiver, msg.value);
 
     _mint(_msgSender(), p.tokenId, p.amount, "");
-    token.minted = token.minted.add(p.amount);
+    token.minted = token.minted + p.amount;
+  }
+
+  /**
+   * @dev mint function which is intended for external contracs as well as admins to giveaway tokens.
+   */
+  function reward(uint256 tokenId, uint64 amount) external onlyRole(REWARDER) {
+    require(_exists(tokenId), "nonexistent token");
+
+    Token storage token = tokens[tokenId];
+    require(block.timestamp >= token.launchedAt, "not launched yet");
+    require(amount > 0, "amount must be greater than 0");
+    require(token.minted + amount <= token.supply, "maximum supply exceeded");
+
+    _mint(_msgSender(), tokenId, amount, "");
+    token.minted = token.minted + amount;
   }
 
   /**

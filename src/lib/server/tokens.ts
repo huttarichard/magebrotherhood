@@ -18,7 +18,6 @@ export interface Token {
   weight: number;
   priceETH: number;
   priceWei: BigNumber;
-  royalty: string;
   ipfsUri: string;
 }
 
@@ -38,7 +37,6 @@ export async function fetchToken(playables: Playables, id: string | number | Big
     weight: token.weight.toNumber(),
     priceETH: formatBNToEtherFloat(token.price),
     priceWei: token.price,
-    royalty: token.royalty,
     ipfsUri: token.uri,
   };
 }

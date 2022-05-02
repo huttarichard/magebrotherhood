@@ -56,7 +56,7 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   await hre.run("compile");
 
   const coinLiquidity = parseEther(taskArgs.coinLiquidity.toFixed(0));
-  const exchangeLiq = parseEther(taskArgs.exchangeLiquidity.toFixed(0));
+  const exchangeLiq = parseEther((taskArgs.exchangeLiquidity * 100).toFixed(0)).div(100);
   const stakingCycle = taskArgs.stakingCycle;
   const stakingPeriod = taskArgs.stakingPeriod;
 
@@ -76,7 +76,6 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("\n");
 
   // Exchange
-
   if (exchangeLiq.eq(BigNumber.from(0))) {
     console.warn(
       "Exchange liquidity is 0, this is not ideal as it will not allow to trade, functions will return errors"
@@ -122,27 +121,45 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info("\n");
 
   console.info("Deploying playables...");
+  const ipfs = await createClientFromEnv();
+
+  const image = readFileSync(join(__dirname, "public/models/tokens/preview/image.gif"));
+  const imageHash = await ipfs.add(image);
+
+  const metadata = {
+    name: "MageBrotherhood Character",
+    description: "One of the MageBrotherhood characters that will be revealed soon. Please come back later.",
+    external_url: "https://magebrotherhood.com/",
+    image: "ipfs://" + imageHash.path,
+    animation_url: "https://magebrotherhood.com/frames/preview",
+  };
+
+  const metadataHash = await ipfs.add(JSON.stringify(metadata));
+  await ipfs.pin.add(metadataHash.path);
+
   const Playables = (await hre.ethers.getContractFactory("Playables")) as Playables__factory;
-  const playables = await Playables.deploy(exchange.address, promoter.address, "ipfs://..");
+  const playables = await Playables.deploy(exchange.address, promoter.address, "ipfs://" + metadataHash.path);
   await playables.deployed();
 
   args.Playables = {
     address: playables.address,
-    args: [exchange.address, promoter.address, "ipfs://.."],
+    args: [exchange.address, promoter.address, "ipfs://" + metadataHash.path],
   };
 
   console.info("Playables address: ", playables.address);
   console.info("Playables tx hash: ", playables.deployTransaction.hash);
+  console.info("Playables metadata: ", JSON.stringify(metadata));
   console.info("\n");
 
   console.info("Deploying staking...");
+  const tmbn = timeNowInBN();
   const Staking = (await hre.ethers.getContractFactory("Staking")) as Staking__factory;
-  const staking = await Staking.deploy(stakingCycle, stakingPeriod, timeNowInBN(), coin.address);
+  const staking = await Staking.deploy(stakingCycle, stakingPeriod, tmbn, coin.address);
   await staking.deployed();
 
   args.Staking = {
     address: staking.address,
-    args: [stakingCycle, stakingPeriod, coin.address],
+    args: [stakingCycle, stakingPeriod, tmbn.toString(), coin.address],
   };
 
   console.info("Staking address: ", staking.address);
@@ -223,11 +240,11 @@ task("playables:tokens", "adds tokens to contract and ipfs", async (taskArgs, hr
   const ipfs = await createClientFromEnv();
 
   const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
-  const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+  // const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
   const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;
 
-  const models = path.resolve(__dirname, "models", "**/index.json");
+  const models = path.resolve(__dirname, "public/models/tokens", "**/index.json");
 
   const files = glob.sync(models);
   for (const file of files) {
@@ -235,6 +252,22 @@ task("playables:tokens", "adds tokens to contract and ipfs", async (taskArgs, hr
 
     const json = JSON.parse(readFileSync(file, "utf8"));
     const dir = dirname(file);
+
+    if (!json.revealed) {
+      const tokenData: Playables.TokenStruct = {
+        createdAt: timeToBN(new Date(json.created_at)),
+        launchedAt: timeToBN(new Date(json.launched_at)),
+        minted: BigNumber.from(0),
+        price: json.price_wei,
+        supply: BigNumber.from(json.supply),
+        weight: BigNumber.from(json.staking_weight),
+        uri: "",
+      };
+
+      const tokenId = BigNumber.from(json.id);
+      await playables.setToken(tokenId, tokenData);
+      continue;
+    }
 
     const image = readFileSync(join(dir, "preview.jpg"));
     const imageHash = await ipfs.add(image);
@@ -266,7 +299,6 @@ task("playables:tokens", "adds tokens to contract and ipfs", async (taskArgs, hr
       launchedAt: timeToBN(new Date(json.launched_at)),
       minted: BigNumber.from(0),
       price: json.price_wei,
-      royalty: EXCHANGE_ADDRESS,
       supply: BigNumber.from(json.supply),
       uri: "ipfs://" + metadataHash.path,
       weight: BigNumber.from(json.staking_weight),

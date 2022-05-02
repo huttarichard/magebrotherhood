@@ -20,13 +20,33 @@ export interface ArLaunchParamsOptions extends ArLaunchParams {
   error?: () => void;
 }
 
+function iOSversion(): number[] | null {
+  if (/iP(hone|od|ad)/.test(navigator.userAgent)) {
+    // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+    const v = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/) as string[];
+    return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || "0", 10)];
+  }
+  return null;
+}
+
 export function isQuickLookSupported(): boolean {
   if (typeof window === "undefined") {
     return false;
   }
   const a = document.createElement("a");
   const supported = a.relList.supports("ar");
-  return supported;
+  if (!supported) {
+    return false;
+  }
+  // version lower then iOS 15.4 is not supported
+  const version = iOSversion();
+  if (!version) {
+    return false;
+  }
+  if (version[0] < 15 || version[1] < 4) {
+    return false;
+  }
+  return true;
 }
 
 export function launchIOSQuick(src: string, arParams: ArLaunchParamsOptions) {

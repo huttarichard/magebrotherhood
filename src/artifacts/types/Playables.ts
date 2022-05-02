@@ -39,7 +39,6 @@ export declare namespace Playables {
     minted: BigNumberish;
     weight: BigNumberish;
     price: BigNumberish;
-    royalty: string;
   };
 
   export type TokenStructOutput = [
@@ -49,8 +48,7 @@ export declare namespace Playables {
     BigNumber,
     BigNumber,
     BigNumber,
-    BigNumber,
-    string
+    BigNumber
   ] & {
     uri: string;
     createdAt: BigNumber;
@@ -59,7 +57,6 @@ export declare namespace Playables {
     minted: BigNumber;
     weight: BigNumber;
     price: BigNumber;
-    royalty: string;
   };
 }
 
@@ -68,11 +65,10 @@ export interface PlayablesInterface extends utils.Interface {
   functions: {
     "ADMIN()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "MANAGER()": FunctionFragment;
+    "REWARDER()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "contractURI()": FunctionFragment;
-    "deleteToken(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getStakingWeight(uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -85,6 +81,7 @@ export interface PlayablesInterface extends utils.Interface {
     "promoters()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "reward(uint256,uint64)": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -93,7 +90,7 @@ export interface PlayablesInterface extends utils.Interface {
     "setDefaultRoyalty(address,uint96)": FunctionFragment;
     "setLiquidityReceiver(address)": FunctionFragment;
     "setPromoterContract(address)": FunctionFragment;
-    "setToken(uint256,(string,uint256,uint256,uint256,uint256,uint128,uint256,address))": FunctionFragment;
+    "setToken(uint256,(string,uint256,uint256,uint64,uint64,uint128,uint256))": FunctionFragment;
     "setTokenRoyalty(uint256,address,uint96)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "tokens(uint256)": FunctionFragment;
@@ -106,7 +103,7 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "MANAGER", values?: undefined): string;
+  encodeFunctionData(functionFragment: "REWARDER", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -118,10 +115,6 @@ export interface PlayablesInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "contractURI",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deleteToken",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -161,6 +154,10 @@ export interface PlayablesInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "reward",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -218,7 +215,7 @@ export interface PlayablesInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "MANAGER", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "REWARDER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -226,10 +223,6 @@ export interface PlayablesInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "contractURI",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "deleteToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -259,6 +252,7 @@ export interface PlayablesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "reward", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
@@ -429,7 +423,7 @@ export interface Playables extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    MANAGER(overrides?: CallOverrides): Promise<[string]>;
+    REWARDER(overrides?: CallOverrides): Promise<[string]>;
 
     balanceOf(
       account: string,
@@ -444,11 +438,6 @@ export interface Playables extends BaseContract {
     ): Promise<[BigNumber[]]>;
 
     contractURI(overrides?: CallOverrides): Promise<[string]>;
-
-    deleteToken(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -499,6 +488,12 @@ export interface Playables extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    reward(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -582,8 +577,7 @@ export interface Playables extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
-        string
+        BigNumber
       ] & {
         uri: string;
         createdAt: BigNumber;
@@ -592,7 +586,6 @@ export interface Playables extends BaseContract {
         minted: BigNumber;
         weight: BigNumber;
         price: BigNumber;
-        royalty: string;
       }
     >;
 
@@ -607,7 +600,7 @@ export interface Playables extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  MANAGER(overrides?: CallOverrides): Promise<string>;
+  REWARDER(overrides?: CallOverrides): Promise<string>;
 
   balanceOf(
     account: string,
@@ -622,11 +615,6 @@ export interface Playables extends BaseContract {
   ): Promise<BigNumber[]>;
 
   contractURI(overrides?: CallOverrides): Promise<string>;
-
-  deleteToken(
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -677,6 +665,12 @@ export interface Playables extends BaseContract {
   revokeRole(
     role: BytesLike,
     account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  reward(
+    tokenId: BigNumberish,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -760,8 +754,7 @@ export interface Playables extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber,
-      string
+      BigNumber
     ] & {
       uri: string;
       createdAt: BigNumber;
@@ -770,7 +763,6 @@ export interface Playables extends BaseContract {
       minted: BigNumber;
       weight: BigNumber;
       price: BigNumber;
-      royalty: string;
     }
   >;
 
@@ -785,7 +777,7 @@ export interface Playables extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    MANAGER(overrides?: CallOverrides): Promise<string>;
+    REWARDER(overrides?: CallOverrides): Promise<string>;
 
     balanceOf(
       account: string,
@@ -800,11 +792,6 @@ export interface Playables extends BaseContract {
     ): Promise<BigNumber[]>;
 
     contractURI(overrides?: CallOverrides): Promise<string>;
-
-    deleteToken(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -853,6 +840,12 @@ export interface Playables extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    reward(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -933,8 +926,7 @@ export interface Playables extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
-        string
+        BigNumber
       ] & {
         uri: string;
         createdAt: BigNumber;
@@ -943,7 +935,6 @@ export interface Playables extends BaseContract {
         minted: BigNumber;
         weight: BigNumber;
         price: BigNumber;
-        royalty: string;
       }
     >;
 
@@ -1045,7 +1036,7 @@ export interface Playables extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MANAGER(overrides?: CallOverrides): Promise<BigNumber>;
+    REWARDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
       account: string,
@@ -1060,11 +1051,6 @@ export interface Playables extends BaseContract {
     ): Promise<BigNumber>;
 
     contractURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deleteToken(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1118,6 +1104,12 @@ export interface Playables extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    reward(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1206,7 +1198,7 @@ export interface Playables extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    MANAGER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    REWARDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
       account: string,
@@ -1221,11 +1213,6 @@ export interface Playables extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    deleteToken(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1279,6 +1266,12 @@ export interface Playables extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    reward(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

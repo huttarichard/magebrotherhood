@@ -17,6 +17,7 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Brand from "components/Brand";
 import { useBHCUSDPrice } from "hooks/useMarketData";
+import env from "lib/env";
 import Link from "next/link";
 
 import HeaderWallet from "./ConnectWallet";
@@ -225,9 +226,19 @@ function BHCPrice() {
   );
 }
 
+const Testnet = styled.div`
+  border-radius: 6px;
+  padding: 6px;
+  margin: 30px 0;
+  background: linear-gradient(45deg, #e412f6a6, #db141482);
+  text-align: center;
+`;
+
 export interface SidebarProps {
   closeIcon?: boolean;
 }
+
+const IS_TESTNET = env.NETWORK !== 1;
 
 export default function Sidebar({ closeIcon = false }: SidebarProps) {
   const { closeMenu } = useLayout();
@@ -243,6 +254,7 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
         <Brand block />
       </Grid>
       <Grid item flexGrow="1">
+        {IS_TESTNET && <Testnet>Carful this is testnet version!</Testnet>}
         <List>
           <Item icon={faHouse} name="Home" link="/" />
           <Item icon={faRectangleVerticalHistory} name="Tokens" link="/tokens" />

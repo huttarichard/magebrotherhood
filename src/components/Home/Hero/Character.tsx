@@ -63,7 +63,7 @@ export function Manipulator() {
       <hemisphereLight color="#8d11db" position={[3, 0, 5]} intensity={0.6} />
 
       <group ref={ref} position={[1.2, -2.1, 0]}>
-        <Model position={[0, 0, 0]} scale={height} glb="/models/tokens/2/model.glb" />
+        <Model position={[0, 0, 0]} scale={height} glb="/models/tokens/1/model.glb" />
       </group>
 
       <ArcballControls enableZoom={false} enableRotate={false} makeDefault camera={camera} />
