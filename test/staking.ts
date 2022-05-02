@@ -350,4 +350,53 @@ describe("Staking contract", function () {
     expect(rewards3.periods).to.be.eq(periods * 2);
     expect(rewards3.amount).to.be.eq(rewardPerPeriods(2 * periods, totalStaked, walletStaked));
   });
+
+  it("should be able to unstake multiple", async function () {
+    const [randomWallet] = await ethers.getSigners();
+
+    // token 1 - weight: 100
+    // token 3 - weight: 110
+
+    await playables.connect(randomWallet).mint(
+      {
+        amount: 100,
+        promoCode: "",
+        tokenId: 1,
+      },
+      {
+        value: parseEther("10"),
+      }
+    );
+
+    await playables.connect(wallet).mint(
+      {
+        amount: 88,
+        promoCode: "",
+        tokenId: 3,
+      },
+      {
+        value: parseEther("10"),
+      }
+    );
+
+    await playables.connect(wallet).safeTransferFrom(wallet.address, staking.address, 1, 10, []);
+    await playables.connect(wallet).safeTransferFrom(wallet.address, staking.address, 3, 88, []);
+    await playables.connect(randomWallet).safeTransferFrom(randomWallet.address, staking.address, 1, 100, []);
+
+    const token3Weight = 110;
+    const totalStaked = (100 + 10) * defaultToken.weight + 88 * token3Weight;
+    const walletStaked = 10 * defaultToken.weight + 88 * token3Weight;
+
+    // should fail: we require at least 2 cycles after stake in order to unstake
+    await expect(staking.connect(wallet).unstake(playables.address, 1)).to.be.reverted;
+    await expect(staking.connect(wallet).unstake(playables.address, 3)).to.be.reverted;
+    await expect(staking.connect(randomWallet).unstake(playables.address, 1)).to.be.reverted;
+
+    await increaseTimeBy(2 * STAKING_CONFIG.cycle);
+
+    // should pass
+    await expect(staking.connect(wallet).unstake(playables.address, 1)).to.not.be.reverted;
+    await expect(staking.connect(wallet).unstake(playables.address, 3)).to.not.be.reverted;
+    await expect(staking.connect(randomWallet).unstake(playables.address, 1)).to.not.be.reverted;
+  });
 });
