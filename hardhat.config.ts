@@ -14,7 +14,12 @@ import { HardhatUserConfig } from "hardhat/config";
 dotenv.config();
 
 // Import tasks
-require("./hardhat.tasks");
+// require("./hardhat.tasks");
+require("./src/tasks/accounts");
+require("./src/tasks/deploy");
+require("./src/tasks/etherscan");
+require("./src/tasks/playables");
+require("./src/tasks/info");
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -34,13 +39,6 @@ const config: HardhatUserConfig = {
       gasPrice: 875000000,
       loggingEnabled: false,
     },
-    // ropsten: {
-    //   url: process.env.ROPSTEN_URL || "",
-    //   accounts: [`0x${process.env.PRIVATE_KEY}`],
-    // },
-    // ganache: {
-    //   url: "http://127.0.0.1:7545",
-    // },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`,
       accounts: [`0x${process.env.PRIVATE_KEY}`],

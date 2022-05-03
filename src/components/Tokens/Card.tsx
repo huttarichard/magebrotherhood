@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import Button from "components/ui/Button";
+import Countdown from "components/ui/CountDown";
 import Paper from "components/ui/Paper";
 import { FullToken } from "hooks/useTokens";
 import { default as NextImage } from "next/image";
@@ -142,11 +143,13 @@ export interface CardProps {
 export function Card(props: React.PropsWithChildren<CardProps>) {
   const { token, mint, studio, description, ar, labels, children, padding } = props;
   const router = useRouter();
+  const date = new Date();
+  const launched = token.launchedAt <= date;
 
   return (
     <PaperCard>
       <Grid container>
-        <Grid item container sm="auto" alignItems="center">
+        <Grid item container sm="auto" alignItems="center" padding={(padding || 0) + 1}>
           <ImageContainer size={260}>
             <Image
               className="image"
@@ -158,7 +161,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
               layout="fill"
             />
 
-            {ar && (
+            {ar && token.ipfsUri && (
               <ImageActionsTopLeft>
                 <ARButton
                   small
@@ -174,7 +177,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
               </ImageActionsTopLeft>
             )}
 
-            {studio && (
+            {studio && token.ipfsUri && (
               <ImageActionsBottom>
                 <Button
                   className="button"
@@ -206,9 +209,15 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
 
           {(mint || labels) && (
             <Grid item xs>
-              {mint && (
+              {mint && launched && (
                 <MainActions>
                   <MintButton className="button" small token={token} />
+                  <OpenseaButton className="button" small token={token} />
+                </MainActions>
+              )}
+
+              {mint && !launched && (
+                <MainActions>
                   <OpenseaButton className="button" small token={token} />
                 </MainActions>
               )}
@@ -224,6 +233,12 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
                   })}
                 </Labels>
               )}
+            </Grid>
+          )}
+
+          {!launched && (
+            <Grid item container justifyContent={"start"}>
+              <Countdown countDownDate={token.launchedAt} />
             </Grid>
           )}
         </ContentGrid>

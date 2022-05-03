@@ -19,6 +19,7 @@ export interface Token {
   priceETH: number;
   priceWei: BigNumber;
   ipfsUri: string;
+  revealed: boolean;
 }
 
 export async function fetchToken(playables: Playables, id: string | number | BigNumber): Promise<Token> {
@@ -38,6 +39,7 @@ export async function fetchToken(playables: Playables, id: string | number | Big
     priceETH: formatBNToEtherFloat(token.price),
     priceWei: token.price,
     ipfsUri: token.uri,
+    revealed: token.revealed,
   };
 }
 
@@ -105,21 +107,23 @@ export async function fetchTokensMetadata(ipfs: IPFSHTTPClient, uris: string[]):
   return Promise.all(uris.map((e) => fetchTokenMetadata(ipfs, e)));
 }
 
-export async function fetchTokens(playables: Playables) {
-  const tokens: Token[] = [];
+export async function fetchTokens(playables: Playables): Promise<Token[]> {
+  const tokens = await playables.getTokens();
 
-  for (let i = 1; i <= 100; i++) {
-    try {
-      const json = await fetchToken(playables, i);
-      tokens.push(json);
-    } catch (e) {
-      if (e instanceof NonExistingToken) {
-        break;
-      }
-      throw e;
-    }
-  }
-  return tokens;
+  return tokens.map((token, i) => {
+    return {
+      id: BigNumber.from(i + 1).toString(),
+      createdAt: new Date(token.createdAt.toNumber() * 1000),
+      launchedAt: new Date(token.launchedAt.toNumber() * 1000),
+      supply: token.supply.toNumber(),
+      minted: token.minted.toNumber(),
+      weight: token.weight.toNumber(),
+      priceETH: formatBNToEtherFloat(token.price),
+      priceWei: token.price,
+      ipfsUri: token.uri,
+      revealed: token.revealed,
+    };
+  });
 }
 
 export interface Staking {

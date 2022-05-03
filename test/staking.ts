@@ -97,9 +97,9 @@ describe("Staking contract", function () {
     await staking.addContract(playables.address);
     await coin.grantRole(await coin.DISTRIBUTOR(), staking.address);
 
-    await addToken(playables, 1);
-    await addToken(playables, 2);
-    await addToken(playables, 3, defaultToken.uri, defaultToken.supply, defaultToken.minted, 110);
+    await addToken(playables);
+    await addToken(playables);
+    await addToken(playables, defaultToken.uri, defaultToken.supply, defaultToken.minted, 110);
 
     await playables.connect(wallet).mint(
       {

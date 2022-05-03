@@ -1,6 +1,7 @@
 /// <reference types="@nomiclabs/hardhat-waffle" />
 
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
+import { ContractTransaction } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
 import { expect } from "chai";
 import { ethers } from "hardhat";
@@ -16,26 +17,28 @@ import {
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
 
+const secs = Math.floor(Date.now() / 1000);
+
 export const defaultToken = {
   uri: "https://example.com/token.png",
-  createdAt: 0,
-  launchedAt: 0,
+  createdAt: secs,
+  launchedAt: secs,
   supply: 1000,
   minted: 0,
   weight: 100,
   price: parseUnits("0.02", "ether"),
+  revealed: true,
 };
 
 export const addToken = async (
-  playables,
-  id: number,
+  playables: Playables,
   uri: string = defaultToken.uri,
   supply: BigNumberish = defaultToken.supply,
   minted: BigNumberish = defaultToken.minted,
   weight: BigNumberish = defaultToken.weight,
   price: BigNumberish = defaultToken.price,
   launchedAt: BigNumberish = defaultToken.launchedAt
-) => {
+): Promise<ContractTransaction> => {
   const token: Playables.TokenStruct = {
     uri,
     createdAt: 0,
@@ -44,8 +47,9 @@ export const addToken = async (
     minted,
     weight,
     price,
+    revealed: true,
   };
-  return playables.setToken(id, token);
+  return playables.addToken(token);
 };
 
 describe("Playables contract", function () {
@@ -73,7 +77,7 @@ describe("Playables contract", function () {
     const Playables = (await ethers.getContractFactory("Playables", owner)) as PlayablesFactory;
     playables = await Playables.deploy(exchange.address, promoter.address, "");
 
-    await addToken(playables, 1);
+    await addToken(playables);
   });
 
   it("should start with 1 token at index 1", async function () {
@@ -97,7 +101,7 @@ describe("Playables contract", function () {
     const tokenId = 2;
     const t = defaultToken;
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price);
+    await addToken(playables, t.uri, t.supply, t.minted, t.weight, t.price);
 
     expect((await playables.tokens(tokenId)).uri).to.equal(t.uri);
     expect((await playables.tokens(tokenId)).createdAt).to.equal((await ethers.provider.getBlock("latest")).timestamp);
@@ -133,7 +137,7 @@ describe("Playables contract", function () {
       launchedAt: (await ethers.provider.getBlock("latest")).timestamp + 10000,
     };
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
+    await addToken(playables, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
 
     const [wallet] = await ethers.getSigners();
     const params: Playables.MintParamsStruct = {
@@ -151,14 +155,14 @@ describe("Playables contract", function () {
   });
 
   it("should be unable to mint token without remaining supply", async function () {
-    const tokenId = 2;
+    let tokenId = 2;
     const t = {
       ...defaultToken,
       supply: 1000,
       minted: 1000,
     };
 
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
+    await addToken(playables, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
 
     const [wallet] = await ethers.getSigners();
     const params: Playables.MintParamsStruct = {
@@ -176,10 +180,12 @@ describe("Playables contract", function () {
 
     // ---
 
-    t.minted = 999;
-    await addToken(playables, 2, t.uri, t.supply, t.minted, t.weight, t.price, t.launchedAt);
+    tokenId = 3;
+    await addToken(playables, t.uri, t.supply, 999, t.weight, t.price, t.launchedAt);
 
     params.amount = 2;
+    params.tokenId = 3;
+
     await expect(
       playables.connect(wallet).mint(params, {
         from: wallet.address,
@@ -187,6 +193,35 @@ describe("Playables contract", function () {
       })
     ).to.be.reverted;
     expect((await playables.tokens(tokenId)).minted).to.equal(999);
+  });
+
+  it("should be able to add multiple tokens", async function () {
+    const tokens = await playables.getTokens();
+    expect(tokens.length).to.equal(1);
+
+    let count = await playables.tokensCount();
+    expect(count).to.equal(1);
+
+    await playables.addTokens([
+      {
+        ...defaultToken,
+        uri: "ipfs://../2.json",
+        revealed: true,
+      },
+      {
+        ...defaultToken,
+        uri: "ipfs://../3.json",
+        revealed: true,
+      },
+    ]);
+
+    count = await playables.tokensCount();
+    expect(count).to.equal(3);
+
+    const tokens2 = await playables.getTokens();
+    expect(tokens2.length).to.equal(3);
+
+    console.log(tokens2);
   });
 
   it("should be unable to mint when paused", async function () {

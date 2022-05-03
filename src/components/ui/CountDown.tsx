@@ -105,21 +105,21 @@ export default function Countdown({ countDownDate, small = true }: CountdownProp
           <span>days</span>
         </div>
       )}
-      {state.hours && (
+      {state.hours > 0 && (
         <div className="countdown-item">
           <SVGCircle radius={hoursRadius} small={small} />
           {state.hours}
           <span>hours</span>
         </div>
       )}
-      {state.minutes && (
+      {state.minutes > 0 && (
         <div className="countdown-item">
           <SVGCircle radius={minutesRadius} small={small} />
           {state.minutes}
           <span>minutes</span>
         </div>
       )}
-      {state.seconds && (
+      {state.seconds > 0 && (
         <div className="countdown-item">
           <SVGCircle radius={secondsRadius} small={small} />
           {state.seconds}

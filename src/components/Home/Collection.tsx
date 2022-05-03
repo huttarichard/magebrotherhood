@@ -46,9 +46,10 @@ const StyledSlide = styled(Grid)`
     position: relative;
     height: 240px;
     margin-bottom: 1.5rem;
-    background-color: #fff;
-    border-radius: 7px;
+    background-color: #ffffff1c;
+    border-radius: 8px;
     overflow: hidden;
+    border: 3px solid #8d11db00;
   }
 
   h3 {
