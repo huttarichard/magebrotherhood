@@ -313,7 +313,8 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
   }
 
   /**
-   * Estimates the claimable rewards for the specified maximum number of past periods, starting at the next claimable period.
+   * Estimates the claimable rewards for the specified maximum number of periods.
+   * Estimation starts at first claimable period and continues until the last claimable period or maxPeriods is reached.
    * Estimations can be done only for periods which have already ended.
    * The maximum number of periods to claim can be calibrated to chunk down claims in several transactions to accomodate gas constraints.
    * @param maxPeriods The maximum number of periods to calculate for.

@@ -17,7 +17,7 @@ import {
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
 
-const secs = Math.floor(Date.now() / 1000);
+const secs = Math.floor(Date.now() / 1000) - 1;
 
 export const defaultToken = {
   uri: "https://example.com/token.png",
@@ -220,8 +220,6 @@ describe("Playables contract", function () {
 
     const tokens2 = await playables.getTokens();
     expect(tokens2.length).to.equal(3);
-
-    console.log(tokens2);
   });
 
   it("should be unable to mint when paused", async function () {

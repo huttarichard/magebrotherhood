@@ -180,16 +180,9 @@ describe("Staking contract", function () {
     const withdrawCycle = await currentCycle();
     await increaseTimeBy(periods * STAKING_CONFIG.cyclesPerPeriod * STAKING_CONFIG.cycle);
 
-    // console.log(await estimateRewards(2 * periods));
-    // console.log(await estimateRewards(periods));
-
-    // 10 periods staked, 10 periods unstaked
+    // 10 periods staked, 10 periods unstaked, estimates for 10 and 20 should give same result
     expect((await estimateRewards(2 * periods)).amount).to.be.eq(rewardPerPeriods(periods, 1, 1));
-    //TODO: either bug or by design (not documented)
-    // it was unstaked for the past 10 periods, estimating periods for last 10 periods should therefore be 0
-    // see line 159-161 that it returns only rewards for specified periods, not total claimable
-    // UNCOMMENT LINE BELOW TO SEE THE ISSUE
-    // expect((await estimateRewards(periods)).amount).to.be.eq(0);
+    expect((await estimateRewards(periods)).amount).to.be.eq(rewardPerPeriods(periods, 1, 1));
 
     const tokenInfo = await staking.getTokenInfo(playables.address, wallet.address, 1);
     expect(tokenInfo.owner).to.equal(ethers.constants.AddressZero);
@@ -197,6 +190,14 @@ describe("Staking contract", function () {
     expect(tokenInfo.weight).to.equal(defaultToken.weight);
     expect(tokenInfo.depositCycle).to.equal(depositCycle);
     expect(tokenInfo.withdrawCycle).to.equal(withdrawCycle);
+
+    await playables.connect(wallet).safeTransferFrom(wallet.address, staking.address, 1, 1, []);
+    await increaseTimeBy(periods * STAKING_CONFIG.cyclesPerPeriod * STAKING_CONFIG.cycle);
+
+    // 30 periods passed, first 10 staked, next 10 unstaked, last 10 staked
+    expect((await estimateRewards(periods)).amount).to.be.eq(rewardPerPeriods(periods, 1, 1));
+    expect((await estimateRewards(2 * periods)).amount).to.be.eq(rewardPerPeriods(periods, 1, 1));
+    expect((await estimateRewards(3 * periods)).amount).to.be.eq(rewardPerPeriods(2 * periods, 1, 1));
   });
 
   it("should be able to claim rewards", async function () {
@@ -382,10 +383,6 @@ describe("Staking contract", function () {
     await playables.connect(wallet).safeTransferFrom(wallet.address, staking.address, 1, 10, []);
     await playables.connect(wallet).safeTransferFrom(wallet.address, staking.address, 3, 88, []);
     await playables.connect(randomWallet).safeTransferFrom(randomWallet.address, staking.address, 1, 100, []);
-
-    const token3Weight = 110;
-    const totalStaked = (100 + 10) * defaultToken.weight + 88 * token3Weight;
-    const walletStaked = 10 * defaultToken.weight + 88 * token3Weight;
 
     // should fail: we require at least 2 cycles after stake in order to unstake
     await expect(staking.connect(wallet).unstake(playables.address, 1)).to.be.reverted;
