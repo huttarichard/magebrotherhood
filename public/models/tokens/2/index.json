@@ -9,7 +9,7 @@
     "launched_at": "2022-05-15T09:12:47.450Z",
     "created_at": "2022-05-02T09:12:47.450Z",
     "price_wei": "110000000000000000",
-    "supply": "1000",
+    "supply": "1",
     "staking_weight": "105",
     "models": {
         "glb": "model.glb",

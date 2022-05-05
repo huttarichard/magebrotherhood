@@ -54,6 +54,9 @@ export default function MintButton({ token, ...props }: ButtonProps) {
           />
         }
         onClick={() => {
+          if (props.disabled) {
+            return;
+          }
           setOpen(true);
         }}
       >

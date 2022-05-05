@@ -161,7 +161,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
               layout="fill"
             />
 
-            {ar && token.ipfsUri && (
+            {ar && token.revealed && (
               <ImageActionsTopLeft>
                 <ARButton
                   small
@@ -177,7 +177,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
               </ImageActionsTopLeft>
             )}
 
-            {studio && token.ipfsUri && (
+            {studio && token.revealed && (
               <ImageActionsBottom>
                 <Button
                   className="button"
@@ -211,7 +211,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
             <Grid item xs>
               {mint && launched && (
                 <MainActions>
-                  <MintButton className="button" small token={token} />
+                  <MintButton disabled={token.minted <= token.supply} className="button" small token={token} />
                   <OpenseaButton className="button" small token={token} />
                 </MainActions>
               )}
@@ -237,7 +237,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
           )}
 
           {!launched && (
-            <Grid item container justifyContent={"start"}>
+            <Grid item container justifyContent={"start"} paddingTop={2} paddingBottom={2}>
               <Countdown countDownDate={token.launchedAt} />
             </Grid>
           )}

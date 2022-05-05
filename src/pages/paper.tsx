@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import InfoGraphics from "components/Ecosystem/InfoGraphics";
 import { PageLayout } from "components/Layout/Layout";
+import { ARButton } from "components/Tokens/Buttons";
 
 const Main = styled.div`
   max-width: 800px;
@@ -18,6 +19,8 @@ const Main = styled.div`
 
 const Break = styled.br`
   break-after: page;
+  padding: 50px 0;
+  display: block;
 `;
 
 export default function SwapPaperFormalPage() {
@@ -51,9 +54,9 @@ export default function SwapPaperFormalPage() {
         </p>
         <p>
           MageBrotherhood envisions creating a paradigm shift in the blockchain gaming industry by establishing a
-          balance between EARNING and LOSING. MageBrotherhood focuses its attention on making the gaming experience fun
-          and the earning more compelling for players while also keeping necessary balance to not turn its tokenmoics
-          into ponzi scheme.
+          balance and good economy. MageBrotherhood focuses its attention on making the gaming experience fun and the
+          earning more compelling for players while also keeping necessary balance to not turn its tokenmoics into ponzi
+          scheme.
         </p>
         <blockquote>
           “Thrill of losing as much as earning is known as gambling. It’s also the only sustainable model when balance
@@ -67,10 +70,9 @@ export default function SwapPaperFormalPage() {
           another.{" "}
         </p>
         <b>
-          Our goal is not to make an ecosystem-first environment and MageBrotherhood being the first proof and awesome
-          game to play. However long term perspective would be to bring even more games onboard and allow replication of
-          the ecosystem for other games as well. We love opensource and we will be publishing source and research as a
-          journey will be guiding us.
+          Our goal is to make an DAO driven environment not just for us, but for the metaverse. We intent to bring more
+          characters and playables, more games onboard and allow replication of the ecosystem for others as well. We
+          love opensource and we will be publishing source and research as a journey will be guiding us.
         </b>
         <Break />
         <h2>Foreword</h2>
@@ -80,35 +82,38 @@ export default function SwapPaperFormalPage() {
           to the users by forcing rules and focusing on keeping balance (unlike traditional P2E games).
         </p>
         <p>
-          MageBrotherhood’s mission is to revolutionize the GameFi sector of the blockchain gaming industry by combining
-          the features and attributes of web3 technologies (power of decentralisation), and emerging technologies of 3D
+          We are on a mission to revolutionize the GameFi sector of the blockchain gaming industry by combining the
+          features and attributes of web3 technologies (power of decentralisation), and emerging technologies of 3D
           space (such as AR, VR) all in one place and integrating them into a gamified environment, creating a unique
           and immersive experience for users.
         </p>
-        <p>
-          MageBrotherhood combines gaming and finance to offer rewards to users for interacting with the platform,
-          playing the game and progressing while adding the thrill of losing for players that do not win. Our first game
-          will allow users to earn incentives in different ways which includes:
-        </p>
-        <ul>
-          <li>
-            Earning MageBrotherhood tokens by completing daily objectives, playing the game and interaction with other
-            players on the platform.
-          </li>
-          <li>
-            Obtaining or trading MageBrotherhood NFTs with each NFT representing a game object, character, land, items,
-            any many more. These NFTs serve a functional purpose in on the MageBrotherhood ecosystem.
-          </li>
-          <li>
-            MageBrotherhood also allows users to stake NFTs to earn more incentives on the platform. With the primary
-            goal to equally distribute value across players and investors and to not allow centralization of assets.
-          </li>
-        </ul>
+
+        <blockquote>
+          If your device supports AR (iOS, Android), you can try to use following button. It will open either QuickLook
+          on iOS or SceneViwer on Android and you will be able to see the 3D model living directly on IPFS. It is the
+          evidence and proof that magebrotherhood is serious about its vision and we do intentend to fullfill objectives
+          described in this paper.
+          <br />
+          <br />
+          <ARButton
+            small
+            className="button"
+            folded={false}
+            ar={{
+              glb: `/models/tokens/1/model.glb`,
+              usdz: `/models/tokens/1/model.usdz`,
+              link: "https://magebrotherhood.com",
+              resizable: true,
+            }}
+          />
+        </blockquote>
+
         <p>
           Our plan is to share edge technologies; share assets; share research and do good things with resources we
           (will) have. We are committed to bring value with hard work and act wisely when it comes to giving rules.
         </p>
         <Break />
+
         <h2>Implementation</h2>
         <InfoGraphics active="all" />
         <p>
@@ -126,6 +131,8 @@ export default function SwapPaperFormalPage() {
             sustainability.
           </li>
         </ul>
+        <Break />
+
         <h3>NFTs (ERC1155 &amp; ERC721)</h3>
         <p>
           NFTs have been widely used to sell digital art and virtual goods. It’s also been known to be a good tool of
@@ -171,19 +178,24 @@ export default function SwapPaperFormalPage() {
           intenciving artists and developers we can let the community decide if a given token should be introduced to
           other members or rather be discarded.
         </p>
+        <Break />
+
         <h3>Liquidity bootstrapping</h3>
         <p>
-          To give these assets any meaning we need investors to recognize its value. That is why most of the liquidity
-          collected from sale will be put directly into exchange to provide backing of Brotherhood Coin. This will be
-          directly included in the contract.
+          To give these assets any meaning we need investors to recognize its value.{" "}
+          <b>
+            That is why all of the liquidity collected from sale will be put directly into exchange to provide backing
+            of Brotherhood Coin.
+          </b>{" "}
+          This will be directly hardcoded in the contract.
         </p>
         <blockquote>
           “Our goal is not to take value from our users. Our goal is to incentivize the right people to do their job,
           while preserving value and bringing more investors and gamers onboard into decentralised space.”
         </blockquote>
         <p>
-          Each (non fully fungible) token minted will eventually return its value in form of BHC ERC20 which will be
-          tradable back to ETH thanks to the staking.
+          Each NFT token minted will eventually return its value in form of BHC ERC20 which will be tradable back to ETH
+          thanks to the staking.
         </p>
         <p>
           Every MageBrotherhood NFT belongs to its owner and can be traded or sold on existing marketplaces at the
@@ -193,11 +205,13 @@ export default function SwapPaperFormalPage() {
           Furthermore, MageBrotherhood will partner with brands to launch their limited edition NFT collections on its
           marketplace, further down the road.
         </p>
+        <Break />
+
         <h3>Coin &amp; Exchange</h3>
         <p>
           The MageBrotherhood DEX allows players to transact directly with one another. It&apos;s a marketplace whereby
           transactions are not facilitated by intermediaries. The BHC token (ERC20 & Exchange) provides monetary policy
-          that are aligned with rules of ecosystem.
+          that is aligned with rules of ecosystem.
         </p>
         <p>
           While uniswap and others allows for similar functionality to be implemented more easily we decided that we
@@ -220,6 +234,8 @@ export default function SwapPaperFormalPage() {
           taxes will stay in exchange to provide more liquidity.
         </p>
         <p>Selling tax might be subject to regulation until DAO is fully introduced.</p>
+        <Break />
+
         <h3>Staking</h3>
         <p>
           To equally distribute the value and rewards to early investors and gamers (for participating in NFTs sale), we
@@ -246,12 +262,14 @@ export default function SwapPaperFormalPage() {
           the value they originally put in.{" "}
         </p>
         <p>There is no minimum amount of NFT that can be staked or a minimum lock-up period.</p>
+        <Break />
+
         <h3>Affiliate</h3>
         <p>
-          In a bid to reward active users of our community for influencing the MageBrotherhood platform. We are
-          introducing the MageBrotherhood Affiliate.{" "}
+          In a bid to reward active users of our community for influencing the MageBrotherhood platform is introducing
+          its affiliate program.{" "}
         </p>
-        <p>Marketing is an important key to every project and how better to do it then in decentralised matter.</p>
+        <p>Marketing is an important key to every project and how better to do it then in decentralised manner.</p>
         <p>
           Every user (influencer) is given the opportunity to register a marketing code. Each mint with given code will
           discount the minting process while rewarding the influencer in the form of BHC.
@@ -265,6 +283,8 @@ export default function SwapPaperFormalPage() {
           Periodic NFT auctions will be hosted on the MageBrotherhood marketplace to further enhance ownership
           experience.
         </p>
+        <Break />
+
         <h3>DAO</h3>
         <p>
           DAOs signal power over centralized entities. We believe that any crypto project seeking to put its community
@@ -276,11 +296,12 @@ export default function SwapPaperFormalPage() {
           of the MageBrotherhood ecosystem like submitting, requesting and voting for/against certain updates as well as
           changing the governance structure itself.
         </p>
-        <p>
-          With the MageBrotherhood DAO fully in operation, the community will have the chance to shape the future of
-          MageBrotherhood.
-        </p>
+        <blockquote>
+          With the MageBrotherhood DAO fully in operation, the community will have the chance to shape the future of the
+          platform with us, and we are looking forward to that day.
+        </blockquote>
         <Break />
+
         <h2>Gamification Mechanics </h2>
         <p>
           The gamification mechanics for the MageBrotherhood game involves the strategic elements implemented in the
@@ -295,23 +316,45 @@ export default function SwapPaperFormalPage() {
         <h3>Quests</h3>
         <p>
           Players can interact with the MageBrotherhood gaming ecosystem to complete quests and earn a plethora of
-          rewards. MageBrotherhood’s web3 development will make quests more interesting as it would involve Arand VR
-          features.
+          rewards.
         </p>
         <h3>Loans</h3>
         <p>
-          Players can earn passive income by lending out valuable NFTs to other players. This could involve lending out
-          Battle NFTS, Brotherhood Upgrades NFTs etc. in exchange for a share of rewards.
-        </p>
-        <p>
-          This effectively creates yield-generating NFTs, enhancing their value proposition for their holders and making
-          lending NFTs more viable.
+          Players can earn passive income by lending out valuable NFTs to other players. This effectively creates
+          yield-generating NFTs, enhancing their value proposition for their holders and making lending NFTs more
+          viable.
         </p>
         <h3>Renting</h3>
         <p>
           With the web3 fully integrated into the gamification environment, players will be able to rent out their
           virtual properties and they will be paid a renting fee by the rentee. This allows players earn extra income
           apart from the regular earning routine.
+        </p>
+
+        <Break />
+        <h2>Research and Development</h2>
+
+        <h3>Polygon PoS Layer-2 Scaling</h3>
+        <p>
+          Currently subject of our interest in terms of scaling. Enterprise blockchain based on POS enjoying security of
+          Ethereum seems like a best way to go.
+        </p>
+
+        <h3>Zero Knowledge Proof</h3>
+        <p>
+          We are investigating snarks to understand if it will be possible o efficiently proof actions without revealing
+          state. This might be utilized to keep the game onchain while not revealing its own state. Pushing
+          decentralized boundary even further.
+        </p>
+
+        <h3>Decentralized state synchronization</h3>
+        <p>
+          Its been very clearly defined by the{" "}
+          <a href="https://gun.eco/" target="_blank" rel="noreferrer">
+            GUN Project
+          </a>{" "}
+          that keeping global decentralized state is very much possible. We are investigating how much is still needed
+          to keep that data and P2P communication in decentralized space while preventing cheating of players.
         </p>
 
         <Break />
@@ -334,7 +377,7 @@ export default function SwapPaperFormalPage() {
           <li>
             <b>Founder - Richard Hutta</b>
             <p>
-              A software engineer with over 10 years of experience, Richard Hutta has built profitable business spanning
+              A software engineer with over 12 years of experience, Richard Hutta has built profitable business spanning
               three continents. His passion for technology and the developing a community-oriented project motivates him
               to work smarter to attain his objectives.
             </p>
@@ -370,13 +413,6 @@ export default function SwapPaperFormalPage() {
             <p></p>
           </li>
         </ul>
-
-        <Break />
-        <h2>Research and Development</h2>
-
-        <h3>Polygon PoS Layer-2 Scaling</h3>
-        <h3>Zero Knowledge Proof</h3>
-        <h3>Decentralized state synchronization</h3>
 
         <Break />
         <h2 id="disclaimer">Disclaimer</h2>

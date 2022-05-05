@@ -62,20 +62,39 @@ export const METAMASK: IProviderInfo = {
   },
 };
 
-export const TRUST: IProviderInfo = {
-  id: "injected",
-  name: "Trust",
-  logo: TrustLogo,
-  type: "injected",
-  check: "isTrust",
-};
-
 export const COINBASE: IProviderInfo = {
   id: "injected",
   name: "Coinbase",
   logo: CoinbaseLogo,
   type: "injected",
   check: "isCoinbaseWallet",
+
+  async connector(actions: Actions) {
+    const { CoinbaseWallet } = await import("@web3-react/coinbase-wallet");
+    let network = "";
+    switch (env.NETWORK) {
+      case 1:
+        network = "mainnet";
+        break;
+      case 4:
+        network = "rinkeby";
+        break;
+      default:
+        throw new Error("invalid network id");
+    }
+    const instance = new CoinbaseWallet(actions, {
+      appName: "MageBrotherhood",
+      appLogoUrl: "https://magebrotherhood.com/images/logo-3rdp.png",
+      darkMode: true,
+      url: `https://${network}.infura.io/v3/${env.INFURA_KEY}`,
+    });
+    await instance.activate(env.NETWORK);
+    if (!instance.provider) {
+      throw new Error("provider undefined");
+    }
+    const web3 = new Web3Provider(instance.provider as unknown as ExternalProvider);
+    return [instance, web3];
+  },
 };
 
 export const WALLETCONNECT: IProviderInfo = {
@@ -84,6 +103,28 @@ export const WALLETCONNECT: IProviderInfo = {
   logo: WalletConnectLogo,
   type: "qrcode",
   check: "isWalletConnect",
+
+  async connector(actions: Actions) {
+    // e682fe7fb7f70e94d576b64d618f4d5d
+    const { WalletConnect } = await import("@web3-react/walletconnect");
+    const instance = new WalletConnect(actions, {
+      rpc: {
+        1: `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
+        4: `https://rinkeby.infura.io/v3/${env.INFURA_KEY}`,
+      },
+    });
+    await instance.activate(env.NETWORK);
+    const web3 = new Web3Provider(instance.provider as ExternalProvider);
+    return [instance, web3];
+  },
+};
+
+export const TRUST: IProviderInfo = {
+  id: "injected",
+  name: "Trust",
+  logo: TrustLogo,
+  type: "injected",
+  check: "isTrust",
 };
 
 export const PORTIS: IProviderInfo = {

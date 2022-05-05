@@ -254,7 +254,7 @@ export default function Sidebar({ closeIcon = false }: SidebarProps) {
         <Brand block />
       </Grid>
       <Grid item flexGrow="1">
-        {IS_TESTNET && <Testnet>Carful this is testnet version!</Testnet>}
+        {IS_TESTNET && <Testnet>Careful - this is testnet version!</Testnet>}
         <List>
           <Item icon={faHouse} name="Home" link="/" />
           <Item icon={faRectangleVerticalHistory} name="Tokens" link="/tokens" />

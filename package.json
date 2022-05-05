@@ -16,6 +16,7 @@
     "@walletconnect/ethereum-provider": "1.7.1"
   },
   "dependencies": {
+    "@coinbase/wallet-sdk": "^3.0.11",
     "@emotion/css": "^11.7.1",
     "@emotion/react": "^11.8.2",
     "@emotion/server": "^11.4.0",
@@ -39,6 +40,7 @@
     "@types/react-lines-ellipsis": "^0.15.1",
     "@types/styled-components": "^5.1.24",
     "@types/ua-parser-js": "^0.7.36",
+    "@walletconnect/ethereum-provider": "^1.7.8",
     "@web3-react/coinbase-wallet": "8.0.25-beta.0",
     "@web3-react/core": "8.0.22-beta.0",
     "@web3-react/eip1193": "8.0.17-beta.0",

@@ -56,7 +56,7 @@ export default function Assets() {
         </Grid>
 
         <Grid item xs="auto">
-          <span>${formatBNToEtherFloatFixed(bhc).toFixed(8)}</span>
+          <span>{formatBNToEtherFloatFixed(bhc).toFixed(8)}</span>
         </Grid>
       </Grid>
 
@@ -73,7 +73,7 @@ export default function Assets() {
         </Grid>
 
         <Grid item xs="auto">
-          <span>${formatBNToEtherFloatFixed(eth).toFixed(8)}</span>
+          <span>{formatBNToEtherFloatFixed(eth).toFixed(8)}</span>
         </Grid>
       </Grid>
     </>

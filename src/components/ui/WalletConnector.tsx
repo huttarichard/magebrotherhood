@@ -74,6 +74,7 @@ export default function WalletConnector({ children, onWalletConnected }: WalletC
                 container
                 alignItems="center"
                 key={i}
+                sx={{ marginTop: 1 }}
                 onClick={() => {
                   connect(w)
                     .then(() => {

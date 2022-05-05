@@ -4,14 +4,14 @@ import { createWeb3ReactStoreAndActions } from "@web3-react/store";
 import type { Actions, Web3ReactStore } from "@web3-react/types";
 import { Connector, Web3ReactState } from "@web3-react/types";
 import env from "lib/env";
-import { ConnectorFactory, IProviderInfo, METAMASK } from "lib/web3/wallets";
+import { COINBASE, ConnectorFactory, IProviderInfo, METAMASK, WALLETCONNECT } from "lib/web3/wallets";
 import create from "zustand";
 
 if (!env.INFURA_KEY) {
   throw new Error("process.env.INFURA_KEY is not defined");
 }
 
-const supportedWallets: IProviderInfo[] = [METAMASK];
+const supportedWallets: IProviderInfo[] = [METAMASK, WALLETCONNECT, COINBASE];
 
 export interface Web3 extends Web3ReactState {
   provider: Provider | null;

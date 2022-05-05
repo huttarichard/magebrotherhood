@@ -46,7 +46,7 @@ contract Exchange is Ownable, Pausable {
     uint256 ethReserve
   );
 
-  uint256 public taxFee = 5;
+  uint256 public taxFee = 2;
 
   uint256 public taxFeeDenominator = 100;
 
