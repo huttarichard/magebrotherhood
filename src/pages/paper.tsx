@@ -53,9 +53,9 @@ export default function SwapPaperFormalPage() {
           themselves from this sector of the blockchain industry.
         </p>
         <p>
-          MageBrotherhood envisions creating a paradigm shift in the blockchain gaming industry by establishing a
-          balance and good economy. MageBrotherhood focuses its attention on making the gaming experience fun and the
-          earning more compelling for players while also keeping necessary balance to not turn its tokenmoics into ponzi
+          MageBrotherhood envisions creating a paradigm shift in the blockchain gaming industry by establishing a good
+          well balanced economy. MageBrotherhood focuses its attention on making the gaming experience fun and the
+          earning more compelling for players while also keeping necessary rules to not turn its tokenmoics into ponzi
           scheme.
         </p>
         <blockquote>
@@ -110,7 +110,7 @@ export default function SwapPaperFormalPage() {
 
         <p>
           Our plan is to share edge technologies; share assets; share research and do good things with resources we
-          (will) have. We are committed to bring value with hard work and act wisely when it comes to giving rules.
+          (will) have. We are committed to bring value with hard work and act wisely when it comes to making rules.
         </p>
         <Break />
 
@@ -137,7 +137,7 @@ export default function SwapPaperFormalPage() {
         <p>
           NFTs have been widely used to sell digital art and virtual goods. It’s also been known to be a good tool of
           various shady sellers and people who made simple derivatives of existing art and allow people to speculate on
-          its price while taking profit from its initial phase known as minting.{" "}
+          its price while taking profit from its initial phase known as &quot;minting&quot;.{" "}
         </p>
         <p>
           This has been a concern of developers and the community as whole, because no value is produced and in the end
