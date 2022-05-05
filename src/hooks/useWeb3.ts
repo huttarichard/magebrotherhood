@@ -65,11 +65,15 @@ export interface Web3Network extends Web3 {
 export const useWeb3Remote = create<Web3Network>((set) => {
   const [store, actions] = createWeb3ReactStoreAndActions([env.NETWORK]);
 
-  const networksrpc = {
-    [env.NETWORK]: ["https://rinkeby.infura.io/v3/" + env.INFURA_KEY],
+  const networksrpc: { [key: string]: string[] } = {
+    "1": [`https://mainnet.infura.io/v3/${env.INFURA_KEY}`, "https://main-light.eth.linkpool.io"],
+    "4": [`https://rinkeby.infura.io/v3/${env.INFURA_KEY}`, "https://rinkeby-light.eth.linkpool.io"],
   };
 
-  const network = new Network(actions, networksrpc);
+  const network = new Network(actions, {
+    [env.NETWORK]: networksrpc[env.NETWORK.toString()],
+  });
+
   network
     .activate()
     .then(() => {
