@@ -8,8 +8,6 @@
     "lint": "next lint",
     "hardhat": "hardhat --tsconfig ./tsconfig.hardhat.json",
     "storybook": "start-storybook -p 6006",
-    "airdrop": "ts-node --project ./tsconfig.hardhat.json ./src/server/airdrop.ts",
-    "screenshots": "ts-node --project ./tsconfig.hardhat.json ./scripts/screenshots.ts",
     "build-storybook": "build-storybook"
   },
   "resolutions": {
