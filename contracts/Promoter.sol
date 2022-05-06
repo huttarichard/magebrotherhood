@@ -84,12 +84,13 @@ contract Promoter is AccessControl, Pausable {
   /**
    * @param _coin is ERC20 coin with spend allowed.
    */
-  constructor(address _coin) {
+  constructor(address _coin, address _exchange) {
     _setRoleAdmin(MANAGER, ADMIN);
     _setupRole(ADMIN, _msgSender());
     _setupRole(MANAGER, _msgSender());
 
     setCoinContract(_coin);
+    setExchangeContract(_exchange);
   }
 
   /**
@@ -113,6 +114,15 @@ contract Promoter is AccessControl, Pausable {
   function setCoinContract(address _coin) public onlyRole(ADMIN) {
     require(_coin != address(0), "invalid address");
     coin = ICoin(_coin);
+  }
+
+  /**
+   * @dev will set the exchange contract address.
+   * @param _exchange address of the exchange contract.
+   */
+  function setExchangeContract(address _exchange) public onlyRole(ADMIN) {
+    require(_exchange != address(0), "invalid address");
+    exchange = IExchange(_exchange);
   }
 
   /**

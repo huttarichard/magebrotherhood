@@ -7,28 +7,44 @@ import { ethers } from "hardhat";
 import {
   Coin,
   Coin__factory as CoinFactory,
+  Exchange,
+  Exchange__factory as ExchangeFactory,
   Promoter,
   Promoter__factory as PromoterFactory,
 } from "../src/artifacts/types";
 
 describe("Promoter contract", function () {
   let coin: Coin;
+  let exchange: Exchange;
   let promoter: Promoter;
   let promoterWallet;
+
+  const reserveETH = ethers.utils.parseEther("10");
+  const reserveCoin = ethers.utils.parseEther((1_000_000).toString());
 
   this.beforeEach(async () => {
     const [owner, wallet] = await ethers.getSigners();
     promoterWallet = wallet;
 
     const coinFactory = (await ethers.getContractFactory("Coin", owner)) as CoinFactory;
-    coin = await coinFactory.deploy(100);
+    coin = await coinFactory.deploy(reserveCoin);
     await coin.deployed();
 
-    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
-    promoter = await promoterFactory.deploy(coin.address);
+    const exchangeFactory = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
+    exchange = await exchangeFactory.deploy(coin.address);
 
+    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
+    promoter = await promoterFactory.deploy(coin.address, exchange.address);
+
+    await coin.grantRole(await coin.DISTRIBUTOR(), promoter.address);
     await promoter.grantRole(await promoter.MANAGER(), owner.address);
     await promoter.connect(promoterWallet).register("code", "John Doe");
+
+    // send eth to the exchange contract
+    await expect(() => owner.sendTransaction({ to: exchange.address, value: reserveETH })).to.changeEtherBalance(
+      exchange,
+      reserveETH
+    );
   });
 
   it("coin contract should be correctly set", async function () {
@@ -62,6 +78,26 @@ describe("Promoter contract", function () {
   });
 
   it("should release funds", async function () {
-    this.skip();
+    const [approvedContract] = await ethers.getSigners();
+    await promoter.allowContract(approvedContract.address);
+
+    expect((await promoter.promoters(promoterWallet.address)).revenue).to.be.eq(parseUnits("0", "ether"));
+    await promoter.connect(approvedContract).addRevenue(promoterWallet.address, parseUnits("0.02", "ether"));
+    expect((await promoter.promoters(promoterWallet.address)).revenue).to.be.eq(parseUnits("0.02", "ether"));
+
+    expect(await coin.balanceOf(promoterWallet.address)).to.be.eq(0);
+
+    // should revert - for release he needs to wait 2 blocks
+    await expect(promoter.release(promoterWallet.address)).to.be.reverted;
+    expect(await coin.balanceOf(promoterWallet.address)).to.be.eq(0);
+
+    // mine 2 blocks
+    await ethers.provider.send("evm_mine", []);
+    await ethers.provider.send("evm_mine", []);
+
+    const expectedReward = await exchange.getEthToTokenInputPrice(parseUnits("0.02", "ether").div(100).mul(5));
+
+    await expect(promoter.release(promoterWallet.address)).to.not.be.reverted;
+    expect(await coin.balanceOf(promoterWallet.address)).to.be.eq(expectedReward);
   });
 });

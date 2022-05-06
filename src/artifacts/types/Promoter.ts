@@ -73,6 +73,7 @@ export interface PromoterInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setCoinContract(address)": FunctionFragment;
+    "setExchangeContract(address)": FunctionFragment;
     "setPromoter(address,(bool,string,uint8,string,uint256,uint256,uint256))": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -147,6 +148,10 @@ export interface PromoterInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setExchangeContract",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPromoter",
     values: [string, Promoter.AccountStruct]
   ): string;
@@ -204,6 +209,10 @@ export interface PromoterInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCoinContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setExchangeContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -428,6 +437,11 @@ export interface Promoter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setExchangeContract(
+      _exchange: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setPromoter(
       promoter: string,
       account: Promoter.AccountStruct,
@@ -545,6 +559,11 @@ export interface Promoter extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setExchangeContract(
+    _exchange: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setPromoter(
     promoter: string,
     account: Promoter.AccountStruct,
@@ -650,6 +669,11 @@ export interface Promoter extends BaseContract {
     ): Promise<void>;
 
     setCoinContract(_coin: string, overrides?: CallOverrides): Promise<void>;
+
+    setExchangeContract(
+      _exchange: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setPromoter(
       promoter: string,
@@ -825,6 +849,11 @@ export interface Promoter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setExchangeContract(
+      _exchange: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setPromoter(
       promoter: string,
       account: Promoter.AccountStruct,
@@ -938,6 +967,11 @@ export interface Promoter extends BaseContract {
 
     setCoinContract(
       _coin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setExchangeContract(
+      _exchange: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -86,7 +86,7 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
 
   console.info("Deploying promoter...");
   const Promoter = (await hre.ethers.getContractFactory("Promoter")) as Promoter__factory;
-  const promoter = await Promoter.deploy(coin.address);
+  const promoter = await Promoter.deploy(coin.address, exchange.address);
   await promoter.deployed();
 
   args.Promoter = {

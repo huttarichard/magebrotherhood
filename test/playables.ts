@@ -65,14 +65,14 @@ describe("Playables contract", function () {
     coin = await coinFactory.deploy(100);
     await coin.deployed();
 
+    const Exchange = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
+    exchange = await Exchange.deploy(coin.address);
+
     const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
-    promoter = await promoterFactory.deploy(coin.address);
+    promoter = await promoterFactory.deploy(coin.address, exchange.address);
 
     await promoter.grantRole(await promoter.MANAGER(), owner.address);
     // await promoter.allowRewarding(owner.address, 100);
-
-    const Exchange = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
-    exchange = await Exchange.deploy(coin.address);
 
     const Playables = (await ethers.getContractFactory("Playables", owner)) as PlayablesFactory;
     playables = await Playables.deploy(exchange.address, promoter.address, "");
@@ -109,7 +109,6 @@ describe("Playables contract", function () {
     expect((await playables.tokens(tokenId)).minted).to.equal(t.minted);
     expect((await playables.tokens(tokenId)).weight).to.equal(t.weight);
     expect((await playables.tokens(tokenId)).price).to.equal(t.price);
-    // expect((await playables.tokens(tokenId)).royalty).to.equal(t.royalty);
   });
 
   it("should mint token", async function () {
@@ -237,9 +236,5 @@ describe("Playables contract", function () {
       })
     ).to.be.reverted;
     expect((await playables.tokens(params.tokenId)).minted).to.equal(0);
-  });
-
-  it("should receive royalty", async function () {
-    this.skip();
   });
 });

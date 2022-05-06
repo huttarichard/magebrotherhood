@@ -39,13 +39,13 @@ describe("Exchange contract", async function () {
     coin = await coinFactory.deploy(reserveCoin);
     await coin.deployed();
 
-    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
-    promoter = await promoterFactory.deploy(coin.address);
-
-    await promoter.grantRole(await promoter.MANAGER(), owner.address);
-
     const Exchange = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
     exchange = await Exchange.deploy(coin.address);
+
+    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
+    promoter = await promoterFactory.deploy(coin.address, exchange.address);
+
+    await promoter.grantRole(await promoter.MANAGER(), owner.address);
 
     // send eth to the exchange contract
     await expect(() => owner.sendTransaction({ to: exchange.address, value: reserveETH })).to.changeEtherBalance(
@@ -290,10 +290,16 @@ describe("Exchange contract", async function () {
     const price = await exchange.getTokenToEthInputPrice(ONE_UNIT.mul(1000));
     const [priceWithoutTax, tax] = await exchange.getTokenToEthInputPriceWithTax(ONE_UNIT.mul(1000));
     expect(priceWithoutTax).to.be.lt(price);
-    //TODO: expect(priceWithoutTax + tax).to.be.eq(price);
   });
 
   it("should calculate tax correctly", async function () {
-    this.skip();
+    const taxFee = 2;
+    const taxDenominator = 100;
+    await exchange.setTaxFee(taxFee, taxDenominator);
+    const price = await exchange.getTokenToEthInputPrice(ONE_UNIT.mul(1000));
+    const [priceWithoutTax, taxAmount] = await exchange.getTokenToEthInputPriceWithTax(ONE_UNIT.mul(1000));
+
+    expect(priceWithoutTax.add(taxAmount)).to.be.eq(price);
+    expect(taxAmount).to.be.eq(price.div(taxDenominator).mul(taxFee));
   });
 });

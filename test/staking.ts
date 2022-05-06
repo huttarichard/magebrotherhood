@@ -77,11 +77,11 @@ describe("Staking contract", function () {
     coin = await coinFactory.deploy(BigNumber.from("1000").pow(18));
     await coin.deployed();
 
-    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
-    promoter = await promoterFactory.deploy(coin.address);
-
     const Exchange = (await ethers.getContractFactory("Exchange", owner)) as ExchangeFactory;
     exchange = await Exchange.deploy(coin.address);
+
+    const promoterFactory = (await ethers.getContractFactory("Promoter", owner)) as PromoterFactory;
+    promoter = await promoterFactory.deploy(coin.address, exchange.address);
 
     const Playables = (await ethers.getContractFactory("Playables", owner)) as PlayablesFactory;
     playables = await Playables.deploy(exchange.address, promoter.address, "");
