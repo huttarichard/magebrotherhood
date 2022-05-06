@@ -5,19 +5,29 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "./interfaces/ICoin.sol";
+contract Exchange is Ownable {
+  /**
+   * @dev The address of the coin contract.
+   */
+  IERC20 public immutable coin;
 
-contract Exchange is Ownable, Pausable {
-  using SafeMath for uint256;
+  /**
+   * @dev The state of the exchange.
+   */
+  enum State {
+    NOT_ACTIVE,
+    BUY_ONLY,
+    SELL_ONLY,
+    BUY_SELL
+  }
 
-  ICoin public immutable coin;
-
+  /**
+   * @dev When someone buys tokens with eth.
+   */
   event Bought(
     address indexed buyer,
     address indexed recipient,
@@ -28,6 +38,9 @@ contract Exchange is Ownable, Pausable {
     uint256 ethReserve
   );
 
+  /**
+   * @dev When someone sell tokens for eth.
+   */
   event Sold(
     address indexed seller,
     address indexed recipient,
@@ -38,6 +51,9 @@ contract Exchange is Ownable, Pausable {
     uint256 ethReserve
   );
 
+  /**
+   * @dev When contract receives ether.
+   */
   event Deposit(
     address indexed depositer,
     uint256 indexed timestamp,
@@ -46,46 +62,67 @@ contract Exchange is Ownable, Pausable {
     uint256 ethReserve
   );
 
-  uint256 public taxFee = 2;
+  /**
+   * @dev Sell tax fee, and its denominator makes up sell tax.
+   */
+  uint256 public sellTaxFee = 2;
+  uint256 public sellTaxFeeDenominator = 100;
 
-  uint256 public taxFeeDenominator = 100;
-
+  /**
+   * @dev Liquidity guard takes care of slipage to keep liquidity around.
+   */
   uint256 public liqudityGuard = 3;
-
   uint256 public liqudityGuardDenominator = 1000;
 
+  /**
+   * @dev Current state of the exchange.
+   * @dev see {Exchange-State}
+   */
+  State public state = State.BUY_ONLY;
+
+  modifier buyEnabled() {
+    require(state == State.BUY_ONLY || state == State.BUY_SELL, "exchange is not in buy mode");
+    _;
+  }
+
+  modifier sellEnabled() {
+    require(state == State.SELL_ONLY || state == State.BUY_SELL, "exchange is not in buy mode");
+    _;
+  }
+
+  /**
+   * @dev By default you need to provide ERC20 coin.
+   * @dev This is will be Coin contract address.
+   */
   constructor(address _coin) payable {
-    coin = ICoin(_coin);
+    coin = IERC20(_coin);
   }
 
   /**
-   * @dev Will pause the contract.
+   * @dev Will put exchange to given state.
+   * @dev see {Exchange-State}
    */
-  function pause() external onlyOwner {
-    _pause();
+  function setState(State newState) external onlyOwner {
+    state = newState;
   }
 
   /**
-   * @dev Will unpause the contract.
+   * @notice Set sell tax fee.
+   * @notice For example _fee with _denominator 100 means 1 unit _fee is 1%.
+   * @param _fee as amount to tax.
+   * @param _denominator division unit.
    */
-  function unpause() external onlyOwner {
-    _unpause();
+  function setSellTaxFee(uint256 _fee, uint256 _denominator) public onlyOwner {
+    require(_fee < 15, "maximum tax fee is 15%");
+    require(_denominator > 0, "denominator must be > 0");
+
+    sellTaxFee = _fee;
+    sellTaxFeeDenominator = _denominator;
   }
 
   /**
-   * @notice Set tax fee.
-   */
-  function setTaxFee(uint256 _feePercent, uint256 _taxFeeDenominator) public onlyOwner {
-    require(_feePercent < 15, "maximum tax fee is 15%");
-    require(_taxFeeDenominator > 0, "denominator must be > 0");
-
-    taxFee = _feePercent;
-    taxFeeDenominator = _taxFeeDenominator;
-  }
-
-  /**
-   * @notice set guard for constant product market maker.
-   * @dev this is the percantage making the slippage possible.
+   * @notice Set liquidity guard for constant product market maker.
+   * @dev This is the percantage making the slippage possible.
    */
   function setLiqudityGuard(uint256 _guard, uint256 _denominator) public onlyOwner {
     require(_denominator > 0, "denominator must be > 0");
@@ -96,9 +133,9 @@ contract Exchange is Ownable, Pausable {
 
   /**
    * @dev This function should be used only for migration.
-   * It would be naive to think we will not need to migrate pool (add/remove)
-   * functionality. In contrast this is also abusing power.
-   * However onlyOwner can be assigned to dao and let community decide.
+   * @notice It would be naive to think we will not need to migrate pool (add/remove)
+   * @notice functionality. In contrast this is also abusing power.
+   * @notice However onlyOwner can be assigned to DAO and let community decide.
    */
   function destruct(address payable receiver) public onlyOwner {
     return selfdestruct(receiver);
@@ -110,7 +147,7 @@ contract Exchange is Ownable, Pausable {
    * @dev simply by sending ETH.
    * @return Amount of Tokens bought.
    */
-  function ethToTokenSwap() external payable whenNotPaused returns (uint256) {
+  function ethToTokenSwap() external payable buyEnabled returns (uint256) {
     return ethToTokenInput(msg.value, 0, block.timestamp, msg.sender, msg.sender);
   }
 
@@ -121,7 +158,7 @@ contract Exchange is Ownable, Pausable {
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of Tokens bought.
    */
-  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable whenNotPaused returns (uint256) {
+  function ethToTokenSwapInput(uint256 minTokens, uint256 deadline) external payable buyEnabled returns (uint256) {
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, msg.sender);
   }
 
@@ -132,12 +169,7 @@ contract Exchange is Ownable, Pausable {
    * @param deadline Time after which this transaction can no longer be executed.
    * @return Amount of ETH sold.
    */
-  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline)
-    external
-    payable
-    whenNotPaused
-    returns (uint256)
-  {
+  function ethToTokenSwapOutput(uint256 tokensBought, uint256 deadline) external payable buyEnabled returns (uint256) {
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), msg.sender);
   }
 
@@ -153,7 +185,7 @@ contract Exchange is Ownable, Pausable {
     uint256 minTokens,
     uint256 deadline,
     address recipient
-  ) external payable whenNotPaused returns (uint256) {
+  ) external payable buyEnabled returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenInput(msg.value, minTokens, deadline, msg.sender, recipient);
   }
@@ -170,7 +202,7 @@ contract Exchange is Ownable, Pausable {
     uint256 tokensBought,
     uint256 deadline,
     address recipient
-  ) external payable whenNotPaused returns (uint256) {
+  ) external payable buyEnabled returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return ethToTokenOutput(tokensBought, msg.value, deadline, payable(msg.sender), recipient);
   }
@@ -181,7 +213,7 @@ contract Exchange is Ownable, Pausable {
    * @dev simply by sending ETH.
    * @return Amount of Tokens bought.
    */
-  function tokenToEthSwap(uint256 tokensSold) external whenNotPaused returns (uint256) {
+  function tokenToEthSwap(uint256 tokensSold) external sellEnabled returns (uint256) {
     (uint256 ethBought, ) = getInputPriceWithTax(tokensSold, _balance(), address(this).balance);
     return tokenToEthInput(tokensSold, ethBought, block.timestamp, msg.sender, payable(msg.sender));
   }
@@ -198,7 +230,7 @@ contract Exchange is Ownable, Pausable {
     uint256 tokensSold,
     uint256 minEth,
     uint256 deadline
-  ) external whenNotPaused returns (uint256) {
+  ) external sellEnabled returns (uint256) {
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -214,7 +246,7 @@ contract Exchange is Ownable, Pausable {
     uint256 ethBought,
     uint256 maxTokens,
     uint256 deadline
-  ) external whenNotPaused returns (uint256) {
+  ) external sellEnabled returns (uint256) {
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, payable(msg.sender));
   }
 
@@ -232,7 +264,7 @@ contract Exchange is Ownable, Pausable {
     uint256 minEth,
     uint256 deadline,
     address payable recipient
-  ) external whenNotPaused returns (uint256) {
+  ) external sellEnabled returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthInput(tokensSold, minEth, deadline, msg.sender, recipient);
   }
@@ -251,7 +283,7 @@ contract Exchange is Ownable, Pausable {
     uint256 maxTokens,
     uint256 deadline,
     address payable recipient
-  ) external whenNotPaused returns (uint256) {
+  ) external sellEnabled returns (uint256) {
     require(recipient != address(this) && recipient != address(0), "invalid recipient");
     return tokenToEthOutput(ethBought, maxTokens, deadline, msg.sender, recipient);
   }
@@ -355,9 +387,9 @@ contract Exchange is Ownable, Pausable {
     uint256 outputReserve // token balance of this
   ) internal view returns (uint256) {
     require(inputReserve > 0 && outputReserve > 0, "not enough liquidity");
-    uint256 inputAmountWithFee = inputAmount.mul(liqudityGuardDenominator - liqudityGuard);
-    uint256 numerator = inputAmountWithFee.mul(outputReserve);
-    uint256 denominator = inputReserve.mul(liqudityGuardDenominator).add(inputAmountWithFee);
+    uint256 inputAmountWithFee = inputAmount * (liqudityGuardDenominator - liqudityGuard);
+    uint256 numerator = inputAmountWithFee * outputReserve;
+    uint256 denominator = inputReserve * (liqudityGuardDenominator + inputAmountWithFee);
     return numerator / denominator;
   }
 
@@ -374,8 +406,8 @@ contract Exchange is Ownable, Pausable {
     uint256 outputReserve // token balance of this
   ) internal view returns (uint256, uint256) {
     uint256 p = getInputPrice(inputAmount, inputReserve, outputReserve);
-    uint256 fee = calculateFee(p);
-    return (p.sub(fee), fee);
+    uint256 fee = calculateSellFee(p);
+    return (p - fee, fee);
   }
 
   /**
@@ -391,9 +423,9 @@ contract Exchange is Ownable, Pausable {
     uint256 outputReserve
   ) internal view returns (uint256) {
     require(inputReserve > 0 && outputReserve > 0, "not enough liquidity");
-    uint256 numerator = inputReserve.mul(outputAmount).mul(liqudityGuardDenominator);
-    uint256 denominator = (outputReserve.sub(outputAmount)).mul(liqudityGuardDenominator - liqudityGuard);
-    return (numerator / denominator).add(1);
+    uint256 numerator = inputReserve * outputAmount * liqudityGuardDenominator;
+    uint256 denominator = (outputReserve - outputAmount) * (liqudityGuardDenominator - liqudityGuard);
+    return (numerator / denominator) + 1;
   }
 
   /**
@@ -409,8 +441,8 @@ contract Exchange is Ownable, Pausable {
     uint256 outputReserve
   ) internal view returns (uint256, uint256) {
     uint256 p = getOutputPrice(outputAmount, inputReserve, outputReserve);
-    uint256 fee = calculateFee(p);
-    return (p.sub(fee), fee);
+    uint256 fee = calculateSellFee(p);
+    return (p - fee, fee);
   }
 
   function ethToTokenInput(
@@ -422,13 +454,10 @@ contract Exchange is Ownable, Pausable {
   ) private returns (uint256) {
     require(deadline >= block.timestamp, "deadline crossed");
     require(ethSold > 0, "sold eth must be > 0");
-
     uint256 tokenReserve = _balance();
-    uint256 tokensBought = getInputPrice(ethSold, address(this).balance.sub(ethSold), tokenReserve);
+    uint256 tokensBought = getInputPrice(ethSold, address(this).balance - ethSold, tokenReserve);
     require(tokensBought >= minTokens, "buy amount not satisfied");
-
-    coin.distribute(recipient, tokensBought);
-
+    coin.transferFrom(address(this), recipient, tokensBought);
     emit Bought(buyer, recipient, block.timestamp, tokensBought, ethSold, _balance(), address(this).balance);
     return tokensBought;
   }
@@ -443,16 +472,13 @@ contract Exchange is Ownable, Pausable {
     require(deadline >= block.timestamp, "deadline crossed");
     require(tokensBought > 0, "tokens bought must be > 0");
     require(maxEth > 0, "max of eth must be > 0");
-
     uint256 tokenReserve = _balance();
-    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance.sub(maxEth), tokenReserve);
-    uint256 ethRefund = maxEth.sub(ethSold);
+    uint256 ethSold = getOutputPrice(tokensBought, address(this).balance - maxEth, tokenReserve);
+    uint256 ethRefund = maxEth - ethSold;
     if (ethRefund > 0) {
       Address.sendValue(payable(buyer), ethRefund);
     }
-
-    coin.distribute(recipient, tokensBought);
-
+    coin.transferFrom(address(this), recipient, tokensBought);
     emit Bought(buyer, recipient, block.timestamp, tokensBought, ethSold, _balance(), address(this).balance);
     return ethSold;
   }
@@ -466,14 +492,11 @@ contract Exchange is Ownable, Pausable {
   ) private returns (uint256) {
     require(deadline >= block.timestamp, "deadline crossed");
     require(tokensSold > 0, "sold tokens must be > 0");
-
     uint256 tokenReserve = _balance();
     (uint256 ethBought, uint256 tax) = getInputPriceWithTax(tokensSold, tokenReserve, address(this).balance);
     require(ethBought >= minEth, "eth bought must >= min eth");
-
-    Address.sendValue(recipient, ethBought.sub(tax));
-    coin.take(seller, tokensSold);
-
+    Address.sendValue(recipient, ethBought - tax);
+    coin.transferFrom(seller, address(this), tokensSold);
     emit Sold(seller, recipient, block.timestamp, tokensSold, ethBought, _balance(), address(this).balance);
     return ethBought;
   }
@@ -488,14 +511,11 @@ contract Exchange is Ownable, Pausable {
     require(deadline >= block.timestamp, "deadline crossed");
     require(ethBought > 0, "bought eth must be > 0");
     require(maxTokens > 0, "max bought tokens must be > 0");
-
     uint256 tokenReserve = _balance();
     (uint256 tokensSold, uint256 tax) = getOutputPriceWithTax(ethBought, tokenReserve, address(this).balance);
     require(maxTokens >= tokensSold, "max bought tokens >= tokens sold");
-
     Address.sendValue(recipient, ethBought);
-    coin.take(seller, tokensSold.add(tax));
-
+    coin.transferFrom(seller, address(this), tokensSold + tax);
     emit Sold(seller, recipient, block.timestamp, tokensSold, ethBought, _balance(), address(this).balance);
     return tokensSold;
   }
@@ -503,14 +523,14 @@ contract Exchange is Ownable, Pausable {
   /**
    * @dev Will simply calulate amount and fee, based on current tax fee
    */
-  function calculateFee(uint256 amount) internal view returns (uint256 fee) {
-    return amount.div(taxFeeDenominator).mul(taxFee);
+  function calculateSellFee(uint256 amount) internal view returns (uint256 fee) {
+    return (amount / sellTaxFeeDenominator) * sellTaxFee;
   }
 
   /**
    * @dev will return current reserve of tokens.
    */
   function _balance() internal view returns (uint256) {
-    return coin.balanceOf(address(coin));
+    return coin.balanceOf(address(this));
   }
 }

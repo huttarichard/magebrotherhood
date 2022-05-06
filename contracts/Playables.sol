@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./interfaces/ICoin.sol";
 import "./interfaces/IPromoter.sol";
 
 /**
