@@ -31,7 +31,7 @@ const envconfig = {
   PROMOTER_ADDRESS: contracts.PROMOTER || "",
   EXCHANGE_ADDRESS: contracts.EXCHANGE || "",
 
-  DEPLOY_ARGS: JSON.parse(Buffer.from(process.env.DEPLOY_ARGS || "", "base64").toString()) as DeployArguments,
+  DEPLOY_ARGS: JSON.parse(Buffer.from(process.env.DEPLOY_ARGS || "", "base64").toString() || "{}") as DeployArguments,
 };
 
 export default envconfig;

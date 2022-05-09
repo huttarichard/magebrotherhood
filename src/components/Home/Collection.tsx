@@ -98,7 +98,7 @@ export default function Collection() {
         <Grid container>
           {tokens.data.map((token, index) => {
             return (
-              <StyledSlide item xs={6} sm={4} md={3} lg key={index}>
+              <StyledSlide item xs={6} sm={3} md={4}g key={index}>
                 <div className="img-wrapper">
                   <Image
                     loading="lazy"
