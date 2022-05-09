@@ -76,6 +76,9 @@ export const COINBASE: IProviderInfo = {
       case 1:
         network = "mainnet";
         break;
+      case 4:
+        network = "rinkeby";
+        break;
       case 5:
         network = "goerli";
         break;
@@ -110,6 +113,7 @@ export const WALLETCONNECT: IProviderInfo = {
     const instance = new WalletConnect(actions, {
       rpc: {
         1: `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
+        4: `https://rinkeby.infura.io/v3/${env.INFURA_KEY}`,
         5: `https://goerli.infura.io/v3/${env.INFURA_KEY}`,
       },
     });
