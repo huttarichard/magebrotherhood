@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "./interfaces/ICoin.sol";
 import "./interfaces/IExchange.sol";
 
 /**
@@ -19,7 +19,8 @@ import "./interfaces/IExchange.sol";
 contract Promoter is AccessControl, Pausable {
   using SafeMath for uint256;
 
-  IDistributor public coin;
+  IERC20 public coin;
+
   IExchange public exchange;
 
   /**
@@ -113,7 +114,7 @@ contract Promoter is AccessControl, Pausable {
    */
   function setCoinContract(address _coin) public onlyRole(ADMIN) {
     require(_coin != address(0), "invalid address");
-    coin = ICoin(_coin);
+    coin = IERC20(_coin);
   }
 
   /**
@@ -210,7 +211,7 @@ contract Promoter is AccessControl, Pausable {
     // Just a safety check in case flashloans are used.
     require(p.lastRewardBlock + 2 < block.number, "reward is not yet ready");
     uint256 bhc = exchange.getEthToTokenInputPrice(p.reward);
-    coin.distribute(promoter, bhc);
+    coin.transferFrom(address(this), promoter, bhc);
     emit Paid(promoter, bhc);
   }
 
@@ -227,7 +228,6 @@ contract Promoter is AccessControl, Pausable {
     uint256 reward = ethRevenue.div(100).mul(p.shares);
     p.reward += reward;
     p.lastRewardBlock = block.number;
-    // todo emit event
     emit Rewarded(promoter, reward);
     return reward;
   }

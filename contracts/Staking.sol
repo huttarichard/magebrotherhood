@@ -4,6 +4,7 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
@@ -12,10 +13,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "hardhat/console.sol";
 
 import "./interfaces/IStakable.sol";
-import "./interfaces/ICoin.sol";
 
 /**
  * @title NFT Staking
@@ -86,7 +85,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
     mapping(address => mapping(uint256 => TokenInfo)) balances;
   }
 
-  IDistributor public coin;
+  IERC20 public coin;
 
   uint256 public totalRewardsPool;
 
@@ -112,8 +111,6 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
-  bytes32 public constant REWARDER = keccak256("REWARDER");
-
   bytes32 public constant SLUSHER = keccak256("SLUSHER");
 
   /**
@@ -136,12 +133,9 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
     require(_cycleLengthInSeconds >= 1 minutes, "invalid cycle length");
     require(_periodLengthInCycles >= 2, "invalid period length");
 
-    _setRoleAdmin(REWARDER, ADMIN);
     _setRoleAdmin(SLUSHER, ADMIN);
-
     _setupRole(ADMIN, _msgSender());
     _setupRole(SLUSHER, _msgSender());
-    _setupRole(REWARDER, _msgSender());
 
     cycleLengthInSeconds = _cycleLengthInSeconds;
     periodLengthInCycles = _periodLengthInCycles;
@@ -169,7 +163,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
    */
   function setCoinContract(address _coin) public onlyRole(ADMIN) {
     require(_coin != address(0), "invalid address");
-    coin = ICoin(_coin);
+    coin = IERC20(_coin);
   }
 
   /**
@@ -191,7 +185,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
     uint16 startPeriod,
     uint16 endPeriod,
     uint256 rewardsPerCycle
-  ) public onlyRole(REWARDER) {
+  ) public onlyRole(ADMIN) {
     require(startPeriod != 0 && startPeriod <= endPeriod, "wrong period range");
     require(startPeriod >= _getCurrentPeriod(periodLengthInCycles), "already committed reward schedule");
 
@@ -277,9 +271,10 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
   function slush(
     address stakableContract,
     uint256 tokenId,
-    address owner
+    address owner,
+    address recipient
   ) public onlyRole(SLUSHER) {
-    _unstake(stakableContract, tokenId, owner, stakableContract);
+    _unstake(stakableContract, tokenId, owner, recipient);
   }
 
   /**
@@ -296,20 +291,6 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
    */
   function unstake(address stakableContract, uint256 tokenId) public {
     _unstake(stakableContract, tokenId, _msgSender(), _msgSender());
-  }
-
-  /**
-   * Unstakes a batch of deposited NFTs from the contract.
-   * @dev Reverts if `tokenIds` is empty.
-   * @dev Reverts if the caller is not the original owner of any of the NFTs.
-   * @dev While the contract is enabled, reverts if any NFT is being unstaked before its staking freeze duration has elapsed.
-   * @dev While the contract is enabled, creates any missing snapshots, up-to the current cycle.
-   * @dev While the contract is enabled, emits the HistoriesUpdated event.
-   * @dev Emits the NftsBatchUnstaked event for each NFT unstaked.
-   * @param tokenIds The token identifiers, referencing the NFTs being unstaked.
-   */
-  function batchUnstake(address stakableContract, uint256[] calldata tokenIds) public {
-    _unstake(stakableContract, tokenIds, _msgSender(), _msgSender());
   }
 
   /**
@@ -380,7 +361,7 @@ contract Staking is ERC165, Pausable, AccessControl, IERC721Receiver, IERC1155Re
     }
 
     if (claim.amount != 0) {
-      coin.distribute(_msgSender(), claim.amount);
+      coin.transferFrom(address(this), _msgSender(), claim.amount);
     }
 
     emit RewardsClaimed(_msgSender(), _getCycle(block.timestamp), claim.startPeriod, claim.periods, claim.amount);

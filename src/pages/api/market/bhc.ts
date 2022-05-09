@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const provider = getInfuraProviderFromEnv();
   const coin = (await connectFromEnv(provider, Contract.Coin)) as Coin;
 
-  const [b, e] = await Promise.all([coin.balanceOf(coin.address), provider.getBalance(env.EXCHANGE_ADDRESS)]);
+  const [b, e] = await Promise.all([coin.balanceOf(env.EXCHANGE_ADDRESS), provider.getBalance(env.EXCHANGE_ADDRESS)]);
 
   const bhc = formatBNToEtherFloatFixed(b);
   const eth = formatBNToEtherFloatFixed(e);

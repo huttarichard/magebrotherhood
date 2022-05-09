@@ -210,6 +210,7 @@ const BHCPriceWrapper = styled.div`
 
 function BHCPrice() {
   const price = useBHCUSDPrice();
+
   if (!price)
     return (
       <BHCPriceWrapper>

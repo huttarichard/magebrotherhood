@@ -36,5 +36,5 @@ npx solhint 'contracts/**/*.sol' --fix
 
 
 ```
- yarn hardhat --network "rinkeby" playables:token:add --id 1 --name "Knight" --description "Warrior" --playables "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF" --royalty "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF" --price 0.01 --supply 800
+ yarn hardhat --network "goerli" playables:token:add --id 1 --name "Knight" --description "Warrior" --playables "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF" --royalty "0xC91a8C5C72d0255576a9C59fd2bc897D403D8eaF" --price 0.01 --supply 800
 ```

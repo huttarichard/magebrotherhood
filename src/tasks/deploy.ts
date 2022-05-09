@@ -16,8 +16,10 @@ import { timeNowInBN } from "../lib/bn";
 import { createClientFromEnv } from "../lib/server/ipfs";
 
 interface DeployParams {
-  coinLiquidity: number;
-  exchangeLiquidity: number;
+  exchangeETHLiquidity: number;
+  exchangeBHCLiquidity: number;
+  stakingBHCLiquidity: number;
+  promoterBHCLiquidity: number;
   stakingCycle: number;
   stakingPeriod: number;
 }
@@ -38,36 +40,39 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   await hre.run("clean");
   await hre.run("compile");
 
-  const coinLiquidity = parseEther(taskArgs.coinLiquidity.toFixed(0));
-  const exchangeLiq = parseEther((taskArgs.exchangeLiquidity * 100).toFixed(0)).div(100);
+  const exchangeBHCLiquidity = parseEther(taskArgs.exchangeBHCLiquidity.toFixed(0));
+  const exchangeETHLiquidity = parseEther((taskArgs.exchangeETHLiquidity * 100).toFixed(0)).div(100);
+  const promoterBHCLiquidity = parseEther(taskArgs.promoterBHCLiquidity.toFixed(0));
+
+  const stakingBHCLiquidity = parseEther(taskArgs.stakingBHCLiquidity.toFixed(0));
   const stakingCycle = taskArgs.stakingCycle;
   const stakingPeriod = taskArgs.stakingPeriod;
 
   const args: DeployArguments = {};
 
   // Coin
-  console.info("Deploying coin...");
   const Coin = (await hre.ethers.getContractFactory("Coin")) as Coin__factory;
-  const coin = await Coin.deploy(coinLiquidity);
+  const coin = await Coin.deploy();
+  console.info("Deploying coin...", coin.address);
   await coin.deployed();
   args.Coin = {
     address: coin.address,
-    args: [coinLiquidity.toString()],
+    args: [],
   };
   console.info("Coin address: ", coin.address);
   console.info("Coin tx hash: ", coin.deployTransaction.hash);
   console.info("\n");
 
   // Exchange
-  if (exchangeLiq.eq(BigNumber.from(0))) {
+  if (exchangeETHLiquidity.eq(BigNumber.from(0))) {
     console.warn(
       "Exchange liquidity is 0, this is not ideal as it will not allow to trade, functions will return errors"
     );
   }
-  console.info("Deploying exchange (liq: %s)...", formatEther(exchangeLiq));
+  console.info("Deploying exchange (eth liq: %s)...", formatEther(exchangeETHLiquidity));
   const Exchange = (await hre.ethers.getContractFactory("Exchange")) as Exchange__factory;
   const exchange = await Exchange.deploy(coin.address, {
-    value: exchangeLiq,
+    value: exchangeETHLiquidity,
   });
   await exchange.deployed();
   args.Exchange = {
@@ -75,12 +80,15 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
     args: [coin.address],
   };
 
+  console.info("Adding BHC liquidity to exchange...", formatEther(exchangeBHCLiquidity));
+  await coin.mint(exchange.address, exchangeBHCLiquidity);
+
   console.info("Exchange address: ", exchange.address);
   console.info("Exchange tx hash: ", exchange.deployTransaction.hash);
   console.info("\n");
 
-  console.info("Setting distributor permissions on coin for exchange...");
-  await coin.grantRole(await coin.DISTRIBUTOR(), exchange.address);
+  console.info("Setting MANIPULATOR permissions on coin for exchange...");
+  await coin.grantRole(await coin.MANIPULATOR(), exchange.address);
   console.info("Role granted");
   console.info("\n");
 
@@ -91,16 +99,15 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
 
   args.Promoter = {
     address: promoter.address,
-    args: [coin.address],
+    args: [coin.address, exchange.address],
   };
 
   console.info("Promoter address: ", promoter.address);
   console.info("Promoter tx hash: ", promoter.deployTransaction.hash);
   console.info("\n");
 
-  console.info("Setting distributor permissions on coin for promoter...");
-  await coin.grantRole(await coin.DISTRIBUTOR(), promoter.address);
-  console.info("Role granted");
+  console.info("Adding BHC liquidity to promoter...", formatEther(promoterBHCLiquidity));
+  await coin.mint(promoter.address, promoterBHCLiquidity);
   console.info("\n");
 
   console.info("Deploying playables...");
@@ -146,13 +153,11 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
     args: [stakingCycle, stakingPeriod, tmbn.toString(), coin.address],
   };
 
+  console.info("Adding BHC liquidity to staking...", formatEther(stakingBHCLiquidity));
+  await coin.mint(staking.address, stakingBHCLiquidity);
+
   console.info("Staking address: ", staking.address);
   console.info("Staking tx hash: ", staking.deployTransaction.hash);
-  console.info("\n");
-
-  console.info("Setting distributor permissions on coin for promoter...");
-  await coin.grantRole(await coin.DISTRIBUTOR(), staking.address);
-  console.info("Role granted");
   console.info("\n");
 
   console.info("Adding playable contract to staking...");
@@ -213,8 +218,10 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   console.info(newEnvFile);
   console.info("Done!");
 })
-  .addOptionalParam("coinLiquidity", "amount of bhc", 10000000, types.int)
-  .addOptionalParam("exchangeLiquidity", "amount of eth send to exchange with deploy", 0.01, types.float)
+  .addOptionalParam("promoterBHCLiquidity", "staking amount of bhc allocated for staking", 100_000, types.int)
+  .addOptionalParam("stakingBHCLiquidity", "staking amount of bhc allocated for staking", 1_000_000, types.int)
+  .addOptionalParam("exchangeBHCLiquidity", "amount of bhc allocated for exchange", 1_000_000, types.int)
+  .addOptionalParam("exchangeETHLiquidity", "amount of eth send to exchange with deploy", 0.01, types.float)
   .addOptionalParam("stakingCycle", "staking cycle in seconds", 60, types.int)
   .addOptionalParam("stakingPeriod", "staking period in cycles", 2, types.int);
 

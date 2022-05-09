@@ -34,7 +34,7 @@ task("playables:tokens:bootstrap", "adds tokens to contract and ipfs", async (ta
     const json = JSON.parse(readFileSync(file, "utf8"));
     const dir = dirname(file);
 
-    console.log("JSON data:", json);
+    console.info("JSON data:", json);
 
     const token = await playables.tokens(json.id);
     if (token.createdAt.toNumber() > 0) {
@@ -142,7 +142,7 @@ task("playables:tokens:update", "update token with given id", async (taskArgs: U
   };
 
   if (!token.revealed) {
-    console.log("Updating token: ", update);
+    console.info("Updating token: ", update);
     await playables.setToken(json.id, update);
     return;
   }
@@ -173,7 +173,7 @@ task("playables:tokens:update", "update token with given id", async (taskArgs: U
   const metadataHash = await ipfs.add(JSON.stringify(metadata));
   update.uri = "ipfs://" + metadataHash.path;
 
-  console.log("Updating token: ", json.id, update);
+  console.info("Updating token: ", json.id, update);
   await playables.setToken(json.id, update);
 
   console.info("Done!");

@@ -196,7 +196,7 @@ export default function AffiliatePage() {
         helpers.setFieldError("nickname", "Invalid nickname");
         return;
       }
-      console.log(values);
+
       makeTransaction<Contract.Promoter, "register">({
         contract: Contract.Promoter,
         fn: "register",

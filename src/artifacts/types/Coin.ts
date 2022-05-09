@@ -34,10 +34,9 @@ export interface CoinInterface extends utils.Interface {
   functions: {
     "ADMIN()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "DISTRIBUTOR()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "NAME()": FunctionFragment;
-    "TICK()": FunctionFragment;
+    "MANIPULATOR()": FunctionFragment;
+    "MAX_SUPPLY()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -48,7 +47,6 @@ export interface CoinInterface extends utils.Interface {
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
-    "distribute(address,uint256)": FunctionFragment;
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -67,7 +65,6 @@ export interface CoinInterface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
-    "take(address,uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -80,15 +77,17 @@ export interface CoinInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "DISTRIBUTOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
-  encodeFunctionData(functionFragment: "TICK", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MANIPULATOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_SUPPLY",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -124,10 +123,6 @@ export interface CoinInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "distribute",
-    values: [string, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "getPastTotalSupply",
     values: [BigNumberish]
@@ -191,10 +186,6 @@ export interface CoinInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "take",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -214,15 +205,14 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "DISTRIBUTOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "TICK", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MANIPULATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "MAX_SUPPLY", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -242,7 +232,6 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPastTotalSupply",
     data: BytesLike
@@ -282,7 +271,6 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "take", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -408,13 +396,11 @@ export interface Coin extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    DISTRIBUTOR(overrides?: CallOverrides): Promise<[string]>;
-
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    NAME(overrides?: CallOverrides): Promise<[string]>;
+    MANIPULATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    TICK(overrides?: CallOverrides): Promise<[string]>;
+    MAX_SUPPLY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     allowance(
       owner: string,
@@ -431,7 +417,7 @@ export interface Coin extends BaseContract {
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     burn(
-      burnee: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -466,12 +452,6 @@ export interface Coin extends BaseContract {
     ): Promise<ContractTransaction>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
-
-    distribute(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     getPastTotalSupply(
       blockNumber: BigNumberish,
@@ -557,12 +537,6 @@ export interface Coin extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    take(
-      owner: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
@@ -587,13 +561,11 @@ export interface Coin extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
-
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-  NAME(overrides?: CallOverrides): Promise<string>;
+  MANIPULATOR(overrides?: CallOverrides): Promise<string>;
 
-  TICK(overrides?: CallOverrides): Promise<string>;
+  MAX_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
   allowance(
     owner: string,
@@ -610,7 +582,7 @@ export interface Coin extends BaseContract {
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   burn(
-    burnee: string,
+    recipient: string,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -645,12 +617,6 @@ export interface Coin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
-
-  distribute(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   getPastTotalSupply(
     blockNumber: BigNumberish,
@@ -733,12 +699,6 @@ export interface Coin extends BaseContract {
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
-  take(
-    owner: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
@@ -763,13 +723,11 @@ export interface Coin extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
-
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-    NAME(overrides?: CallOverrides): Promise<string>;
+    MANIPULATOR(overrides?: CallOverrides): Promise<string>;
 
-    TICK(overrides?: CallOverrides): Promise<string>;
+    MAX_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -786,7 +744,7 @@ export interface Coin extends BaseContract {
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(
-      burnee: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -818,12 +776,6 @@ export interface Coin extends BaseContract {
     ): Promise<void>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
-
-    distribute(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getPastTotalSupply(
       blockNumber: BigNumberish,
@@ -903,12 +855,6 @@ export interface Coin extends BaseContract {
     ): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
-
-    take(
-      owner: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1018,13 +964,11 @@ export interface Coin extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    DISTRIBUTOR(overrides?: CallOverrides): Promise<BigNumber>;
-
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    NAME(overrides?: CallOverrides): Promise<BigNumber>;
+    MANIPULATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    TICK(overrides?: CallOverrides): Promise<BigNumber>;
+    MAX_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -1041,7 +985,7 @@ export interface Coin extends BaseContract {
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(
-      burnee: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1076,12 +1020,6 @@ export interface Coin extends BaseContract {
     ): Promise<BigNumber>;
 
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    distribute(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     getPastTotalSupply(
       blockNumber: BigNumberish,
@@ -1170,12 +1108,6 @@ export interface Coin extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
-    take(
-      owner: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
@@ -1203,13 +1135,11 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    DISTRIBUTOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    MANIPULATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    TICK(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    MAX_SUPPLY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -1229,7 +1159,7 @@ export interface Coin extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
-      burnee: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1266,12 +1196,6 @@ export interface Coin extends BaseContract {
     delegates(
       account: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    distribute(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getPastTotalSupply(
@@ -1366,12 +1290,6 @@ export interface Coin extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    take(
-      owner: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

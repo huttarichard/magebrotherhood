@@ -34,8 +34,6 @@ export default function StakedItems({ account }: Props) {
   });
 
   const handeUnstaking = (item: FullToken) => {
-    console.log(item);
-
     makeTransaction({
       contract: Contract.Staking,
       description: {

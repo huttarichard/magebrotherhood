@@ -34,14 +34,12 @@ interface Props {
 }
 
 export default function SwipeableEdgeDrawer(props: React.PropsWithChildren<Props>) {
-  const { children, defaultOpen = false, edge, edgeSize = 0, container } = props;
+  const { children, defaultOpen = false, edge, edgeSize = 0 } = props;
   const [open, setOpen] = React.useState(defaultOpen);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
-
-  console.log(container);
 
   return (
     <Root>

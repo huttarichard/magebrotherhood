@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IPromoter.sol";
 
 /**
- * Playables contract.
+ * @dev Playables contract.
  */
 contract Playables is ERC1155, Ownable, Pausable {
   /**

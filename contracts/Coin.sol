@@ -9,18 +9,16 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
-  uint256 public constant MAX_SUPPLY = 1_000_000_000;
+  uint256 public constant MAX_SUPPLY = 1_000_000_000 ether;
 
   bytes32 public constant ADMIN = keccak256("ADMIN");
 
   bytes32 public constant MANIPULATOR = keccak256("MANIPULATOR");
 
-  constructor(uint256 liquidity) ERC20("Brotherhood Coin", "BHC") ERC20Permit("Brotherhood") {
+  constructor() ERC20("Brotherhood Coin", "BHC") ERC20Permit("Brotherhood") {
     _setRoleAdmin(MANIPULATOR, ADMIN);
     _setupRole(ADMIN, _msgSender());
     _setupRole(MANIPULATOR, _msgSender());
-
-    _mint(address(this), liquidity);
   }
 
   /**

@@ -37,21 +37,20 @@ export interface ExchangeInterface extends utils.Interface {
     "liqudityGuard()": FunctionFragment;
     "liqudityGuardDenominator()": FunctionFragment;
     "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "reserves()": FunctionFragment;
+    "sellTaxFee()": FunctionFragment;
+    "sellTaxFeeDenominator()": FunctionFragment;
     "setLiqudityGuard(uint256,uint256)": FunctionFragment;
-    "setTaxFee(uint256,uint256)": FunctionFragment;
-    "taxFee()": FunctionFragment;
-    "taxFeeDenominator()": FunctionFragment;
+    "setSellTaxFee(uint256,uint256)": FunctionFragment;
+    "setState(uint8)": FunctionFragment;
+    "state()": FunctionFragment;
     "tokenToEthSwap(uint256)": FunctionFragment;
     "tokenToEthSwapInput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthSwapOutput(uint256,uint256,uint256)": FunctionFragment;
     "tokenToEthTransferInput(uint256,uint256,uint256,address)": FunctionFragment;
     "tokenToEthTransferOutput(uint256,uint256,uint256,address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "coin", values?: undefined): string;
@@ -109,26 +108,32 @@ export interface ExchangeInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "reserves", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "sellTaxFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sellTaxFeeDenominator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setLiqudityGuard",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTaxFee",
+    functionFragment: "setSellTaxFee",
     values: [BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "taxFee", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "taxFeeDenominator",
-    values?: undefined
+    functionFragment: "setState",
+    values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "state", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenToEthSwap",
     values: [BigNumberish]
@@ -153,7 +158,6 @@ export interface ExchangeInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "coin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "destruct", data: BytesLike): Result;
@@ -210,23 +214,26 @@ export interface ExchangeInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "reserves", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sellTaxFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sellTaxFeeDenominator",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setLiqudityGuard",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setTaxFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "taxFee", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "taxFeeDenominator",
+    functionFragment: "setSellTaxFee",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setState", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "state", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenToEthSwap",
     data: BytesLike
@@ -251,23 +258,18 @@ export interface ExchangeInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Bought(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Deposit(address,uint256,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
     "Sold(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Bought"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Sold"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export type BoughtEvent = TypedEvent<
@@ -306,10 +308,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export type PausedEvent = TypedEvent<[string], { account: string }>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
 export type SoldEvent = TypedEvent<
   [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
   {
@@ -324,10 +322,6 @@ export type SoldEvent = TypedEvent<
 >;
 
 export type SoldEventFilter = TypedEventFilter<SoldEvent>;
-
-export type UnpausedEvent = TypedEvent<[string], { account: string }>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface Exchange extends BaseContract {
   contractName: "Exchange";
@@ -430,17 +424,15 @@ export interface Exchange extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
+    sellTaxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    sellTaxFeeDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setLiqudityGuard(
       _guard: BigNumberish,
@@ -448,15 +440,18 @@ export interface Exchange extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
+    setSellTaxFee(
+      _fee: BigNumberish,
+      _denominator: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    taxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+    setState(
+      newState: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    taxFeeDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
+    state(overrides?: CallOverrides): Promise<[number]>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
@@ -495,10 +490,6 @@ export interface Exchange extends BaseContract {
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -576,17 +567,15 @@ export interface Exchange extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
+  sellTaxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  sellTaxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
   setLiqudityGuard(
     _guard: BigNumberish,
@@ -594,15 +583,18 @@ export interface Exchange extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setTaxFee(
-    _feePercent: BigNumberish,
-    _taxFeeDenominator: BigNumberish,
+  setSellTaxFee(
+    _fee: BigNumberish,
+    _denominator: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+  setState(
+    newState: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+  state(overrides?: CallOverrides): Promise<number>;
 
   tokenToEthSwap(
     tokensSold: BigNumberish,
@@ -641,10 +633,6 @@ export interface Exchange extends BaseContract {
 
   transferOwnership(
     newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -717,13 +705,13 @@ export interface Exchange extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     reserves(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+
+    sellTaxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sellTaxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
     setLiqudityGuard(
       _guard: BigNumberish,
@@ -731,15 +719,15 @@ export interface Exchange extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
+    setSellTaxFee(
+      _fee: BigNumberish,
+      _denominator: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+    setState(newState: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+    state(overrides?: CallOverrides): Promise<number>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
@@ -780,8 +768,6 @@ export interface Exchange extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -828,9 +814,6 @@ export interface Exchange extends BaseContract {
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
     "Sold(address,address,uint256,uint256,uint256,uint256,uint256)"(
       seller?: string | null,
       recipient?: string | null,
@@ -849,9 +832,6 @@ export interface Exchange extends BaseContract {
       tokenReserve?: null,
       ethReserve?: null
     ): SoldEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
@@ -928,17 +908,15 @@ export interface Exchange extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     reserves(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sellTaxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sellTaxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
 
     setLiqudityGuard(
       _guard: BigNumberish,
@@ -946,15 +924,18 @@ export interface Exchange extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
+    setSellTaxFee(
+      _fee: BigNumberish,
+      _denominator: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    taxFee(overrides?: CallOverrides): Promise<BigNumber>;
+    setState(
+      newState: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    taxFeeDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+    state(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
@@ -993,10 +974,6 @@ export interface Exchange extends BaseContract {
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -1077,17 +1054,17 @@ export interface Exchange extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     reserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sellTaxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sellTaxFeeDenominator(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     setLiqudityGuard(
       _guard: BigNumberish,
@@ -1095,15 +1072,18 @@ export interface Exchange extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setTaxFee(
-      _feePercent: BigNumberish,
-      _taxFeeDenominator: BigNumberish,
+    setSellTaxFee(
+      _fee: BigNumberish,
+      _denominator: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    taxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setState(
+      newState: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    taxFeeDenominator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    state(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenToEthSwap(
       tokensSold: BigNumberish,
@@ -1142,10 +1122,6 @@ export interface Exchange extends BaseContract {
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

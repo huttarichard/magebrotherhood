@@ -78,7 +78,7 @@ contract Exchange is Ownable {
    * @dev Current state of the exchange.
    * @dev see {Exchange-State}
    */
-  State public state = State.BUY_ONLY;
+  State public state = State.BUY_SELL;
 
   modifier buyEnabled() {
     require(state == State.BUY_ONLY || state == State.BUY_SELL, "exchange is not in buy mode");

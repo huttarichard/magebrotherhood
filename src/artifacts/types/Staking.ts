@@ -46,11 +46,9 @@ export interface StakingInterface extends utils.Interface {
   functions: {
     "ADMIN()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "REWARDER()": FunctionFragment;
     "SLUSHER()": FunctionFragment;
     "addContract(address)": FunctionFragment;
     "addRewardsForPeriods(uint16,uint16,uint256)": FunctionFragment;
-    "batchUnstake(address,uint256[])": FunctionFragment;
     "claimRewards(uint16)": FunctionFragment;
     "coin()": FunctionFragment;
     "contracts(address)": FunctionFragment;
@@ -77,7 +75,7 @@ export interface StakingInterface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "rewardsSchedule(uint256)": FunctionFragment;
     "setCoinContract(address)": FunctionFragment;
-    "slush(address,uint256,address)": FunctionFragment;
+    "slush(address,uint256,address,address)": FunctionFragment;
     "stakerHistories(address,uint256)": FunctionFragment;
     "startTimestamp()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -91,16 +89,11 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "REWARDER", values?: undefined): string;
   encodeFunctionData(functionFragment: "SLUSHER", values?: undefined): string;
   encodeFunctionData(functionFragment: "addContract", values: [string]): string;
   encodeFunctionData(
     functionFragment: "addRewardsForPeriods",
     values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchUnstake",
-    values: [string, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "claimRewards",
@@ -193,7 +186,7 @@ export interface StakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "slush",
-    values: [string, BigNumberish, string]
+    values: [string, BigNumberish, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "stakerHistories",
@@ -222,7 +215,6 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "REWARDER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "SLUSHER", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addContract",
@@ -230,10 +222,6 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "addRewardsForPeriods",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "batchUnstake",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -498,8 +486,6 @@ export interface Staking extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    REWARDER(overrides?: CallOverrides): Promise<[string]>;
-
     SLUSHER(overrides?: CallOverrides): Promise<[string]>;
 
     addContract(
@@ -511,12 +497,6 @@ export interface Staking extends BaseContract {
       startPeriod: BigNumberish,
       endPeriod: BigNumberish,
       rewardsPerCycle: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    batchUnstake(
-      stakableContract: string,
-      tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -660,6 +640,7 @@ export interface Staking extends BaseContract {
       stakableContract: string,
       tokenId: BigNumberish,
       owner: string,
+      recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -695,8 +676,6 @@ export interface Staking extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  REWARDER(overrides?: CallOverrides): Promise<string>;
-
   SLUSHER(overrides?: CallOverrides): Promise<string>;
 
   addContract(
@@ -708,12 +687,6 @@ export interface Staking extends BaseContract {
     startPeriod: BigNumberish,
     endPeriod: BigNumberish,
     rewardsPerCycle: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  batchUnstake(
-    stakableContract: string,
-    tokenIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -857,6 +830,7 @@ export interface Staking extends BaseContract {
     stakableContract: string,
     tokenId: BigNumberish,
     owner: string,
+    recipient: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -892,8 +866,6 @@ export interface Staking extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    REWARDER(overrides?: CallOverrides): Promise<string>;
-
     SLUSHER(overrides?: CallOverrides): Promise<string>;
 
     addContract(
@@ -905,12 +877,6 @@ export interface Staking extends BaseContract {
       startPeriod: BigNumberish,
       endPeriod: BigNumberish,
       rewardsPerCycle: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    batchUnstake(
-      stakableContract: string,
-      tokenIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1049,6 +1015,7 @@ export interface Staking extends BaseContract {
       stakableContract: string,
       tokenId: BigNumberish,
       owner: string,
+      recipient: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1209,8 +1176,6 @@ export interface Staking extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    REWARDER(overrides?: CallOverrides): Promise<BigNumber>;
-
     SLUSHER(overrides?: CallOverrides): Promise<BigNumber>;
 
     addContract(
@@ -1222,12 +1187,6 @@ export interface Staking extends BaseContract {
       startPeriod: BigNumberish,
       endPeriod: BigNumberish,
       rewardsPerCycle: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    batchUnstake(
-      stakableContract: string,
-      tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1354,6 +1313,7 @@ export interface Staking extends BaseContract {
       stakableContract: string,
       tokenId: BigNumberish,
       owner: string,
+      recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1390,8 +1350,6 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    REWARDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     SLUSHER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addContract(
@@ -1403,12 +1361,6 @@ export interface Staking extends BaseContract {
       startPeriod: BigNumberish,
       endPeriod: BigNumberish,
       rewardsPerCycle: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    batchUnstake(
-      stakableContract: string,
-      tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1547,6 +1499,7 @@ export interface Staking extends BaseContract {
       stakableContract: string,
       tokenId: BigNumberish,
       owner: string,
+      recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

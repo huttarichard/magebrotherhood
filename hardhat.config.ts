@@ -39,8 +39,8 @@ const config: HardhatUserConfig = {
       gasPrice: 875000000,
       loggingEnabled: false,
     },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`,
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
     },
   },
