@@ -71,7 +71,7 @@ task("playables:tokens:bootstrap", "adds tokens to contract and ipfs", async (ta
       description: json.description,
       external_url: json.external_url,
       image: "ipfs://" + imageHash.path,
-      animation_url: "ipfs://" + glbHash.path,
+      animation_url: "https://www.magebrotherhood.com/frames/" + json.id,
       models: {
         glb: "ipfs://" + glbHash.path,
         usdz: "ipfs://" + usdzHash.path,
@@ -161,7 +161,7 @@ task("playables:tokens:update", "update token with given id", async (taskArgs: U
     description: json.description,
     external_url: json.external_url,
     image: "ipfs://" + imageHash.path,
-    animation_url: "ipfs://" + glbHash.path,
+    animation_url: "https://www.magebrotherhood.com/frames/" + json.id,
     models: {
       glb: "ipfs://" + glbHash.path,
       usdz: "ipfs://" + usdzHash.path,
