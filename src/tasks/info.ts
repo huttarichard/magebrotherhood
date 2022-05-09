@@ -6,6 +6,7 @@ import { task } from "hardhat/config";
 import { Coin } from "../artifacts/types/Coin";
 import { Exchange } from "../artifacts/types/Exchange";
 import { formatBNToEtherFloatFixed } from "../lib/bn";
+import env from "../lib/env.server";
 
 task("info", "Prints info about current state of the contracts, must have .env settup").setAction(
   async (taskargs, hre) => {
@@ -19,11 +20,7 @@ task("info", "Prints info about current state of the contracts, must have .env s
       head: ["Stats", "Value"],
     });
 
-    // const STAKING_ADDRESS = process.env.STAKING_ADDRESS as string;
-    // const PROMOTER_ADDRESS = process.env.PROMOTER_ADDRESS as string;
-    // const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
-
-    const COIN_ADDRESS = process.env.COIN_ADDRESS as string;
+    const COIN_ADDRESS = env.COIN_ADDRESS as string;
     console.info("Coin address:", COIN_ADDRESS);
 
     const coinBytecode = await owner.provider?.getCode(COIN_ADDRESS);
@@ -35,7 +32,7 @@ task("info", "Prints info about current state of the contracts, must have .env s
     const Coin = await hre.ethers.getContractFactory("Coin");
     const coin = Coin.attach(COIN_ADDRESS).connect(owner) as Coin;
 
-    const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+    const EXCHANGE_ADDRESS = env.EXCHANGE_ADDRESS as string;
     console.info("Exchange address:", EXCHANGE_ADDRESS);
 
     const exchangeBytecode = await owner.provider?.getCode(EXCHANGE_ADDRESS);

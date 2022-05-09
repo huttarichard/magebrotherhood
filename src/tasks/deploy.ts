@@ -168,50 +168,26 @@ task("deploy", "deploys coin contract", async (taskArgs: DeployParams, hre) => {
   const jsonArgs = JSON.stringify(args);
   const buffer = Buffer.from(jsonArgs);
 
+  const CONTRACTS = JSON.stringify({
+    COIN: coin.address,
+    STAKING: staking.address,
+    PROMOTER: promoter.address,
+    EXCHANGE: exchange.address,
+    PLAYABLES: playables.address,
+  });
+
   const newEnvFile = updateEnvFile([
     {
-      key: "COIN_ADDRESS",
-      value: `"${coin.address}"`,
-    },
-    {
-      key: "NEXT_PUBLIC_COIN_ADDRESS",
-      value: "$COIN_ADDRESS",
-    },
-    {
-      key: "STAKING_ADDRESS",
-      value: `"${staking.address}"`,
-    },
-    {
-      key: "NEXT_PUBLIC_STAKING_ADDRESS",
-      value: "$STAKING_ADDRESS",
-    },
-    {
-      key: "PROMOTER_ADDRESS",
-      value: `"${promoter.address}"`,
-    },
-    {
-      key: "NEXT_PUBLIC_PROMOTER_ADDRESS",
-      value: "$PROMOTER_ADDRESS",
-    },
-    {
-      key: "PLAYABLES_ADDRESS",
-      value: `"${playables.address}"`,
-    },
-    {
-      key: "NEXT_PUBLIC_PLAYABLES_ADDRESS",
-      value: "$PLAYABLES_ADDRESS",
-    },
-    {
-      key: "EXCHANGE_ADDRESS",
-      value: `"${exchange.address}"`,
-    },
-    {
-      key: "NEXT_PUBLIC_EXCHANGE_ADDRESS",
-      value: "$EXCHANGE_ADDRESS",
+      key: "CONTRACTS",
+      value: `'${CONTRACTS}'`,
     },
     {
       key: "DEPLOY_ARGS",
       value: `"${buffer.toString("base64")}"`,
+    },
+    {
+      key: "NEXT_PUBLIC_CONTRACTS",
+      value: `'${CONTRACTS}'`,
     },
   ]);
 

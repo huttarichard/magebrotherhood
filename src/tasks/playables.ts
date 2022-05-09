@@ -8,6 +8,7 @@ import path, { dirname, join } from "path";
 
 import { Playables } from "../artifacts/types/Playables";
 import { timeToBN } from "../lib/bn";
+import env from "../lib/env.server";
 import { createClientFromEnv, replaceIPFSUrisWithGateway } from "../lib/server/ipfs";
 import { OpenseaMetadata } from "../lib/server/tokens";
 
@@ -15,8 +16,7 @@ task("playables:tokens:bootstrap", "adds tokens to contract and ipfs", async (ta
   const [owner] = await hre.ethers.getSigners();
   const ipfs = await createClientFromEnv();
 
-  const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
-  // const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+  const PLAYABLES_ADDRESS = env.PLAYABLES_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
   const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;
 
@@ -115,8 +115,7 @@ task("playables:tokens:update", "update token with given id", async (taskArgs: U
   const [owner] = await hre.ethers.getSigners();
   const ipfs = await createClientFromEnv();
 
-  const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
-  // const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+  const PLAYABLES_ADDRESS = env.PLAYABLES_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
   const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;
 
@@ -188,8 +187,7 @@ interface MintArgs {
 task("playables:tokens:mint", "mint token as reward", async (taskArgs: MintArgs, hre) => {
   const [owner] = await hre.ethers.getSigners();
 
-  const PLAYABLES_ADDRESS = process.env.PLAYABLES_ADDRESS as string;
-  // const EXCHANGE_ADDRESS = process.env.EXCHANGE_ADDRESS as string;
+  const PLAYABLES_ADDRESS = env.PLAYABLES_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
   const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;
 

@@ -2,22 +2,11 @@ import "@nomiclabs/hardhat-ethers";
 
 import { task, types } from "hardhat/config";
 
-interface DeployedContract {
-  address: string;
-  args: any[];
-}
-interface DeployArguments {
-  Coin?: DeployedContract;
-  Exchange?: DeployedContract;
-  Promoter?: DeployedContract;
-  Playables?: DeployedContract;
-  Staking?: DeployedContract;
-}
+import env, { DeployedContract } from "../lib/env.server";
 
 task("etherscan", "Verifies all contract with ethersca, keep in mind you have to have .env settup")
   .setAction(async (taskargs, hre) => {
-    const DEPLOY_ARGS = process.env.DEPLOY_ARGS as string;
-    const args: DeployArguments = JSON.parse(Buffer.from(DEPLOY_ARGS, "base64").toString());
+    const args = env.DEPLOY_ARGS;
 
     interface Contract extends DeployedContract {
       name: string;

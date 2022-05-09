@@ -49,7 +49,7 @@ const config: HardhatUserConfig = {
     },
   },
   gasReporter: {
-    // enabled: process.env.REPORT_GAS !== undefined,
+    // enabled: false,
     enabled: true,
     coinmarketcap: "83d01702-c240-4a23-8393-f2d9134105bf",
     currency: "USD",

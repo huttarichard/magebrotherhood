@@ -1,13 +1,15 @@
 import { create as createClient } from "ipfs-http-client";
 
+import env from "../env.server";
+
 if (typeof window !== "undefined") {
   throw new Error("do not use ipfs in browser");
 }
 
-const IPFS_PUBLIC_KEY = process.env.INFURA_IPFS_PUBLIC_KEY;
-const IPFS_SECRET_KEY = process.env.INFURA_IPFS_SECRET_KEY;
-const IPFS_GATEWAY = process.env.INFURA_IPFS_GATEWAY;
-const INFURA_IPFS_NODE = process.env.INFURA_IPFS_NODE;
+const IPFS_PUBLIC_KEY = env.INFURA_IPFS_PUBLIC_KEY;
+const IPFS_SECRET_KEY = env.INFURA_IPFS_SECRET_KEY;
+const IPFS_GATEWAY = env.INFURA_IPFS_GATEWAY;
+const INFURA_IPFS_NODE = env.INFURA_IPFS_NODE;
 
 function authorization() {
   const buff = Buffer.from(IPFS_PUBLIC_KEY + ":" + IPFS_SECRET_KEY);

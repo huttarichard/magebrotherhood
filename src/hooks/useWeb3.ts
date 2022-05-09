@@ -8,7 +8,7 @@ import { COINBASE, ConnectorFactory, IProviderInfo, METAMASK, WALLETCONNECT } fr
 import create from "zustand";
 
 if (!env.INFURA_KEY) {
-  throw new Error("process.env.INFURA_KEY is not defined");
+  throw new Error("env.INFURA_KEY is not defined");
 }
 
 const supportedWallets: IProviderInfo[] = [METAMASK, WALLETCONNECT, COINBASE];
