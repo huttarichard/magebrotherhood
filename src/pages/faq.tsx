@@ -54,7 +54,7 @@ export default function FAQPage() {
       <Main>
         <br />
 
-        <Typography variant="h3">FAQ & Support</Typography>
+        <Typography variant="h3">FAQ &ampq; Support</Typography>
         <br />
         <Typography variant="body1">
           Some of the most frequented questions asked are answered here. We understand that not every curious mind will
@@ -82,9 +82,9 @@ export default function FAQPage() {
           <StyledAccordionSummary>What is the value of MageBrotherhood NFTs?</StyledAccordionSummary>
           <StyledAccordionDetails>
             NFT on its own has no value, it is a way to represent ownership. Underlaying asset of NFT can have some
-            value, but we really don't know what or how much is it, only time will tell. However what we do know is that
-            all of the liquidity from sale will be pushed to the pool backing the Brotherhood Coin, pumping its price.
-            What we also know that you can stake your NFT and profit in long term. That is garanteed!
+            value, but we really don&apos;t know what or how much is it, only time will tell. However what we do know is
+            that all of the liquidity from sale will be pushed to the pool backing the Brotherhood Coin, pumping its
+            price. What we also know that you can stake your NFT and profit in long term. That is garanteed!
           </StyledAccordionDetails>
         </Accord>
 

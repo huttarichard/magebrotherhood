@@ -59,8 +59,8 @@ export default function SwapPaperFormalPage() {
           scheme.
         </p>
         <blockquote>
-          “Thrill of losing as much as earning is known as gambling. It’s also the only sustainable model when balance
-          is kept.”
+          “Thrill of losing as much as earning is known as gambling. It&apos;s also the only sustainable model when
+          balance is kept.”
         </blockquote>
         <p>
           MageBrotherhood plans to infuse 3D, AR and VR technologies into its platform to create a seamless and exciting
@@ -135,9 +135,9 @@ export default function SwapPaperFormalPage() {
 
         <h3>NFTs (ERC1155 &amp; ERC721)</h3>
         <p>
-          NFTs have been widely used to sell digital art and virtual goods. It’s also been known to be a good tool of
-          various shady sellers and people who made simple derivatives of existing art and allow people to speculate on
-          its price while taking profit from its initial phase known as &quot;minting&quot;.{" "}
+          NFTs have been widely used to sell digital art and virtual goods. It&apos;s also been known to be a good tool
+          of various shady sellers and people who made simple derivatives of existing art and allow people to speculate
+          on its price while taking profit from its initial phase known as &quot;minting&quot;.{" "}
         </p>
         <p>
           This has been a concern of developers and the community as whole, because no value is produced and in the end
@@ -210,8 +210,8 @@ export default function SwapPaperFormalPage() {
         <h3>Coin &amp; Exchange</h3>
         <p>
           The MageBrotherhood DEX allows players to transact directly with one another. It&apos;s a marketplace whereby
-          transactions are not facilitated by intermediaries. The BHC token (ERC20 & Exchange) provides monetary policy
-          that is aligned with rules of ecosystem.
+          transactions are not facilitated by intermediaries. The BHC token (ERC20 &amp; Exchange) provides monetary
+          policy that is aligned with rules of ecosystem.
         </p>
         <p>
           While uniswap and others allows for similar functionality to be implemented more easily we decided that we
