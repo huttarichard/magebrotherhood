@@ -31,7 +31,7 @@ export default function Scheme() {
         In-Game Short Movie
       </Typography>
       <Typography variant="body1" textAlign="center">
-        Or game department has been quite busy, watch short movie we put together for our fans!
+        Our trailer to get our fans excited about first alpha release! Stay tunned.
       </Typography>
       <br />
 
@@ -50,7 +50,7 @@ export default function Scheme() {
           >
             <NoSsr>
               <ReactPlayer
-                url="https://www.youtube.com/watch?v=p9PH3fZpqqQ"
+                url="https://www.youtube.com/watch?v=TiGpxhaK4V8"
                 light={preview.src}
                 width="100%"
                 height="100%"

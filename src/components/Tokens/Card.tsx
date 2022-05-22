@@ -86,7 +86,7 @@ const ImageActionsBottom = styled.div`
   .button {
     box-shadow: 0px 0 10px 3px #0000001c;
     height: 100%;
-    background: #ffffff8f;
+    background: #ffffff;
     letter-spacing: 1.1px;
   }
 `;
@@ -182,7 +182,7 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
                 <Button
                   className="button"
                   block
-                  text="3D Studio"
+                  text="View in 3D"
                   onClick={() => {
                     router.push("/tokens/" + token.id);
                   }}
