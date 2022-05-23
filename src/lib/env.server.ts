@@ -32,6 +32,10 @@ const envconfig = {
   EXCHANGE_ADDRESS: contracts.EXCHANGE || "",
 
   DEPLOY_ARGS: JSON.parse(Buffer.from(process.env.DEPLOY_ARGS || "", "base64").toString() || "{}") as DeployArguments,
+
+  MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY || "",
+  MAILCHIMP_API_SERVER: process.env.MAILCHIMP_API_SERVER || "",
+  MAILCHIMP_AUDIENCE_ID: process.env.MAILCHIMP_AUDIENCE_ID || "",
 };
 
 export default envconfig;

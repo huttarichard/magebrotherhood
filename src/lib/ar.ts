@@ -1,4 +1,4 @@
-import { isAndroid } from "react-device-detect";
+import { isAndroid, isSafari } from "react-device-detect";
 
 export type ARModeKind = "quick-look" | "scene-viewer" | "webxr" | "none";
 
@@ -31,6 +31,9 @@ function iOSversion(): number[] | null {
 
 export function isQuickLookSupported(): boolean {
   if (typeof window === "undefined") {
+    return false;
+  }
+  if (!isSafari) {
     return false;
   }
   const a = document.createElement("a");

@@ -148,7 +148,7 @@ const Character = dynamic(() => import("./Character"), {
   ssr: false,
 });
 
-export default function Hero() {
+export default function Hero({ action = true }: { action?: boolean }) {
   const router = useRouter();
   const [button, setButton] = useState<JSX.Element>();
 
@@ -160,6 +160,9 @@ export default function Hero() {
   });
 
   useEffect(() => {
+    if (!action) {
+      return;
+    }
     const button =
       ars.mode === ARMode.NONE ? (
         <Button text="Explore Tokens" distorted borders onClick={() => router.push("/tokens")} />
