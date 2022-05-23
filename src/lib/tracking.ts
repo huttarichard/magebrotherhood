@@ -46,6 +46,8 @@ export interface TrackingWindow extends Window {
   TiktokAnalyticsObject: string;
 
   ttq: {
+    track: (event: TikTokEventName, args?: TikTokEventData) => void;
+
     instance: (instance: string) => {
       track: (event: TikTokEventName, args?: TikTokEventData) => void;
     };
@@ -54,13 +56,13 @@ export interface TrackingWindow extends Window {
 
 declare let window: TrackingWindow;
 
-const PIXEL_ID = "webpage";
+// const PIXEL_ID = "webpage";
 
 function track(name: TikTokEventName, data?: TikTokEventData) {
   if (typeof window === "undefined") {
     return;
   }
-  window.ttq.instance(PIXEL_ID).track(name, data);
+  window.ttq.track(name, data);
 }
 
 export interface ClickImportantButton {
