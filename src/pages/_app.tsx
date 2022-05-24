@@ -2,6 +2,7 @@ import "swiper/css";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import OGImage from "assets/images/magebrotherhood.jpg";
+import HotJar from "components/Marketing/HotJar";
 import TiktokPixelCode from "components/Marketing/TiktokPixelCode";
 import GlobalStyle from "components/ui/GlobalStyle";
 import ThemeProvider, { createEmotionCache } from "components/ui/ThemeProvider";
@@ -89,6 +90,7 @@ function MageBrotherHoodApp(props: Props) {
       </CacheProvider>
 
       <TiktokPixelCode id="C9AU0PRC77U9N0P9CPBG" />
+      <HotJar />
     </>
   );
 }
