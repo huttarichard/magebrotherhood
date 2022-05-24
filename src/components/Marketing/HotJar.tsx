@@ -4,7 +4,7 @@ export default function HotJar() {
   return (
     <Script
       strategy="afterInteractive"
-      id="tiktok-pixel-code"
+      id="hotjar-js"
       dangerouslySetInnerHTML={{
         __html: `
         (function(h,o,t,j,a,r){
