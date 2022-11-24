@@ -23,6 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const additions: any[] = [];
 
+  console.log("hey", token);
+
   if (fields.metadata) {
     const result = await fetchTokenMetadata(ifps, token.ipfsUri);
     additions.push(result);

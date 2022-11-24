@@ -1,6 +1,6 @@
 {
-    "id": "3",
-    "revealed": false,
+    "id": 3,
+    "revealed": true,
     "name": "Knight",
     "description": "One of the first characters we ever designed for MageBrotherhood. No better soldier is in battlefield, without any hassitation he will do his duty.",
     "external_url": "https://magebrotherhood.com/tokens/3",

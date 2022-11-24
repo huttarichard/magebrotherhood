@@ -67,7 +67,6 @@ export const useWeb3Remote = create<Web3Network>((set) => {
 
   const networksrpc: { [key: string]: string[] } = {
     "1": [`https://mainnet.infura.io/v3/${env.INFURA_KEY}`],
-    "4": [`https://rinkeby.infura.io/v3/${env.INFURA_KEY}`],
     "5": [`https://goerli.infura.io/v3/${env.INFURA_KEY}`],
   };
 

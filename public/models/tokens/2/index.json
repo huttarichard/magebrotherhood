@@ -1,6 +1,6 @@
 {
-    "id": "2",
-    "revealed": false,
+    "id": 2,
+    "revealed": true,
     "name": "First Knight",
     "description": "One of the first characters we ever designed for MageBrotherhood. One of the strongest protector of your kingdom.",
     "external_url": "https://magebrotherhood.com/tokens/1",
