@@ -151,3 +151,6 @@ export function useExchangeHourlyCandles(web3: Web3) {
 
   return { candles, error, exchange: contract, connected };
 }
+
+const date = new Date("2018-10-19" + ":00:00.000Z");
+const time = Math.ceil(date.getTime() / 1000);
