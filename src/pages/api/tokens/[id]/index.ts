@@ -19,11 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ifps = await createClientFromEnv();
   const provider = getInfuraProviderFromEnv();
   const playables = (await connectFromEnv(provider, Contract.Playables)) as Playables;
+
   const token = await fetchToken(playables as Playables, req.query.id as string);
 
   const additions: any[] = [];
-
-  console.log("hey", token);
 
   if (fields.metadata) {
     const result = await fetchTokenMetadata(ifps, token.ipfsUri);
