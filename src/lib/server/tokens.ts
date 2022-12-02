@@ -109,7 +109,6 @@ export async function fetchTokensMetadata(ipfs: IPFSHTTPClient, uris: string[]):
 
 export async function fetchTokens(playables: Playables): Promise<Token[]> {
   const tokens = await playables.getTokens();
-
   return tokens.map((token, i) => {
     return {
       id: BigNumber.from(i + 1).toString(),

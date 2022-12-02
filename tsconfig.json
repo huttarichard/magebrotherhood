@@ -21,23 +21,13 @@
     "isolatedModules": true,
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@nomiclabs",
-      "./src/@types",
-    ],
+    "typeRoots": ["./node_modules/@types", "./node_modules/@nomiclabs", "./src/@types"],
     "jsx": "preserve",
     "noEmit": true,
     "baseUrl": "src",
     "incremental": true
   },
-  "files": [
-    "next-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src/**/*"
-, "scripts/screenshots.ts"  ]
+  "files": ["next-env.d.ts"],
+  "exclude": ["node_modules"],
+  "include": ["src/**/*", "scripts/screenshots.ts"]
 }

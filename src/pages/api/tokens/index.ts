@@ -59,6 +59,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     return replaceIPFSUrisWithGateway(newToken);
   });
-
+  console.log(merged);
   res.json(merged);
 }
