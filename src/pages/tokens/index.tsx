@@ -15,7 +15,6 @@ export default function TokensIndexPage() {
   const tokens = useTokens({
     metadata: true,
   });
-
   if (tokens.error) {
     throw tokens.error;
   }

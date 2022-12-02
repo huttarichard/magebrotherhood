@@ -23,7 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const fields = parseFields(req.query);
 
   const ifps = await createClientFromEnv();
+
   const provider = getInfuraProviderFromEnv();
+
   const playables = (await connectFromEnv(provider, Contract.Playables)) as Playables;
   const tokens = await fetchTokens(playables as Playables);
 
@@ -59,6 +61,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     return replaceIPFSUrisWithGateway(newToken);
   });
-  console.log(merged);
   res.json(merged);
 }
