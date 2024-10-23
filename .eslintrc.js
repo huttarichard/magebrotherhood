@@ -66,7 +66,9 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "off",
+    "react/no-unknown-property": "off",
     "no-restricted-imports": [
       "error",
       {

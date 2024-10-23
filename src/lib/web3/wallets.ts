@@ -76,8 +76,8 @@ export const COINBASE: IProviderInfo = {
       case 1:
         network = "mainnet";
         break;
-      case 5:
-        network = "goerli";
+      case 11155111:
+        network = "sepolia";
         break;
       default:
         throw new Error("invalid network id");
@@ -110,7 +110,7 @@ export const WALLETCONNECT: IProviderInfo = {
     const instance = new WalletConnect(actions, {
       rpc: {
         1: `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
-        5: `https://goerli.infura.io/v3/${env.INFURA_KEY}`,
+        11155111: `https://sepolia.infura.io/v3/${env.INFURA_KEY}`,
       },
     });
     await instance.activate(env.NETWORK);

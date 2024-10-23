@@ -50,7 +50,7 @@ export default function Scheme() {
           >
             <NoSsr>
               <ReactPlayer
-                url="https://www.youtube.com/watch?v=TiGpxhaK4V8"
+                url="https://magebrotherhood.com/preview.mp4"
                 light={preview.src}
                 width="100%"
                 height="100%"

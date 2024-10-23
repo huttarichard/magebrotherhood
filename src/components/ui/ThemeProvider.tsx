@@ -80,7 +80,6 @@ export const mui: ThemeOptions = {
     fontWeightMedium: 600,
 
     body1: {
-      fontSize: "1.5rem",
       fontWeight: 500,
       color: "white",
     },

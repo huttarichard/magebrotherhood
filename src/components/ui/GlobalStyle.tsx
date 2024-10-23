@@ -33,6 +33,7 @@ const GlobalStyle = (theme: Theme) => css`
     box-sizing: border-box;
     overscroll-behavior: none;
     font-size: 100%;
+    font-size: 1rem;
     height: 100%;
   }
 

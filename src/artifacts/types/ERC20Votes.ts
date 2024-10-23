@@ -32,16 +32,19 @@ export declare namespace ERC20Votes {
 export interface ERC20VotesInterface extends utils.Interface {
   contractName: "ERC20Votes";
   functions: {
+    "CLOCK_MODE()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "checkpoints(address,uint32)": FunctionFragment;
+    "clock()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getVotes(address)": FunctionFragment;
@@ -56,6 +59,10 @@ export interface ERC20VotesInterface extends utils.Interface {
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "CLOCK_MODE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
@@ -73,6 +80,7 @@ export interface ERC20VotesInterface extends utils.Interface {
     functionFragment: "checkpoints",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "clock", values?: undefined): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
@@ -91,6 +99,10 @@ export interface ERC20VotesInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getPastTotalSupply",
     values: [BigNumberish]
@@ -136,6 +148,7 @@ export interface ERC20VotesInterface extends utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "CLOCK_MODE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
@@ -147,6 +160,7 @@ export interface ERC20VotesInterface extends utils.Interface {
     functionFragment: "checkpoints",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "clock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
@@ -158,6 +172,10 @@ export interface ERC20VotesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPastTotalSupply",
     data: BytesLike
@@ -193,12 +211,14 @@ export interface ERC20VotesInterface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
+    "EIP712DomainChanged()": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -223,6 +243,11 @@ export type DelegateVotesChangedEvent = TypedEvent<
 
 export type DelegateVotesChangedEventFilter =
   TypedEventFilter<DelegateVotesChangedEvent>;
+
+export type EIP712DomainChangedEvent = TypedEvent<[], {}>;
+
+export type EIP712DomainChangedEventFilter =
+  TypedEventFilter<EIP712DomainChangedEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber],
@@ -259,6 +284,8 @@ export interface ERC20Votes extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    CLOCK_MODE(overrides?: CallOverrides): Promise<[string]>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
@@ -280,6 +307,8 @@ export interface ERC20Votes extends BaseContract {
       pos: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[ERC20Votes.CheckpointStructOutput]>;
+
+    clock(overrides?: CallOverrides): Promise<[number]>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -306,14 +335,28 @@ export interface ERC20Votes extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
 
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -363,6 +406,8 @@ export interface ERC20Votes extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  CLOCK_MODE(overrides?: CallOverrides): Promise<string>;
+
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
   allowance(
@@ -384,6 +429,8 @@ export interface ERC20Votes extends BaseContract {
     pos: BigNumberish,
     overrides?: CallOverrides
   ): Promise<ERC20Votes.CheckpointStructOutput>;
+
+  clock(overrides?: CallOverrides): Promise<number>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -410,14 +457,28 @@ export interface ERC20Votes extends BaseContract {
 
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
+  eip712Domain(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, BigNumber, string, string, BigNumber[]] & {
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+    }
+  >;
+
   getPastTotalSupply(
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPastVotes(
     account: string,
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -464,6 +525,8 @@ export interface ERC20Votes extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    CLOCK_MODE(overrides?: CallOverrides): Promise<string>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     allowance(
@@ -485,6 +548,8 @@ export interface ERC20Votes extends BaseContract {
       pos: BigNumberish,
       overrides?: CallOverrides
     ): Promise<ERC20Votes.CheckpointStructOutput>;
+
+    clock(overrides?: CallOverrides): Promise<number>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -508,14 +573,28 @@ export interface ERC20Votes extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -596,6 +675,9 @@ export interface ERC20Votes extends BaseContract {
       newBalance?: null
     ): DelegateVotesChangedEventFilter;
 
+    "EIP712DomainChanged()"(): EIP712DomainChangedEventFilter;
+    EIP712DomainChanged(): EIP712DomainChangedEventFilter;
+
     "Transfer(address,address,uint256)"(
       from?: string | null,
       to?: string | null,
@@ -609,6 +691,8 @@ export interface ERC20Votes extends BaseContract {
   };
 
   estimateGas: {
+    CLOCK_MODE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
@@ -630,6 +714,8 @@ export interface ERC20Votes extends BaseContract {
       pos: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    clock(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -656,14 +742,16 @@ export interface ERC20Votes extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -714,6 +802,8 @@ export interface ERC20Votes extends BaseContract {
   };
 
   populateTransaction: {
+    CLOCK_MODE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
@@ -738,6 +828,8 @@ export interface ERC20Votes extends BaseContract {
       pos: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    clock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -767,14 +859,16 @@ export interface ERC20Votes extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

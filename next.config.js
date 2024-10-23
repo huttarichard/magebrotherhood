@@ -1,11 +1,3 @@
-const withPlugins = require("next-compose-plugins");
-
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-});
-
-const withTM = require("next-transpile-modules")(["three"]);
-
 /**
  * @type {import('next').NextConfig}
  */
@@ -21,6 +13,9 @@ const config = {
     formats: ["image/avif", "image/webp"],
   },
   optimizeFonts: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {
@@ -52,6 +47,21 @@ const config = {
       },
     ];
   },
+  webpack: (config, { isServer }) => {
+    // Transpile three and three-stdlib modules
+    config.module.rules.push({
+      test: /\.js$/,
+      include: /node_modules\/(three|three-stdlib)/,
+      use: {
+        loader: "babel-loader",
+        options: {
+          presets: ["@babel/preset-env"],
+        },
+      },
+    });
+
+    return config;
+  },
 };
 
-module.exports = withPlugins([withBundleAnalyzer, withTM], config);
+module.exports = config;

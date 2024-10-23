@@ -85,7 +85,7 @@ const Item = styled.li`
 
 export default function Collection() {
   const tokens = useTokens({ metadata: true });
-  const [w, sw] = useState<number | null>(null);
+  const [, sw] = useState<number | null>(null);
   const { width } = useWindowSize();
   // const { width } = useScreen();
 

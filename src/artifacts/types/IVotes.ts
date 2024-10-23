@@ -137,13 +137,13 @@ export interface IVotes extends BaseContract {
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
 
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -168,13 +168,13 @@ export interface IVotes extends BaseContract {
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
   getPastTotalSupply(
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPastVotes(
     account: string,
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -196,13 +196,13 @@ export interface IVotes extends BaseContract {
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -252,13 +252,13 @@ export interface IVotes extends BaseContract {
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -287,13 +287,13 @@ export interface IVotes extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

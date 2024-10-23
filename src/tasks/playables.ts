@@ -15,7 +15,7 @@ import { OpenseaMetadata } from "../lib/server/tokens";
 task("playables:tokens:bootstrap", "adds tokens to contract and ipfs", async (taskArgs, hre) => {
   const [owner] = await hre.ethers.getSigners();
   const ipfs = await createClientFromEnv();
-  console.log(owner);
+
   const PLAYABLES_ADDRESS = env.PLAYABLES_ADDRESS as string;
   const Playables = await hre.ethers.getContractFactory("Playables");
   const playables = Playables.attach(PLAYABLES_ADDRESS).connect(owner) as Playables;

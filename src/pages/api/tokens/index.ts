@@ -20,14 +20,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
 
-  const fields = parseFields(req.query);
+  const fields = parseFields(req.query as any);
 
   const ifps = await createClientFromEnv();
 
   const provider = getInfuraProviderFromEnv();
 
   const playables = (await connectFromEnv(provider, Contract.Playables)) as Playables;
-  console.log(await playables.address);
+  console.info(await playables.address);
   const tokens = await fetchTokens(playables as Playables);
 
   const ids = tokens.map((token) => token.id);

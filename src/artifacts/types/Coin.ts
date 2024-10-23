@@ -33,6 +33,7 @@ export interface CoinInterface extends utils.Interface {
   contractName: "Coin";
   functions: {
     "ADMIN()": FunctionFragment;
+    "CLOCK_MODE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "MANIPULATOR()": FunctionFragment;
@@ -42,11 +43,13 @@ export interface CoinInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burn(address,uint256)": FunctionFragment;
     "checkpoints(address,uint32)": FunctionFragment;
+    "clock()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "getPastTotalSupply(uint256)": FunctionFragment;
     "getPastVotes(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -72,6 +75,10 @@ export interface CoinInterface extends utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "ADMIN", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "CLOCK_MODE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -105,6 +112,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "checkpoints",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "clock", values?: undefined): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
@@ -123,6 +131,10 @@ export interface CoinInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getPastTotalSupply",
     values: [BigNumberish]
@@ -200,6 +212,7 @@ export interface CoinInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "CLOCK_MODE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
@@ -221,6 +234,7 @@ export interface CoinInterface extends utils.Interface {
     functionFragment: "checkpoints",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "clock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
@@ -232,6 +246,10 @@ export interface CoinInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPastTotalSupply",
     data: BytesLike
@@ -286,6 +304,7 @@ export interface CoinInterface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
+    "EIP712DomainChanged()": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -297,6 +316,7 @@ export interface CoinInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -326,6 +346,11 @@ export type DelegateVotesChangedEvent = TypedEvent<
 
 export type DelegateVotesChangedEventFilter =
   TypedEventFilter<DelegateVotesChangedEvent>;
+
+export type EIP712DomainChangedEvent = TypedEvent<[], {}>;
+
+export type EIP712DomainChangedEventFilter =
+  TypedEventFilter<EIP712DomainChangedEvent>;
 
 export type PausedEvent = TypedEvent<[string], { account: string }>;
 
@@ -394,6 +419,8 @@ export interface Coin extends BaseContract {
   functions: {
     ADMIN(overrides?: CallOverrides): Promise<[string]>;
 
+    CLOCK_MODE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
@@ -428,6 +455,8 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ERC20Votes.CheckpointStructOutput]>;
 
+    clock(overrides?: CallOverrides): Promise<[number]>;
+
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseAllowance(
@@ -453,14 +482,28 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<[string]>;
 
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -559,6 +602,8 @@ export interface Coin extends BaseContract {
 
   ADMIN(overrides?: CallOverrides): Promise<string>;
 
+  CLOCK_MODE(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -593,6 +638,8 @@ export interface Coin extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ERC20Votes.CheckpointStructOutput>;
 
+  clock(overrides?: CallOverrides): Promise<number>;
+
   decimals(overrides?: CallOverrides): Promise<number>;
 
   decreaseAllowance(
@@ -618,14 +665,28 @@ export interface Coin extends BaseContract {
 
   delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
+  eip712Domain(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, BigNumber, string, string, BigNumber[]] & {
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+    }
+  >;
+
   getPastTotalSupply(
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPastVotes(
     account: string,
-    blockNumber: BigNumberish,
+    timepoint: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -721,6 +782,8 @@ export interface Coin extends BaseContract {
   callStatic: {
     ADMIN(overrides?: CallOverrides): Promise<string>;
 
+    CLOCK_MODE(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -755,6 +818,8 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<ERC20Votes.CheckpointStructOutput>;
 
+    clock(overrides?: CallOverrides): Promise<number>;
+
     decimals(overrides?: CallOverrides): Promise<number>;
 
     decreaseAllowance(
@@ -777,14 +842,28 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<string>;
 
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -908,6 +987,9 @@ export interface Coin extends BaseContract {
       newBalance?: null
     ): DelegateVotesChangedEventFilter;
 
+    "EIP712DomainChanged()"(): EIP712DomainChangedEventFilter;
+    EIP712DomainChanged(): EIP712DomainChangedEventFilter;
+
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
@@ -962,6 +1044,8 @@ export interface Coin extends BaseContract {
   estimateGas: {
     ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
 
+    CLOCK_MODE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -996,6 +1080,8 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    clock(overrides?: CallOverrides): Promise<BigNumber>;
+
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseAllowance(
@@ -1021,14 +1107,16 @@ export interface Coin extends BaseContract {
 
     delegates(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1131,6 +1219,8 @@ export interface Coin extends BaseContract {
   populateTransaction: {
     ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    CLOCK_MODE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1170,6 +1260,8 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    clock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decreaseAllowance(
@@ -1198,14 +1290,16 @@ export interface Coin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPastTotalSupply(
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPastVotes(
       account: string,
-      blockNumber: BigNumberish,
+      timepoint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
